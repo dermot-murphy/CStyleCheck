@@ -6,4 +6,4 @@
 #   v = pathlib.Path('_version.txt').read_text().strip()
 #   pathlib.Path('_version.py').write_text(f'__version__ = {v!r}\n')
 #   "
-__version__ = "1.0.0"
+__version__ = "1.0.001"

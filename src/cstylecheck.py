@@ -3291,7 +3291,7 @@ def main() -> int:
         cfg.get("ignore", {}),
     ):
         files.append(_fp)
-        if getattr(args, "verbose", False):
+        if getattr(args, "verbose", False) and sys.stderr.isatty():
             _msg = f"Discovering: {_fp}"
             print(f"{_msg:<79}", end="\r",
                   file=sys.stderr, flush=True)
@@ -3316,8 +3316,10 @@ def main() -> int:
     for filepath in files:
         if getattr(args, "verbose", False):
             _msg = f"Scanning: {filepath}"
-            print(f"{_msg:<79}", end="\r",
-                  file=sys.stderr, flush=True)
+            if sys.stderr.isatty():
+                print(f"{_msg:<79}", end="\r", file=sys.stderr, flush=True)
+            else:
+                print(_msg, file=sys.stderr, flush=True)
         try:
             source = Path(filepath).read_text(encoding="utf-8", errors="replace")
             source_cache[filepath] = source
@@ -3357,7 +3359,7 @@ def main() -> int:
                 else:
                     tee.print(v)
 
-    if getattr(args, "verbose", False):
+    if getattr(args, "verbose", False) and sys.stderr.isatty():
         print(" " * 80, end="\r",
               file=sys.stderr)  # erase last progress line
     # Cross-file sign-compatibility check (needs all files ingested first).
