@@ -41,7 +41,7 @@ jobs:
   # Job 1: Run the checker
   # ---------------------------------------------------------------------------
   stylecheck:
-    name: Naming Convention Lint
+    name: Example C file action
     runs-on: ubuntu-latest
 
     outputs:
