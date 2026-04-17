@@ -1,4 +1,4 @@
-# .github/workflows/cstylecheck_rules.yml
+# .github/workflows/rules.yml
 # =============================================================================
 # Embedded C Style Compliance Checker with trend analysis
 # =============================================================================
@@ -21,7 +21,7 @@
 # to make the trend page publicly accessible.
 # =============================================================================
 
-name: CStyleCheck Rules
+name: CStyleCheck
 
 on:
   push:
@@ -326,8 +326,16 @@ jobs:
 
       - name: Update README badge
         run: |
-          # Switch back to the source branch to update README
-          git checkout ${{ github.ref_name }} -- README.md 2>/dev/null || true
+          # -----------------------------------------------------------------------
+          # HEAD is currently on gh-pages after the trend commit above.
+          # We must switch back to the source branch before committing README,
+          # and fetch the latest remote tip to avoid a non-fast-forward rejection
+          # if another job pushed to main between our checkout and now.
+          # -----------------------------------------------------------------------
+          git fetch origin ${{ github.ref_name }}
+          git checkout ${{ github.ref_name }}
+          git reset --hard origin/${{ github.ref_name }}
+
           python - << 'EOF'
           import json, os, pathlib, re
 
@@ -360,4 +368,5 @@ jobs:
           git add README.md
           git diff --staged --quiet && echo "No README change" && exit 0
           git commit -m "ci: update naming convention badge [skip ci]"
-          git push origin HEAD:${{ github.ref_name }}
+          # HEAD is now correctly on the source branch; push directly.
+          git push origin ${{ github.ref_name }}
