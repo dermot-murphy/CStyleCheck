@@ -1,4 +1,4 @@
-# .github/workflows/cstylecheck_rules.yml
+# .github/workflows/rules.yml
 # =============================================================================
 # Embedded C Style Compliance Checker with trend analysis
 # =============================================================================
@@ -21,7 +21,7 @@
 # to make the trend page publicly accessible.
 # =============================================================================
 
-name: CStyleCheck Rules
+name: CStyleCheck
 
 on:
   push:
@@ -35,6 +35,8 @@ on:
       - "source/**/*.c"
       - "source/**/*.h"
       - "src/**"
+
+  workflow_dispatch:
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -324,10 +326,18 @@ jobs:
             "trend: run #${{ github.run_number }} E=${{ needs.stylecheck.outputs.errors }} W=${{ needs.stylecheck.outputs.warnings }}"
           git push origin gh-pages
 
-      - name: Update README badge
+      - name: Update README badge and push to source branch
         run: |
-          # Switch back to the source branch to update README
-          git checkout ${{ github.ref_name }} -- README.md 2>/dev/null || true
+          # -----------------------------------------------------------------------
+          # HEAD is on gh-pages here. Branch-switching back to main in the same
+          # working tree is unreliable when gh-pages is an orphan (no shared
+          # ancestor). Instead, add a git worktree at /tmp/main-wt pointing at
+          # the latest remote tip of the source branch. This gives us a fully
+          # independent working directory for main without touching gh-pages HEAD.
+          # -----------------------------------------------------------------------
+          git fetch origin ${{ github.ref_name }}
+          git worktree add /tmp/main-wt origin/${{ github.ref_name }}
+
           python - << 'EOF'
           import json, os, pathlib, re
 
@@ -338,7 +348,8 @@ jobs:
           badge_url  = f"https://img.shields.io/endpoint?url={pages_base}/cstylecheck/badge.json"
           badge_md   = f"[![Naming Convention]({badge_url})]({trend_url})"
 
-          readme = pathlib.Path("README.md")
+          # Operate in the worktree, not in the gh-pages working directory.
+          readme = pathlib.Path("/tmp/main-wt/README.md")
           if not readme.exists():
               print("No README.md -- skipping")
           else:
@@ -352,12 +363,20 @@ jobs:
               readme.write_text(text)
               print(f"README updated: {badge_md}")
           EOF
+
+          cd /tmp/main-wt
+          git add README.md
+          if git diff --staged --quiet; then
+            echo "No README change — nothing to push"
+          else
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -m "ci: update naming convention badge [skip ci]"
+            # Push the worktree's branch (main) directly — HEAD never touched gh-pages.
+            git push origin HEAD:${{ github.ref_name }}
+          fi
+
+          cd -
+          git worktree remove /tmp/main-wt
         env:
           REPO: ${{ github.repository }}
-
-      - name: Commit and push README update
-        run: |
-          git add README.md
-          git diff --staged --quiet && echo "No README change" && exit 0
-          git commit -m "ci: update naming convention badge [skip ci]"
-          git push origin HEAD:${{ github.ref_name }}
