@@ -96,6 +96,25 @@ def main():
         ("Whitespace ratio",  "whitespace_ratio"),
         ("Test count",        "test_count"),
         ("Rule count",        "rule_count"),
+        # C source metrics (issue #388)
+        ("SLOC",              "loc_sloc"),
+        ("Physical lines",    "loc_physical"),
+        ("Comment lines",     "loc_comment"),
+        ("Doxygen lines",     "loc_doxygen"),
+        ("Comment density",   "loc_comment_density"),
+        ("Blank ratio",       "loc_blank_ratio"),
+        ("Function count",    "func_count"),
+        ("Max func length",   "func_length_max"),
+        ("Avg func length",   "func_length_avg"),
+        ("Funcs over 60 LOC", "func_over_length"),
+        ("Max params",        "func_param_max"),
+        ("CC max",            "cc_max"),
+        ("CC avg",            "cc_avg"),
+        ("Nesting depth max", "nesting_max"),
+        ("Doxygen coverage",  "dox_coverage"),
+        ("Static vars",       "static_vars"),
+        ("Max file length",   "file_length_max"),
+        ("Defect density (v/KLOC)", "defect_density"),
     ]
 
     for label, key in metrics:
@@ -106,12 +125,16 @@ def main():
 
     # Charts per branch
     chart_keys = [
-        ("errors_warnings",  "Violation counts"),
-        ("file_stats",       "Repository file counts"),
-        ("line_churn",       "Line churn per commit"),
-        ("file_churn",       "File churn per commit"),
-        ("ratios",           "Comment & whitespace ratios"),
-        ("test_rule_counts", "Test & rule counts"),
+        ("errors_warnings",       "Violation counts"),
+        ("file_stats",            "Repository file counts"),
+        ("line_churn",            "Line churn per commit"),
+        ("file_churn",            "File churn per commit"),
+        ("ratios",                "Comment & whitespace ratios"),
+        ("test_rule_counts",      "Test & rule counts"),
+        ("loc_breakdown",         "LOC breakdown (SLOC / comment / doxygen / blank)"),
+        ("cyclomatic_complexity", "Cyclomatic complexity & nesting depth"),
+        ("defect_density",        "Defect density & documentation coverage"),
+        ("func_metrics",          "Function count, max length & static variables"),
     ]
 
     for branch in BRANCHES:
