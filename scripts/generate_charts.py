@@ -383,8 +383,9 @@ def main():
                     help="Branch name (main or develop)")
     args = ap.parse_args()
 
-    repo_root  = Path(__file__).resolve().parent.parent
-    data_file  = repo_root / args.data_dir / f"{args.branch}.json"
+    repo_root    = Path(__file__).resolve().parent.parent
+    branch_safe  = args.branch.replace("/", "-").replace("\\", "-")
+    data_file    = repo_root / args.data_dir / f"{branch_safe}.json"
 
     if not data_file.exists():
         print(f"[charts] Data file not found: {data_file}")
