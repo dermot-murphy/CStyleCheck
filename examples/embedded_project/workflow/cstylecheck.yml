@@ -1,0 +1,118 @@
+# =============================================================================
+# .github/workflows/cstylecheck.yml
+#
+# CStyleCheck CI workflow for embedded C projects.
+#
+# USAGE IN YOUR OWN REPOSITORY
+# ----------------------------
+# 1. Copy this file to .github/workflows/cstylecheck.yml in your project.
+# 2. Copy the config/ directory to your project root.
+# 3. Adjust the SRC_GLOB and INCLUDE_GLOB variables below to match your
+#    source tree.
+# 4. Push — the check runs automatically on every PR and push.
+#
+# This workflow:
+#   - Runs the CI gate profile on every PR (fails on errors only).
+#   - Runs the strict Barr-C profile for informational reporting on push.
+#   - Uploads both reports as downloadable artifacts.
+# =============================================================================
+
+name: CStyleCheck
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - '**.c'
+      - '**.h'
+      - 'config/**.yml'
+      - '.github/workflows/cstylecheck.yml'
+
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '**.c'
+      - '**.h'
+      - 'config/**.yml'
+
+  workflow_dispatch:       # Allow manual trigger from the Actions tab.
+
+env:
+  # Adjust these to match your project's source layout.
+  SRC_GLOB:     "src/*.c"
+  INCLUDE_GLOB: "include/*.h"
+
+jobs:
+  style-check:
+    name: CStyleCheck
+    runs-on: ubuntu-latest
+
+    steps:
+      # ------------------------------------------------------------------
+      # 1. Check out the target project
+      # ------------------------------------------------------------------
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------------------
+      # 2. Fetch CStyleCheck (pinned to a known-good tag)
+      # ------------------------------------------------------------------
+      - name: Fetch CStyleCheck
+        uses: actions/checkout@v4
+        with:
+          repository: dermot-murphy/CStyleCheck
+          ref: main                        # or pin to a specific tag/SHA
+          path: _cstylecheck
+
+      # ------------------------------------------------------------------
+      # 3. Python environment
+      # ------------------------------------------------------------------
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      # ------------------------------------------------------------------
+      # 4. CI gate scan — fails on errors (no --exit-zero)
+      # ------------------------------------------------------------------
+      - name: Run CI gate scan
+        id: ci_scan
+        run: |
+          python3 _cstylecheck/src/cstylecheck.py \
+            --config config/ci.yml \
+            --output-format json \
+            ${{ env.SRC_GLOB }} ${{ env.INCLUDE_GLOB }} \
+            | tee reports/ci_report.json
+
+      - name: Upload CI report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cstylecheck-ci-report
+          path: reports/ci_report.json
+          retention-days: 30
+
+      # ------------------------------------------------------------------
+      # 5. Strict scan — informational only (--exit-zero; never blocks)
+      # ------------------------------------------------------------------
+      - name: Run strict Barr-C scan
+        if: always()
+        run: |
+          python3 _cstylecheck/src/cstylecheck.py \
+            --config config/strict.yml \
+            --exit-zero \
+            --output-format json \
+            ${{ env.SRC_GLOB }} ${{ env.INCLUDE_GLOB }} \
+            | tee reports/strict_report.json
+
+      - name: Upload strict report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cstylecheck-strict-report
+          path: reports/strict_report.json
+          retention-days: 30
