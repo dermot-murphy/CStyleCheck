@@ -357,10 +357,11 @@ def _generate_all(points, output_dir, branch):
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    branch_safe = branch.replace("/", "-").replace("\\", "-")
     written = []
     for name, svg in charts:
         if svg:
-            p = output_dir / f"{branch}_{name}.svg"
+            p = output_dir / f"{branch_safe}_{name}.svg"
             p.write_text(svg, encoding="utf-8")
             written.append(str(p))
             print(f"[charts] Wrote {p}")

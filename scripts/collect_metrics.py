@@ -678,7 +678,8 @@ def main():
     }
 
     # --- load, upsert, save ---
-    hist_path = output_dir / f"{branch}.json"
+    branch_safe = branch.replace("/", "-").replace("\\", "-")
+    hist_path = output_dir / f"{branch_safe}.json"
     history   = _load_history(hist_path)
     history["branch"] = branch
 

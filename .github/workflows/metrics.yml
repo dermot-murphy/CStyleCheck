@@ -40,18 +40,21 @@ jobs:
         id: collect
         run: |
           BRANCH="${{ github.event.inputs.branch_override || github.head_ref || github.ref_name }}"
+          BRANCH_SAFE="${BRANCH//\//-}"
           echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "branch_safe=$BRANCH_SAFE" >> "$GITHUB_OUTPUT"
           mkdir -p metrics/charts
           python3 scripts/collect_metrics.py --branch "$BRANCH" --output-dir metrics
 
       - name: Generate SVG charts
         run: |
           BRANCH="${{ steps.collect.outputs.branch }}"
+          BRANCH_SAFE="${{ steps.collect.outputs.branch_safe }}"
           python3 scripts/generate_charts.py \
             --data-dir metrics \
             --output-dir metrics/charts \
             --branch "$BRANCH"
-          # Also generate charts for the other branch if its data exists
+          # Also generate charts for the other standard branch if its data exists
           OTHER=$([ "$BRANCH" = "main" ] && echo "develop" || echo "main")
           if [ -f "metrics/${OTHER}.json" ]; then
             python3 scripts/generate_charts.py \
@@ -77,11 +80,11 @@ jobs:
       - name: Generate comparison report (PR only)
         if: github.event_name == 'pull_request'
         run: |
-          BRANCH="${{ steps.collect.outputs.branch }}"
+          BRANCH_SAFE="${{ steps.collect.outputs.branch_safe }}"
           # Compare against the target branch (base of the PR)
           BASE="${{ github.base_ref }}"
           python3 scripts/compare_metrics.py \
-            --current  "metrics/${BRANCH}.json" \
+            --current  "metrics/${BRANCH_SAFE}.json" \
             --baseline "/tmp/${BASE}.json" \
             --baseline-name "${BASE}" \
             --output   metrics-report.md
