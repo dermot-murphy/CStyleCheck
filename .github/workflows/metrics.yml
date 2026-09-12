@@ -3,6 +3,8 @@ name: Trend Metrics
 on:
   push:
     branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
   workflow_dispatch:
     inputs:
       branch_override:
@@ -37,7 +39,7 @@ jobs:
       - name: Collect metrics
         id: collect
         run: |
-          BRANCH="${{ github.event.inputs.branch_override || github.ref_name }}"
+          BRANCH="${{ github.event.inputs.branch_override || github.head_ref || github.ref_name }}"
           echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
           mkdir -p metrics/charts
           python3 scripts/collect_metrics.py --branch "$BRANCH" --output-dir metrics
@@ -58,7 +60,44 @@ jobs:
               --branch "$OTHER"
           fi
 
+      - name: Fetch baseline metrics (PR only)
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin gh-pages 2>/dev/null || true
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+            git show origin/gh-pages:metrics/develop.json > /tmp/develop.json 2>/dev/null \
+              || echo '{"data_points":[]}' > /tmp/develop.json
+            git show origin/gh-pages:metrics/main.json > /tmp/main.json 2>/dev/null \
+              || echo '{"data_points":[]}' > /tmp/main.json
+          else
+            echo '{"data_points":[]}' > /tmp/develop.json
+            echo '{"data_points":[]}' > /tmp/main.json
+          fi
+
+      - name: Generate comparison report (PR only)
+        if: github.event_name == 'pull_request'
+        run: |
+          BRANCH="${{ steps.collect.outputs.branch }}"
+          # Compare against the target branch (base of the PR)
+          BASE="${{ github.base_ref }}"
+          python3 scripts/compare_metrics.py \
+            --current  "metrics/${BRANCH}.json" \
+            --baseline "/tmp/${BASE}.json" \
+            --baseline-name "${BASE}" \
+            --output   metrics-report.md
+          echo "---"
+          cat metrics-report.md
+
+      - name: Upload metrics report artifact (PR only)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: metrics-comparison-report
+          path: metrics-report.md
+          retention-days: 30
+
       - name: Commit metrics to gh-pages
+        if: github.event_name != 'pull_request'
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -91,6 +130,7 @@ jobs:
           fi
 
       - name: Update wiki
+        if: github.event_name != 'pull_request'
         run: |
           # Return to the source commit
           git checkout "${{ github.sha }}" -- . 2>/dev/null || \
