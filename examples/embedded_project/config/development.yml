@@ -1,0 +1,190 @@
+# =============================================================================
+# CStyleCheck — development profile
+# =============================================================================
+# For use during day-to-day development.  All rules are reported as
+# warnings or info — nothing fails the build.  Useful as IDE / editor
+# feedback before stricter gate checks are run in CI.
+#
+# Tip: pass --exit-zero when using this profile so the checker never
+# blocks your build, but still provides feedback in its output.
+# =============================================================================
+
+file_prefix:
+  enabled: false
+
+variables:
+  enabled: true
+  severity: info
+  case: lower_snake
+  min_length: 2
+  max_length: 40
+  allow_single_char_loop_vars: true
+  allow_loop_vars_short: true
+
+  global:
+    severity: info
+    case: lower_snake
+    require_module_prefix: false
+    g_prefix:
+      enabled: false      # Not enforced in development; enabled in strict.
+
+  static:
+    severity: info
+    case: lower_snake
+    require_module_prefix: false
+    s_prefix:
+      enabled: false
+
+  local:
+    severity: info
+    case: lower_snake
+
+  parameter:
+    severity: info
+    case: lower_snake
+    p_prefix:
+      enabled: false
+
+  pointer_prefix:
+    enabled: false
+  pp_prefix:
+    enabled: false
+  bool_prefix:
+    enabled: false
+  handle_prefix:
+    enabled: false
+  no_numeric_in_name:
+    enabled: false
+  prefix_order:
+    enabled: false
+
+functions:
+  enabled: true
+  severity: warning
+  case: lower_snake
+  require_module_prefix: false
+  style: "any"
+  max_parameters: 8
+  max_lines: 100          # Relaxed during development; tightened before release.
+  function_doc_header:
+    enabled: false
+  assert_density:
+    enabled: false
+  null_statement_comment:
+    enabled: false
+  declaration_spacing:
+    enabled: false
+
+constants:
+  enabled: true
+  severity: info
+  case: upper_snake
+  require_prefix: false
+
+typedefs:
+  enabled: true
+  severity: info
+  case: "any"
+
+enums:
+  enabled: true
+  severity: info
+  members:
+    case: upper_snake
+    require_prefix: false
+
+structs:
+  enabled: true
+  severity: info
+
+include_guards:
+  enabled: true
+  severity: warning
+
+misc:
+  copyright_header:
+    enabled: false        # Copyright not enforced in development profile.
+
+  eof_comment:
+    enabled: false
+
+  line_length:
+    enabled: true
+    severity: info
+    max_length: 100
+
+  indentation:
+    enabled: true
+    severity: info
+    style: spaces
+    spaces: 4
+
+  magic_number:
+    enabled: false
+
+  unsigned_suffix:
+    enabled: true
+    severity: info
+
+  lowercase_l_suffix:
+    enabled: true
+    severity: warning
+
+  yoda_condition:
+    enabled: true
+    severity: info
+
+  block_comment_spacing:
+    enabled: false
+
+  comment_ratio:
+    enabled: true
+    severity: info
+    min_ratio: 0.05
+    max_ratio: 0.80
+    exclude_doxygen: true
+
+  whitespace_ratio:
+    enabled: false
+
+  declared_not_defined:
+    enabled: false
+
+  function_length:
+    enabled: true
+    severity: info
+    max_lines: 100
+
+  function_doc_header:
+    enabled: false
+  assert_density:
+    enabled: false
+  null_statement_comment:
+    enabled: false
+  declaration_spacing:
+    enabled: false
+
+  file_length:
+    enabled: true
+    severity: info
+    max_lines: 500
+
+  reserved_header_name:
+    enabled: true
+    severity: warning
+
+  non_ascii_source:
+    enabled: true
+    severity: error       # Non-ASCII is always an error regardless of profile.
+
+  octal_constant:
+    enabled: true
+    severity: warning
+
+  trigraph:
+    enabled: true
+    severity: warning
+
+  constant_comparison:
+    enabled: true
+    severity: info

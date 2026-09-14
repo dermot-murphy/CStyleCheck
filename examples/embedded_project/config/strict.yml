@@ -1,0 +1,216 @@
+# =============================================================================
+# CStyleCheck — Barr-C:2018 strict profile
+# =============================================================================
+# For use on production / release builds.  Violations at 'error' severity
+# will cause a non-zero exit code when --exit-zero is NOT passed.
+#
+# Standards covered:
+#   Barr-C:2018, MISRA C:2012, ISO 26262-6 §8.4, ASPICE SWE.3 / SWE.4
+# =============================================================================
+
+file_prefix:
+  enabled: false          # Project does not enforce a filename prefix.
+
+# -----------------------------------------------------------------------------
+# Variables
+# -----------------------------------------------------------------------------
+variables:
+  enabled: true
+  severity: error
+  case: lower_snake
+  min_length: 2
+  max_length: 31          # ISO C minimum guaranteed identifier uniqueness.
+  allow_single_char_loop_vars: true
+  allow_loop_vars_short: true
+
+  global:
+    severity: error
+    case: lower_snake
+    require_module_prefix: false
+    g_prefix:
+      enabled: true       # Barr-C §2.2: global variables must carry g_ prefix.
+
+  static:
+    severity: error
+    case: lower_snake
+    require_module_prefix: false
+    s_prefix:
+      enabled: false      # Barr-C treats file-scope static the same as global.
+
+  local:
+    severity: warning
+    case: lower_snake
+
+  parameter:
+    severity: warning
+    case: lower_snake
+    p_prefix:
+      enabled: true       # Barr-C §2.2: pointer parameters must carry p_ prefix.
+
+  pointer_prefix:
+    enabled: true
+  pp_prefix:
+    enabled: false
+  bool_prefix:
+    enabled: false
+  handle_prefix:
+    enabled: false
+  no_numeric_in_name:
+    enabled: false
+  prefix_order:
+    enabled: false
+
+# -----------------------------------------------------------------------------
+# Functions
+# -----------------------------------------------------------------------------
+functions:
+  enabled: true
+  severity: error
+  case: lower_snake
+  require_module_prefix: false
+  style: "any"
+  max_parameters: 6       # MISRA C:2012 Advisory 17.5 / Barr-C §3.
+  max_lines: 50           # Barr-C §2.7: functions must fit on a page.
+  function_doc_header:
+    enabled: false
+  assert_density:
+    enabled: false
+  null_statement_comment:
+    enabled: false
+  declaration_spacing:
+    enabled: false
+
+# -----------------------------------------------------------------------------
+# Constants (macros / enum members)
+# -----------------------------------------------------------------------------
+constants:
+  enabled: true
+  severity: error
+  case: upper_snake
+  require_prefix: false
+
+# -----------------------------------------------------------------------------
+# Typedefs
+# -----------------------------------------------------------------------------
+typedefs:
+  enabled: true
+  severity: warning
+  case: "any"             # Barr-C §2.4: typedef names end with _t.
+
+# -----------------------------------------------------------------------------
+# Enums
+# -----------------------------------------------------------------------------
+enums:
+  enabled: true
+  severity: warning
+  members:
+    case: upper_snake
+    require_prefix: false
+
+# -----------------------------------------------------------------------------
+# Structs
+# -----------------------------------------------------------------------------
+structs:
+  enabled: true
+  severity: warning
+
+# -----------------------------------------------------------------------------
+# Include guards
+# -----------------------------------------------------------------------------
+include_guards:
+  enabled: true
+  severity: error
+
+# -----------------------------------------------------------------------------
+# Miscellaneous
+# -----------------------------------------------------------------------------
+misc:
+  copyright_header:
+    enabled: true         # All files must carry a copyright notice.
+
+  eof_comment:
+    enabled: false
+
+  line_length:
+    enabled: true
+    severity: warning
+    max_length: 80        # Barr-C §1.6: 80-column limit.
+
+  indentation:
+    enabled: true
+    severity: error
+    style: spaces
+    spaces: 4
+
+  magic_number:
+    enabled: false        # Project uses named constants; magic-number check omitted.
+
+  unsigned_suffix:
+    enabled: true
+    severity: error       # All unsigned integer literals must carry U suffix.
+
+  lowercase_l_suffix:
+    enabled: true
+    severity: error       # Lowercase l looks like 1; use L suffix.
+
+  yoda_condition:
+    enabled: true
+    severity: warning     # MISRA C:2012 Rule 14.4: constant on left of comparison.
+
+  block_comment_spacing:
+    enabled: false
+
+  comment_ratio:
+    enabled: true
+    severity: warning
+    min_ratio: 0.10       # At least 10 % non-doxygen comment coverage.
+    max_ratio: 0.60
+    exclude_doxygen: true
+
+  whitespace_ratio:
+    enabled: true
+    severity: info
+    min_ratio: 0.05
+    max_ratio: 0.40
+
+  declared_not_defined:
+    enabled: false
+
+  function_length:
+    enabled: true
+    severity: warning
+    max_lines: 50
+
+  function_doc_header:
+    enabled: false
+  assert_density:
+    enabled: false
+  null_statement_comment:
+    enabled: false
+  declaration_spacing:
+    enabled: false
+
+  file_length:
+    enabled: true
+    severity: warning
+    max_lines: 300
+
+  reserved_header_name:
+    enabled: true
+    severity: warning
+
+  non_ascii_source:
+    enabled: true
+    severity: error
+
+  octal_constant:
+    enabled: true
+    severity: error
+
+  trigraph:
+    enabled: true
+    severity: error
+
+  constant_comparison:
+    enabled: true
+    severity: info

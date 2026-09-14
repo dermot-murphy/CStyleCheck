@@ -43,6 +43,10 @@ PALETTES = {
     "ratios":          ["#bc8cff", "#39d353"],
     "lines":           ["#3fb950", "#f85149"],
     "repo":            ["#388bfd", "#d29922", "#bc8cff"],
+    "loc":             ["#3fb950", "#388bfd", "#bc8cff", "#8b949e"],
+    "complexity":      ["#f85149", "#d29922", "#388bfd"],
+    "density":         ["#f85149", "#bc8cff"],
+    "docs":            ["#39d353", "#388bfd"],
 }
 
 # --------------------------------------------------------------------------
@@ -302,12 +306,62 @@ def _generate_all(points, output_dir, branch):
             y_label="count"
         )))
 
+    # --- C source metrics charts (issue #388) ---
+
+    charts.append(("loc_breakdown",
+        _make_chart(
+            f"LOC breakdown — {branch}",
+            ts,
+            [("SLOC",    _extract(points, "loc_sloc")),
+             ("Comment", _extract(points, "loc_comment")),
+             ("Doxygen", _extract(points, "loc_doxygen")),
+             ("Blank",   _extract(points, "loc_blank"))],
+            PALETTES["loc"],
+            y_label="lines"
+        )))
+
+    charts.append(("cyclomatic_complexity",
+        _make_chart(
+            f"Cyclomatic complexity — {branch}",
+            ts,
+            [("CC max",  _extract(points, "cc_max")),
+             ("CC avg",  _extract(points, "cc_avg")),
+             ("Nesting max", _extract(points, "nesting_max"))],
+            PALETTES["complexity"],
+            y_label="value",
+            y_min_zero=True
+        )))
+
+    charts.append(("defect_density",
+        _make_chart(
+            f"Defect density (violations/KLOC) — {branch}",
+            ts,
+            [("Defect density", _extract(points, "defect_density")),
+             ("Dox coverage",   _extract(points, "dox_coverage"))],
+            PALETTES["density"],
+            y_label="value",
+            y_min_zero=True
+        )))
+
+    charts.append(("func_metrics",
+        _make_chart(
+            f"Function metrics — {branch}",
+            ts,
+            [("Func count",      _extract(points, "func_count")),
+             ("Func length max",  _extract(points, "func_length_max")),
+             ("Static vars",      _extract(points, "static_vars"))],
+            PALETTES["docs"],
+            y_label="count",
+            y_min_zero=True
+        )))
+
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    branch_safe = branch.replace("/", "-").replace("\\", "-")
     written = []
     for name, svg in charts:
         if svg:
-            p = output_dir / f"{branch}_{name}.svg"
+            p = output_dir / f"{branch_safe}_{name}.svg"
             p.write_text(svg, encoding="utf-8")
             written.append(str(p))
             print(f"[charts] Wrote {p}")
@@ -329,8 +383,9 @@ def main():
                     help="Branch name (main or develop)")
     args = ap.parse_args()
 
-    repo_root  = Path(__file__).resolve().parent.parent
-    data_file  = repo_root / args.data_dir / f"{args.branch}.json"
+    repo_root    = Path(__file__).resolve().parent.parent
+    branch_safe  = args.branch.replace("/", "-").replace("\\", "-")
+    data_file    = repo_root / args.data_dir / f"{branch_safe}.json"
 
     if not data_file.exists():
         print(f"[charts] Data file not found: {data_file}")

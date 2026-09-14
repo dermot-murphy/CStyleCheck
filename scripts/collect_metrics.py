@@ -288,6 +288,304 @@ def _source_ratios():
 
 
 # --------------------------------------------------------------------------
+# C source metrics (issue #388)
+# ISO 26262-6, IEC 61508-3, MISRA C:2012, ASPICE SWE.3/4, Barr-C:2018
+# --------------------------------------------------------------------------
+
+def _empty_c_metrics():
+    return {
+        "loc_physical": 0, "loc_blank": 0, "loc_comment": 0, "loc_doxygen": 0,
+        "loc_sloc": 0, "loc_comment_density": 0.0, "loc_blank_ratio": 0.0,
+        "func_count": 0, "func_length_max": 0, "func_length_avg": 0.0,
+        "func_over_length": 0, "func_param_max": 0, "func_over_params": 0,
+        "cc_max": 0, "cc_avg": 0.0, "cc_over_threshold": 0,
+        "nesting_max": 0, "dox_coverage": 0.0,
+        "global_vars": 0, "static_vars": 0, "file_length_max": 0,
+        "defect_density": 0.0,
+    }
+
+
+def _cat_lines(lines):
+    """Categorise source lines → (physical, blank, comment, doxygen, sloc)."""
+    physical = len(lines)
+    blank = comment = doxygen = 0
+    in_block = False
+    in_dox   = False
+
+    for raw in lines:
+        s = raw.strip()
+        if not s:
+            blank += 1
+            continue
+        if in_dox:
+            doxygen += 1
+            if "*/" in s:
+                in_dox = False
+            continue
+        if in_block:
+            comment += 1
+            if "*/" in s:
+                in_block = False
+            continue
+        if s.startswith("/**"):
+            in_dox = True
+            doxygen += 1
+            if "*/" in s[3:]:
+                in_dox = False
+            continue
+        if s.startswith("/*"):
+            in_block = True
+            comment += 1
+            if "*/" in s[2:]:
+                in_block = False
+            continue
+        if s.startswith("//"):
+            comment += 1
+            continue
+        # code / SLOC line
+
+    sloc = physical - blank - comment - doxygen
+    return physical, blank, comment, doxygen, max(0, sloc)
+
+
+_DECISION_RE = re.compile(
+    r'\b(?:if|while|for|case|do)\b|&&|\|\||\?'
+)
+_CTRL_KWS = frozenset({
+    "if", "else", "while", "for", "do", "switch", "return",
+    "break", "continue", "goto", "typedef", "struct", "enum", "union",
+})
+
+
+def _is_func_def(lines, i):
+    """Heuristic: does line i start a C function definition?"""
+    s = lines[i].strip()
+    if not s or s[0] in ("#", "/", "*", "}"):
+        return False
+    first_tok = re.split(r"\W+", s)[0]
+    if first_tok in _CTRL_KWS:
+        return False
+    if "(" not in s:
+        return False
+    if s.startswith(("typedef", "struct", "enum", "union")):
+        return False
+    if s.endswith(";"):
+        return False
+    n = len(lines)
+    for j in range(i, min(i + 6, n)):
+        l = lines[j].strip()
+        if "{" in l:
+            return True
+        if ";" in l and j > i:
+            return False
+    return False
+
+
+def _func_sig_info(lines, i):
+    """Return (name, param_count) from function signature at line i."""
+    n = len(lines)
+    parts = []
+    for j in range(i, min(i + 6, n)):
+        parts.append(lines[j])
+        if "{" in lines[j]:
+            break
+    sig = " ".join(parts)
+    m = re.search(r"(\w+)\s*\(([^)]*)\)", sig)
+    if not m:
+        return "unknown", 0
+    name = m.group(1)
+    ps   = m.group(2).strip()
+    params = 0 if (not ps or ps.lower() == "void") else ps.count(",") + 1
+    return name, params
+
+
+def _has_dox_before(lines, i):
+    """Return True if a /** … */ block immediately precedes line i."""
+    j = i - 1
+    while j >= 0 and not lines[j].strip():
+        j -= 1
+    if j < 0:
+        return False
+    if "*/" in lines[j]:
+        k = j
+        while k >= 0 and (j - k) < 40:
+            if lines[k].strip().startswith("/**"):
+                return True
+            k -= 1
+    return False
+
+
+def _func_complexity(body_lines):
+    """McCabe cyclomatic complexity = 1 + decision points in function body."""
+    cc = 1
+    for raw in body_lines:
+        s = raw.strip()
+        if s.startswith(("//", "*", "/*")):
+            continue
+        cc += len(_DECISION_RE.findall(s))
+    return cc
+
+
+def _extract_functions(text):
+    """Return list of {name, length, params, complexity, nesting, has_dox} dicts."""
+    lines = text.splitlines()
+    n = len(lines)
+    funcs = []
+    i = 0
+    while i < n:
+        if not _is_func_def(lines, i):
+            i += 1
+            continue
+
+        name, params = _func_sig_info(lines, i)
+        has_dox = _has_dox_before(lines, i)
+
+        brace_line = i
+        while brace_line < n and "{" not in lines[brace_line]:
+            brace_line += 1
+        if brace_line >= n:
+            i += 1
+            continue
+
+        depth = 0
+        max_depth = 0
+        end_line = brace_line
+        for j in range(brace_line, n):
+            for ch in lines[j]:
+                if ch == "{":
+                    depth += 1
+                    if depth > max_depth:
+                        max_depth = depth
+                elif ch == "}":
+                    depth -= 1
+            if depth == 0:
+                end_line = j
+                break
+
+        body = lines[brace_line:end_line + 1]
+        funcs.append({
+            "name":       name,
+            "length":     len(body),
+            "params":     params,
+            "complexity": _func_complexity(body),
+            "nesting":    max(0, max_depth - 1),
+            "has_dox":    has_dox,
+        })
+        i = end_line + 1
+
+    return funcs
+
+
+def _count_static_vars(text):
+    """Count static variable declarations at file scope in a .c file."""
+    static_v = 0
+    depth = 0
+    in_block = False
+
+    for raw in text.splitlines():
+        s = raw.strip()
+        if in_block:
+            if "*/" in s:
+                in_block = False
+            continue
+        if s.startswith("/*") and "*/" not in s[2:]:
+            in_block = True
+            continue
+        if s.startswith(("//", "*", "#")):
+            continue
+
+        # At file scope, a static var starts with 'static' and ends with ';'
+        # but has no '(' (which would make it a function declaration)
+        if depth == 0 and s.startswith("static ") and s.endswith(";") and "(" not in s:
+            static_v += 1
+
+        depth += s.count("{") - s.count("}")
+        depth = max(0, depth)
+
+    return static_v
+
+
+def _c_source_metrics(total_violations=0):
+    """
+    Analyse examples/*.c and *.h for industry-standard C source metrics.
+    total_violations is passed in to compute defect density.
+    """
+    c_files = sorted(EXAMPLES.glob("*.c"))
+    h_files = sorted(EXAMPLES.glob("*.h"))
+    all_files = c_files + h_files
+
+    if not all_files:
+        return _empty_c_metrics()
+
+    total_phys = total_blank = total_cmt = total_dox = total_sloc = 0
+    all_funcs = []
+    total_static_v = 0
+    max_file_len = 0
+
+    for fpath in all_files:
+        try:
+            text = fpath.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            continue
+        file_lines = text.splitlines()
+        if len(file_lines) > max_file_len:
+            max_file_len = len(file_lines)
+
+        ph, bl, cm, dx, sl = _cat_lines(file_lines)
+        total_phys  += ph
+        total_blank += bl
+        total_cmt   += cm
+        total_dox   += dx
+        total_sloc  += sl
+
+        if fpath.suffix == ".c":
+            all_funcs.extend(_extract_functions(text))
+            total_static_v += _count_static_vars(text)
+
+    n = len(all_funcs)
+    lengths      = [f["length"]     for f in all_funcs]
+    complexities = [f["complexity"] for f in all_funcs]
+    params_list  = [f["params"]     for f in all_funcs]
+    nestings     = [f["nesting"]    for f in all_funcs]
+    dox_covered  = sum(1 for f in all_funcs if f["has_dox"])
+
+    sloc = total_sloc
+    kloc = sloc / 1000.0 if sloc else 0.001
+
+    return {
+        # Lines of code (IEC 61508-3 Annex B, ISO 26262-6)
+        "loc_physical":        total_phys,
+        "loc_blank":           total_blank,
+        "loc_comment":         total_cmt,
+        "loc_doxygen":         total_dox,
+        "loc_sloc":            sloc,
+        "loc_comment_density": round((total_cmt + total_dox) / sloc, 3) if sloc else 0.0,
+        "loc_blank_ratio":     round(total_blank / total_phys, 3) if total_phys else 0.0,
+        # Function metrics (MISRA C:2012 Rule 15.4, Barr-C §2)
+        "func_count":          n,
+        "func_length_max":     max(lengths, default=0),
+        "func_length_avg":     round(sum(lengths) / n, 1) if n else 0.0,
+        "func_over_length":    sum(1 for l in lengths if l > 60),
+        "func_param_max":      max(params_list, default=0),
+        "func_over_params":    sum(1 for p in params_list if p > 6),
+        # Cyclomatic complexity (McCabe, ISO 26262-6 §8.4.4)
+        "cc_max":              max(complexities, default=0),
+        "cc_avg":              round(sum(complexities) / n, 2) if n else 0.0,
+        "cc_over_threshold":   sum(1 for c in complexities if c > 10),
+        # Control-flow nesting depth (MISRA C:2012 Rule 15.5)
+        "nesting_max":         max(nestings, default=0),
+        # Documentation coverage (ASPICE SWE.3/SWE.4)
+        "dox_coverage":        round(dox_covered / n, 3) if n else 0.0,
+        # Variables (AUTOSAR BSW, JSF AV Rule 137)
+        "static_vars":         total_static_v,
+        # File-level metrics
+        "file_length_max":     max_file_len,
+        # Defect density (violations per KLOC) — ASPICE SWE.4 maturity index
+        "defect_density":      round(total_violations / kloc, 2),
+    }
+
+
+# --------------------------------------------------------------------------
 # Main
 # --------------------------------------------------------------------------
 
@@ -325,6 +623,7 @@ def main():
     csc             = _cstylecheck_metrics()
     ratios          = _source_ratios()
     test_count, rule_count = _test_and_rule_counts()
+    c_metrics       = _c_source_metrics(total_violations=csc["total"])
 
     data_point = {
         "timestamp":       timestamp,
@@ -354,10 +653,33 @@ def main():
         # Tool stats
         "test_count":      test_count,
         "rule_count":      rule_count,
+        # C source metrics (issue #388)
+        "loc_physical":        c_metrics["loc_physical"],
+        "loc_blank":           c_metrics["loc_blank"],
+        "loc_comment":         c_metrics["loc_comment"],
+        "loc_doxygen":         c_metrics["loc_doxygen"],
+        "loc_sloc":            c_metrics["loc_sloc"],
+        "loc_comment_density": c_metrics["loc_comment_density"],
+        "loc_blank_ratio":     c_metrics["loc_blank_ratio"],
+        "func_count":          c_metrics["func_count"],
+        "func_length_max":     c_metrics["func_length_max"],
+        "func_length_avg":     c_metrics["func_length_avg"],
+        "func_over_length":    c_metrics["func_over_length"],
+        "func_param_max":      c_metrics["func_param_max"],
+        "func_over_params":    c_metrics["func_over_params"],
+        "cc_max":              c_metrics["cc_max"],
+        "cc_avg":              c_metrics["cc_avg"],
+        "cc_over_threshold":   c_metrics["cc_over_threshold"],
+        "nesting_max":         c_metrics["nesting_max"],
+        "dox_coverage":        c_metrics["dox_coverage"],
+        "static_vars":         c_metrics["static_vars"],
+        "file_length_max":     c_metrics["file_length_max"],
+        "defect_density":      c_metrics["defect_density"],
     }
 
     # --- load, upsert, save ---
-    hist_path = output_dir / f"{branch}.json"
+    branch_safe = branch.replace("/", "-").replace("\\", "-")
+    hist_path = output_dir / f"{branch_safe}.json"
     history   = _load_history(hist_path)
     history["branch"] = branch
 
@@ -375,7 +697,11 @@ def main():
     print(f"[metrics] Summary: errors={data_point['errors']}, "
           f"warnings={data_point['warnings']}, "
           f"total_files={data_point['total_files']}, "
-          f"tests={data_point['test_count']}")
+          f"tests={data_point['test_count']}, "
+          f"sloc={data_point['loc_sloc']}, "
+          f"funcs={data_point['func_count']}, "
+          f"cc_max={data_point['cc_max']}, "
+          f"defect_density={data_point['defect_density']}")
 
     # Print JSON for the workflow to capture if needed
     print(json.dumps(data_point))
