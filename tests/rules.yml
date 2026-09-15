@@ -763,10 +763,29 @@ misc:
     severity: error
     extra_reserved: []      # additional project-specific names to reserve
 
+  # -----------------------------------------------------------------------
+  # MISRA C:2012 Rule 15.1 (Advisory) — goto forbidden
+  # -----------------------------------------------------------------------
+  # The goto statement is forbidden.  It can bypass initialisations, obscure
+  # control flow, and make static analysis harder.  Restructure using break,
+  # continue, or an early-return pattern.
+  #
+  #   Violation:  goto cleanup;
+  #   Correct:    Use break / continue / early return.
   goto_usage:
     enabled: true
     severity: error
 
+  # -----------------------------------------------------------------------
+  # MISRA C:2012 Rule 13.4 (Required) — assignment in condition
+  # -----------------------------------------------------------------------
+  # The result of an assignment operator shall not be used.  Assignments
+  # inside if/while/for conditions are almost always typos for '==' and
+  # silently compile.  Even when intentional they reduce readability.
+  #
+  #   Violation:  if (x = foo()) { … }
+  #   Violation:  while (ptr = next_node(ptr)) { … }
+  #   Correct:    x = foo(); if (x) { … }
   assignment_in_condition:
     enabled: true
     severity: warning
