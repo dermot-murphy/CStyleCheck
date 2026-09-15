@@ -3,16 +3,18 @@
 <text x="68" y="22" font-size="13" font-weight="600" fill="#e6edf3" font-family="ui-monospace, 'Cascadia Code', monospace">File churn per commit — develop</text>
 <line x1="68" y1="224.0" x2="620" y2="224.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
 <text x="63" y="228.0" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">0.000</text>
-<line x1="68" y1="191.5" x2="620" y2="191.5" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="195.5" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">0.200</text>
-<line x1="68" y1="159.0" x2="620" y2="159.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="163.0" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">0.400</text>
-<line x1="68" y1="126.5" x2="620" y2="126.5" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="130.5" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">0.600</text>
-<line x1="68" y1="94.0" x2="620" y2="94.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="98.0" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">0.800</text>
+<line x1="68" y1="196.91666666666666" x2="620" y2="196.91666666666666" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="200.91666666666666" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">0.500</text>
+<line x1="68" y1="169.83333333333334" x2="620" y2="169.83333333333334" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="173.83333333333334" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">1.000</text>
+<line x1="68" y1="142.75" x2="620" y2="142.75" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="146.75" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">1.500</text>
+<line x1="68" y1="115.66666666666667" x2="620" y2="115.66666666666667" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="119.66666666666667" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">2.000</text>
+<line x1="68" y1="88.58333333333334" x2="620" y2="88.58333333333334" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="92.58333333333334" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">2.500</text>
 <line x1="68" y1="61.5" x2="620" y2="61.5" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="65.5" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">1.000</text>
+<text x="63" y="65.5" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">3.000</text>
 <line x1="68" y1="42" x2="68" y2="224" stroke="#484f58" stroke-width="1" />
 <line x1="68" y1="224" x2="620" y2="224" stroke="#484f58" stroke-width="1" />
 <text x="14" y="133" fill="#8b949e" font-family="ui-monospace, 'Cascadia Code', monospace" font-size="10" text-anchor="middle" transform="rotate(-90 14 133)">files</text>
