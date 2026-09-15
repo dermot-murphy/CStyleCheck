@@ -790,6 +790,86 @@ misc:
     enabled: true
     severity: warning
 
+  # -----------------------------------------------------------------------
+  # Multiple statements per line — Barr-C §3.2 / MISRA C:2012 Rule 15.5
+  # -----------------------------------------------------------------------
+  # Each statement shall appear on its own line.  Multiple statements on
+  # one line obscure control flow and make targeted breakpoints impossible.
+  # for(init; cond; update) is exempt — the semicolons there are separators.
+  #
+  #   Violation:  x = 1; y = 2;
+  #   Correct:    x = 1;
+  #               y = 2;
+  multiple_statements_per_line:
+    enabled: true
+    severity: warning
+
+  # -----------------------------------------------------------------------
+  # MISRA C:2012 Rule 11.5 (Advisory) — void pointer usage
+  # -----------------------------------------------------------------------
+  # A conversion should not be performed from pointer to void into pointer
+  # to object.  void * removes compile-time type checking and can hide
+  # mismatched pointer arithmetic or object sizes.
+  #
+  #   Violation:  void *buf = get_buffer();
+  #   Correct:    uint8_t *buf = get_buffer();
+  void_pointer:
+    enabled: true
+    severity: warning
+
+  # -----------------------------------------------------------------------
+  # MISRA C:2012 Rule 17.2 (Required) — recursive functions forbidden
+  # -----------------------------------------------------------------------
+  # Functions shall not call themselves, either directly or indirectly.
+  # Recursion makes worst-case stack-depth analysis intractable and can
+  # silently overflow the fixed stacks of embedded RTOS tasks.
+  #
+  #   Violation:  int fact(int n) { return n * fact(n-1); }
+  #   Correct:    Use an iterative loop instead.
+  recursive_function:
+    enabled: true
+    severity: error
+
+  # -----------------------------------------------------------------------
+  # sizeof with type operand — Barr-C §5.7
+  # -----------------------------------------------------------------------
+  # sizeof(TypeName) is fragile: if the variable's declared type changes,
+  # the sizeof silently becomes wrong.  sizeof(*var) or sizeof(var) always
+  # track the variable's actual type.
+  #
+  #   Violation:  memset(buf, 0, sizeof(uint32_t) * N);
+  #   Correct:    memset(buf, 0, sizeof(*buf) * N);
+  sizeof_type:
+    enabled: true
+    severity: info
+
+  # -----------------------------------------------------------------------
+  # MISRA C:2012 Rule 14.4 — boolean comparison with true/false
+  # -----------------------------------------------------------------------
+  # The controlling expression shall be essentially Boolean.  Comparing a
+  # boolean expression to 'true' or 'false' with == / != is redundant and
+  # may hide type-coercion bugs; use the expression directly or negate it.
+  #
+  #   Violation:  if (flag == true)   { … }
+  #   Violation:  while (done == false) { … }
+  #   Correct:    if (flag)            { … }
+  #   Correct:    while (!done)        { … }
+  boolean_comparison:
+    enabled: true
+    severity: warning
+
+  # -----------------------------------------------------------------------
+  # Empty else clause — Barr-C §8.3 / MISRA C:2012 Rule 15.7
+  # -----------------------------------------------------------------------
+  # An else with an empty body is either a forgotten placeholder or dead
+  # code.  Remove it or add a comment explaining why no action is needed.
+  #
+  #   Violation:  } else {}
+  #   Correct:    remove the else, or add /* intentionally empty */
+  empty_else:
+    enabled: true
+    severity: warning
+
 # --- Reserved / banned identifier names ---
 # Checks that no declared variable, function, macro, or constant name
 # shadows a C keyword, C++ keyword, or C standard library name.

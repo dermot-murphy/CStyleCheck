@@ -351,8 +351,14 @@ class Checker:
         self._check_octal_constants()           # MISRA C:2012/2023 Rule 7.1
         self._check_trigraphs()                 # MISRA C:2012/2023 Rule 4.2
         self._check_non_ascii_source()          # MISRA C:2012/2023 Rule 4.1
-        self._check_goto_usage()                # MISRA C:2012 Rule 15.1
-        self._check_assignment_in_condition()   # MISRA C:2012 Rule 13.4
+        self._check_goto_usage()                    # MISRA C:2012 Rule 15.1
+        self._check_assignment_in_condition()       # MISRA C:2012 Rule 13.4
+        self._check_multiple_statements_per_line()  # Barr-C §3.2 / MISRA 15.5
+        self._check_void_pointer()                  # MISRA C:2012 Rule 11.5
+        self._check_recursive_function()            # MISRA C:2012 Rule 17.2
+        self._check_sizeof_type()                   # Barr-C §5.7
+        self._check_boolean_comparison()            # MISRA C:2012 Rule 14.4
+        self._check_empty_else()                    # Barr-C §8.3
         if self._spell_dict is not None:
             self._check_spelling()
         # Remove violations for rules that are disabled for this file
@@ -2505,6 +2511,212 @@ class Checker:
                     f"assignment to a separate statement "
                     f"(MISRA C:2012 Rule 13.4)"
                 )
+
+    # -----------------------------------------------------------------------
+    # MISRA C:2012 Rule 15.5 / Barr-C §3.2 — multiple statements per line
+    # -----------------------------------------------------------------------
+    # Each statement shall appear on its own line.  Multiple statements on
+    # one line hide control-flow structure, complicate diffs, and make it
+    # harder to set precise breakpoints in a debugger.
+    #
+    #   Violation:  x = 1; y = 2;
+    #   Correct:    x = 1;
+    #               y = 2;
+    # -----------------------------------------------------------------------
+
+    _RE_MULTI_STMT = re.compile(r';\s*(?=[a-zA-Z_*(])')
+    _RE_FOR_LINE   = re.compile(r'\bfor\s*\(')
+
+    def _check_multiple_statements_per_line(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("multiple_statements_per_line", {})
+        if not cfg.get("enabled", True):
+            return
+        sev = cfg.get("severity", "warning")
+        offset = 0
+        for line in self.clean.splitlines(keepends=True):
+            stripped = line.rstrip()
+            if not self._RE_FOR_LINE.search(stripped):
+                for m in self._RE_MULTI_STMT.finditer(stripped):
+                    self._v(
+                        offset + m.start(), sev,
+                        "misc.multiple_statements_per_line",
+                        "Multiple statements on one line; each statement should be "
+                        "on its own line for readability and debuggability "
+                        "(Barr-C §3.2 / MISRA C:2012 Rule 15.5)"
+                    )
+            offset += len(line)
+
+    # -----------------------------------------------------------------------
+    # MISRA C:2012 Rule 11.5 (Advisory) — void pointer usage
+    # -----------------------------------------------------------------------
+    # A conversion should not be performed from pointer to void into pointer
+    # to object.  void * reduces compile-time type checking and can hide
+    # mismatched pointer arithmetic or object sizes.  Use a typed pointer or
+    # a discriminated-union approach instead.
+    #
+    #   Violation:  void *buf = get_buffer();
+    #   Correct:    uint8_t *buf = get_buffer();
+    # -----------------------------------------------------------------------
+
+    _RE_VOID_PTR = re.compile(r'\bvoid\s*\*')
+
+    def _check_void_pointer(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("void_pointer", {})
+        if not cfg.get("enabled", True):
+            return
+        sev = cfg.get("severity", "warning")
+        for m in self._RE_VOID_PTR.finditer(self.clean):
+            self._v(
+                m.start(), sev, "misc.void_pointer",
+                "Use of 'void *' reduces type safety; prefer a typed pointer "
+                "or a type-safe union (MISRA C:2012 Rule 11.5)"
+            )
+
+    # -----------------------------------------------------------------------
+    # MISRA C:2012 Rule 17.2 (Required) — recursive functions forbidden
+    # -----------------------------------------------------------------------
+    # Functions shall not call themselves, either directly or indirectly.
+    # Recursion makes stack-depth analysis intractable and can overflow the
+    # fixed-size stacks typical of embedded RTOS tasks.
+    #
+    #   Violation:  int factorial(int n) { return n * factorial(n-1); }
+    #   Correct:    Use an iterative loop instead.
+    # -----------------------------------------------------------------------
+
+    _RE_FUNC_DEF_REC = re.compile(
+        r'\b([a-zA-Z_]\w*)\s*\([^;{]*\)\s*\{',
+        re.MULTILINE,
+    )
+    _C_KW_SET = frozenset([
+        'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break',
+        'continue', 'return', 'goto', 'typedef', 'struct', 'union', 'enum',
+        'sizeof', 'alignof', 'typeof', 'static', 'extern', 'inline',
+    ])
+
+    def _check_recursive_function(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("recursive_function", {})
+        if not cfg.get("enabled", True):
+            return
+        sev = cfg.get("severity", "error")
+        for m in self._RE_FUNC_DEF_REC.finditer(self.clean):
+            name = m.group(1)
+            if name in self._C_KW_SET:
+                continue
+            open_brace = m.end() - 1
+            depth = 0
+            body_end = open_brace
+            for i in range(open_brace, len(self.clean)):
+                if self.clean[i] == '{':
+                    depth += 1
+                elif self.clean[i] == '}':
+                    depth -= 1
+                    if depth == 0:
+                        body_end = i
+                        break
+            body = self.clean[open_brace + 1:body_end]
+            call_m = re.search(r'\b' + re.escape(name) + r'\s*\(', body)
+            if call_m:
+                self._v(
+                    open_brace + 1 + call_m.start(), sev,
+                    "misc.recursive_function",
+                    f"Function '{name}' calls itself directly; recursion is "
+                    f"forbidden in safety-critical embedded code "
+                    f"(MISRA C:2012 Rule 17.2)"
+                )
+
+    # -----------------------------------------------------------------------
+    # sizeof with type operand — best practice (Barr-C §5.7)
+    # -----------------------------------------------------------------------
+    # sizeof(type_name) is fragile: if the variable's type changes, the
+    # sizeof expression silently becomes wrong.  sizeof(*var) or sizeof(var)
+    # are preferred because they always match the actual object.
+    #
+    #   Violation:  memset(buf, 0, sizeof(uint32_t) * N);
+    #   Correct:    memset(buf, 0, sizeof(*buf) * N);
+    # -----------------------------------------------------------------------
+
+    _RE_SIZEOF_TYPE = re.compile(
+        r'\bsizeof\s*\(\s*'
+        r'(?:'
+        r'(?:unsigned\s+|signed\s+)?(?:short\s+|long\s+)?'
+        r'(?:int|char|short|long|float|double|bool)\b'
+        r'|[a-zA-Z_]\w*_t\b'
+        r'|[A-Z][A-Za-z0-9_]*\b'
+        r')'
+        r'(?:\s*\*+)?\s*\)'
+    )
+
+    def _check_sizeof_type(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("sizeof_type", {})
+        if not cfg.get("enabled", True):
+            return
+        sev = cfg.get("severity", "info")
+        for m in self._RE_SIZEOF_TYPE.finditer(self.clean):
+            self._v(
+                m.start(), sev, "misc.sizeof_type",
+                "sizeof with a type operand is fragile; prefer sizeof(*var) "
+                "or sizeof(var) so the size always tracks the variable's type "
+                "(Barr-C §5.7)"
+            )
+
+    # -----------------------------------------------------------------------
+    # MISRA C:2012 Rule 14.4 — boolean comparison with true/false
+    # -----------------------------------------------------------------------
+    # The controlling expression shall be essentially Boolean.  Comparing a
+    # boolean expression to 'true' or 'false' with == / != is redundant and
+    # may hide type coercion bugs.  Use the boolean expression directly or
+    # negate it.
+    #
+    #   Violation:  if (flag == true)   { … }
+    #   Violation:  while (done == false) { … }
+    #   Correct:    if (flag)            { … }
+    #   Correct:    while (!done)        { … }
+    # -----------------------------------------------------------------------
+
+    _RE_BOOL_CMP = re.compile(
+        r'(?:'
+        r'[!=]=\s*\b(?:true|false|TRUE|FALSE)\b'
+        r'|\b(?:true|false|TRUE|FALSE)\b\s*[!=]='
+        r')'
+    )
+
+    def _check_boolean_comparison(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("boolean_comparison", {})
+        if not cfg.get("enabled", True):
+            return
+        sev = cfg.get("severity", "warning")
+        for m in self._RE_BOOL_CMP.finditer(self.clean):
+            self._v(
+                m.start(), sev, "misc.boolean_comparison",
+                "Comparing a boolean expression to true/false with == or != "
+                "is redundant; use the expression directly or negate it with ! "
+                "(MISRA C:2012 Rule 14.4)"
+            )
+
+    # -----------------------------------------------------------------------
+    # Empty else clause — Barr-C §8.3 / MISRA C:2012 Rule 15.7
+    # -----------------------------------------------------------------------
+    # Every if-else chain should have a meaningful else.  An else with an
+    # empty body is either a placeholder that was forgotten or dead code.
+    # Remove it or add a comment explaining why no action is required.
+    #
+    #   Violation:  } else {}
+    #   Correct:    } else { /* intentionally empty */ }   (or omit the else)
+    # -----------------------------------------------------------------------
+
+    _RE_EMPTY_ELSE = re.compile(r'\belse\s*\{\s*\}', re.DOTALL)
+
+    def _check_empty_else(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("empty_else", {})
+        if not cfg.get("enabled", True):
+            return
+        sev = cfg.get("severity", "warning")
+        for m in self._RE_EMPTY_ELSE.finditer(self.clean):
+            self._v(
+                m.start(), sev, "misc.empty_else",
+                "Empty else clause; remove it or add a comment explaining "
+                "why no action is required here (Barr-C §8.3)"
+            )
 
     # -----------------------------------------------------------------------
     # 10. Reserved / banned name check

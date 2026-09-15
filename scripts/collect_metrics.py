@@ -302,6 +302,10 @@ def _empty_c_metrics():
         "nesting_max": 0, "dox_coverage": 0.0,
         "global_vars": 0, "static_vars": 0, "file_length_max": 0,
         "defect_density": 0.0,
+        # Safety/style counters
+        "assert_count": 0, "assert_density": 0.0,
+        "goto_count": 0, "void_ptr_count": 0,
+        "cast_count": 0, "macro_count": 0,
     }
 
 
@@ -355,6 +359,17 @@ _CTRL_KWS = frozenset({
     "if", "else", "while", "for", "do", "switch", "return",
     "break", "continue", "goto", "typedef", "struct", "enum", "union",
 })
+
+# Safety/style counters
+_RE_ASSERT    = re.compile(r'\bassert\s*\(')
+_RE_GOTO_MET  = re.compile(r'\bgoto\b')
+_RE_VOID_PTR  = re.compile(r'\bvoid\s*\*')
+_RE_C_CAST    = re.compile(
+    r'\(\s*(?:const\s+)?(?:unsigned\s+|signed\s+)?'
+    r'[a-zA-Z_]\w*(?:\s*\*+)?\s*\)\s*(?=[a-zA-Z_(0-9])'
+)
+_RE_MACRO_DEF = re.compile(r'^\s*#\s*define\s+(\w+)', re.MULTILINE)
+_RE_INC_GUARD = re.compile(r'^[A-Z0-9_]+_H(?:_|PP)?(?:_\w+)?$')
 
 
 def _is_func_def(lines, i):
@@ -521,6 +536,7 @@ def _c_source_metrics(total_violations=0):
     all_funcs = []
     total_static_v = 0
     max_file_len = 0
+    total_assert = total_goto = total_void_ptr = total_cast = total_macro = 0
 
     for fpath in all_files:
         try:
@@ -537,6 +553,16 @@ def _c_source_metrics(total_violations=0):
         total_cmt   += cm
         total_dox   += dx
         total_sloc  += sl
+
+        # Safety/style counters (raw text — includes comments; acceptable for
+        # high-level trend metrics where exact precision is not required)
+        total_assert   += len(_RE_ASSERT.findall(text))
+        total_goto     += len(_RE_GOTO_MET.findall(text))
+        total_void_ptr += len(_RE_VOID_PTR.findall(text))
+        total_cast     += len(_RE_C_CAST.findall(text))
+        for m in _RE_MACRO_DEF.finditer(text):
+            if not _RE_INC_GUARD.match(m.group(1)):
+                total_macro += 1
 
         if fpath.suffix == ".c":
             all_funcs.extend(_extract_functions(text))
@@ -582,6 +608,13 @@ def _c_source_metrics(total_violations=0):
         "file_length_max":     max_file_len,
         # Defect density (violations per KLOC) — ASPICE SWE.4 maturity index
         "defect_density":      round(total_violations / kloc, 2),
+        # Safety / style counters (CERT C, MISRA C:2012)
+        "assert_count":        total_assert,
+        "assert_density":      round(total_assert / kloc, 2),
+        "goto_count":          total_goto,
+        "void_ptr_count":      total_void_ptr,
+        "cast_count":          total_cast,
+        "macro_count":         total_macro,
     }
 
 
@@ -675,6 +708,13 @@ def main():
         "static_vars":         c_metrics["static_vars"],
         "file_length_max":     c_metrics["file_length_max"],
         "defect_density":      c_metrics["defect_density"],
+        # Safety / style counters (CERT C, MISRA C:2012)
+        "assert_count":        c_metrics["assert_count"],
+        "assert_density":      c_metrics["assert_density"],
+        "goto_count":          c_metrics["goto_count"],
+        "void_ptr_count":      c_metrics["void_ptr_count"],
+        "cast_count":          c_metrics["cast_count"],
+        "macro_count":         c_metrics["macro_count"],
     }
 
     # --- load, upsert, save ---
