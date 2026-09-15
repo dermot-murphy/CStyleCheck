@@ -2704,7 +2704,8 @@ class Checker:
     #   Correct:    } else { /* intentionally empty */ }   (or omit the else)
     # -----------------------------------------------------------------------
 
-    _RE_EMPTY_ELSE = re.compile(r'\belse\s*\{\s*\}', re.DOTALL)
+    _RE_EMPTY_ELSE       = re.compile(r'\belse\s*\{(\s*)\}', re.DOTALL)
+    _RE_ELSE_OPEN_BRACE  = re.compile(r'\belse\s*\{')
 
     def _check_empty_else(self) -> None:
         cfg = self.cfg.get("misc", {}).get("empty_else", {})
@@ -2712,6 +2713,17 @@ class Checker:
             return
         sev = cfg.get("severity", "warning")
         for m in self._RE_EMPTY_ELSE.finditer(self.clean):
+            # self.clean replaces comment/string content with spaces but
+            # preserves offsets.  Check self.source at the same positions:
+            # if the original block contains anything non-whitespace (e.g. a
+            # deliberate "/* intentionally empty */" comment), do not flag it.
+            ob_m = self._RE_ELSE_OPEN_BRACE.search(self.source, m.start(),
+                                                    m.end())
+            if ob_m is None:
+                continue
+            inner_orig = self.source[ob_m.end():m.end() - 1]  # between { and }
+            if inner_orig.strip():
+                continue  # block has content in original (e.g. a comment)
             self._v(
                 m.start(), sev, "misc.empty_else",
                 "Empty else clause; remove it or add a comment explaining "

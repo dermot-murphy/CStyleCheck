@@ -1009,6 +1009,12 @@ class TestEmptyElse(unittest.TestCase):
         src = "void f(void){ /* else {} */ return; }\n"
         self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
 
+    def test_else_with_comment_not_flagged(self):
+        # An else block containing only a comment is intentionally documented
+        # and must NOT be flagged — this is the recommended "correct" form.
+        src = "void f(int x){ if (x > 0) { (void)x; } else { /* intentionally empty */ } }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
 
 if __name__ == "__main__":
     unittest.main()
