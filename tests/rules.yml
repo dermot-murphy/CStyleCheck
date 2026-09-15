@@ -763,6 +763,14 @@ misc:
     severity: error
     extra_reserved: []      # additional project-specific names to reserve
 
+  goto_usage:
+    enabled: true
+    severity: error
+
+  assignment_in_condition:
+    enabled: true
+    severity: warning
+
 # --- Reserved / banned identifier names ---
 # Checks that no declared variable, function, macro, or constant name
 # shadows a C keyword, C++ keyword, or C standard library name.
