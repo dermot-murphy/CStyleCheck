@@ -108,6 +108,9 @@ jobs:
           # Stash current metrics so we can switch branches
           cp -r metrics /tmp/metrics-out
 
+          # Remove generated metrics so git checkout doesn't refuse to overwrite them
+          rm -rf metrics
+
           # Check out gh-pages (create if it doesn't exist)
           git fetch origin gh-pages 2>/dev/null || true
           if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
