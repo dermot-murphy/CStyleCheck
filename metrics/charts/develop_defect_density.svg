@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="280" viewBox="0 0 640 280">
+<rect width="640" height="280" fill="#0d1117" rx="6" />
+<text x="68" y="22" font-size="13" font-weight="600" fill="#e6edf3" font-family="ui-monospace, 'Cascadia Code', monospace">Defect density (violations/KLOC) — develop</text>
+<line x1="68" y1="224.0" x2="620" y2="224.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="228.0" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">0</text>
+<line x1="68" y1="179.8423913043478" x2="620" y2="179.8423913043478" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="183.8423913043478" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">5</text>
+<line x1="68" y1="135.68478260869563" x2="620" y2="135.68478260869563" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="139.68478260869563" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">10</text>
+<line x1="68" y1="91.52717391304344" x2="620" y2="91.52717391304344" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="95.52717391304344" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">15</text>
+<line x1="68" y1="47.36956521739128" x2="620" y2="47.36956521739128" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="51.36956521739128" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">20</text>
+<line x1="68" y1="42" x2="68" y2="224" stroke="#484f58" stroke-width="1" />
+<line x1="68" y1="224" x2="620" y2="224" stroke="#484f58" stroke-width="1" />
+<text x="14" y="133" fill="#8b949e" font-family="ui-monospace, 'Cascadia Code', monospace" font-size="10" text-anchor="middle" transform="rotate(-90 14 133)">value</text>
+<line x1="344.0" y1="224" x2="344.0" y2="228" stroke="#484f58" stroke-width="1" />
+<text x="344.0" y="240" text-anchor="middle" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Sep 15</text>
+<circle cx="344.0" cy="61.5" r="3" fill="#f85149" />
+<circle cx="344.0" cy="218.48029891304347" r="3" fill="#bc8cff" />
+<rect x="68" y="255" width="14" height="3" fill="#f85149" rx="1" />
+<text x="86" y="264" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Defect density</text>
+<rect x="194" y="255" width="14" height="3" fill="#bc8cff" rx="1" />
+<text x="212" y="264" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Dox coverage</text>
+</svg>
