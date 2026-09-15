@@ -21,7 +21,7 @@
 <line x1="344.0" y1="224" x2="344.0" y2="228" stroke="#484f58" stroke-width="1" />
 <text x="344.0" y="240" text-anchor="middle" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Sep 15</text>
 <circle cx="344.0" cy="224.0" r="3" fill="#f85149" />
-<circle cx="344.0" cy="224.0" r="3" fill="#d29922" />
+<circle cx="344.0" cy="169.83333333333334" r="3" fill="#d29922" />
 <circle cx="344.0" cy="61.5" r="3" fill="#388bfd" />
 <rect x="68" y="255" width="14" height="3" fill="#f85149" rx="1" />
 <text x="86" y="264" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Errors</text>
