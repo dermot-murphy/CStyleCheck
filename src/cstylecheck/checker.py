@@ -347,10 +347,12 @@ class Checker:
         self._check_yoda()
         self._check_constant_comparison()
         self._check_reserved_names()
-        self._check_lowercase_l_suffix()   # MISRA C:2012/2023 Rule 7.3
-        self._check_octal_constants()      # MISRA C:2012/2023 Rule 7.1
-        self._check_trigraphs()            # MISRA C:2012/2023 Rule 4.2
-        self._check_non_ascii_source()     # MISRA C:2012/2023 Rule 4.1
+        self._check_lowercase_l_suffix()        # MISRA C:2012/2023 Rule 7.3
+        self._check_octal_constants()           # MISRA C:2012/2023 Rule 7.1
+        self._check_trigraphs()                 # MISRA C:2012/2023 Rule 4.2
+        self._check_non_ascii_source()          # MISRA C:2012/2023 Rule 4.1
+        self._check_goto_usage()                # MISRA C:2012 Rule 15.1
+        self._check_assignment_in_condition()   # MISRA C:2012 Rule 13.4
         if self._spell_dict is not None:
             self._check_spelling()
         # Remove violations for rules that are disabled for this file
@@ -2397,6 +2399,112 @@ class Checker:
                 f"line {line}, col {col}; source files must use only "
                 f"printable ASCII characters (MISRA C:2012/2023 Rule 4.1)"
             ))
+
+    # -----------------------------------------------------------------------
+    # 15. MISRA C:2012 Rule 15.1 — goto forbidden
+    #
+    # The goto statement transfers control unconditionally to a labelled
+    # statement elsewhere in the same function.  It can bypass
+    # initialisations, obscure control flow, and make static analysis
+    # significantly harder.  MISRA C:2012 Rule 15.1 is Advisory; many
+    # safety-critical coding standards treat it as Required.
+    #
+    #   Violation:  goto cleanup;
+    #   Correct:    Restructure using break, continue, a flag variable,
+    #               or an early-return pattern.
+    # -----------------------------------------------------------------------
+
+    _RE_GOTO = re.compile(r'\bgoto\b')
+
+    def _check_goto_usage(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("goto_usage", {})
+        if not cfg.get("enabled", True):
+            return
+        sev = cfg.get("severity", "error")
+
+        for m in self._RE_GOTO.finditer(self.clean):
+            self._v(
+                m.start(), sev, "misc.goto_usage",
+                "Use of 'goto' is forbidden; restructure the control flow "
+                "using break, continue, or an early-return pattern instead "
+                "(MISRA C:2012 Rule 15.1)"
+            )
+
+    # -----------------------------------------------------------------------
+    # 16. MISRA C:2012 Rule 13.4 — assignment in condition
+    #
+    # Using an assignment operator inside a conditional expression (the
+    # test of an if, while, or for statement) is almost always a typo for
+    # '==', and the C compiler silently accepts it.  Even when intentional
+    # (e.g. while ((c = getchar()) != EOF)), it makes the code harder to
+    # read and violates MISRA C:2012 Rule 13.4.
+    #
+    #   Violation:  if (x = foo()) { … }
+    #   Violation:  while (ptr = next_node(ptr)) { … }
+    #   Correct:    x = foo(); if (x) { … }
+    # -----------------------------------------------------------------------
+
+    _RE_COND_KW   = re.compile(r'\b(if|while|for)\s*\(')
+    _RE_ASSIGN_IN_COND = re.compile(r'(?<![!<>=+\-*/%&|^~])=(?!=)')
+
+    def _check_assignment_in_condition(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("assignment_in_condition", {})
+        if not cfg.get("enabled", True):
+            return
+        sev = cfg.get("severity", "warning")
+
+        for m in self._RE_COND_KW.finditer(self.clean):
+            keyword  = m.group(1)
+            open_pos = m.end() - 1   # index of the '(' in self.clean
+
+            # Walk forward to find the matching closing ')'
+            depth     = 0
+            close_pos = open_pos
+            for i in range(open_pos, len(self.clean)):
+                if self.clean[i] == '(':
+                    depth += 1
+                elif self.clean[i] == ')':
+                    depth -= 1
+                    if depth == 0:
+                        close_pos = i
+                        break
+
+            inner = self.clean[open_pos + 1:close_pos]
+            cond_base = open_pos + 1  # absolute offset of inner[0] in self.clean
+
+            if keyword == 'for':
+                # Extract the condition part: between the first and second
+                # top-level semicolons, ignoring semicolons inside nested ().
+                depth2      = 0
+                semi_count  = 0
+                cond_start  = 0
+                cond_end    = len(inner)
+                for i, ch in enumerate(inner):
+                    if ch in '(':
+                        depth2 += 1
+                    elif ch in ')':
+                        depth2 -= 1
+                    elif ch == ';' and depth2 == 0:
+                        semi_count += 1
+                        if semi_count == 1:
+                            cond_start = i + 1
+                        elif semi_count == 2:
+                            cond_end = i
+                            break
+                condition  = inner[cond_start:cond_end]
+                cond_base += cond_start
+            else:
+                condition = inner
+
+            for am in self._RE_ASSIGN_IN_COND.finditer(condition):
+                self._v(
+                    cond_base + am.start(), sev,
+                    "misc.assignment_in_condition",
+                    f"Assignment operator '=' used inside {keyword!r} "
+                    f"condition; use '==' for comparison or extract the "
+                    f"assignment to a separate statement "
+                    f"(MISRA C:2012 Rule 13.4)"
+                )
 
     # -----------------------------------------------------------------------
     # 10. Reserved / banned name check

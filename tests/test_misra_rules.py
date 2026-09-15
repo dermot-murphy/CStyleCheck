@@ -2,10 +2,12 @@
 =====================
 Unit tests for the MISRA C:2012/2023 checks:
 
-  NR-001  misc.lowercase_l_suffix  — MISRA C Rule 7.3 (Required)
-  NR-002  misc.octal_constant      — MISRA C Rule 7.1 (Required)
-  NR-003  misc.trigraph            — MISRA C Rule 4.2 (Advisory/Required)
-  NR-004  misc.non_ascii_source    — MISRA C Rule 4.1 (Required)
+  NR-001  misc.lowercase_l_suffix      — MISRA C Rule 7.3 (Required)
+  NR-002  misc.octal_constant          — MISRA C Rule 7.1 (Required)
+  NR-003  misc.trigraph                — MISRA C Rule 4.2 (Advisory/Required)
+  NR-004  misc.non_ascii_source        — MISRA C Rule 4.1 (Required)
+  NR-005  misc.goto_usage              — MISRA C Rule 15.1 (Advisory)
+  NR-006  misc.assignment_in_condition — MISRA C Rule 13.4 (Required)
 
 Each class documents the rule it covers, lists positive (should flag) and
 negative (should not flag) cases, and verifies the violation message text.
@@ -552,6 +554,180 @@ class TestNonAsciiSource(unittest.TestCase):
         """DEL (0x7F) must be flagged."""
         src = "void foo(void) {\x7f}\n"
         self.assertTrue(has(src, _na_cfg(), RULE_NA))
+
+
+# ---------------------------------------------------------------------------
+# NR-005  misc.goto_usage — MISRA C:2012 Rule 15.1 (Advisory)
+# ---------------------------------------------------------------------------
+
+def _goto_cfg(enabled=True, severity="error"):
+    return cfg_only(misc={"goto_usage": {
+        "enabled": enabled,
+        "severity": severity,
+    }})
+
+
+RULE_GOTO = "misc.goto_usage"
+
+
+class TestGotoUsage(unittest.TestCase):
+    """misc.goto_usage — any use of the goto keyword is forbidden."""
+
+    # --- Positive: should flag ---
+
+    def test_simple_goto_flagged(self):
+        src = "void f(void){ goto end; end: return; }\n"
+        self.assertTrue(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_goto_at_start_of_line_flagged(self):
+        src = "void f(void){\n    goto cleanup;\ncleanup:\n    return;\n}\n"
+        self.assertTrue(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_goto_inside_if_flagged(self):
+        src = "void f(int x){\n    if (x < 0) goto err;\nerr: return;\n}\n"
+        self.assertTrue(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_violation_count_one_per_goto(self):
+        src = (
+            "void f(void){\n"
+            "    goto a;\n"
+            "    goto b;\n"
+            "a:b: return;\n"
+            "}\n"
+        )
+        self.assertEqual(count(src, _goto_cfg(), RULE_GOTO), 2)
+
+    def test_violation_message_contains_rule_ref(self):
+        src = "void f(void){ goto end; end: return; }\n"
+        viols = [v for v in run(src, _goto_cfg()) if v.rule == RULE_GOTO]
+        self.assertTrue(viols)
+        self.assertIn("15.1", viols[0].message)
+
+    # --- Negative: should NOT flag ---
+
+    def test_rule_disabled(self):
+        src = "void f(void){ goto end; end: return; }\n"
+        self.assertFalse(has(src, _goto_cfg(enabled=False), RULE_GOTO))
+
+    def test_goto_in_comment_not_flagged(self):
+        # 'goto' inside a comment must not be flagged (self.clean strips comments)
+        src = "/* goto end; */\nvoid f(void){ return; }\n"
+        self.assertFalse(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_goto_in_string_not_flagged(self):
+        src = 'void f(void){ const char *p = "goto end"; (void)p; }\n'
+        self.assertFalse(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_identifier_containing_goto_not_flagged(self):
+        # e.g. "goto_state" must not match
+        src = "static int goto_state = 0;\n"
+        self.assertFalse(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_severity_configurable(self):
+        src = "void f(void){ goto end; end: return; }\n"
+        viols = [v for v in run(src, _goto_cfg(severity="warning")) if v.rule == RULE_GOTO]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "warning")
+
+
+# ---------------------------------------------------------------------------
+# NR-006  misc.assignment_in_condition — MISRA C:2012 Rule 13.4 (Required)
+# ---------------------------------------------------------------------------
+
+def _aic_cfg(enabled=True, severity="warning"):
+    return cfg_only(misc={"assignment_in_condition": {
+        "enabled": enabled,
+        "severity": severity,
+    }})
+
+
+RULE_AIC = "misc.assignment_in_condition"
+
+
+class TestAssignmentInCondition(unittest.TestCase):
+    """misc.assignment_in_condition — '=' inside if/while/for condition."""
+
+    # --- Positive: should flag ---
+
+    def test_if_assignment_flagged(self):
+        src = "void f(int *p){ int x; if (x = *p) { (void)x; } }\n"
+        self.assertTrue(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_while_assignment_flagged(self):
+        src = "int getc(void); void f(void){ int c; while (c = getc()) { (void)c; } }\n"
+        self.assertTrue(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_for_condition_assignment_flagged(self):
+        # Assignment in the condition part (middle segment) of a for loop
+        src = (
+            "int next(int x); "
+            "void f(void){ int x = 0; "
+            "for (; x = next(x); ) { (void)x; } }\n"
+        )
+        self.assertTrue(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_violation_message_contains_rule_ref(self):
+        src = "void f(int *p){ int x; if (x = *p) { (void)x; } }\n"
+        viols = [v for v in run(src, _aic_cfg()) if v.rule == RULE_AIC]
+        self.assertTrue(viols)
+        self.assertIn("13.4", viols[0].message)
+
+    def test_nested_assignment_in_if_flagged(self):
+        src = "int foo(void); void f(void){ int a; if ((a = foo()) > 0) { (void)a; } }\n"
+        self.assertTrue(has(src, _aic_cfg(), RULE_AIC))
+
+    # --- Negative: should NOT flag ---
+
+    def test_rule_disabled(self):
+        src = "void f(int *p){ int x; if (x = *p) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(enabled=False), RULE_AIC))
+
+    def test_equality_comparison_not_flagged(self):
+        src = "void f(int x){ if (x == 0) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_not_equal_not_flagged(self):
+        src = "void f(int x){ if (x != 0) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_less_equal_not_flagged(self):
+        src = "void f(int x){ if (x <= 10) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_greater_equal_not_flagged(self):
+        src = "void f(int x){ if (x >= 0) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_for_init_assignment_not_flagged(self):
+        # Assignment in the init part of for() must NOT be flagged
+        src = "void f(void){ int i; for (i = 0; i < 10; i++) { (void)i; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_for_increment_not_flagged(self):
+        # Compound assignment in the increment part must NOT be flagged
+        src = "void f(void){ int i; for (i = 0; i < 10; i += 2) { (void)i; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_compound_assign_in_condition_not_flagged(self):
+        # += in a condition would be very unusual but the character before
+        # '=' is '+', which is excluded by the lookbehind
+        src = "void f(int x){ if (x >= 0) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_assignment_before_condition_not_flagged(self):
+        # Assignment as a statement before an if must NOT be flagged
+        src = "void f(void){ int x; x = 5; if (x > 0) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_assignment_in_string_not_flagged(self):
+        src = 'void f(void){ if (1) { const char *s = "if (x = 0)"; (void)s; } }\n'
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_severity_configurable(self):
+        src = "void f(int *p){ int x; if (x = *p) { (void)x; } }\n"
+        viols = [v for v in run(src, _aic_cfg(severity="error")) if v.rule == RULE_AIC]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "error")
 
 
 if __name__ == "__main__":

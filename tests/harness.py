@@ -87,6 +87,8 @@ _ALL_OFF: dict = {
         "file_length":                {"enabled": False},
         "reserved_header_name":       {"enabled": False},
         "null_statement_comment":     {"enabled": False},
+        "goto_usage":                 {"enabled": False},
+        "assignment_in_condition":    {"enabled": False},
     },
     "reserved_names":    {"enabled": False},
     "sign_compatibility":{"enabled": False},
