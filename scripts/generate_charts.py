@@ -355,6 +355,30 @@ def _generate_all(points, output_dir, branch):
             y_min_zero=True
         )))
 
+    charts.append(("safety_indicators",
+        _make_chart(
+            f"Safety indicators — {branch}",
+            ts,
+            [("Goto count",      _extract(points, "goto_count")),
+             ("Void ptr count",  _extract(points, "void_ptr_count")),
+             ("Cast count",      _extract(points, "cast_count")),
+             ("Assert count",    _extract(points, "assert_count"))],
+            PALETTES["errors_warnings"],
+            y_label="count",
+            y_min_zero=True
+        )))
+
+    charts.append(("macro_metrics",
+        _make_chart(
+            f"Macro & assert density — {branch}",
+            ts,
+            [("Macro count",     _extract(points, "macro_count")),
+             ("Assert density",  _extract(points, "assert_density"))],
+            PALETTES["complexity"],
+            y_label="count / per-KLOC",
+            y_min_zero=True
+        )))
+
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     branch_safe = branch.replace("/", "-").replace("\\", "-")

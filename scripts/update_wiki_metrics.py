@@ -115,6 +115,12 @@ def main():
         ("Static vars",       "static_vars"),
         ("Max file length",   "file_length_max"),
         ("Defect density (v/KLOC)", "defect_density"),
+        ("Assert count",            "assert_count"),
+        ("Assert density (/KLOC)",  "assert_density"),
+        ("Goto count",              "goto_count"),
+        ("Void pointer count",      "void_ptr_count"),
+        ("C-style cast count",      "cast_count"),
+        ("Macro count",             "macro_count"),
     ]
 
     for label, key in metrics:
@@ -135,6 +141,8 @@ def main():
         ("cyclomatic_complexity", "Cyclomatic complexity & nesting depth"),
         ("defect_density",        "Defect density & documentation coverage"),
         ("func_metrics",          "Function count, max length & static variables"),
+        ("safety_indicators",     "Safety indicators (goto, void ptr, casts, asserts)"),
+        ("macro_metrics",         "Macro count & assert density"),
     ]
 
     for branch in BRANCHES:

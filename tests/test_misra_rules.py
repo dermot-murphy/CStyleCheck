@@ -25,7 +25,7 @@ import os
 import unittest
 
 sys.path.insert(0, os.path.dirname(__file__))
-from harness import cfg_only, run, has, clean, count
+from harness import cfg_only, run, rules, has, clean, count
 
 # ---------------------------------------------------------------------------
 # Shared config builders
@@ -728,6 +728,292 @@ class TestAssignmentInCondition(unittest.TestCase):
         viols = [v for v in run(src, _aic_cfg(severity="error")) if v.rule == RULE_AIC]
         self.assertTrue(viols)
         self.assertEqual(viols[0].severity, "error")
+
+
+# ---------------------------------------------------------------------------
+# NR-007  misc.multiple_statements_per_line
+# NR-008  misc.void_pointer
+# NR-009  misc.recursive_function
+# NR-010  misc.sizeof_type
+# NR-011  misc.boolean_comparison
+# NR-012  misc.empty_else
+# ---------------------------------------------------------------------------
+
+RULE_MULTI  = "misc.multiple_statements_per_line"
+RULE_VOIDP  = "misc.void_pointer"
+RULE_REC    = "misc.recursive_function"
+RULE_SIZEOF = "misc.sizeof_type"
+RULE_BOOL   = "misc.boolean_comparison"
+RULE_EELSE  = "misc.empty_else"
+
+
+def _multi_cfg(enabled=True, severity="warning"):
+    return cfg_only(misc={"multiple_statements_per_line": {"enabled": enabled, "severity": severity}})
+
+
+def _voidp_cfg(enabled=True, severity="warning"):
+    return cfg_only(misc={"void_pointer": {"enabled": enabled, "severity": severity}})
+
+
+def _rec_cfg(enabled=True, severity="error"):
+    return cfg_only(misc={"recursive_function": {"enabled": enabled, "severity": severity}})
+
+
+def _sizeof_cfg(enabled=True, severity="info"):
+    return cfg_only(misc={"sizeof_type": {"enabled": enabled, "severity": severity}})
+
+
+def _bool_cfg(enabled=True, severity="warning"):
+    return cfg_only(misc={"boolean_comparison": {"enabled": enabled, "severity": severity}})
+
+
+def _eelse_cfg(enabled=True, severity="warning"):
+    return cfg_only(misc={"empty_else": {"enabled": enabled, "severity": severity}})
+
+
+class TestMultipleStatementsPerLine(unittest.TestCase):
+    def test_two_statements_flagged(self):
+        src = "void f(void){ int x; x = 1; x = 2; }\n"
+        self.assertIn(RULE_MULTI, rules(src, _multi_cfg()))
+
+    def test_single_statement_clean(self):
+        src = "void f(void){ int x;\nx = 1;\n}\n"
+        self.assertNotIn(RULE_MULTI, rules(src, _multi_cfg()))
+
+    def test_for_loop_not_flagged(self):
+        src = "void f(void){ int i; for (i = 0; i < 10; i++) { (void)i; } }\n"
+        self.assertNotIn(RULE_MULTI, rules(src, _multi_cfg()))
+
+    def test_struct_member_semicolons_flagged(self):
+        # Two members on same line should be flagged
+        src = "typedef struct { int a; int b; } Foo;\n"
+        self.assertIn(RULE_MULTI, rules(src, _multi_cfg()))
+
+    def test_disabled(self):
+        src = "void f(void){ int x; x = 1; x = 2; }\n"
+        self.assertNotIn(RULE_MULTI, rules(src, _multi_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "void f(void){ int x; x = 1; x = 2; }\n"
+        viols = [v for v in run(src, _multi_cfg(severity="error")) if v.rule == RULE_MULTI]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "error")
+
+    def test_comment_not_flagged(self):
+        # Semicolons only in a comment must not fire
+        src = "void f(void){ /* x = 1; y = 2; */ int z;\n}\n"
+        self.assertNotIn(RULE_MULTI, rules(src, _multi_cfg()))
+
+    def test_message_content(self):
+        src = "void f(void){ int x; x = 1; x = 2; }\n"
+        msgs = [v.message for v in run(src, _multi_cfg()) if v.rule == RULE_MULTI]
+        self.assertTrue(msgs)
+        self.assertIn("Multiple statements", msgs[0])
+
+
+class TestVoidPointer(unittest.TestCase):
+    def test_void_ptr_flagged(self):
+        src = "void f(void *buf){ (void)buf; }\n"
+        self.assertIn(RULE_VOIDP, rules(src, _voidp_cfg()))
+
+    def test_typed_ptr_clean(self):
+        src = "void f(uint8_t *buf){ (void)buf; }\n"
+        self.assertNotIn(RULE_VOIDP, rules(src, _voidp_cfg()))
+
+    def test_void_star_in_var_decl(self):
+        src = "void f(void){ void *p = (void*)0;\n(void)p; }\n"
+        count_v = sum(1 for r in rules(src, _voidp_cfg()) if r == RULE_VOIDP)
+        self.assertGreaterEqual(count_v, 1)
+
+    def test_disabled(self):
+        src = "void f(void *buf){ (void)buf; }\n"
+        self.assertNotIn(RULE_VOIDP, rules(src, _voidp_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "void f(void *buf){ (void)buf; }\n"
+        viols = [v for v in run(src, _voidp_cfg(severity="error")) if v.rule == RULE_VOIDP]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "error")
+
+    def test_message_content(self):
+        src = "void f(void *buf){ (void)buf; }\n"
+        msgs = [v.message for v in run(src, _voidp_cfg()) if v.rule == RULE_VOIDP]
+        self.assertTrue(msgs)
+        self.assertIn("11.5", msgs[0])
+
+    def test_void_return_type_not_flagged(self):
+        # 'void f(void)' — void is a return type, not a void pointer
+        src = "void f(void){ return; }\n"
+        self.assertNotIn(RULE_VOIDP, rules(src, _voidp_cfg()))
+
+    def test_in_comment_not_flagged(self):
+        src = "void f(void){ /* void *ptr */ return; }\n"
+        self.assertNotIn(RULE_VOIDP, rules(src, _voidp_cfg()))
+
+
+class TestRecursiveFunction(unittest.TestCase):
+    def test_direct_recursion_flagged(self):
+        src = "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n"
+        self.assertIn(RULE_REC, rules(src, _rec_cfg()))
+
+    def test_non_recursive_clean(self):
+        src = "int add(int a, int b){ return a + b; }\n"
+        self.assertNotIn(RULE_REC, rules(src, _rec_cfg()))
+
+    def test_disabled(self):
+        src = "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n"
+        self.assertNotIn(RULE_REC, rules(src, _rec_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n"
+        viols = [v for v in run(src, _rec_cfg(severity="warning")) if v.rule == RULE_REC]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "warning")
+
+    def test_message_contains_17_2(self):
+        src = "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n"
+        msgs = [v.message for v in run(src, _rec_cfg()) if v.rule == RULE_REC]
+        self.assertTrue(msgs)
+        self.assertIn("17.2", msgs[0])
+
+    def test_function_name_in_message(self):
+        src = "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n"
+        msgs = [v.message for v in run(src, _rec_cfg()) if v.rule == RULE_REC]
+        self.assertTrue(msgs)
+        self.assertIn("fact", msgs[0])
+
+    def test_if_keyword_not_matched(self):
+        # 'if' followed by '{' must not be treated as a function definition
+        src = "void f(int x){ if (x > 0) { (void)x; } }\n"
+        self.assertNotIn(RULE_REC, rules(src, _rec_cfg()))
+
+    def test_recursive_in_comment_not_flagged(self):
+        src = "int f(int n){ /* f(n-1) */ return n; }\n"
+        self.assertNotIn(RULE_REC, rules(src, _rec_cfg()))
+
+
+class TestSizeofType(unittest.TestCase):
+    def test_sizeof_primitive_flagged(self):
+        src = "void f(void){ int n = sizeof(int);\n(void)n; }\n"
+        self.assertIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_sizeof_typedef_t_flagged(self):
+        src = "void f(void){ int n = sizeof(uint32_t);\n(void)n; }\n"
+        self.assertIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_sizeof_var_clean(self):
+        src = "void f(void){ uint32_t x; int n = sizeof(x);\n(void)n; }\n"
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_sizeof_ptr_deref_clean(self):
+        src = "void f(uint32_t *p){ int n = sizeof(*p);\n(void)n; }\n"
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_disabled(self):
+        src = "void f(void){ int n = sizeof(int);\n(void)n; }\n"
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "void f(void){ int n = sizeof(uint8_t);\n(void)n; }\n"
+        viols = [v for v in run(src, _sizeof_cfg(severity="warning")) if v.rule == RULE_SIZEOF]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "warning")
+
+    def test_message_content(self):
+        src = "void f(void){ int n = sizeof(int);\n(void)n; }\n"
+        msgs = [v.message for v in run(src, _sizeof_cfg()) if v.rule == RULE_SIZEOF]
+        self.assertTrue(msgs)
+        self.assertIn("sizeof", msgs[0])
+
+
+class TestBooleanComparison(unittest.TestCase):
+    def test_eq_true_flagged(self):
+        src = "void f(int flag){ if (flag == true) { (void)flag; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_eq_false_flagged(self):
+        src = "void f(int done){ while (done == false) { done = 1; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_ne_true_flagged(self):
+        src = "void f(int ok){ if (ok != true) { (void)ok; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_direct_use_clean(self):
+        src = "void f(int flag){ if (flag) { (void)flag; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_negation_clean(self):
+        src = "void f(int done){ while (!done) { done = 1; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_disabled(self):
+        src = "void f(int flag){ if (flag == true) { (void)flag; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "void f(int flag){ if (flag == true) { (void)flag; } }\n"
+        viols = [v for v in run(src, _bool_cfg(severity="error")) if v.rule == RULE_BOOL]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "error")
+
+    def test_message_content(self):
+        src = "void f(int flag){ if (flag == true) { (void)flag; } }\n"
+        msgs = [v.message for v in run(src, _bool_cfg()) if v.rule == RULE_BOOL]
+        self.assertTrue(msgs)
+        self.assertIn("14.4", msgs[0])
+
+    def test_in_comment_not_flagged(self):
+        src = "void f(void){ /* if (flag == true) */ return; }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_uppercase_true_flagged(self):
+        src = "void f(int flag){ if (flag == TRUE) { (void)flag; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+
+class TestEmptyElse(unittest.TestCase):
+    def test_empty_else_flagged(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else {} }\n"
+        self.assertIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
+    def test_non_empty_else_clean(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else { x = 0; } }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
+    def test_else_if_clean(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else if (x < 0) { x = 0; } }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
+    def test_no_else_clean(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
+    def test_disabled(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else {} }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else {} }\n"
+        viols = [v for v in run(src, _eelse_cfg(severity="error")) if v.rule == RULE_EELSE]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "error")
+
+    def test_message_content(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else {} }\n"
+        msgs = [v.message for v in run(src, _eelse_cfg()) if v.rule == RULE_EELSE]
+        self.assertTrue(msgs)
+        self.assertIn("Empty else", msgs[0])
+
+    def test_in_comment_not_flagged(self):
+        src = "void f(void){ /* else {} */ return; }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
+    def test_else_with_comment_not_flagged(self):
+        # An else block containing only a comment is intentionally documented
+        # and must NOT be flagged — this is the recommended "correct" form.
+        src = "void f(int x){ if (x > 0) { (void)x; } else { /* intentionally empty */ } }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
 
 
 if __name__ == "__main__":
