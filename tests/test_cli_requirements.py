@@ -5,9 +5,11 @@ Covers:
   SWE1-015  each source file is read from disk exactly once per invocation and
             the cached text is shared by Checker and SignChecker
             (UV-CLI-014 to UV-CLI-016).
-  SWE1-094  main() writes the startup banner (tool name, version, copyright)
-            to stderr, not stdout, before processing begins
-            (UV-CLI-017 to UV-CLI-019).
+  SWE1-094  main() writes the two-line startup banner ("<tool> <version>",
+            then the copyright line) to stderr (and the --log file), never
+            to stdout, before processing begins; it is emitted even when
+            stdout is piped and cannot be suppressed (UV-CLI-017 to
+            UV-CLI-019).
   SWE1-096  violation paths use the OS-native separator (os.sep) in
             Violation.__str__() and the other emitted output
             (UV-CLI-020 to UV-CLI-022).
@@ -256,6 +258,56 @@ class TestStartupBanner(unittest.TestCase):
                                     "--output-format", "json", str(src))
         json.loads(out)  # raises if the banner leaked into stdout
         self.assertIn(_VERSION_STRING, err)
+
+    # UV-CLI-017 (banner still emitted when stdout is piped, not a TTY)
+    def test_banner_emitted_when_stdout_piped(self):
+        with tempfile.TemporaryDirectory() as td:
+            src = _write(td, "main.c", "void f(void){}\n")
+            r = subprocess.run(
+                [sys.executable, _CHECKER, "--config", _YAML, str(src)],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                stdin=subprocess.DEVNULL, text=True)
+        lines = r.stderr.splitlines()
+        self.assertEqual(lines[:2], [_VERSION_STRING, _COPYRIGHT])
+        self.assertNotIn(_VERSION_STRING, r.stdout)
+
+    # UV-CLI-017 (banner also written to the --log file)
+    def test_banner_written_to_log_file(self):
+        with tempfile.TemporaryDirectory() as td:
+            src = _write(td, "main.c", "void f(void){}\n")
+            log = Path(td) / "run.log"
+            _, out, err = _run_main("--config", _YAML, "--log", str(log),
+                                    str(src))
+            log_text = log.read_text(encoding="utf-8")
+        self.assertEqual(log_text.splitlines()[:2],
+                         [_VERSION_STRING, _COPYRIGHT])
+        self.assertTrue(err.startswith(f"{_VERSION_STRING}\n{_COPYRIGHT}\n"))
+        self.assertNotIn(_VERSION_STRING, out)
+
+    # UV-CLI-018 (exactly two banner lines, nothing else on stderr)
+    def test_banner_is_exactly_two_lines(self):
+        with tempfile.TemporaryDirectory() as td:
+            src = _write(td, "main.c", "void f(void){}\n")
+            _, _, err = _run_main("--config", _YAML, str(src))
+        self.assertEqual(err, f"{_VERSION_STRING}\n{_COPYRIGHT}\n")
+
+    # UV-CLI-018 (copyright line format)
+    def test_copyright_line_format(self):
+        with tempfile.TemporaryDirectory() as td:
+            src = _write(td, "main.c", "void f(void){}\n")
+            _, _, err = _run_main("--config", _YAML, str(src))
+        line1, line2 = err.splitlines()[:2]
+        self.assertEqual(line1, f"{_TOOL_NAME} {_VERSION}")
+        self.assertRegex(line2, r"^\(C\) \d{4} Dermot Murphy$")
+        self.assertEqual(line2, _COPYRIGHT)
+
+    # UV-CLI-019 (negative: no option suppresses the banner)
+    def test_no_quiet_option(self):
+        with tempfile.TemporaryDirectory() as td:
+            src = _write(td, "main.c", "void f(void){}\n")
+            with self.assertRaises(SystemExit) as cm:
+                _run_main("--config", _YAML, "--quiet", str(src))
+        self.assertEqual(cm.exception.code, 2)
 
     # UV-CLI-019 (negative: --version prints to stdout, no stderr banner)
     def test_version_flag_writes_no_stderr_banner(self):

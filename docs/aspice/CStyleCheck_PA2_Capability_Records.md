@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-PA2-001 | **Version** | 1.24 |
+| **Document ID** | CSC-PA2-001 | **Version** | 1.25 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.25 | 2026-09-29 | Claude | #413: SWE.4 evidence — test total 1439→1444; SWE1-094 fully verified after CR-413 |
 | 1.24 | 2026-09-29 | Claude | Issue #407: §4.1 SWE.4 criterion and CI-017 → 1439 tests; §6 SWE.4 evidence (55 modules, RR-003-001 closed, SWE1-094 `--quiet` gap); §5.4 register CSC-AUD-009 1.0→1.1 and CSC-REVIEW-003 1.0→1.1; referenced-document versions resynced (ACQ4 1.4→1.5, DEV-001 1.3→1.4, DEV-002 1.2→1.3, MAN3 1.8→1.9, MAN5 1.5→1.6, PA2 1.23→1.24, STD 1.3→1.4, SUP1 1.10→1.11, SUP10 1.3→1.4, SUP8 1.13→1.14, SUP9 1.3→1.4, SWE1 2.8→2.9, SWE2 1.13→1.14, SWE3 1.18→1.19, SWE4 1.22→1.24, SWE5 1.15→1.16, SWE6 1.17→1.18, SYS2 2.3→2.4, SYS3 1.7→1.8, SYS4 1.12→1.13, SYS5 1.9→1.10) |
 | 1.23 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-021: §6 ratings per CSC-AUD-009 (3 F / 14 L), verdict and history note (no standalone v1.6.0 audit record); §4.1 counts (121 SW req, 135 units, 1422 tests, 27 SIT, 17 SITC, 60 CIs); §5.4 versions for all corrected WPs plus CSC-REVIEW-003, CSC-STD-001 and CSC-AUD-009; CI-045 package row. AUD9-F-013: SWE.3 wording (135 units, all specified). AUD9-F-009: §5.3 WP storage CI-027 → CI-055 |
 | 1.22 | 2026-07-06 | Claude | ASPICE audit — §4.1 SYS.4 15→16 SITC, SUP.8 34→37 CIs; §5.4 SYS2→2.2, SYS3→1.6, SYS4→1.11, SYS5→1.8, SUP8→1.11, SUP1→1.9, MAN3→1.7; §6 SYS.4/SUP.8 counts — closes #379 |
@@ -72,7 +73,7 @@ For each assessed process, performance objectives are defined in the table below
 | SWE.1 | 121 software requirements defined, reviewed, approved; 113 traceable to a SYS.2 parent, and the 8 trend-metrics requirements (SWE1-102 to SWE1-108, SWE1-117) traceable to CSC-MAN3-001 §10.3 | CSC-SWE1-001 §4.18 verification criteria | ✅ Defined |
 | SWE.2 | Architecture reviewed; all SWE.1 requirements mapped to components; interfaces defined | CSC-SWE2-001 §10 traceability | ✅ Defined |
 | SWE.3 | All 135 units designed (UNIT-01 to UNIT-135, each with a §5 specification); resource usage documented | CSC-SWE3-001 §4 unit catalogue | ✅ Defined |
-| SWE.4 | ≥ 85% combined statement + branch coverage (CI gate); ≥ 90% statement / ≥ 85% branch (long-term target); all 1439 unit tests PASS on Python 3.10/11/12 | CSC-SWE4-001 §4.2 coverage criteria | ✅ Defined |
+| SWE.4 | ≥ 85% combined statement + branch coverage (CI gate); ≥ 90% statement / ≥ 85% branch (long-term target); all 1444 unit tests PASS on Python 3.10/11/12 | CSC-SWE4-001 §4.2 coverage criteria | ✅ Defined |
 | SWE.5 | All 27 SIT integration test cases PASS; all 10 SWA interfaces covered | CSC-SWE5-001 §3.3 verification criteria | ✅ Defined |
 | SWE.6 | All 12 SWQ qualification test cases PASS; 100% SW requirements coverage; release gate met | CSC-SWE6-001 §3.3 qualification criteria | ✅ Defined |
 | MAN.3 | All WBS work packages completed; milestones achieved within schedule | CSC-MAN3-001 §8 schedule | ✅ Defined |
@@ -232,7 +233,7 @@ All work products are reviewed before approval according to the following schedu
 | CSC-AUD-008 | ASPICE Internal Audit — CL2 Assessment (2026-06-28) | 1.0 | Released | v1.5.1 tag |
 | CSC-AUD-009 | ASPICE Internal Audit — CL2 Re-assessment, post-v1.6.0 `develop` (2026-09-29) | 1.1 | Released | #405; AUD9-F-027 residual (#408) and AUD9-F-004 closure (#407) |
 | CI-045 | `src/cstylecheck/` package (12 modules) | 1.6.0 + `develop` | Released (v1.6.0); `develop` in progress | v1.6.0 tag / `develop` `296e91b` |
-| CI-017 | Test suite (1279 tests at v1.6.0; 1439 on `develop`) | 1.6.0 + `develop` | Released (v1.6.0); `develop` in progress | v1.6.0 tag / `develop` `296e91b` |
+| CI-017 | Test suite (1279 tests at v1.6.0; 1444 on `develop`) | 1.6.0 + `develop` | Released (v1.6.0); `develop` in progress | v1.6.0 tag / `develop` `296e91b` |
 
 ---
 
@@ -251,7 +252,7 @@ The table below summarises all assessed processes and their CL2 PA achievement e
 | SWE.1 | 121 SW requirements (SWE1-109 to SWE1-117 added); SWE1-102 to 108/117 parent = CSC-MAN3-001 §10.3 | Objectives: §4.1; strategy: §4.2 | CSC-SWE1-001 v2.9; in CM | **L** | #405 |
 | SWE.2 | 13 components (COMP-13 trend scripts added), 10 interfaces; COMP-05f and run_all() include the 8 new checks | Objectives: §4.1 | CSC-SWE2-001 v1.14; in CM | **L** | #405 |
 | SWE.3 | 135 units, all with §5 specs; line references regenerated; §6.3 baseline format corrected | Objectives: §4.1 | CSC-SWE3-001 v1.19; in CM | **L** | #405 |
-| SWE.4 | 1439 unit tests (55 modules); §7 traces all SW requirements; SWE1-015/094/096 unit tests added by #407 (RR-003-001 closed; SWE1-094 `--quiet` clause not implemented) | Objectives: §4.1; coverage targets | CSC-SWE4-001 v1.24; CI evidence | **L** | #405 |
+| SWE.4 | 1444 unit tests (55 modules); §7 traces all SW requirements; SWE1-015/094/096 unit tests added by #407 (RR-003-001 closed; SWE1-094 aligned with the implementation by CR-413 (#413), fully verified) | Objectives: §4.1; coverage targets | CSC-SWE4-001 v1.24; CI evidence | **L** | #405 |
 | SWE.5 | 27 SIT tests (SIT-027 for the 8 new rules); SIT-012 updated for #394/#395 | Objectives: §4.1 | CSC-SWE5-001 v1.16; in CM | **L** | #405 |
 | SWE.6 | 12 SWQ tests; SWQ-003 covers 81 rule IDs; SWQ-007 aligned with SWE1-100; 113/113 in-scope requirements | Objectives: §4.1; release gate | CSC-SWE6-001 v1.18; CI evidence | **L** | #405 |
 | MAN.3 | WBS, schedule (actuals to v1.6.0, v1.7.0 planned) and trend-metrics monitoring (§10.3) | Objectives: §4.1; §4.3 monitoring | CSC-MAN3-001 v1.9; in CM | **L** | #405 |

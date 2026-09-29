@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.15 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.16 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.16 | 2026-09-29 | Claude | Issue #413 (CR-413): COMP-01 key behaviour describes the startup banner as two lines on stderr and the log, never stdout, not suppressible (was "one-line"); referenced-document versions resynced (SWE1 2.9→2.10, SWE3 1.19→1.20) |
 | 1.15 | 2026-09-29 | Claude | Issue #410: COMP-05f table — `misc.boolean_comparison` is a style rule; MISRA 14.4 citation removed |
 | 1.14 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE3 1.18→1.19, SYS3 1.7→1.8) |
 | 1.13 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-002: add the 8 new checks (#391/#392) to COMP-05f (diagram and method table, with the previously missing v1.4.0–v1.6.0 methods), to the §8.1 run_all() sequence and to the §10 RTM (SWE1-109 to SWE1-116). AUD9-F-006: SWA-IF-09 → Counter multiset; §8.1 baseline steps. AUD9-F-011: add COMP-13 Trend-Analysis Scripts (out of package) and §10 rows for SWE1-100/101, SWE1-102 to SWE1-108 and SWE1-117. AUD9-F-015: record the #397 edits (COMP-06 functions, baseline key, SWA-IF-08) made to v1.12 without a revision; header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
@@ -49,9 +50,9 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.9 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.11 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.8 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.19 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.21 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
 
 ---
@@ -124,7 +125,7 @@ scripts/   (outside the package — CI-only, not installed)
 | **Responsibility** | Parse command-line arguments; expand `--options-file` tokens before direct CLI args; resolve source file lists from globs; validate invocation |
 | **Inputs** | `sys.argv`; options file on disk |
 | **Outputs** | `argparse.Namespace` object; resolved `[filepath]` list |
-| **Key behaviour** | Options-file tokens are injected before direct argv tokens so direct args always take precedence; `main()` writes a one-line startup banner (tool name, version, copyright) to `stderr` before processing |
+| **Key behaviour** | Options-file tokens are injected before direct argv tokens so direct args always take precedence; `main()` writes a two-line startup banner (`CStyleCheck <version>`, then the copyright line) to `stderr` and the `--log` file before processing; it is never written to stdout and cannot be suppressed (SWE1-094) |
 
 ### COMP-02 — Configuration Loader
 

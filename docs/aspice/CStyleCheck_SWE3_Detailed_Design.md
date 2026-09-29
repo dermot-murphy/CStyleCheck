@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.20 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.21 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.21 | 2026-09-29 | Claude | Issue #413 (CR-413): UNIT-46 step 3 specifies the two-line, unconditional stderr/log banner (SWE1-094); step 5 records the `--fix` header re-read (SWE1-015 exception); §8 SWE1-094 row; referenced-document versions resynced (SWE1 2.9→2.10, SWE2 1.14→1.15, SWE4 1.24→1.25) |
 | 1.20 | 2026-09-29 | Claude | Issue #410: UNIT-134 purpose and §6.1 `misc.boolean_comparison` row — style rule; MISRA C:2012 Rule 14.4 citation removed; message suffix "(redundant comparison with a Boolean literal)" |
 | 1.19 | 2026-09-29 | Claude | Issue #407: UNIT-03 algorithm records the `os.path.normpath()` step (SWE1-096); UNIT-41 note and §8 SWE1-096 row corrected (separator applied by UNIT-03; `Violation.__str__()` renders the path verbatim); referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE4 1.22→1.24) |
 | 1.18 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-002: add UNIT-128 to UNIT-135 (8 new checker methods from #391/#392) to the §4 catalogue, §5 specs and §8 RTM, and add the §6.1 config keys. AUD9-F-007: correct the §6.3 baseline file format to {"violations":[{file,line,rule,message}]}. AUD9-F-010: UNIT-125/127 specify the safety indicators and the safety_indicators/macro_metrics charts; add a SWE1-117 RTM row. AUD9-F-011: UNIT-121 to UNIT-127 component → COMP-13. AUD9-F-012: regenerate every §4 source line reference (43 corrected, 24 added). AUD9-F-013: add §5 specs for the 35 catalogued units that had none (UNIT-06 to UNIT-94). AUD9-F-004: §8 RTM rows for SWE1-062 and SWE1-MISRA-001 to 003. AUD9-F-015: header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
@@ -51,9 +52,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.9 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.14 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.24 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.11 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.16 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.26 |
 
 ---
 
@@ -1502,9 +1503,9 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 **Algorithm:**
 1. Fast path for `--version` / `--help`; expand `--options-file` (UNIT-02) and parse arguments
 2. Handle `--update-config` (UNIT-94), `--preset` and `--init` (UNIT-98/99), then exit
-3. Load the configuration, dictionaries, defines, banned names, copyright template, aliases and exclusions; open `--log`; print the startup banner to stderr and the log (SWE1-094)
+3. Load the configuration, dictionaries, defines, banned names, copyright template, aliases and exclusions; open `--log`; write the two-line startup banner (`_VERSION_STRING`, then `_COPYRIGHT`) to stderr and to the log via `Tee.log_print()`, never to stdout; the write is unconditional (no TTY check, no suppression option) (SWE1-094)
 4. Discover files (UNIT-03); for each file, resolve the per-directory config (UNIT-100), run `Checker.run_all()` (UNIT-22) and emit violations (with verbose progress when requested)
-5. Run the cross-file checks (`SignChecker`, `DeclaredNotDefinedChecker`); apply `--fix` / `--dry-run` (UNIT-96)
+5. Run the cross-file checks (`SignChecker`, `DeclaredNotDefinedChecker`); apply `--fix` / `--dry-run` (UNIT-96). Without `--dry-run`, the `variable.pointer_prefix` header rename (UNIT-118) re-reads each companion `.h` file from disk, because it may already have been rewritten in this fix pass — the documented exception to SWE1-015
 6. `--write-baseline`: write (UNIT-36) and return 0. `--baseline-file`: filter with UNIT-35 and UNIT-119
 7. Apply `--warnings-as-errors`; emit JSON, SARIF or HTML output; print the summary (UNIT-40)
 8. Return 1 if any error-severity violation remains, otherwise 0; configuration errors exit with 2
@@ -1777,7 +1778,7 @@ Written by `write_baseline()` (UNIT-36) and read by `load_baseline()` (UNIT-35).
 | SWE1-091 | `misc.constant_comparison` | UNIT-116 |
 | SWE1-092 | `misc.unsigned_suffix` signed-param exemption | UNIT-30 (extended) |
 | SWE1-093 | `variable.pointer_prefix` auto-fix | UNIT-117, UNIT-118 |
-| SWE1-094 | Startup banner to stderr | UNIT-46 (extended) |
+| SWE1-094 | Two-line startup banner to stderr (and `--log`), unconditional | UNIT-46 (extended) |
 | SWE1-095 | Copyright in `--version` output | UNIT-88 (extended) |
 | SWE1-096 | OS-native path separator | UNIT-03 (`os.path.normpath` in `discover_files`), UNIT-41 (extended) |
 | SWE1-097 | `print_summary()` restructure | UNIT-40 (extended) |

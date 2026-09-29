@@ -69,6 +69,13 @@ Versioning follows [Semantic Versioning](https://semver.org/).
   from the function-name line to the closing brace; static-variable counting handles
   multi-line and multi-declarator definitions. Expect a one-off step in these series
   (issue [#388](https://github.com/dermot-murphy/CStyleCheck/issues/388)).
+- **Startup-banner requirements match the tool (documentation only)** — SYS-F-046 and SWE1-094
+  now specify the existing behaviour: two lines on `stderr` (`CStyleCheck <version>`,
+  `(C) 2026 Dermot Murphy`), also written to `--log`, emitted even when output is piped, not
+  suppressible, never on `stdout`. The `--quiet`, date-time, file-count and non-TTY clauses are
+  removed. SWE1-015 records the `--fix` header re-read exception. Change request CR-413; no
+  code change; 5 new tests in `tests/test_cli_requirements.py` (total 1439→1444)
+  (issue [#413](https://github.com/dermot-murphy/CStyleCheck/issues/413)).
 
 ### Fixed
 

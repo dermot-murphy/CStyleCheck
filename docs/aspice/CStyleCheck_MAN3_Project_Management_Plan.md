@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN3-001 | **Version** | 1.9 |
+| **Document ID** | CSC-MAN3-001 | **Version** | 1.10 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.10 | 2026-09-29 | Claude | #413: test total 1439→1444 |
 | 1.9 | 2026-09-29 | Claude | Issue #407: §4.1 scope, WBS-07 and WBS-10 → 1439 tests / 55 modules (CSC-SWE4-001 v1.24); referenced-document versions resynced (MAN5 1.5→1.6, SUP1 1.10→1.11, SUP8 1.13→1.14, SWE1 2.8→2.9, SYS2 2.3→2.4) |
 | 1.8 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-020: §3.1 version 1.2.0→1.6.0; §4.1 scope (12 modules, 81 rules, 1422 tests / 54 modules, 5 workflows, Dependabot); WBS-07/10 to 16 statuses; §8 schedule adds actuals for v1.2.0 to v1.6.0, CSC-AUD-009 and the planned v1.7.0. AUD9-F-011: add §10.3 Trend-Analysis Metrics Monitoring (parent of SWE1-102 to SWE1-108 and SWE1-117) and a §10.1 row; `rules.yml` → `cstylecheck_rules.yml`. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.7 | 2026-07-06 | Claude | ASPICE audit — update WBS-07 and WBS-10 stale test counts — closes #379 |
@@ -66,7 +67,7 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 ### 4.1 In Scope
 
 - Design, implementation, and testing of `src/cstylecheck/` package (12 sub-modules) implementing 81 rule IDs (73 at v1.6.0; 8 added on `develop` by #391/#392)
-- Test suite (1439 pytest tests across 55 test modules on `develop`, 2026-09-29, after #408 and #407; 1279 at v1.6.0)
+- Test suite (1444 pytest tests across 55 test modules on `develop`, 2026-09-29, after #408, #407 and #413; 1279 at v1.6.0)
 - Docker image build and multi-platform publication to GHCR and Docker Hub
 - GitHub Action integration (`action.yml`)
 - pre-commit hook integration (`.pre-commit-hooks.yml`)
@@ -129,10 +130,10 @@ Requirements  →  Architecture  →  Detailed Design  →  Implementation
 | WBS-04 | Software architecture (SWE.2) | 6h | Claude | Complete |
 | WBS-05 | Detailed design (SWE.3) | 8h | Claude | Complete |
 | WBS-06 | Core linter implementation | 80h | Claude | Complete |
-| WBS-07 | Test suite (1439 tests on `develop`) | 40h | Claude | Complete (ongoing per feature) |
+| WBS-07 | Test suite (1444 tests on `develop`) | 40h | Claude | Complete (ongoing per feature) |
 | WBS-08 | Docker packaging and CI | 8h | Claude | Complete |
 | WBS-09 | GitHub Action and pre-commit | 6h | Claude | Complete |
-| WBS-10 | Unit verification (SWE.4) | 4h | Claude | Complete — 1439 tests across 55 modules; SWE4 catalogue updated (CSC-SWE4-001 v1.24, #405, #408, #407) |
+| WBS-10 | Unit verification (SWE.4) | 4h | Claude | Complete — 1444 tests across 55 modules; SWE4 catalogue updated (CSC-SWE4-001 v1.24, #405, #408, #407) |
 | WBS-11 | Integration testing (SWE.5) | 4h | Claude | Complete — #152 closed 2026-05-28; SIT-001 to SIT-027 recorded |
 | WBS-12 | Qualification testing (SWE.6) | 4h | Claude | Complete — SWQ-001 to SWQ-012 recorded (v1.6.0); post-v1.6.0 extensions recorded 2026-09-29 |
 | WBS-13 | System integration testing (SYS.4) | 4h | Claude | Complete — SITC-001 to SITC-017 recorded |
