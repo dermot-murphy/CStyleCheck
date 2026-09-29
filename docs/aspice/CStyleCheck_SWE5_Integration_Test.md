@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.19 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.20 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.20 | 2026-09-29 | Claude | Issue #418 (CR-418): SIT-027 steps 1–6 and 8 enable the rule explicitly (all 8 post-v1.6.0 rules are opt-in); new step 10 — none of the 8 reported with the default config; steps renumbered (old step 10 → 11); test file cites UV-MSR-009; post-v1.6.0 note 1452→1463 tests; referenced-document versions resynced (5) |
 | 1.19 | 2026-09-29 | Claude | Issue #412: SIT-027 step 7 — `misc.boolean_comparison` not reported with the default config (opt-in), `TRUE` macro not matched; post-v1.6.0 note 1444→1452 tests; referenced-document versions resynced (5) |
 | 1.18 | 2026-09-29 | Claude | Release-prep cross-reference resync: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.17 | 2026-09-29 | Claude | Issue #413 (CR-413): SIT-024 step 1 expects the two-line stderr banner with stdout piped; step 3 expects `--quiet` to be rejected (no suppression); post-v1.6.0 note 1439→1444 tests; referenced-document versions resynced (SWE2 1.14→1.15, SWE1 2.9→2.10, SWE4 1.24→1.25, SWE6 1.18→1.19) |
@@ -55,11 +56,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.18 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.13 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.28 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.22 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.16 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.19 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.14 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.29 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.23 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.17 |
 
 ### 3.2 Test Environment
 
@@ -700,20 +701,21 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | **Objective** | Verify end-to-end integration of the 8 rules added by PRs #391/#392: each rule reads its `misc.*` config (enabled, severity), runs on the comment/string-stripped source and reports through the Violation / output path |
 | **Interfaces** | SWA-IF-03, SWA-IF-06, SWA-IF-10 |
 | **SW-REQ** | SWE1-109, SWE1-110, SWE1-111, SWE1-112, SWE1-113, SWE1-114, SWE1-115, SWE1-116 |
-| **Test file** | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-008, via `tests/harness.py` `run()` with `tests/rules.yml`) |
+| **Test file** | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-009, via `tests/harness.py` `run()` with `tests/rules.yml`) |
 
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
-| 1 | `goto cleanup;` | Default config | `misc.goto_usage` error |
-| 2 | `if (x = foo())`, `while (p = next(p))`, `for (i = 0; j = k; i++)` | Default config | `misc.assignment_in_condition` warning for each condition assignment; none for the `for` init |
-| 3 | `x = 1; y = 2;` and a `for (…; …; …)` header | Default config | `misc.multiple_statements_per_line` for the first line only |
-| 4 | `void *buf;` and `uint8_t *buf;` | Default config | `misc.void_pointer` for `void *` only |
-| 5 | `int fact(int n) { return n * fact(n - 1); }` | Default config | `misc.recursive_function` error naming `fact` |
-| 6 | `sizeof(uint32_t)`, `sizeof(*p)` | Default config | `misc.sizeof_type` info for the type operand only |
+| 1 | `goto cleanup;` | Config with `misc.goto_usage.enabled: true` | `misc.goto_usage` error |
+| 2 | `if (x = foo())`, `while (p = next(p))`, `for (i = 0; j = k; i++)` | Config with `misc.assignment_in_condition.enabled: true` | `misc.assignment_in_condition` warning for each condition assignment; none for the `for` init |
+| 3 | `x = 1; y = 2;` and a `for (…; …; …)` header | Config with `misc.multiple_statements_per_line.enabled: true` | `misc.multiple_statements_per_line` for the first line only |
+| 4 | `void *buf;` and `uint8_t *buf;` | Config with `misc.void_pointer.enabled: true` | `misc.void_pointer` for `void *` only |
+| 5 | `int fact(int n) { return n * fact(n - 1); }` | Config with `misc.recursive_function.enabled: true` | `misc.recursive_function` error naming `fact` |
+| 6 | `sizeof(uint32_t)`, `sizeof(*p)` | Config with `misc.sizeof_type.enabled: true` | `misc.sizeof_type` info for the type operand only |
 | 7 | `if (flag == true)`, `if (flag)`, `if (TRUE == flag)` | Default config, then `misc.boolean_comparison.enabled: true` | No `misc.boolean_comparison` with the default config (opt-in, #412); when enabled, one for `flag == true` only (`TRUE` macro not matched) |
-| 8 | `} else {}` and `} else { /* intentionally empty */ }` | Default config | `misc.empty_else` for the empty block only |
+| 8 | `} else {}` and `} else { /* intentionally empty */ }` | Config with `misc.empty_else.enabled: true` | `misc.empty_else` for the empty block only |
 | 9 | Each rule with `enabled: false`, and with an overridden `severity` | Modified config | No violation when disabled; configured severity reported |
-| 10 | Rule keywords inside comments or strings | Default config | No violation |
+| 10 | The inputs of steps 1–8 together | Default config (no `misc` keys for the 8 rules) | None of the 8 rule IDs reported: all 8 rules are opt-in (#412, #418) |
+| 11 | Rule keywords inside comments or strings | Each rule enabled | No violation |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
@@ -755,7 +757,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 **Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence)
 
-**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests; #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: 1452 tests, all PASS (local run, Python 3.11).
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests; #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: 1452 tests; #418 (the other 7 post-v1.6.0 rules opt-in) adds 11: 1463 tests, all PASS (local run, Python 3.11).
 
 > **📋 Note:** All 10 defined software architecture interfaces must be covered before integration testing is considered complete. Any uncovered interface must be resolved via a new or updated test case.
 

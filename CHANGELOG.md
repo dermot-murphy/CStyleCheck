@@ -11,26 +11,27 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- **8 new MISRA C / Barr-C rules** (81 rule IDs in total), all enabled by default in `src/rules.yml`:
-  - `misc.goto_usage` (error) — every `goto` (MISRA C:2012 Rule 15.1)
+- **8 new MISRA C / Barr-C rules** (81 rule IDs in total), all **disabled by default** (opt-in; `enabled: false` in `src/rules.yml`, and off when the
+  key is absent — #412, #418):
+  - `misc.goto_usage` (error, disabled by default) — every `goto` (MISRA C:2012 Rule 15.1)
     ([#391](https://github.com/dermot-murphy/CStyleCheck/pull/391)).
-  - `misc.assignment_in_condition` (warning) — `=` inside an `if`/`while` condition or a
+  - `misc.assignment_in_condition` (warning, disabled by default) — `=` inside an `if`/`while` condition or a
     `for` condition clause (MISRA C:2012 Rule 13.4)
     ([#391](https://github.com/dermot-murphy/CStyleCheck/pull/391)).
-  - `misc.multiple_statements_per_line` (warning) — more than one statement on a line;
+  - `misc.multiple_statements_per_line` (warning, disabled by default) — more than one statement on a line;
     `for` headers exempt (Barr-C §3.2).
-  - `misc.void_pointer` (warning) — `void *` usage (MISRA C:2012 Rule 11.5).
-  - `misc.recursive_function` (error) — direct recursion (MISRA C:2012 Rule 17.2).
-  - `misc.sizeof_type` (info) — `sizeof` applied to a type name instead of an object
+  - `misc.void_pointer` (warning, disabled by default) — `void *` usage (MISRA C:2012 Rule 11.5).
+  - `misc.recursive_function` (error, disabled by default) — direct recursion (MISRA C:2012 Rule 17.2).
+  - `misc.sizeof_type` (info, disabled by default) — `sizeof` applied to a type name instead of an object
     (Barr-C §5.7).
   - `misc.boolean_comparison` (warning, disabled by default) — `==`/`!=` against the
     lowercase `true`/`false` literals (style rule).
-  - `misc.empty_else` (warning) — empty `else { }` block; a block containing a comment
+  - `misc.empty_else` (warning, disabled by default) — empty `else { }` block; a block containing a comment
     is accepted (Barr-C §8.3).
 
   The last six were added in [#392](https://github.com/dermot-murphy/CStyleCheck/pull/392).
   Projects upgrading with an existing `rules.yml` can add the new keys with
-  `--update-config`. 76 new tests in `tests/test_misra_rules.py`.
+  `--update-config` (they are added as `enabled: false`). 76 new tests in `tests/test_misra_rules.py`.
 - **Trend analysis — safety indicators** — `scripts/collect_metrics.py` records
   `assert_count`, `assert_density` (per KLOC SLOC), `goto_count`, `void_ptr_count`,
   `cast_count` (C-style casts) and `macro_count` (excluding include guards), counted on
@@ -57,6 +58,19 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- **New rules are opt-in (#418)** — `misc.goto_usage`, `misc.assignment_in_condition`,
+  `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`,
+  `misc.sizeof_type` and `misc.empty_else` now ship `enabled: false` in `src/rules.yml` and
+  are disabled when their key is absent from a project config (the checker reads
+  `cfg.get("enabled", False)`), as `misc.boolean_comparison` already was (#412). Upgrading
+  therefore adds no new findings to an existing project. `--update-config` adds the keys as
+  `enabled: false`. To use a rule, set `misc.<rule>.enabled: true`. The sample profile
+  `examples/embedded_project/config/strict.yml` enables all 8. **Policy** (recorded in
+  `CONTRIBUTING.md` and as CR-418 in SUP10): new rules ship `enabled: false` and default to
+  disabled when the key is absent; they may be enabled in presets. 11 new tests in
+  `tests/test_misra_rules.py`, including policy tests that fail if a rule shipped
+  `enabled: false` defaults to on in code; total 1452→1463
+  (issue [#418](https://github.com/dermot-murphy/CStyleCheck/issues/418)).
 - **`misc.boolean_comparison` is opt-in and matches lowercase `true`/`false` only (#412)** —
   the rule is now disabled by default, including when the key is missing from a project
   config (`enabled: false` in `src/rules.yml`; the checker defaults to disabled). Enabled by

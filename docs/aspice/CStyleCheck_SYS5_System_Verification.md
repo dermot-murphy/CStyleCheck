@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.13 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.14 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.14 | 2026-09-29 | Claude | #418 (CR-418): VTC-003 — the 8 post-v1.6.0 rules are opt-in (row notes UV-MSR-009); result note test total 1452→1463; referenced-document versions resynced (4) |
 | 1.13 | 2026-09-29 | Claude | #412: VTC-003 result note — test total 1444→1452; referenced-document versions resynced (4) |
 | 1.12 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | #413: test total 1439→1444 |
@@ -49,11 +50,11 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.7 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.10 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.16 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.8 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.11 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.17 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.16 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.17 |
 
 ### 3.3 System Configuration Under Test
 
@@ -166,13 +167,13 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | Misc — file quality (v1.2.x) | `misc.copyright_header`, `misc.eof_comment`, `misc.comment_ratio`, `misc.whitespace_ratio` | `test_copyright_header.py`, `test_eof_comment.py`, `test_comment_ratio.py`, `test_whitespace_ratio.py` | PASS |
 | Misc — MISRA C | `misc.lowercase_l_suffix`, `misc.octal_constant`, `misc.trigraph`, `misc.non_ascii_source` | `test_misra_rules.py` | PASS |
 | Misc — constant comparison (v1.6.0) | `misc.constant_comparison` | `test_constant_comparison.py` | PASS |
-| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` | `test_misra_rules.py` (76 tests), SITC-017 | PASS |
+| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` (all opt-in, #412, #418) | `test_misra_rules.py` (76 tests; opt-in policy UV-MSR-009, 11 tests), SITC-017 | PASS |
 | Misc — function quality (v1.4.0) | `misc.function_length`, `misc.function_doc_header`, `misc.assert_density`, `misc.null_statement_comment`, `misc.declaration_spacing` | `test_function_length.py`, `test_function_doc_header.py`, `test_assert_density.py`, `test_null_statement_comment.py`, `test_declaration_spacing.py` | PASS |
 | Misc — file constraints (v1.4.0) | `misc.file_length`, `misc.reserved_header_name` | `test_file_length.py`, `test_reserved_header_name.py` | PASS |
 | Naming (v1.4.0) | `naming.identifier_length`, `naming.no_single_char_identifiers` | `test_identifier_length.py`, `test_no_single_char_identifiers.py` | PASS |
 | Other | `reserved_name`, `spell_check`, `sign_compatibility`, `misc.declared_not_defined` | `test_reserved_name.py`, `test_spell_check.py`, `test_sign_compatibility.py`, `test_declared_not_defined.py` | PASS |
 
-**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1444 tests, all PASS, after #408, #407 and #413; 1452 tests, all PASS, after #412
+**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1444 tests, all PASS, after #408, #407 and #413; 1452 tests, all PASS, after #412; 1463 tests, all PASS, after #418
 
 ---
 

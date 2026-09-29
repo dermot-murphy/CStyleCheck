@@ -773,7 +773,7 @@ misc:
   #   Violation:  goto cleanup;
   #   Correct:    Use break / continue / early return.
   goto_usage:
-    enabled: true
+    enabled: false          # opt-in; disabled by default (#418)
     severity: error
 
   # -----------------------------------------------------------------------
@@ -787,7 +787,7 @@ misc:
   #   Violation:  while (ptr = next_node(ptr)) { … }
   #   Correct:    x = foo(); if (x) { … }
   assignment_in_condition:
-    enabled: true
+    enabled: false          # opt-in; disabled by default (#418)
     severity: warning
 
   # -----------------------------------------------------------------------
@@ -801,7 +801,7 @@ misc:
   #   Correct:    x = 1;
   #               y = 2;
   multiple_statements_per_line:
-    enabled: true
+    enabled: false          # opt-in; disabled by default (#418)
     severity: warning
 
   # -----------------------------------------------------------------------
@@ -814,7 +814,7 @@ misc:
   #   Violation:  void *buf = get_buffer();
   #   Correct:    uint8_t *buf = get_buffer();
   void_pointer:
-    enabled: true
+    enabled: false          # opt-in; disabled by default (#418)
     severity: warning
 
   # -----------------------------------------------------------------------
@@ -827,7 +827,7 @@ misc:
   #   Violation:  int fact(int n) { return n * fact(n-1); }
   #   Correct:    Use an iterative loop instead.
   recursive_function:
-    enabled: true
+    enabled: false          # opt-in; disabled by default (#418)
     severity: error
 
   # -----------------------------------------------------------------------
@@ -840,7 +840,7 @@ misc:
   #   Violation:  memset(buf, 0, sizeof(uint32_t) * N);
   #   Correct:    memset(buf, 0, sizeof(*buf) * N);
   sizeof_type:
-    enabled: true
+    enabled: false          # opt-in; disabled by default (#418)
     severity: info
 
   # -----------------------------------------------------------------------
@@ -872,7 +872,7 @@ misc:
   #   Violation:  } else {}
   #   Correct:    remove the else, or add /* intentionally empty */
   empty_else:
-    enabled: true
+    enabled: false          # opt-in; disabled by default (#418)
     severity: warning
 
 # --- Reserved / banned identifier names ---

@@ -214,3 +214,31 @@ misc:
   constant_comparison:
     enabled: true
     severity: info
+
+  # Opt-in MISRA C / Barr-C rules (#418): these ship 'enabled: false' and
+  # are off when the key is absent.  The strict profile enables all of them
+  # at their default severities.
+  goto_usage:
+    enabled: true
+    severity: error       # MISRA C:2012 Rule 15.1
+  assignment_in_condition:
+    enabled: true
+    severity: warning     # MISRA C:2012 Rule 13.4
+  multiple_statements_per_line:
+    enabled: true
+    severity: warning     # Barr-C §3.2
+  void_pointer:
+    enabled: true
+    severity: warning     # MISRA C:2012 Rule 11.5
+  recursive_function:
+    enabled: true
+    severity: error       # MISRA C:2012 Rule 17.2 (direct recursion)
+  sizeof_type:
+    enabled: true
+    severity: info        # Barr-C §5.7
+  boolean_comparison:
+    enabled: true
+    severity: warning     # style: == / != against true / false
+  empty_else:
+    enabled: true
+    severity: warning     # Barr-C §8.3

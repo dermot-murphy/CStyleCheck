@@ -2407,6 +2407,13 @@ class Checker:
             ))
 
     # -----------------------------------------------------------------------
+    # Opt-in policy (#418): the MISRA / Barr-C rules added after v1.6.0
+    # (the sections that follow: goto_usage, assignment_in_condition,
+    # multiple_statements_per_line, void_pointer, recursive_function,
+    # sizeof_type, boolean_comparison, empty_else) ship 'enabled: false' in
+    # rules.yml and are disabled when their key is absent from the config
+    # (cfg.get("enabled", False)).  See CONTRIBUTING.md.
+    # -----------------------------------------------------------------------
     # 15. MISRA C:2012 Rule 15.1 — goto forbidden
     #
     # The goto statement transfers control unconditionally to a labelled
@@ -2424,7 +2431,7 @@ class Checker:
 
     def _check_goto_usage(self) -> None:
         cfg = self.cfg.get("misc", {}).get("goto_usage", {})
-        if not cfg.get("enabled", True):
+        if not cfg.get("enabled", False):   # opt-in (#418)
             return
         sev = cfg.get("severity", "error")
 
@@ -2455,7 +2462,7 @@ class Checker:
 
     def _check_assignment_in_condition(self) -> None:
         cfg = self.cfg.get("misc", {}).get("assignment_in_condition", {})
-        if not cfg.get("enabled", True):
+        if not cfg.get("enabled", False):   # opt-in (#418)
             return
         sev = cfg.get("severity", "warning")
 
@@ -2529,7 +2536,7 @@ class Checker:
 
     def _check_multiple_statements_per_line(self) -> None:
         cfg = self.cfg.get("misc", {}).get("multiple_statements_per_line", {})
-        if not cfg.get("enabled", True):
+        if not cfg.get("enabled", False):   # opt-in (#418)
             return
         sev = cfg.get("severity", "warning")
         offset = 0
@@ -2562,7 +2569,7 @@ class Checker:
 
     def _check_void_pointer(self) -> None:
         cfg = self.cfg.get("misc", {}).get("void_pointer", {})
-        if not cfg.get("enabled", True):
+        if not cfg.get("enabled", False):   # opt-in (#418)
             return
         sev = cfg.get("severity", "warning")
         for m in self._RE_VOID_PTR.finditer(self.clean):
@@ -2595,7 +2602,7 @@ class Checker:
 
     def _check_recursive_function(self) -> None:
         cfg = self.cfg.get("misc", {}).get("recursive_function", {})
-        if not cfg.get("enabled", True):
+        if not cfg.get("enabled", False):   # opt-in (#418)
             return
         sev = cfg.get("severity", "error")
         for m in self._RE_FUNC_DEF_REC.finditer(self.clean):
@@ -2648,7 +2655,7 @@ class Checker:
 
     def _check_sizeof_type(self) -> None:
         cfg = self.cfg.get("misc", {}).get("sizeof_type", {})
-        if not cfg.get("enabled", True):
+        if not cfg.get("enabled", False):   # opt-in (#418)
             return
         sev = cfg.get("severity", "info")
         for m in self._RE_SIZEOF_TYPE.finditer(self.clean):
@@ -2717,7 +2724,7 @@ class Checker:
 
     def _check_empty_else(self) -> None:
         cfg = self.cfg.get("misc", {}).get("empty_else", {})
-        if not cfg.get("enabled", True):
+        if not cfg.get("enabled", False):   # opt-in (#418)
             return
         sev = cfg.get("severity", "warning")
         for m in self._RE_EMPTY_ELSE.finditer(self.clean):

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.7 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.8 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.8 | 2026-09-29 | Claude | Cross-reference resync with #418: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.7 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.5 | 2026-09-29 | Claude | Issue #413 (CR-413, CSC-SUP10-001 §7.1): SYS-F-046 rewritten to match the implementation — two-line banner (`CStyleCheck <version>`, copyright) on stderr before checking, written even when stdout is piped, not suppressible, never on stdout (date-time, file count and non-TTY suppression removed); RTM row updated; trace SYS-F-046 → SWE1-094 unchanged; referenced-document versions resynced (SWE1 2.9→2.10) |
@@ -66,9 +67,9 @@ The system is deployed in four integration modes:
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.16 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.10 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.13 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.17 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.11 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.14 |
 
 ### 3.4 Glossary
 

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.23 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.24 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-09-29 | Claude | Issue #418 (CR-418): UNIT-128 to UNIT-133 and UNIT-135 algorithms — `enabled` defaults to `false` when the key is absent (opt-in); §6.1 `enabled` default `true`→`false` for `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type` and `misc.empty_else`; UNIT-128 to UNIT-135 `checker.py` line numbers updated; referenced-document versions resynced (3) |
 | 1.23 | 2026-09-29 | Claude | Issue #412: UNIT-134 algorithm — disabled by default (also when the key is absent), lowercase `true`/`false` only; §6.1 `misc.boolean_comparison.enabled` default `true`→`false`; referenced-document versions resynced (3) |
 | 1.22 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.21 | 2026-09-29 | Claude | Issue #413 (CR-413): UNIT-46 step 3 specifies the two-line, unconditional stderr/log banner (SWE1-094); step 5 records the `--fix` header re-read (SWE1-015 exception); §8 SWE1-094 row; referenced-document versions resynced (SWE1 2.9→2.10, SWE2 1.14→1.15, SWE4 1.24→1.25) |
@@ -54,9 +55,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.13 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.18 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.28 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.14 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.19 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.29 |
 
 ---
 
@@ -193,14 +194,14 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-125 | `_c_source_metrics` | `scripts/collect_metrics.py` | COMP-13 (Trend-Analysis Scripts) | `scripts/collect_metrics.py` |
 | UNIT-126 | `_summarise_violations` | `scripts/collect_metrics.py` | COMP-13 (Trend-Analysis Scripts) | `scripts/collect_metrics.py` |
 | UNIT-127 | `_make_chart` (stacked) / `_stack_series` / `_category_series` | `scripts/generate_charts.py` | COMP-13 (Trend-Analysis Scripts) | `scripts/generate_charts.py` |
-| UNIT-128 | `Checker._check_goto_usage` | `checker.py:2425` | COMP-05f | `checker.py` |
-| UNIT-129 | `Checker._check_assignment_in_condition` | `checker.py:2456` | COMP-05f | `checker.py` |
-| UNIT-130 | `Checker._check_multiple_statements_per_line` | `checker.py:2530` | COMP-05f | `checker.py` |
-| UNIT-131 | `Checker._check_void_pointer` | `checker.py:2563` | COMP-05f | `checker.py` |
-| UNIT-132 | `Checker._check_recursive_function` | `checker.py:2596` | COMP-05f | `checker.py` |
-| UNIT-133 | `Checker._check_sizeof_type` | `checker.py:2649` | COMP-05f | `checker.py` |
-| UNIT-134 | `Checker._check_boolean_comparison` | `checker.py:2683` | COMP-05f | `checker.py` |
-| UNIT-135 | `Checker._check_empty_else` | `checker.py:2710` | COMP-05f | `checker.py` |
+| UNIT-128 | `Checker._check_goto_usage` | `checker.py:2432` | COMP-05f | `checker.py` |
+| UNIT-129 | `Checker._check_assignment_in_condition` | `checker.py:2463` | COMP-05f | `checker.py` |
+| UNIT-130 | `Checker._check_multiple_statements_per_line` | `checker.py:2537` | COMP-05f | `checker.py` |
+| UNIT-131 | `Checker._check_void_pointer` | `checker.py:2570` | COMP-05f | `checker.py` |
+| UNIT-132 | `Checker._check_recursive_function` | `checker.py:2603` | COMP-05f | `checker.py` |
+| UNIT-133 | `Checker._check_sizeof_type` | `checker.py:2656` | COMP-05f | `checker.py` |
+| UNIT-134 | `Checker._check_boolean_comparison` | `checker.py:2698` | COMP-05f | `checker.py` |
+| UNIT-135 | `Checker._check_empty_else` | `checker.py:2725` | COMP-05f | `checker.py` |
 
 ---
 
@@ -1578,7 +1579,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Enforce `misc.goto_usage` (SWE1-109, MISRA C:2012 Rule 15.1).
 
-**Algorithm:** Return if `misc.goto_usage.enabled` is false. For each `\bgoto\b` match in `self.clean` (comments and strings already blanked), emit `misc.goto_usage` at the match offset with the configured severity (default `error`).
+**Algorithm:** Return if `misc.goto_usage.enabled` is false; `enabled` defaults to `false` when the key is absent (opt-in, #418). For each `\bgoto\b` match in `self.clean` (comments and strings already blanked), emit `misc.goto_usage` at the match offset with the configured severity (default `error`).
 
 ---
 
@@ -1587,7 +1588,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 **Purpose:** Enforce `misc.assignment_in_condition` (SWE1-110, MISRA C:2012 Rule 13.4).
 
 **Algorithm:**
-1. Return if disabled. For each `if (`, `while (` or `for (` in `self.clean`, find the matching `)` by paren-depth counting
+1. Return if disabled (`enabled` defaults to `false` when the key is absent (opt-in, #418)). For each `if (`, `while (` or `for (` in `self.clean`, find the matching `)` by paren-depth counting
 2. For `for`, the condition is the text between the first and second top-level `;`; for `if` and `while`, it is the whole parenthesised text
 3. Flag each `=` in the condition that is not part of `==`, `!=`, `<=`, `>=` or a compound assignment (lookbehind excludes `!<>=+-*/%&|^~`, lookahead excludes `=`); default severity `warning`
 
@@ -1597,7 +1598,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Enforce `misc.multiple_statements_per_line` (SWE1-111, Barr-C §3.2).
 
-**Algorithm:** Return if disabled. For each line of `self.clean` that does not contain a `for (` header, flag every `;` followed (after optional whitespace) by an identifier start, `*` or `(`. Offsets are accumulated per line; default severity `warning`.
+**Algorithm:** Return if disabled; `enabled` defaults to `false` when the key is absent (opt-in, #418). For each line of `self.clean` that does not contain a `for (` header, flag every `;` followed (after optional whitespace) by an identifier start, `*` or `(`. Offsets are accumulated per line; default severity `warning`.
 
 ---
 
@@ -1605,7 +1606,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Enforce `misc.void_pointer` (SWE1-112, MISRA C:2012 Rule 11.5).
 
-**Algorithm:** Return if disabled. Flag every `\bvoid\s*\*` match in `self.clean` (declarations, parameters and casts alike); default severity `warning`.
+**Algorithm:** Return if disabled; `enabled` defaults to `false` when the key is absent (opt-in, #418). Flag every `\bvoid\s*\*` match in `self.clean` (declarations, parameters and casts alike); default severity `warning`.
 
 ---
 
@@ -1614,7 +1615,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 **Purpose:** Enforce `misc.recursive_function` for direct recursion (SWE1-113, MISRA C:2012 Rule 17.2).
 
 **Algorithm:**
-1. Return if disabled. For each `name(…) {` function-definition match in `self.clean` where `name` is not a C keyword, find the matching `}` by brace-depth counting
+1. Return if disabled (`enabled` defaults to `false` when the key is absent (opt-in, #418)). For each `name(…) {` function-definition match in `self.clean` where `name` is not a C keyword, find the matching `}` by brace-depth counting
 2. Search the body for `\bname\s*\(`; on the first match emit `misc.recursive_function` at the call offset (default severity `error`)
 3. Indirect recursion (A → B → A) is not detected (design limitation)
 
@@ -1624,7 +1625,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Enforce `misc.sizeof_type` (SWE1-114, Barr-C §5.7).
 
-**Algorithm:** Return if disabled. Flag each `sizeof ( T [*…] )` where `T` is a primitive type (optionally `signed`/`unsigned`/`short`/`long`), a `*_t` typedef or a capitalised type name. Lower-case variable operands (`sizeof(buf)`, `sizeof(*p)`) do not match. Default severity `info`.
+**Algorithm:** Return if disabled; `enabled` defaults to `false` when the key is absent (opt-in, #418). Flag each `sizeof ( T [*…] )` where `T` is a primitive type (optionally `signed`/`unsigned`/`short`/`long`), a `*_t` typedef or a capitalised type name. Lower-case variable operands (`sizeof(buf)`, `sizeof(*p)`) do not match. Default severity `info`.
 
 ---
 
@@ -1640,7 +1641,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Enforce `misc.empty_else` (SWE1-116, Barr-C §8.3).
 
-**Algorithm:** Return if disabled. For each `else { }` in `self.clean` whose braces contain only whitespace, re-examine the same span in the original `self.source`. If the original block contains anything other than whitespace (e.g. an `/* intentionally empty */` comment), skip it; otherwise emit `misc.empty_else` (default severity `warning`).
+**Algorithm:** Return if disabled; `enabled` defaults to `false` when the key is absent (opt-in, #418). For each `else { }` in `self.clean` whose braces contain only whitespace, re-examine the same span in the original `self.source`. If the original block contains anything other than whitespace (e.g. an `/* intentionally empty */` comment), skip it; otherwise emit `misc.empty_else` (default severity `warning`).
 
 ---
 
@@ -1676,14 +1677,14 @@ The top-level configuration keys and their types:
 | `misc.octal_constant.enabled` | `bool` | `true` | Detect octal constants (MISRA 7.1) |
 | `misc.trigraph.enabled` | `bool` | `true` | Detect trigraph sequences (MISRA 4.2) |
 | `misc.declared_not_defined.enabled` | `bool` | `false` | Cross-file declared-but-not-defined check |
-| `misc.goto_usage.enabled` / `.severity` | `bool` / `str` | `true` / `error` | Flag `goto` (MISRA 15.1) |
-| `misc.assignment_in_condition.enabled` / `.severity` | `bool` / `str` | `true` / `warning` | Flag `=` in conditions (MISRA 13.4) |
-| `misc.multiple_statements_per_line.enabled` / `.severity` | `bool` / `str` | `true` / `warning` | One statement per line (Barr-C §3.2) |
-| `misc.void_pointer.enabled` / `.severity` | `bool` / `str` | `true` / `warning` | Flag `void *` (MISRA 11.5) |
-| `misc.recursive_function.enabled` / `.severity` | `bool` / `str` | `true` / `error` | Flag direct recursion (MISRA 17.2) |
-| `misc.sizeof_type.enabled` / `.severity` | `bool` / `str` | `true` / `info` | Flag `sizeof(type)` (Barr-C §5.7) |
+| `misc.goto_usage.enabled` / `.severity` | `bool` / `str` | `false` / `error` | Flag `goto` (MISRA 15.1) (opt-in, #418) |
+| `misc.assignment_in_condition.enabled` / `.severity` | `bool` / `str` | `false` / `warning` | Flag `=` in conditions (MISRA 13.4) (opt-in, #418) |
+| `misc.multiple_statements_per_line.enabled` / `.severity` | `bool` / `str` | `false` / `warning` | One statement per line (Barr-C §3.2) (opt-in, #418) |
+| `misc.void_pointer.enabled` / `.severity` | `bool` / `str` | `false` / `warning` | Flag `void *` (MISRA 11.5) (opt-in, #418) |
+| `misc.recursive_function.enabled` / `.severity` | `bool` / `str` | `false` / `error` | Flag direct recursion (MISRA 17.2) (opt-in, #418) |
+| `misc.sizeof_type.enabled` / `.severity` | `bool` / `str` | `false` / `info` | Flag `sizeof(type)` (Barr-C §5.7) (opt-in, #418) |
 | `misc.boolean_comparison.enabled` / `.severity` | `bool` / `str` | `false` / `warning` | Flag `== true/false`, lowercase literals only (style rule, opt-in, #412) |
-| `misc.empty_else.enabled` / `.severity` | `bool` / `str` | `true` / `warning` | Flag empty `else {}` (Barr-C §8.3) |
+| `misc.empty_else.enabled` / `.severity` | `bool` / `str` | `false` / `warning` | Flag empty `else {}` (Barr-C §8.3) (opt-in, #418) |
 | `sign_compatibility.enabled` | `bool` | `true` | Cross-file sign-compatibility check |
 | `sign_compatibility.plain_char_is_signed` | `bool` | `true` | Treat plain `char` as signed |
 | `spell_check.enabled` | `bool` | `false` | Enable comment spell-check |

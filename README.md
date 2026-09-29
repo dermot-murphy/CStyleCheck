@@ -102,7 +102,7 @@ tests/
     test_comment_ratio.py   #  24 tests: misc.comment_ratio
     test_whitespace_ratio.py #  27 tests: misc.whitespace_ratio
     test_declared_not_defined.py # 39 tests: misc.declared_not_defined
-    test_misra_rules.py     # 140 tests: MISRA C / Barr-C rule coverage
+    test_misra_rules.py     # 160 tests: MISRA C / Barr-C rule coverage
     test_parameter_prefix.py #  51 tests: variable.parameter.*
     test_print_summary.py   #  11 tests: --summary per-file breakdown
     test_exclusions.py      #  28 tests: per-file exclusions
@@ -137,7 +137,7 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1452 tests)
+    cstylecheck_tests.yml      # runs the test suite on every commit (1463 tests)
     cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
@@ -521,12 +521,13 @@ Matching rules:
 
 ### Unreleased (on `develop`)
 
-- **8 new MISRA C / Barr-C rules** (#391, #392), enabled by default except
-  `misc.boolean_comparison`, which is opt-in (#412):
+- **8 new MISRA C / Barr-C rules** (#391, #392), all **opt-in** (disabled by default,
+  including when the key is absent from a project config; #412, #418). Enable each with
+  `misc.<rule>.enabled: true`:
   `misc.goto_usage` (MISRA 15.1, error), `misc.assignment_in_condition` (MISRA 13.4),
   `misc.multiple_statements_per_line` (Barr-C §3.2), `misc.void_pointer` (MISRA 11.5),
   `misc.recursive_function` (MISRA 17.2, direct recursion, error),
-  `misc.sizeof_type` (Barr-C §5.7, info), `misc.boolean_comparison` (style, opt-in, lowercase `true`/`false` only) and
+  `misc.sizeof_type` (Barr-C §5.7, info), `misc.boolean_comparison` (style, lowercase `true`/`false` only) and
   `misc.empty_else` (Barr-C §8.3). See [Rules and Configuration](Rules-and-Configuration.md).
 - **Baseline matching without line numbers** (#394) and **platform-independent baseline
   paths** (#395).
@@ -535,7 +536,8 @@ Matching rules:
 8 new rules; **81 rule IDs** total. 143 new tests (1422 total at the time).
 #408 and #407 (dedicated unit tests for the source cache, startup banner and OS path
 separator) add 17 more, #413 (startup-banner requirements aligned with the code) adds 5,
-and #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: **1452 tests** in total.
+#412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8, and #418 (the other 7 new
+rules opt-in) adds 11: **1463 tests** in total.
 
 ### New in v1.2.0 (2026-05-29)
 

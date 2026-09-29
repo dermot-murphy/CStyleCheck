@@ -1077,5 +1077,117 @@ class TestEmptyElse(unittest.TestCase):
         self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
 
 
+# ===========================================================================
+# #418 -- opt-in policy for the MISRA / Barr-C rules added after v1.6.0
+#
+# New rules ship 'enabled: false' in src/rules.yml and default to disabled
+# when their key is absent from the project config.  Each snippet below
+# triggers exactly the rule it is keyed by when that rule is enabled.
+# ===========================================================================
+
+import pytest  # noqa: E402
+import re as _re  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+
+import yaml as _yaml  # noqa: E402
+
+_REPO = _Path(__file__).resolve().parent.parent
+
+_OPTIN_SNIPPETS = {
+    "goto_usage":
+        "void f(void){ goto end; end: return; }\n",
+    "assignment_in_condition":
+        "void f(int *p){ int x; if (x = *p) { (void)x; } }\n",
+    "multiple_statements_per_line":
+        "void f(void){ int x; x = 1; x = 2; }\n",
+    "void_pointer":
+        "void f(void *buf){ (void)buf; }\n",
+    "recursive_function":
+        "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n",
+    "sizeof_type":
+        "void f(void){ int n = sizeof(int);\n(void)n; }\n",
+    "boolean_comparison":
+        "void f(bool x){ if (x == true) { (void)x; } }\n",
+    "empty_else":
+        "void f(int x){ if (x > 0) { (void)x; } else {} }\n",
+}
+
+# The 7 rules made opt-in by #418 (boolean_comparison was already opt-in, #412).
+_OPTIN_418 = sorted(k for k in _OPTIN_SNIPPETS if k != "boolean_comparison")
+
+
+@pytest.mark.parametrize("key", _OPTIN_418)
+def test_optin_rule_off_when_key_absent(key):
+    """#418: with the rule's key absent from misc, the rule does not fire."""
+    src = _OPTIN_SNIPPETS[key]
+    rule_id = f"misc.{key}"
+    # Sanity: the snippet does trigger the rule when it is enabled explicitly.
+    assert rule_id in rules(src, cfg_only(misc={key: {"enabled": True}}))
+    cfg = cfg_only()
+    cfg["misc"].pop(key, None)
+    assert rule_id not in rules(src, cfg)
+    # Also off when the key is present without an 'enabled' flag.
+    assert rule_id not in rules(src, cfg_only(misc={key: {"severity": "error"}}))
+
+
+def _shipped_disabled_misc_keys(path):
+    data = _yaml.safe_load(path.read_text(encoding="utf-8"))
+    return sorted(k for k, v in data.get("misc", {}).items()
+                  if isinstance(v, dict) and v.get("enabled") is False)
+
+
+def test_optin_policy_all_eight_shipped_disabled():
+    """#418: all 8 opt-in rules ship 'enabled: false' in both rules.yml files."""
+    for path in (_REPO / "src" / "rules.yml", _REPO / "tests" / "rules.yml"):
+        shipped_off = set(_shipped_disabled_misc_keys(path))
+        missing = sorted(set(_OPTIN_SNIPPETS) - shipped_off)
+        assert not missing, f"{path}: not shipped disabled: {missing}"
+
+
+def test_optin_policy_none_fire_with_empty_misc_config():
+    """#418 policy: every opt-in rule shipped 'enabled: false' in src/rules.yml
+    stays off when the whole misc section of the config is empty."""
+    shipped_off = set(_shipped_disabled_misc_keys(_REPO / "src" / "rules.yml"))
+    keys = sorted(k for k in _OPTIN_SNIPPETS if k in shipped_off)
+    assert len(keys) == 8
+    src = "".join(_OPTIN_SNIPPETS[k] for k in keys)
+    # Non-vacuous: with every rule enabled, each one fires on the snippet.
+    on = set(rules(src, cfg_only(misc={k: {"enabled": True} for k in keys})))
+    assert {f"misc.{k}" for k in keys} <= on
+    cfg = cfg_only()
+    cfg["misc"] = {}
+    fired = set(rules(src, cfg))
+    assert not fired & {f"misc.{k}" for k in keys}, sorted(fired)
+
+
+def test_optin_policy_code_default_matches_shipped_default():
+    """#418 policy: every misc rule shipped 'enabled: false' in src/rules.yml
+    reads its flag in code as .get("enabled", False), so a config without the
+    key keeps the rule disabled."""
+    code = "".join(
+        p.read_text(encoding="utf-8")
+        for p in sorted((_REPO / "src" / "cstylecheck").glob("*.py"))
+    )
+    bad = []
+    for key in _shipped_disabled_misc_keys(_REPO / "src" / "rules.yml"):
+        m = _re.search(r'get\("' + key + r'",\s*\{\}\)(.{0,200}?)'
+                       r'\.get\("enabled",\s*(True|False)\)', code, _re.S)
+        if m is None or m.group(2) != "False":
+            bad.append(key)
+    assert not bad, f"code defaults these shipped-off rules to on: {bad}"
+
+
+def test_optin_update_config_adds_rules_disabled(tmp_path, capsys):
+    """#418: --update-config adds the missing opt-in rule keys as disabled."""
+    from cstylecheck.config import update_config
+    cfg_file = tmp_path / "project.yml"
+    cfg_file.write_text("misc:\n  line_length:\n    enabled: true\n",
+                        encoding="utf-8")
+    assert update_config(str(cfg_file)) == 0
+    merged = _yaml.safe_load(cfg_file.read_text(encoding="utf-8"))
+    for key in _OPTIN_SNIPPETS:
+        assert merged["misc"][key]["enabled"] is False, key
+
+
 if __name__ == "__main__":
     unittest.main()
