@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.11 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.12 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,7 +20,8 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 2.11 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 2.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 2.11 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.10 | 2026-09-29 | Claude | Cross-reference resync with #422: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.9 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.8 | 2026-09-29 | Claude | #418 / #410 residual: SYS-F-020 no longer cites MISRA 14.4 for the boolean comparison rule (style rule, opt-in); cross-reference resync with #418 (3 referenced-document versions) |
@@ -70,9 +71,9 @@ The system is deployed in four integration modes:
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.20 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.14 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.17 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.21 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.15 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.18 |
 
 ### 3.4 Glossary
 

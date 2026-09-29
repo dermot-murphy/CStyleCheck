@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.17 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.18 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,7 +22,8 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 2.17 | 2026-09-29 | Claude | Issue #425: SWE1-069 — every configuration or usage error prints its message to stderr and exits 2, with the same exit code and message from the installed `cstylecheck` console script and `python src/cstylecheck.py`; RTM row cites `test_exit_code_entry_points.py`; referenced-document versions resynced (4) |
+| 2.18 | 2026-09-29 | Claude | Issue #425: SWE1-069 — every configuration or usage error prints its message to stderr and exits 2, with the same exit code and message from the installed `cstylecheck` console script and `python src/cstylecheck.py`; RTM row cites `test_exit_code_entry_points.py`; referenced-document versions resynced (4) |
+| 2.17 | 2026-09-29 | Claude | Issue #424: SWE1-001 — `functions.case` is not a case-style key; a config containing it loads normally (exit code unchanged) with one `WARNING` on `stderr` per config file (root or per-directory) saying it is not used and to use `functions.style`; SWE1-032 — function-name casing set by `functions.style` only; SWE1-075 — presets and `--init` do not write `functions.case`; RTM rows cite `test_functions_case_removed.py`; referenced-document versions resynced (4) |
 | 2.16 | 2026-09-29 | Claude | Issue #422: SWE1-001 — case-style values normalised to canonical names at load (case-insensitive, documented aliases; root and per-directory configs); SWE1-002 — an unknown case-style value is a configuration error (exit 2) naming the file, key, value and allowed values; SWE1-075 — presets and `--init` write only canonical case names; RTM rows cite `test_case_style_config.py`; referenced-document versions resynced (4) |
 | 2.15 | 2026-09-29 | Claude | Issue #420: SWE1-075 extended — `--preset misra` enables `misc.goto_usage`, `misc.assignment_in_condition`, `misc.void_pointer`, `misc.recursive_function` and `misc.empty_else`; `--preset barr-c` enables `misc.multiple_statements_per_line`, `misc.sizeof_type` and `misc.empty_else` (shipped severities; `minimal` unchanged; `misc.boolean_comparison` in no preset); `--init` asks two yes/no questions (default No) for the MISRA C:2012 and Barr-C rule sets; RTM row updated. No new requirement ID (extension of the existing preset/wizard requirement); referenced-document versions resynced (4) |
 | 2.14 | 2026-09-29 | Claude | Issue #418 (CR-418, CSC-SUP10-001 §7.1): SWE1-109 to SWE1-114 and SWE1-116 — `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type` and `misc.empty_else` disabled by default, including when the configuration key is absent (opt-in policy: new rules ship `enabled: false`); RTM rows marked opt-in; referenced-document versions resynced (4) |
@@ -65,10 +66,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.11 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.14 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.22 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.20 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.12 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.15 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.23 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.21 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
@@ -94,7 +95,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | SW-REQ-ID | Requirement | Priority | Verification | Parent |
 |---|---|---|---|---|
-| SWE1-001 | The software shall parse the YAML configuration file into a nested dictionary accessible via the `load_config()` function; every case-style value (the naming `case` / `*_case` keys, `functions.style`, `file_prefix.case`, `misc.eof_comment.filename_case`) shall be normalised to its canonical name at load, case-insensitively and accepting the documented aliases (e.g. `PascalCase` → `pascal`, `UPPER_SNAKE` → `upper_snake`), for the root config and each per-directory `.cstylecheck.yml` (#422) | Mandatory | Test | SYS-F-002, SYS-F-026, SYS-NF-007 |
+| SWE1-001 | The software shall parse the YAML configuration file into a nested dictionary accessible via the `load_config()` function; every case-style value (the naming `case` / `*_case` keys, `functions.style`, `file_prefix.case`, `misc.eof_comment.filename_case`) shall be normalised to its canonical name at load, case-insensitively and accepting the documented aliases (e.g. `PascalCase` → `pascal`, `UPPER_SNAKE` → `upper_snake`), for the root config and each per-directory `.cstylecheck.yml` (#422); `functions.case` is not a case-style key and is not used (#424): a config that contains it shall load normally, with the exit code unchanged, and the software shall print one `WARNING` on `stderr` per config file naming the file and stating that the key is not used and that `functions.style` is to be used instead | Mandatory | Test | SYS-F-002, SYS-F-026, SYS-NF-007 |
 | SWE1-002 | The software shall raise a configuration error (exit code 2) if the YAML file is absent, malformed, or unparseable, or if a case-style key holds a value that is not a canonical name or alias after normalisation; the case-style error message shall name the config file, the dotted key path, the value and the allowed values, and no file shall be checked (#422) | Mandatory | Test | SYS-F-039 |
 | SWE1-003 | The software shall apply project `--defines` substitutions to the preprocessed source text before any rule check, using the `apply_defines()` function | Mandatory | Test | SYS-F-006 |
 | SWE1-004 | The software shall load the module alias map via `load_alias_file()` and use it to derive accepted prefix strings per source file | Mandatory | Test | SYS-F-007 |
@@ -145,7 +146,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 |---|---|---|---|---|
 | SWE1-030 | The `_check_functions()` method shall detect C function definitions by regex and extract function names | Mandatory | Test | SYS-F-015 |
 | SWE1-031 | The software shall enforce module prefix on all public (non-static) function names | Mandatory | Test | SYS-F-012 |
-| SWE1-032 | The software shall enforce the configured function naming style: `object_verb`, `verb_object`, or `lower_snake` | Mandatory | Test | SYS-F-015 |
+| SWE1-032 | The software shall enforce the configured function naming style: `object_verb`, `verb_object`, or `lower_snake`, set by `functions.style`; function-name casing shall be controlled by `functions.style` only (`functions.case` has no effect, #424) | Mandatory | Test | SYS-F-015 |
 | SWE1-033 | The software shall enforce the static function prefix (e.g. `prv_`) on file-scope static function names when `functions.static_prefix.enabled: true` | Mandatory | Test | SYS-F-016 |
 | SWE1-034 | The software shall enforce `min_length` and `max_length` constraints on function names | Mandatory | Test | SYS-F-017 |
 
@@ -252,7 +253,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SWE1-072 | The `preprocessor.parse_inline_suppressions()` function shall parse `// cstylecheck: disable=rule.id` and `// cstylecheck: enable=rule.id` directives in C source, and equivalently `/* cstylecheck: disable=rule.id */` block-comment form on the same line; directives shall be case-insensitive and shall support comma-separated lists of rule IDs | Mandatory | Test | SYS-F-008, SYS-F-041 |
 | SWE1-073 | The `parse_inline_suppressions()` function shall support `disable-next-line=rule.id` to suppress the immediately following non-blank, non-comment line; a `disable=rule.id` on the same line as code shall suppress that line only; an unpaired `disable=` shall suppress from that point to end of file | Mandatory | Test | SYS-F-008, SYS-F-041 |
 | SWE1-074 | The `fixer.py` module shall apply safe mechanical in-place fixes when `--fix` is specified; `--dry-run` shall display a unified diff without writing; `--safe-only` shall restrict fixes to zero-risk substitutions; currently fixable rules: `misc.unsigned_suffix` (`42u` → `42U`), `misc.lowercase_l_suffix` (`100l` → `100L`), and `variable.pointer_prefix` (rename via `_fix_pointer_prefix` — see SWE1-093) | Mandatory | Test | SYS-F-020, SYS-F-042 |
-| SWE1-075 | The `wizard.py` module shall implement `--init` (interactive Q&A wizard writing `.cstylecheck.yml`) and `--preset barr-c\|minimal\|misra` (write pre-built config without wizard); `--init-output FILE` shall set the output path; `--overwrite` shall allow overwriting an existing file; the `misra` preset shall enable the opt-in rules `misc.goto_usage`, `misc.assignment_in_condition`, `misc.void_pointer`, `misc.recursive_function` and `misc.empty_else`, and the `barr-c` preset shall enable `misc.multiple_statements_per_line`, `misc.sizeof_type` and `misc.empty_else`, each written with `enabled: true` and its shipped default severity; the `minimal` preset shall enable none of them and no preset shall enable `misc.boolean_comparison`; after its other questions `--init` shall ask two yes/no questions, each defaulting to No (also on end of input), to enable the MISRA C:2012 rule set and the Barr-C rule set, and shall list those 7 rules with `enabled: true` only for the rule set(s) answered yes (#420); presets and `--init` shall write only canonical case-style names (keys of `_CASE_PATTERNS`), the wizard showing its friendly labels (`lower_snake`, `camelCase`, `PascalCase`) in the same order but storing `lower_snake`, `camel` or `pascal` (#422) | Mandatory | Test | SYS-F-002, SYS-F-043 |
+| SWE1-075 | The `wizard.py` module shall implement `--init` (interactive Q&A wizard writing `.cstylecheck.yml`) and `--preset barr-c\|minimal\|misra` (write pre-built config without wizard); `--init-output FILE` shall set the output path; `--overwrite` shall allow overwriting an existing file; the `misra` preset shall enable the opt-in rules `misc.goto_usage`, `misc.assignment_in_condition`, `misc.void_pointer`, `misc.recursive_function` and `misc.empty_else`, and the `barr-c` preset shall enable `misc.multiple_statements_per_line`, `misc.sizeof_type` and `misc.empty_else`, each written with `enabled: true` and its shipped default severity; the `minimal` preset shall enable none of them and no preset shall enable `misc.boolean_comparison`; after its other questions `--init` shall ask two yes/no questions, each defaulting to No (also on end of input), to enable the MISRA C:2012 rule set and the Barr-C rule set, and shall list those 7 rules with `enabled: true` only for the rule set(s) answered yes (#420); presets and `--init` shall write only canonical case-style names (keys of `_CASE_PATTERNS`), the wizard showing its friendly labels (`lower_snake`, `camelCase`, `PascalCase`) in the same order but storing `lower_snake`, `camel` or `pascal` (#422); presets and `--init` shall not write `functions.case` (#424) | Mandatory | Test | SYS-F-002, SYS-F-043 |
 | SWE1-076 | The `config.py resolve_per_dir_config()` function shall walk upward from each source file's directory when `--per-dir-config` is active, deep-merging any `.cstylecheck.yml` found on top of the root config; the nearest config wins; `root: true` in any `.cstylecheck.yml` stops the upward search; results shall be cached per directory | Mandatory | Test | SYS-F-002, SYS-F-044 |
 | SWE1-077 | The `output.py _violations_to_html()` function shall produce a self-contained HTML report when `--output-format html` is specified; the report shall include inline CSS, summary cards (errors/warnings/info/total/files), and per-file violation tables; when `--log FILE` is provided the HTML shall be written to that file, otherwise to stdout | Mandatory | Test | SYS-F-027, SYS-F-045 |
 | SWE1-078 | The `_check_function_length()` method shall report `misc.function_length` when a function body (opening `{` to closing `}`, inclusive) exceeds `misc.function_length.max_lines`; when `count_comments: false` blank and comment-only lines shall be excluded from the count | Mandatory | Test | SYS-F-020 |
@@ -315,11 +316,11 @@ The following criteria shall be met by all software requirements above. They are
 
 | SW-REQ-ID | Software Requirement Summary | Parent SYS REQ | SWE.2 Design Element | SWE.4 Test Reference |
 |---|---|---|---|---|
-| SWE1-001 to SWE1-006 | Configuration loading | SYS-F-002, F-006, F-007, F-008, F-025, F-026, SYS-NF-007, SYS-NF-009 | Configuration Loader module | `test_cli.py`, `test_dictionaries.py`; SWE1-001/002 case-style normalisation and validation: `test_case_style_config.py` (#422) |
+| SWE1-001 to SWE1-006 | Configuration loading | SYS-F-002, F-006, F-007, F-008, F-025, F-026, SYS-NF-007, SYS-NF-009 | Configuration Loader module | `test_cli.py`, `test_dictionaries.py`; SWE1-001/002 case-style normalisation and validation: `test_case_style_config.py` (#422); SWE1-001 `functions.case` warning: `test_functions_case_removed.py` (#424) |
 | SWE1-007 to SWE1-010 | Dictionary management | SYS-F-009 | Dictionary Manager module | `test_dictionaries.py` |
 | SWE1-011 to SWE1-016 | Source parsing and cache | SYS-F-010, SYS-NF-001, SYS-NF-002 | Source Parser / Cache | `test_misc.py`, `test_preprocessor.py`; SWE1-015: `test_cli_requirements.py` (UV-CLI-014 to 016); `--fix` header re-read is a documented exception |
 | SWE1-017 to SWE1-029 | Variable rules | SYS-F-013, F-014, F-017, F-018 | `Checker._check_variables()` | `test_variables.py` |
-| SWE1-030 to SWE1-034 | Function rules | SYS-F-015, F-016, F-017 | `Checker._check_functions()` | `test_functions.py` |
+| SWE1-030 to SWE1-034 | Function rules | SYS-F-015, F-016, F-017 | `Checker._check_functions()` | `test_functions.py`; SWE1-032 `functions.style` only: `test_functions_case_removed.py` (#424) |
 | SWE1-035 to SWE1-039 | Constant and macro rules | SYS-F-011, F-012, F-017, F-018 | `Checker._check_defines()` | `test_defines.py` |
 | SWE1-040 to SWE1-042 | Type rules | SYS-F-011 | `Checker._check_typedefs/enums/structs()` | `test_typedefs.py`, `test_enums.py`, `test_structs.py` |
 | SWE1-043 to SWE1-044 | Include guard rules | SYS-F-019 | `Checker._check_include_guard()` | `test_include_guards.py` |
@@ -336,7 +337,7 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-068 to SWE1-070 | CLI and entry point | SYS-F-001, F-003 to F-005, SYS-F-037 to F-040, SYS-NF-008 | CLI module / `main()` | `test_cli.py`; SWE1-069 exit code 2 from both entry points: `test_exit_code_entry_points.py` (#425) |
 | SWE1-072 to SWE1-073 | Inline suppression comments | SYS-F-008, SYS-F-041 | `preprocessor.parse_inline_suppressions()` | `test_inline_suppression.py` |
 | SWE1-074 | Auto-fix mode | SYS-F-020, SYS-F-042 | `fixer.py` Fixer module | `test_fix_mode.py` |
-| SWE1-075 | Config wizard and presets (presets / `--init` enable the standard-specific opt-in rules, #420) | SYS-F-002, SYS-F-043 | `wizard.py` Wizard module | `test_init_wizard.py`; canonical case names: `test_case_style_config.py` (#422) |
+| SWE1-075 | Config wizard and presets (presets / `--init` enable the standard-specific opt-in rules, #420) | SYS-F-002, SYS-F-043 | `wizard.py` Wizard module | `test_init_wizard.py`; canonical case names: `test_case_style_config.py` (#422); no `functions.case`: `test_functions_case_removed.py` (#424) |
 | SWE1-076 | Per-directory config | SYS-F-002, SYS-F-044 | `config.resolve_per_dir_config()` | `test_per_dir_config.py` |
 | SWE1-077 | HTML report output | SYS-F-027, SYS-F-045 | `output._violations_to_html()` | `test_html_report.py` |
 | SWE1-078 | Function length | SYS-F-020 | `Checker._check_function_length()` | `test_function_length.py` |

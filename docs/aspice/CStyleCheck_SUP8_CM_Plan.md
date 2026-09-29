@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.20 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.21 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,7 +20,8 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.20 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.21 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.20 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.19 | 2026-09-29 | Claude | Cross-reference resync with #422: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.18 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.17 | 2026-09-29 | Claude | Cross-reference resync with #418: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -68,9 +69,9 @@ This plan applies to all configuration items produced by the CStyleCheck project
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.10 |
-| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.11 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.17 |
+| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.11 |
+| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.12 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.18 |
 
 ---
 

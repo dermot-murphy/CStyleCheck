@@ -91,6 +91,8 @@ from .config import (                    # noqa: F401, E402
     load_config,
     validate_case_styles,
     _CASE_STYLE_KEYS,
+    _DEPRECATED_KEYS,
+    deprecated_key_warnings,
     load_spell_words,
     load_alias_file,
     load_exclusions_file,
