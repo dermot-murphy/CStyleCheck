@@ -941,7 +941,7 @@ def _c_source_metrics(total_violations=0, source_dir=None):
         "cc_max":              max(complexities, default=0),
         "cc_avg":              round(sum(complexities) / n, 2) if n else 0.0,
         "cc_over_threshold":   sum(1 for c in complexities if c > CC_LIMIT),
-        # Control-flow nesting depth (MISRA C:2012 Rule 15.5)
+        # Control-flow nesting depth (JSF AV / automotive profiles, <= 5)
         "nesting_max":         max(nestings, default=0),
         # Documentation coverage (ASPICE SWE.3/SWE.4)
         "dox_coverage":        dox_ratio,
