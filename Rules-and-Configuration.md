@@ -103,7 +103,12 @@ Keys that take these values: `variables.case`, `variables.global.case`,
 `variables.static.case`, `variables.local.case`, `variables.parameter.case`,
 `constants.case`, `macros.case`, `typedefs.case`, `enums.type_case`,
 `enums.member_case`, `structs.tag_case`, `structs.member_case`,
-`functions.case`, `functions.object_case` and `functions.verb_case`.
+`functions.object_case` and `functions.verb_case`.
+
+`functions.case` is not a setting: the checker never read it, so it was
+removed in #424.  Function-name casing is set by `functions.style`
+(`object_verb`, `verb_object`, `lower_snake` or `any`).  A config that still
+contains `functions.case` loads normally but prints a warning on stderr.
 
 These aliases are also accepted and are converted to the canonical name when
 the config is loaded.  Matching ignores letter case, so `PASCALCASE` and

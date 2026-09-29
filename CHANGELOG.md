@@ -114,6 +114,22 @@ Versioning follows [Semantic Versioning](https://semver.org/).
   code change; 5 new tests in `tests/test_cli_requirements.py` (total 1439→1444)
   (issue [#413](https://github.com/dermot-murphy/CStyleCheck/issues/413)).
 
+### Removed
+
+- **`functions.case` setting (#424)** — the `misra`, `barr-c` and `minimal` presets and
+  the `--init` wizard wrote `functions.case`, and #422 validated it as a case-style key,
+  but the checker never read it, so it had no effect. Function-name casing is set by
+  `functions.style` (`object_verb`, `verb_object`, `lower_snake`, `any`). The key is no
+  longer written by the presets or the wizard, and is removed from the
+  `examples/embedded_project/config/*.yml` files, `scripts/metrics_rules.yml` and
+  `Rules-and-Configuration.md`. `validate_case_styles()` no longer lists it as a
+  case-style key (14 keys). A config (root or per-directory `.cstylecheck.yml`) that
+  still contains `functions.case` loads normally with the same exit code, and prints one
+  `WARNING` on `stderr` per config file saying the key is not used and to use
+  `functions.style` instead. New helper `deprecated_key_warnings()`. 16 new tests in
+  `tests/test_functions_case_removed.py`; total 1508→1524
+  (issue [#424](https://github.com/dermot-murphy/CStyleCheck/issues/424)).
+
 ### Fixed
 
 - **Last enum member is now checked (#423)** — `enum.member_case` and

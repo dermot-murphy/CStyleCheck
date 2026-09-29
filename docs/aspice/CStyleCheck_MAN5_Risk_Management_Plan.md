@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN5-001 | **Version** | 1.12 |
+| **Document ID** | CSC-MAN5-001 | **Version** | 1.13 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,7 +20,8 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.12 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.12 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | Cross-reference resync with #422: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.10 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.9 | 2026-09-29 | Claude | Cross-reference resync with #418: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -44,9 +45,9 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.16 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.20 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.11 |
+| CSC-MAN3-001 | Project Management Plan | 1.17 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.21 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.12 |
 
 ---
 

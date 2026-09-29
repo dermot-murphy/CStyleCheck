@@ -64,7 +64,7 @@ _PRESET_BARR_C = {
                      "static":    {"s_prefix": {"enabled": True, "prefix": "s_"}},
                      "pointer_prefix": {"enabled": True, "prefix": "p_"},
                      "bool_prefix":    {"enabled": True, "prefix": "b_"}},
-    "functions":    {"enabled": True,  "severity": "error", "case": "lower_snake",
+    "functions":    {"enabled": True,  "severity": "error",
                      "min_length": 3, "max_length": 40},
     "typedefs":     {"enabled": True,  "severity": "error",
                      # Barr-C §5.1.a: type names are lower-case with an
@@ -113,7 +113,7 @@ _PRESET_MISRA = {
     "file_prefix":  {"enabled": True,  "severity": "warning"},
     "variables":    {"enabled": True,  "severity": "warning", "case": "lower_snake",
                      "min_length": 2, "max_length": 31},
-    "functions":    {"enabled": True,  "severity": "warning", "case": "lower_snake"},
+    "functions":    {"enabled": True,  "severity": "warning"},
     "misc": {
         "magic_numbers":      {"enabled": True,  "severity": "warning",
                                "exempt_values": [0, 1]},
@@ -284,7 +284,7 @@ def run_wizard(
     cfg["variables"] = var_cfg
 
     cfg["functions"] = {
-        "enabled": True, "severity": "warning", "case": var_case,
+        "enabled": True, "severity": "warning",
         "min_length": 3, "max_length": 40,
     }
 
