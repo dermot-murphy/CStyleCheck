@@ -118,7 +118,6 @@ class TestGeneratedConfigsUseCanonicalNames(unittest.TestCase):
             cfg = _wizard_yaml(label)
             with self.subTest(choice=label):
                 self.assertEqual(cfg["variables"]["case"], canon)
-                self.assertEqual(cfg["functions"]["case"], canon)
                 for key, value in _all_case_keys(cfg):
                     if key not in self._NON_NAMING:
                         self.assertIn(value, _CASE_PATTERNS, key)

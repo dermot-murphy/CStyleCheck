@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.25 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.26 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.26 | 2026-09-29 | Claude | Issue #424: SWQ-001 step 9 (`functions.case` → one `WARNING` on stderr, exit code unchanged) with a 2026-09-29 execution row; §6 SWE1-075 row cites UV-FCASE-001; BP3 evidence — suite total 1508→1524; referenced-document versions resynced (4) |
 | 1.25 | 2026-09-29 | Claude | Issue #422: SWQ-001 steps 7–8 (case-style aliases accepted and enforced; unknown case style → exit 2 naming the key) with a 2026-09-29 execution row; §6 SWE1-075 row cites UV-CASE-001 and UV-CASE-005; BP3 evidence — suite total 1481→1508; referenced-document versions resynced (4) |
 | 1.24 | 2026-09-29 | Claude | Issue #420: §6 SWE1-075 row cites UV-WIZ-001 to UV-WIZ-005 and SIT-016 (presets / `--init` enable the standard-specific opt-in rules); BP3 evidence — suite total 1463→1481; referenced-document versions resynced (4) |
 | 1.23 | 2026-09-29 | Claude | Issue #418 (CR-418): SWQ-003 post-v1.6.0 row — all 8 rules opt-in, UV-MSR-009 cited; BP3 evidence — `test_misra_rules.py` 149→160 test cases; suite total 1452→1463; referenced-document versions resynced (4) |
@@ -61,10 +62,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.16 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.22 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.16 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.19 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.17 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.23 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.17 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.20 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -113,11 +114,13 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | 6 | Run with `--exclusions exclusions.yml` | Valid exclusions file | Tool runs; excluded rules suppressed for specified files |
 | 7 | Run with a config using case-style aliases (#422) | `typedefs.case: PascalCase`, `enums.member_case: UPPER_SNAKE` | Tool runs; aliases treated as `pascal` / `upper_snake` and enforced (`typedef.case`, `enum.member_case` reported for wrongly-cased names) |
 | 8 | Run with an unknown case style (#422) | `typedefs.case: PascalCaes` | Exit 2 before any file is checked; stderr names the file, `typedefs.case`, the value and the allowed values |
+| 9 | Run with a config that still contains `functions.case` (#424) | `functions.case: lower_snake` | Tool runs; exit code as without the key; one `WARNING` on stderr naming the file and `functions.case`, saying it is not used and to use `functions.style` |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
 | 2026-06-26 | GitHub Actions (automated) | 3.10 / 3.11 / 3.12 | PASS | |
 | 2026-09-29 | Claude (local pytest run, `tests/test_case_style_config.py` UV-CASE-003 and UV-CASE-005) | 3.11 | PASS (steps 7–8) | |
+| 2026-09-29 | Claude (local pytest run, `tests/test_functions_case_removed.py` UV-FCASE-003) | 3.11 | PASS (step 9) | |
 
 ---
 
@@ -419,7 +422,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | SWE1-MISRA-001 to SWE1-MISRA-004 | MISRA C lexical rules (lowercase_l, octal, trigraph, non_ascii) | SWQ-003 | Covered |
 | SWE1-072 to SWE1-073 | Inline suppression comments | `test_inline_suppression.py` (via pytest) | Covered |
 | SWE1-074 | Auto-fix mode | `test_fix_mode.py` (via pytest) | Covered |
-| SWE1-075 | Config wizard and presets (incl. preset / `--init` opt-in rules, #420; canonical case names, #422) | `test_init_wizard.py` (via pytest; UV-WIZ-001 to UV-WIZ-005, SIT-016); `test_case_style_config.py` (UV-CASE-001, UV-CASE-005) | Covered |
+| SWE1-075 | Config wizard and presets (incl. preset / `--init` opt-in rules, #420; canonical case names, #422; no `functions.case`, #424) | `test_init_wizard.py` (via pytest; UV-WIZ-001 to UV-WIZ-005, SIT-016); `test_case_style_config.py` (UV-CASE-001, UV-CASE-005); `test_functions_case_removed.py` (UV-FCASE-001) | Covered |
 | SWE1-076 | Per-directory config | `test_per_dir_config.py` (via pytest) | Covered |
 | SWE1-077 | HTML report output | `test_html_report.py` (via pytest) | Covered |
 | SWE1-078 to SWE1-088 | v1.4.0 rules (function quality, macro safety, naming) | SWQ-003 | Covered |
@@ -509,5 +512,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1524 after #424).
 
