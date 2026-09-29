@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.7 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: §9 traceability 73→81 rule IDs (8 MISRA/Barr-C rules from #391/#392 in SS-05); scope text |
+| 1.7 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: §9 traceability 73→81 rule IDs (8 MISRA/Barr-C rules from #391/#392 in SS-05); scope text. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.6 | 2026-07-06 | Claude | ASPICE audit — scope v1.2.x→v1.6.0; traceability 53→73 rule IDs; add models.py and utils.py to subsystem table — closes #379 |
 | 1.5 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.4 | 2026-06-05 | Claude | CSC-AUD-005 corrective action — fix factual errors identified in audit |
@@ -42,9 +42,9 @@ This System Architecture Description defines the top-level structural and behavi
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 1.6 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.4 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.7 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.3 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.12 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.13 |
 
 ---
 

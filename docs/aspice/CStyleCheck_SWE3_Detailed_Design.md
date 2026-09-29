@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.18 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-002: add UNIT-128 to UNIT-135 (8 new checker methods from #391/#392) to the §4 catalogue, §5 specs and §8 RTM, and add the §6.1 config keys. AUD9-F-007: correct the §6.3 baseline file format to {"violations":[{file,line,rule,message}]}. AUD9-F-010: UNIT-125/127 specify the safety indicators and the safety_indicators/macro_metrics charts; add a SWE1-117 RTM row. AUD9-F-011: UNIT-121 to UNIT-127 component → COMP-13. AUD9-F-012: regenerate every §4 source line reference (43 corrected, 24 added). AUD9-F-013: add §5 specs for the 35 catalogued units that had none (UNIT-06 to UNIT-94). AUD9-F-004: §8 RTM rows for SWE1-062 and SWE1-MISRA-001 to 003. AUD9-F-015: header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows |
+| 1.18 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-002: add UNIT-128 to UNIT-135 (8 new checker methods from #391/#392) to the §4 catalogue, §5 specs and §8 RTM, and add the §6.1 config keys. AUD9-F-007: correct the §6.3 baseline file format to {"violations":[{file,line,rule,message}]}. AUD9-F-010: UNIT-125/127 specify the safety indicators and the safety_indicators/macro_metrics charts; add a SWE1-117 RTM row. AUD9-F-011: UNIT-121 to UNIT-127 component → COMP-13. AUD9-F-012: regenerate every §4 source line reference (43 corrected, 24 added). AUD9-F-013: add §5 specs for the 35 catalogued units that had none (UNIT-06 to UNIT-94). AUD9-F-004: §8 RTM rows for SWE1-062 and SWE1-MISRA-001 to 003. AUD9-F-015: header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.17 | 2026-09-29 | Claude | Add UNIT-121 to UNIT-127 (trend-analysis C source metric helpers in `scripts/collect_metrics.py`, stacked charts in `scripts/generate_charts.py`); update §3.1 refs (SWE1 2.6→2.7, SWE4 1.20→1.21); update §8 RTM for SWE1-102 to SWE1-108; also records UNIT-37 revision and UNIT-119/UNIT-120 (baseline, issues #394/#395, PR #397) — issue #388 |
 | 1.16 | 2026-07-06 | Claude | ASPICE audit — update scope to v1.6.0; §3.1 refs (SWE1 2.4→2.6, SWE2 1.11→1.12, SWE4 1.17→1.20); add UNIT-116 (_check_constant_comparison), UNIT-117 (_fix_pointer_prefix), UNIT-118 (fix_pointer_prefix_in_header); update UNIT-95 for block-comment form, UNIT-22 run_all order, UNIT-86 Tee; update §8 RTM — closes #373 |
 | 1.15 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SWE1 2.3→2.4, SWE2 1.9→1.11, SWE4 1.16→1.17 |
@@ -49,9 +49,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.12 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.21 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.8 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.13 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.22 |
 
 ---
 

@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.12 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SITC-017 for the 8 post-v1.6.0 MISRA/Barr-C rules (all 81 rule IDs covered), with §5 and §6 rows. AUD9-F-006: SITC-007 step 2 baseline format; add step 6 (line-independent matching). AUD9-F-026: CM baseline ID per test-case group; scope text v1.5.0→v1.6.0/develop. AUD9-F-024: Author and Description columns swapped back in earlier revision rows |
+| 1.12 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SITC-017 for the 8 post-v1.6.0 MISRA/Barr-C rules (all 81 rule IDs covered), with §5 and §6 rows. AUD9-F-006: SITC-007 step 2 baseline format; add step 6 (line-independent matching). AUD9-F-026: CM baseline ID per test-case group; scope text v1.5.0→v1.6.0/develop. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.11 | 2026-07-06 | Claude | ASPICE audit — add SITC-016 for v1.6.0 block-comment inline suppression — closes #379 |
 | 1.10 | 2026-07-06 | Claude | v1.6.0 RC — update §5 overall result 1183→1279; update §3.3 SWE5→1.13, SVD→1.22 |
 | 1.9 | 2026-06-27 | Dermot Murphy | Fix §3.3 cross-ref: SYS2 1.9→2.0 |
@@ -58,9 +58,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.0 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.5 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.7 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.3 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.7 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.9 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment

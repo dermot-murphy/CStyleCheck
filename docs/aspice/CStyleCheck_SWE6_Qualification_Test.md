@@ -22,7 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.17 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SWQ-003 → 81 rule IDs; add the post-v1.6.0 MISRA/Barr-C rule row (SWE1-109 to SWE1-116); §6 rows for SWE1-094 to SWE1-117; coverage 113/113 in scope. AUD9-F-006: SWQ-007 step 4 → a moved violation stays suppressed (SWE1-100); add steps 6/7 (multiset, path normalisation); trace SWE1-100/101. AUD9-F-003: BP3 note `test_misra_rules.py` 64→140. AUD9-F-026: commit SHA / configuration under test; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows |
+| 1.17 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SWQ-003 → 81 rule IDs; add the post-v1.6.0 MISRA/Barr-C rule row (SWE1-109 to SWE1-116); §6 rows for SWE1-094 to SWE1-117; coverage 113/113 in scope. AUD9-F-006: SWQ-007 step 4 → a moved violation stays suppressed (SWE1-100); add steps 6/7 (multiset, path normalisation); trace SWE1-100/101. AUD9-F-003: BP3 note `test_misra_rules.py` 64→140. AUD9-F-026: commit SHA / configuration under test; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.16 | 2026-07-06 | Claude | ASPICE audit — remove non-existent rule IDs `variable.local.prefix` and `variable.parameter.prefix` from SWQ-003 table; update §3.1 refs (SWE1 2.5→2.6, SWE5 1.12→1.14, SUP8 1.9→1.10); fix coverage gate note; add SWE1-094 to SWE1-099 to §3.3 criteria — closes #376 |
 | 1.15 | 2026-07-06 | Claude | v1.6.0 RC — update test count 1223→1279; §3.1 SWE5→1.13, SVD→1.22; add SWQ-003 row for constant_comparison/output behaviour improvements; update §8 execution results |
 | 1.14 | 2026-07-01 | Claude | Add misc.constant_comparison, unsigned_suffix signed-param, pointer_prefix fix to SWQ-003; update rule count 72→73; req coverage 91→94; §3.1 SWE1→2.5, SWE5→1.12; version under test 1.5.0→1.6.0 |
@@ -53,10 +53,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.6 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.14 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.6 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.10 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.8 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.15 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.9 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.13 |
 
 ### 3.2 Software Configuration Under Test
 

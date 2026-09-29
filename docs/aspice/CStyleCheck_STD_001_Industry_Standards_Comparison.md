@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-023: `goto` (P10-1, MISRA 15.1) and recursion (AV 119, MISRA 17.2) rows 🔵→🟢; add §7.8 mapping the 8 post-v1.6.0 rules (#391/#392) to the surveyed standards; footer version v1.1→v1.3 |
+| 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-023: `goto` (P10-1, MISRA 15.1) and recursion (AV 119, MISRA 17.2) rows 🔵→🟢; add §7.8 mapping the 8 post-v1.6.0 rules (#391/#392) to the surveyed standards; footer version v1.1→v1.3. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.2 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.1 | 2026-06-06 | Claude | Add `misc.file_length` (max lines per file) as unique opportunity #12; create change-request issues for all 12 opportunities |
 | 1.0 | 2026-06-06 | Claude | Initial document — full survey of 11 industry standards with coverage matrix; closes issue #217 |
@@ -42,9 +42,9 @@ The findings are presented in a unified coverage matrix and a prioritised list o
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 1.9 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.8 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.10 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.8 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.13 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.18 |
 
 ---
 

@@ -22,7 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.22 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-003: catalogue the 76 tests from #391/#392 (UV-MSR-001 to UV-MSR-008); `test_misra_rules.py` 64→140; total 1346→1422 (54 modules); coverage-gate text 1279→1422; scope text. AUD9-F-004: §7 rows for SWE1-001 to 006, 011 to 016, 057 to 064, 094 to 099 and SWE1-MISRA-001 to 003 (SWE1-015, 094 and 096 have no dedicated unit test and are recorded as gaps). AUD9-F-001/F-010: §7 rows for SWE1-109 to SWE1-117. AUD9-F-015: header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows |
+| 1.22 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-003: catalogue the 76 tests from #391/#392 (UV-MSR-001 to UV-MSR-008); `test_misra_rules.py` 64→140; total 1346→1422 (54 modules); coverage-gate text 1279→1422; scope text. AUD9-F-004: §7 rows for SWE1-001 to 006, 011 to 016, 057 to 064, 094 to 099 and SWE1-MISRA-001 to 003 (SWE1-015, 094 and 096 have no dedicated unit test and are recorded as gaps). AUD9-F-001/F-010: §7 rows for SWE1-109 to SWE1-117. AUD9-F-015: header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.21 | 2026-09-29 | Claude | Add §5.16 `test_collect_metrics.py` (54 tests, UV-MET-001 to UV-MET-010) for trend-analysis C source metrics; add §6 row (total 1279→1333, modules 53→54); add SWE1-102 to SWE1-108 to §7; update §3.1 refs (SWE1 2.6→2.7, SWE3 1.16→1.17); also records UV-CLI-011 to UV-CLI-013 and §5.13 and §6 test_improvements 67→80, §6 total 1333→1346 (baseline, issues #394/#395, PR #397) — issue #388 |
 | 1.20 | 2026-07-06 | Claude | ASPICE audit — update §6 per-row test counts for 8 modules (+56 total): test_defines.py 22→30, test_yoda_condition.py 37→46, test_inline_suppression.py 15→24, test_constant_comparison.py 21→27, test_parameter_prefix.py 47→51, test_pointer_prefix_fix.py 10→20, test_print_summary.py 7→11, test_unsigned_suffix_signed_params.py 9→15; update §3.1 refs (SWE1 2.4→2.6, SWE3 1.15→1.16, SWE5 1.11→1.14); add SWE1-091/092/093 to §7 traceability — closes #374 |
 | 1.19 | 2026-07-06 | Claude | v1.6.0 RC — update test total 1223→1279 (+56 across 8 modules: yoda_condition 37→46, inline_suppression 15→24, constant_comparison 21→27, defines 22→30, parameter_prefix 47→51, pointer_prefix_fix 10→20, print_summary 7→11, unsigned_suffix_signed_params 9→15); update coverage comment; update §5.5 SVD→1.22 |
@@ -57,10 +57,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.17 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.14 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.9 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.8 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.18 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.15 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.13 |
 
 ---
 

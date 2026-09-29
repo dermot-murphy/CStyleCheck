@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.9 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-VTC-003 → 81 rule IDs (add the non_ascii_source, constant_comparison and 8 post-v1.6.0 MISRA/Barr-C rule rows); §5/§6 counts. AUD9-F-006: SYS-VTC-007 baseline format and step 5 (line-independent matching). AUD9-F-026: CM baseline; scope text |
+| 1.9 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-VTC-003 → 81 rule IDs (add the non_ascii_source, constant_comparison and 8 post-v1.6.0 MISRA/Barr-C rule rows); §5/§6 counts. AUD9-F-006: SYS-VTC-007 baseline format and step 5 (line-independent matching). AUD9-F-026: CM baseline; scope text. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.8 | 2026-07-06 | Claude | ASPICE audit — SYS-VTC-003 71→73 rule IDs; update rule category table — closes #379 |
 | 1.7 | 2026-06-25 | Claude | AUD7-F-001 corrective action — update SYS-VTC-003 from 53 to 71 rule IDs; expand rule-category table with rules added since v1.0.0; update overall verdict to v1.4.1 |
 | 1.6 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
@@ -45,11 +45,11 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 1.6 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.5 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.4 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.3 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.7 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.12 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.7 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.13 |
 
 ### 3.3 System Configuration Under Test
 

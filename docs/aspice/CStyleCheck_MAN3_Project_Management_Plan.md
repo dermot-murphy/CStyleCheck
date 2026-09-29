@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.8 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-020: §3.1 version 1.2.0→1.6.0; §4.1 scope (12 modules, 81 rules, 1422 tests / 54 modules, 5 workflows, Dependabot); WBS-07/10 to 16 statuses; §8 schedule adds actuals for v1.2.0 to v1.6.0, CSC-AUD-009 and the planned v1.7.0. AUD9-F-011: add §10.3 Trend-Analysis Metrics Monitoring (parent of SWE1-102 to SWE1-108 and SWE1-117) and a §10.1 row; `rules.yml` → `cstylecheck_rules.yml` |
+| 1.8 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-020: §3.1 version 1.2.0→1.6.0; §4.1 scope (12 modules, 81 rules, 1422 tests / 54 modules, 5 workflows, Dependabot); WBS-07/10 to 16 statuses; §8 schedule adds actuals for v1.2.0 to v1.6.0, CSC-AUD-009 and the planned v1.7.0. AUD9-F-011: add §10.3 Trend-Analysis Metrics Monitoring (parent of SWE1-102 to SWE1-108 and SWE1-117) and a §10.1 row; `rules.yml` → `cstylecheck_rules.yml`. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.7 | 2026-07-06 | Claude | ASPICE audit — update WBS-07 and WBS-10 stale test counts — closes #379 |
 | 1.6 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.5 | 2026-06-04 | Claude | Deep accuracy audit: fix §3 Purpose version text v1.0.0→v1.2.0, update SWE1-001 version in §3.2 (1.3→1.5) — resolves issue #163 |
@@ -52,11 +52,11 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | System Requirements Specification | 1.6 |
-| CSC-SWE1-001 | Software Requirements Specification | 1.9 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.7 |
-| CSC-MAN5-001 | Risk Management Plan | 1.3 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.4 |
+| CSC-SYS2-001 | System Requirements Specification | 2.3 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.8 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.13 |
+| CSC-MAN5-001 | Risk Management Plan | 1.5 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.10 |
 
 ---
 

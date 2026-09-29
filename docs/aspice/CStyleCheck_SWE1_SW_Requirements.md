@@ -22,7 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 2.8 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-001: add SWE1-109 to SWE1-116 for the 8 rules from #391/#392, with RTM rows, Appendix A.1 rows and A.2/A.3 updates. AUD9-F-007: SWE1-065 baseline file is a JSON object with a `violations` array. AUD9-F-008: SWE1-094 parent → SYS-F-046; add SYS-F-041 to SYS-F-046 and the other uncited SYS IDs as parents; add upward-trace note. AUD9-F-010: add SWE1-117 (trend safety indicators) and extend the SWE1-108 chart list. AUD9-F-011: SWE1-102 to SWE1-108 parent → CSC-MAN3-001 §10.3; add SWE1-100/101 RTM rows. AUD9-F-015: header date. AUD9-F-025: renumber §4.15 to §4.18 so sections are in order. AUD9-F-024: Author and Description columns swapped back in earlier revision rows |
+| 2.8 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-001: add SWE1-109 to SWE1-116 for the 8 rules from #391/#392, with RTM rows, Appendix A.1 rows and A.2/A.3 updates. AUD9-F-007: SWE1-065 baseline file is a JSON object with a `violations` array. AUD9-F-008: SWE1-094 parent → SYS-F-046; add SYS-F-041 to SYS-F-046 and the other uncited SYS IDs as parents; add upward-trace note. AUD9-F-010: add SWE1-117 (trend safety indicators) and extend the SWE1-108 chart list. AUD9-F-011: SWE1-102 to SWE1-108 parent → CSC-MAN3-001 §10.3; add SWE1-100/101 RTM rows. AUD9-F-015: header date. AUD9-F-025: renumber §4.15 to §4.18 so sections are in order. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 2.7 | 2026-09-29 | Claude | Add §4.18 SWE1-102 to SWE1-108 (trend-analysis C source code metrics: LOC, cyclomatic complexity, size, documentation, coupling, violation quality, backward-compatible charts/wiki); update RTM; also records SWE1-065 to SWE1-067 revision and SWE1-100/SWE1-101 (baseline matching, issues #394/#395, PR #397) — issue #388 |
 | 2.6 | 2026-07-06 | Claude | ASPICE audit — add SWE1-094 to SWE1-099 for v1.6.0 features (startup banner, copyright in --version, block-comment suppression, OS path sep, --summary restructure, fn_start correction, fn-ptr typedef exemption); update SWE1-072 for /* */ form; update SWE1-074 for pointer_prefix fix; update §3.2 cross-refs (SWE2 1.11→1.12, SUP8 1.9→1.10); update RTM — closes #371 |
 | 2.5 | 2026-07-01 | Claude | Add SWE1-091 (misc.constant_comparison), SWE1-092 (unsigned_suffix signed-param exemption), SWE1-093 (variable.pointer_prefix auto-fix); update §3.1 scope to v1.6.0; update RTM — closes #339 #340 #341 |
@@ -56,10 +56,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.0 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.5 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.12 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.10 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.3 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.7 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.13 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.13 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
