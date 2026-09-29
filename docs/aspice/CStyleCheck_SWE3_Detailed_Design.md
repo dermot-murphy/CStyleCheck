@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.24 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.25 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.25 | 2026-09-29 | Claude | Issue #420: UNIT-98 algorithm — two new yes/no prompts (default No) for the MISRA C:2012 and Barr-C opt-in rule sets, rules listed with shipped severity; UNIT-99 — `PRESETS` enable the matching opt-in rules via `MISRA_OPT_IN_RULES` / `BARR_C_OPT_IN_RULES`, deterministic ordered output, `barr-c` suffix keys in nested form; §4 catalogue line numbers (`wizard.py:191`, `wizard.py:307`); referenced-document versions resynced (3) |
 | 1.24 | 2026-09-29 | Claude | Issue #418 (CR-418): UNIT-128 to UNIT-133 and UNIT-135 algorithms — `enabled` defaults to `false` when the key is absent (opt-in); §6.1 `enabled` default `true`→`false` for `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type` and `misc.empty_else`; UNIT-128 to UNIT-135 `checker.py` line numbers updated; referenced-document versions resynced (3) |
 | 1.23 | 2026-09-29 | Claude | Issue #412: UNIT-134 algorithm — disabled by default (also when the key is absent), lowercase `true`/`false` only; §6.1 `misc.boolean_comparison.enabled` default `true`→`false`; referenced-document versions resynced (3) |
 | 1.22 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -55,9 +56,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.14 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.19 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.29 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.15 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.20 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.30 |
 
 ---
 
@@ -164,8 +165,8 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-95 | `parse_inline_suppressions` | `preprocessor.py:77` | COMP-04 | `preprocessor.py` |
 | UNIT-96 | `apply_fixes` | `fixer.py:337` | COMP-08 | `fixer.py` |
 | UNIT-97 | `unified_diff` | `fixer.py:386` | COMP-08 | `fixer.py` |
-| UNIT-98 | `run_wizard` | `wizard.py:155` | COMP-09 | `wizard.py` |
-| UNIT-99 | `run_preset` | `wizard.py:253` | COMP-09 | `wizard.py` |
+| UNIT-98 | `run_wizard` | `wizard.py:191` | COMP-09 | `wizard.py` |
+| UNIT-99 | `run_preset` | `wizard.py:307` | COMP-09 | `wizard.py` |
 | UNIT-100 | `resolve_per_dir_config` | `config.py:686` | COMP-10 | `config.py` |
 | UNIT-101 | `_violations_to_html` | `output.py:182` | COMP-07 | `output.py` |
 | UNIT-102 | `_check_function_length` | `checker.py:2953` | COMP-05f | `checker.py` |
@@ -881,10 +882,11 @@ src/cstylecheck/
 **Purpose:** Interactive Q&A wizard that prompts the user for project preferences, writes `.cstylecheck.yml` directly, and returns 0 on success or 1 on abort.
 
 **Algorithm:**
-1. Present a short series of prompts (project name, preferred naming style, which rule categories to enable)
-2. Build a YAML-serialisable config dict based on user answers
-3. Write the config to `output_path` (default `.cstylecheck.yml`); if the file exists and `overwrite` is False → return 1 (abort)
-4. Return 0 on success
+1. Present a short series of prompts (project name, preferred naming style, which rule categories to enable) via `_ask` / `_ask_bool` / `_ask_choice`; an empty answer or `EOFError` returns the default
+2. Ask last, with `_ask_bool` (default No), "Enable MISRA C:2012 rules (…)?" and "Enable Barr-C rules (…)?" (#420); asking them last keeps the order of the earlier questions unchanged
+3. Build a YAML-serialisable config dict based on user answers; `misc` always lists the 7 rules of `MISRA_OPT_IN_RULES` ∪ `BARR_C_OPT_IN_RULES` (MISRA order first, `misc.empty_else` once) with the shipped severity from `_OPT_IN_SEVERITY`, and `enabled: true` only when the matching question was answered yes (`misc.empty_else` when either was); `misc.boolean_comparison` is not listed
+4. Write the config to `output_path` (default `.cstylecheck.yml`); if the file exists and `overwrite` is False → return 1 (abort)
+5. Return 0 on success
 
 ---
 
@@ -893,9 +895,11 @@ src/cstylecheck/
 **Purpose:** Write a pre-built config file for the named preset without running the wizard; returns 0 on success or 1 on error.
 
 **Algorithm:**
-1. Look up `preset_name` (`barr-c`, `minimal`, or `misra`) from the built-in `PRESETS` dict
+1. Look up `preset_name` (`barr-c`, `minimal`, or `misra`) from the built-in `PRESETS` dict; an unknown name → emit the list of presets via `print_fn`; return 1
 2. If `output_path` exists and `overwrite` is false → emit error via `print_fn`; return 1
-3. Write YAML to `output_path` (default `.cstylecheck.yml`); return 0
+3. Write YAML to `output_path` (default `.cstylecheck.yml`) with `yaml.dump(sort_keys=False)`, so keys keep the preset's insertion order and output is deterministic; return 0
+
+**`PRESETS` contents for the opt-in rules (#420):** `_opt_in()` builds ordered `misc` entries `{enabled: true, severity: <shipped default>}` from `MISRA_OPT_IN_RULES` (`goto_usage`, `assignment_in_condition`, `void_pointer`, `recursive_function`, `empty_else`) for `misra` and from `BARR_C_OPT_IN_RULES` (`multiple_statements_per_line`, `sizeof_type`, `empty_else`) for `barr-c`; `minimal` lists none of them and no preset lists `boolean_comparison`. The `barr-c` preset writes `typedefs.suffix` and `enums.type_suffix` in the nested `{enabled, suffix}` form read by UNIT-26/UNIT-27 (a bare string raised `AttributeError` in the checker).
 
 ---
 

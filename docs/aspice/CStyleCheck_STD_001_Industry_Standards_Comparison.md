@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-STD-001 | **Version** | 1.8 |
+| **Document ID** | CSC-STD-001 | **Version** | 1.9 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.9 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.8 | 2026-09-29 | Claude | Cross-reference resync with #418: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.7 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -47,9 +48,9 @@ The findings are presented in a unified coverage matrix and a prioritised list o
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.14 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.19 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.24 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.15 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.20 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.25 |
 
 ---
 

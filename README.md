@@ -112,7 +112,7 @@ tests/
     test_workflow_config.py #  16 tests: CI workflow regression tests
     test_inline_suppression.py # 24 tests: inline suppression comments
     test_fix_mode.py        #  11 tests: auto-fix engine (apply_fixes, unified_diff)
-    test_init_wizard.py     #  15 tests: config wizard and presets (run_wizard, run_preset)
+    test_init_wizard.py     #  33 tests: config wizard and presets (run_wizard, run_preset)
     test_per_dir_config.py  #  15 tests: per-directory config resolution
     test_html_report.py     #  20 tests: HTML report output
     test_function_length.py #  11 tests: misc.function_length
@@ -137,7 +137,7 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1463 tests)
+    cstylecheck_tests.yml      # runs the test suite on every commit (1481 tests)
     cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
@@ -426,6 +426,17 @@ The wizard asks a short series of questions (project name, preferred naming styl
 which rule categories to enable) and writes `.cstylecheck.yml` in the current
 directory.
 
+The last two questions enable the standard-specific opt-in rules (#420); both
+default to **No** (Enter, or end of input, keeps the default):
+
+```text
+Enable MISRA C:2012 rules (goto 15.1, assignment in condition 13.4, void pointer 11.5, recursion 17.2, empty else 15.7)? [y/N]:
+Enable Barr-C rules (one statement per line §3.2, sizeof on objects §5.7, empty else §8.3)? [y/N]:
+```
+
+The generated file always lists these rules, with `enabled: true` only for the
+standard(s) answered yes, so they can be toggled later.
+
 ### Pre-built presets
 
 Skip the wizard entirely with `--preset`:
@@ -435,6 +446,17 @@ python src/cstylecheck.py --preset barr-c     # Barr-C:2018 recommended defaults
 python src/cstylecheck.py --preset minimal    # minimal rule set for adoption
 python src/cstylecheck.py --preset misra      # MISRA-oriented rule set
 ```
+
+The standard-specific presets also enable the matching opt-in rules (#420), at
+their shipped default severities:
+
+| Preset | Opt-in rules enabled |
+|---|---|
+| `misra` | `misc.goto_usage` (15.1), `misc.assignment_in_condition` (13.4), `misc.void_pointer` (11.5), `misc.recursive_function` (17.2), `misc.empty_else` (related to 15.7) |
+| `barr-c` | `misc.multiple_statements_per_line` (§3.2), `misc.sizeof_type` (§5.7), `misc.empty_else` (§8.3) |
+| `minimal` | none |
+
+`misc.boolean_comparison` is a style rule and is in no preset.
 
 ### Options
 
@@ -529,6 +551,10 @@ Matching rules:
   `misc.recursive_function` (MISRA 17.2, direct recursion, error),
   `misc.sizeof_type` (Barr-C §5.7, info), `misc.boolean_comparison` (style, lowercase `true`/`false` only) and
   `misc.empty_else` (Barr-C §8.3). See [Rules and Configuration](Rules-and-Configuration.md).
+- **Presets enable the matching opt-in rules** (#420): `--preset misra` enables the five
+  MISRA rules above (plus `misc.empty_else`), `--preset barr-c` enables the three Barr-C
+  rules, and `--init` asks two new yes/no questions (default No). `misc.boolean_comparison`
+  is in no preset.
 - **Baseline matching without line numbers** (#394) and **platform-independent baseline
   paths** (#395).
 - **Trend-analysis C source metrics** (#388), including safety indicators.
@@ -537,7 +563,7 @@ Matching rules:
 #408 and #407 (dedicated unit tests for the source cache, startup banner and OS path
 separator) add 17 more, #413 (startup-banner requirements aligned with the code) adds 5,
 #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8, and #418 (the other 7 new
-rules opt-in) adds 11: **1463 tests** in total.
+rules opt-in) adds 11, and #420 (preset opt-in rules) adds 18: **1481 tests** in total.
 
 ### New in v1.2.0 (2026-05-29)
 

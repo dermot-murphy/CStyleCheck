@@ -176,5 +176,201 @@ class TestCLIInit(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
+# Issue #420 — presets / --init wizard enable the standard-specific opt-in
+# (#418) rules.
+# ---------------------------------------------------------------------------
+
+_OPT_IN_RULES = (
+    "goto_usage", "assignment_in_condition", "multiple_statements_per_line",
+    "void_pointer", "recursive_function", "sizeof_type",
+    "boolean_comparison", "empty_else",
+)
+_MISRA_RULES  = {"goto_usage", "assignment_in_condition", "void_pointer",
+                 "recursive_function", "empty_else"}
+_BARR_C_RULES = {"multiple_statements_per_line", "sizeof_type", "empty_else"}
+
+# One snippet that triggers every opt-in rule when it is enabled.
+_TRIGGER_SRC = """\
+#include <stdint.h>
+#include <stdbool.h>
+static int fact(int n)
+{
+    int x = 0; int y = 1;
+    void *p = 0;
+    if (x = n) { x = 1; }
+    if (n == true) { x = 2; } else {}
+    x = (int)sizeof(uint32_t);
+    goto done;
+done:
+    return n * fact(n - 1);
+}
+"""
+
+
+def _shipped_severity(rule):
+    import yaml
+    data = yaml.safe_load((_SRC / "rules.yml").read_text(encoding="utf-8"))
+    return data["misc"][rule]["severity"]
+
+
+def _enabled_opt_in(cfg):
+    misc = cfg.get("misc", {})
+    return {r for r in _OPT_IN_RULES if misc.get(r, {}).get("enabled", False)}
+
+
+def _preset_cfg(name):
+    import yaml
+    with tempfile.TemporaryDirectory() as td:
+        out = str(Path(td) / "out.yml")
+        assert run_preset(name, output_path=out, print_fn=lambda *_: None) == 0
+        return yaml.safe_load(Path(out).read_text(encoding="utf-8"))
+
+
+def _fired_opt_in(cfg):
+    from harness import rules
+    return {r.split(".", 1)[1] for r in rules(_TRIGGER_SRC, cfg)
+            if r.startswith("misc.") and r.split(".", 1)[1] in _OPT_IN_RULES}
+
+
+class TestPresetOptInRules(unittest.TestCase):
+    """#420: preset contents for the opt-in (#418) rules."""
+
+    def test_misra_enables_exactly_five_rules(self):
+        self.assertEqual(_enabled_opt_in(_preset_cfg("misra")), _MISRA_RULES)
+
+    def test_barr_c_enables_exactly_three_rules(self):
+        self.assertEqual(_enabled_opt_in(_preset_cfg("barr-c")), _BARR_C_RULES)
+
+    def test_minimal_enables_none(self):
+        self.assertEqual(_enabled_opt_in(_preset_cfg("minimal")), set())
+
+    def test_boolean_comparison_in_no_preset(self):
+        for name in PRESETS:
+            self.assertNotIn("boolean_comparison",
+                             _preset_cfg(name).get("misc", {}), name)
+
+    def test_enabled_rules_carry_shipped_severity(self):
+        for name in ("misra", "barr-c"):
+            misc = _preset_cfg(name)["misc"]
+            for rule in _enabled_opt_in({"misc": misc}):
+                self.assertIs(misc[rule]["enabled"], True)
+                self.assertEqual(misc[rule]["severity"],
+                                 _shipped_severity(rule), f"{name}:{rule}")
+
+    def test_preset_output_is_deterministic(self):
+        for name in PRESETS:
+            with tempfile.TemporaryDirectory() as td:
+                a, b = Path(td) / "a.yml", Path(td) / "b.yml"
+                run_preset(name, output_path=str(a), print_fn=lambda *_: None)
+                run_preset(name, output_path=str(b), print_fn=lambda *_: None)
+                self.assertEqual(a.read_text(), b.read_text(), name)
+
+    def test_yaml_lists_rules_with_enabled_true_and_severity(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td) / "out.yml"
+            run_preset("misra", output_path=str(out), print_fn=lambda *_: None)
+            text = out.read_text()
+            self.assertIn("  goto_usage:\n    enabled: true\n    severity: error\n",
+                          text)
+
+    def test_checker_fires_exactly_the_enabled_rules(self):
+        expected = {"misra": _MISRA_RULES, "barr-c": _BARR_C_RULES,
+                    "minimal": set()}
+        for name, want in expected.items():
+            with self.subTest(preset=name):
+                self.assertEqual(_fired_opt_in(_preset_cfg(name)), want)
+
+    def test_cli_with_generated_config_fires_enabled_rules(self):
+        expected = {"misra": _MISRA_RULES, "barr-c": _BARR_C_RULES,
+                    "minimal": set()}
+        for name, want in expected.items():
+            with self.subTest(preset=name), tempfile.TemporaryDirectory() as td:
+                cfg = str(Path(td) / "cfg.yml")
+                src = Path(td) / "test_module.c"
+                src.write_text(_TRIGGER_SRC, encoding="utf-8")
+                rc, _ = _cli("--preset", name, "--init-output", cfg)
+                self.assertEqual(rc, 0)
+                _, out = _cli("--config", cfg, str(src))
+                self.assertNotIn("Traceback", out)
+                fired = {r for r in _OPT_IN_RULES if f"[misc.{r}]" in out}
+                self.assertEqual(fired, want)
+
+
+class TestWizardOptInRules(unittest.TestCase):
+    """#420: --init wizard MISRA / Barr-C opt-in rule prompts."""
+
+    # Answers to the 8 questions that precede the #420 prompts.
+    _PRE = [""] * 8
+
+    def _run(self, *answers, eof_after=None):
+        import yaml
+        prompts = []
+        it = iter(answers)
+
+        def _prompt(msg):
+            prompts.append(msg)
+            if eof_after is not None and len(prompts) > eof_after:
+                raise EOFError
+            try:
+                return next(it)
+            except StopIteration:
+                return ""
+        with tempfile.TemporaryDirectory() as td:
+            out = str(Path(td) / "out.yml")
+            rc = run_wizard(output_path=out, prompt_fn=_prompt,
+                            print_fn=lambda *_: None)
+            self.assertEqual(rc, 0)
+            return yaml.safe_load(Path(out).read_text()), prompts
+
+    def test_prompts_are_asked_last_with_default_no(self):
+        _, prompts = self._run()
+        self.assertEqual(len(prompts), 10)
+        self.assertIn("Enable MISRA C:2012 rules", prompts[8])
+        self.assertIn("15.1", prompts[8])
+        self.assertTrue(prompts[8].endswith("[y/N]: "))
+        self.assertIn("Enable Barr-C rules", prompts[9])
+        self.assertIn("§3.2", prompts[9])
+        self.assertTrue(prompts[9].endswith("[y/N]: "))
+
+    def test_defaults_enable_none(self):
+        cfg, _ = self._run()
+        self.assertEqual(_enabled_opt_in(cfg), set())
+
+    def test_explicit_no_enables_none(self):
+        cfg, _ = self._run(*self._PRE, "n", "N")
+        self.assertEqual(_enabled_opt_in(cfg), set())
+
+    def test_eof_keeps_default_no(self):
+        cfg, _ = self._run(eof_after=0)
+        self.assertEqual(_enabled_opt_in(cfg), set())
+
+    def test_yes_to_misra_enables_misra_rules(self):
+        cfg, _ = self._run(*self._PRE, "y", "")
+        self.assertEqual(_enabled_opt_in(cfg), _MISRA_RULES)
+
+    def test_yes_to_barr_c_enables_barr_c_rules(self):
+        cfg, _ = self._run(*self._PRE, "", "y")
+        self.assertEqual(_enabled_opt_in(cfg), _BARR_C_RULES)
+
+    def test_yes_to_both_enables_union(self):
+        cfg, _ = self._run(*self._PRE, "y", "yes")
+        self.assertEqual(_enabled_opt_in(cfg), _MISRA_RULES | _BARR_C_RULES)
+
+    def test_rules_listed_with_shipped_severity(self):
+        cfg, _ = self._run()
+        misc = cfg["misc"]
+        for rule in _MISRA_RULES | _BARR_C_RULES:
+            self.assertIn(rule, misc)
+            self.assertEqual(misc[rule]["severity"], _shipped_severity(rule))
+        self.assertNotIn("boolean_comparison", misc)
+
+    def test_wizard_config_fires_enabled_rules(self):
+        cfg, _ = self._run(*self._PRE, "y", "y")
+        self.assertEqual(_fired_opt_in(cfg), _MISRA_RULES | _BARR_C_RULES)
+        cfg, _ = self._run()
+        self.assertEqual(_fired_opt_in(cfg), set())
+
+
+# ---------------------------------------------------------------------------
 if __name__ == "__main__":
     unittest.main()

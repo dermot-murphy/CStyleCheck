@@ -16,6 +16,33 @@ from pathlib import Path
 # Preset configurations
 # ---------------------------------------------------------------------------
 
+# Opt-in (#418) rules each standard-specific preset / wizard answer enables
+# (#420).  Order is the order the keys are written to the generated YAML.
+# misc.boolean_comparison is a style rule and belongs to no preset.
+MISRA_OPT_IN_RULES: tuple[str, ...] = (   # 15.1, 13.4, 11.5, 17.2, 15.7
+    "goto_usage", "assignment_in_condition", "void_pointer",
+    "recursive_function", "empty_else",
+)
+BARR_C_OPT_IN_RULES: tuple[str, ...] = (  # §3.2, §5.7, §8.3
+    "multiple_statements_per_line", "sizeof_type", "empty_else",
+)
+# Shipped rules.yml default severities (unchanged by presets / wizard).
+_OPT_IN_SEVERITY: dict[str, str] = {
+    "goto_usage":                   "error",
+    "assignment_in_condition":      "warning",
+    "multiple_statements_per_line": "warning",
+    "void_pointer":                 "warning",
+    "recursive_function":           "error",
+    "sizeof_type":                  "info",
+    "empty_else":                   "warning",
+}
+
+
+def _opt_in(rules: tuple[str, ...]) -> dict:
+    """Return ordered ``misc`` entries enabling *rules* at shipped severity."""
+    return {r: {"enabled": True, "severity": _OPT_IN_SEVERITY[r]} for r in rules}
+
+
 _PRESET_BARR_C = {
     "file_prefix":  {"enabled": True,  "severity": "error",
                      "separator": "_", "case": "lower",
@@ -30,9 +57,13 @@ _PRESET_BARR_C = {
     "functions":    {"enabled": True,  "severity": "error", "case": "lower_snake",
                      "min_length": 3, "max_length": 40},
     "typedefs":     {"enabled": True,  "severity": "error",
-                     "case": "PascalCase", "suffix": "_t"},
+                     "case": "PascalCase",
+                     # nested {enabled, suffix} form per rules.yml; a bare
+                     # string crashed the checker (#420)
+                     "suffix": {"enabled": True, "suffix": "_t"}},
     "enums":        {"enabled": True,  "severity": "error",
-                     "type_case": "PascalCase", "type_suffix": "_t",
+                     "type_case": "PascalCase",
+                     "type_suffix": {"enabled": True, "suffix": "_t"},
                      "member_case": "UPPER_SNAKE"},
     "misc": {
         "line_length":        {"enabled": True,  "severity": "warning", "max": 120},
@@ -42,6 +73,8 @@ _PRESET_BARR_C = {
                                "require_on_unsigned_constants": True},
         "lowercase_l_suffix": {"enabled": True,  "severity": "error"},
         "eof_comment":        {"enabled": False},
+        # Opt-in rules (#418) enabled by this preset (#420): §3.2, §5.7, §8.3.
+        **_opt_in(BARR_C_OPT_IN_RULES),
     },
     "sign_compatibility": {"enabled": True, "severity": "warning"},
 }
@@ -75,6 +108,9 @@ _PRESET_MISRA = {
         "lowercase_l_suffix": {"enabled": True,  "severity": "error"},
         "octal_constant":     {"enabled": True,  "severity": "error"},
         "trigraph":           {"enabled": True,  "severity": "error"},
+        # Opt-in rules (#418) enabled by this preset (#420): 15.1, 13.4,
+        # 11.5, 17.2 and empty else (related to 15.7).
+        **_opt_in(MISRA_OPT_IN_RULES),
     },
     "sign_compatibility": {"enabled": True, "severity": "error"},
 }
@@ -198,6 +234,17 @@ def run_wizard(
     copyright = _ask_bool("Require copyright header in every file?",  False, prompt_fn)
     misra     = _ask_bool("Enable MISRA-C checks (unsigned suffix, octal, trigraph)?", False, prompt_fn)
     sign      = _ask_bool("Enable sign-compatibility checks across TUs?",             False, prompt_fn)
+    # Opt-in standard-specific rules (#420).  Asked last so the order of the
+    # earlier questions (and any scripted stdin answering them) is unchanged;
+    # EOF / Enter keeps the default of No.
+    misra_rules = _ask_bool(
+        "Enable MISRA C:2012 rules (goto 15.1, assignment in condition 13.4, "
+        "void pointer 11.5, recursion 17.2, empty else 15.7)?",
+        False, prompt_fn)
+    barr_rules = _ask_bool(
+        "Enable Barr-C rules (one statement per line §3.2, "
+        "sizeof on objects §5.7, empty else §8.3)?",
+        False, prompt_fn)
 
     # ---- Build config ----
     cfg: dict = {}
@@ -239,6 +286,13 @@ def run_wizard(
         "trigraph":           {"enabled": misra, "severity": "error"},
         "copyright_header":   {"enabled": copyright, "severity": "error"},
     }
+    # Opt-in rules (#418/#420): always listed so they can be toggled later;
+    # enabled only when the matching question was answered yes.  empty_else
+    # is shared by both standards.
+    for rule in dict.fromkeys(MISRA_OPT_IN_RULES + BARR_C_OPT_IN_RULES):
+        on = ((misra_rules and rule in MISRA_OPT_IN_RULES)
+              or (barr_rules and rule in BARR_C_OPT_IN_RULES))
+        cfg["misc"][rule] = {"enabled": on, "severity": _OPT_IN_SEVERITY[rule]}
 
     cfg["sign_compatibility"] = {"enabled": sign, "severity": "warning"}
 

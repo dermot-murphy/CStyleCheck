@@ -1651,7 +1651,7 @@ if (retries == MAX_RETRIES)    /* ✓ one side is a variable   */
 **Rule ID:** `misc.goto_usage` — **disabled by default (opt-in, #418)**
 
 The rule is off unless enabled. A project config that omits the key does not
-enable it. To enable it:
+enable it. `--preset misra` enables it, as does answering yes to the MISRA C:2012 question in `--init` (#420). To enable it by hand:
 
 ```yaml
 misc:
@@ -1676,7 +1676,7 @@ identifiers that merely contain `goto`, are ignored.
 **Rule ID:** `misc.assignment_in_condition` — **disabled by default (opt-in, #418)**
 
 The rule is off unless enabled. A project config that omits the key does not
-enable it. To enable it:
+enable it. `--preset misra` enables it, as does answering yes to the MISRA C:2012 question in `--init` (#420). To enable it by hand:
 
 ```yaml
 misc:
@@ -1704,7 +1704,7 @@ if (status != 0) { … }
 **Rule ID:** `misc.multiple_statements_per_line` — **disabled by default (opt-in, #418)**
 
 The rule is off unless enabled. A project config that omits the key does not
-enable it. To enable it:
+enable it. `--preset barr-c` enables it, as does answering yes to the Barr-C question in `--init` (#420). To enable it by hand:
 
 ```yaml
 misc:
@@ -1729,7 +1729,7 @@ for (i = 0U; i < n; i++)        /* ✓ for-header semicolons are separators */
 **Rule ID:** `misc.void_pointer` — **disabled by default (opt-in, #418)**
 
 The rule is off unless enabled. A project config that omits the key does not
-enable it. To enable it:
+enable it. `--preset misra` enables it, as does answering yes to the MISRA C:2012 question in `--init` (#420). To enable it by hand:
 
 ```yaml
 misc:
@@ -1754,7 +1754,7 @@ uint8_t *p_buf = pool_Get();    /* ✓ */
 **Rule ID:** `misc.recursive_function` — **disabled by default (opt-in, #418)**
 
 The rule is off unless enabled. A project config that omits the key does not
-enable it. To enable it:
+enable it. `--preset misra` enables it, as does answering yes to the MISRA C:2012 question in `--init` (#420). To enable it by hand:
 
 ```yaml
 misc:
@@ -1781,7 +1781,7 @@ uint32_t math_Factorial(uint32_t n)
 **Rule ID:** `misc.sizeof_type` — **disabled by default (opt-in, #418)**
 
 The rule is off unless enabled. A project config that omits the key does not
-enable it. To enable it:
+enable it. `--preset barr-c` enables it, as does answering yes to the Barr-C question in `--init` (#420). To enable it by hand:
 
 ```yaml
 misc:
@@ -1806,7 +1806,7 @@ memset(p_buf, 0, sizeof(*p_buf) * N);     /* ✓ */
 **Rule ID:** `misc.boolean_comparison` — **disabled by default (opt-in, #412)**
 
 The rule is off unless enabled. A project config that omits the key does not
-enable it. To enable it:
+enable it. No preset enables it, and `--init` does not ask about it (#420): it is a style rule, not part of MISRA C or Barr-C. To enable it by hand:
 
 ```yaml
 misc:
@@ -1841,7 +1841,7 @@ if (TRUE == u8_flag)   /* ✓ not checked: macro, not a <stdbool.h> literal */
 **Rule ID:** `misc.empty_else` — **disabled by default (opt-in, #418)**
 
 The rule is off unless enabled. A project config that omits the key does not
-enable it. To enable it:
+enable it. `--preset misra` (related to MISRA C:2012 Rule 15.7) and `--preset barr-c` both enable it, as does answering yes to either the MISRA C:2012 or the Barr-C question in `--init` (#420). To enable it by hand:
 
 ```yaml
 misc:

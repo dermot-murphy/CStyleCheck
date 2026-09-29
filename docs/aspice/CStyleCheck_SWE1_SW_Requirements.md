@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.14 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.15 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.15 | 2026-09-29 | Claude | Issue #420: SWE1-075 extended — `--preset misra` enables `misc.goto_usage`, `misc.assignment_in_condition`, `misc.void_pointer`, `misc.recursive_function` and `misc.empty_else`; `--preset barr-c` enables `misc.multiple_statements_per_line`, `misc.sizeof_type` and `misc.empty_else` (shipped severities; `minimal` unchanged; `misc.boolean_comparison` in no preset); `--init` asks two yes/no questions (default No) for the MISRA C:2012 and Barr-C rule sets; RTM row updated. No new requirement ID (extension of the existing preset/wizard requirement); referenced-document versions resynced (4) |
 | 2.14 | 2026-09-29 | Claude | Issue #418 (CR-418, CSC-SUP10-001 §7.1): SWE1-109 to SWE1-114 and SWE1-116 — `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type` and `misc.empty_else` disabled by default, including when the configuration key is absent (opt-in policy: new rules ship `enabled: false`); RTM rows marked opt-in; referenced-document versions resynced (4) |
 | 2.13 | 2026-09-29 | Claude | Issue #412: SWE1-115 — `misc.boolean_comparison` disabled by default (also when the key is absent) and restricted to lowercase `true`/`false`; `TRUE`/`FALSE` macros not flagged; RTM row marked opt-in; referenced-document versions resynced (4) |
 | 2.12 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -62,10 +63,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.8 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.11 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.19 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.17 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.9 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.12 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.20 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.18 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
@@ -249,7 +250,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SWE1-072 | The `preprocessor.parse_inline_suppressions()` function shall parse `// cstylecheck: disable=rule.id` and `// cstylecheck: enable=rule.id` directives in C source, and equivalently `/* cstylecheck: disable=rule.id */` block-comment form on the same line; directives shall be case-insensitive and shall support comma-separated lists of rule IDs | Mandatory | Test | SYS-F-008, SYS-F-041 |
 | SWE1-073 | The `parse_inline_suppressions()` function shall support `disable-next-line=rule.id` to suppress the immediately following non-blank, non-comment line; a `disable=rule.id` on the same line as code shall suppress that line only; an unpaired `disable=` shall suppress from that point to end of file | Mandatory | Test | SYS-F-008, SYS-F-041 |
 | SWE1-074 | The `fixer.py` module shall apply safe mechanical in-place fixes when `--fix` is specified; `--dry-run` shall display a unified diff without writing; `--safe-only` shall restrict fixes to zero-risk substitutions; currently fixable rules: `misc.unsigned_suffix` (`42u` → `42U`), `misc.lowercase_l_suffix` (`100l` → `100L`), and `variable.pointer_prefix` (rename via `_fix_pointer_prefix` — see SWE1-093) | Mandatory | Test | SYS-F-020, SYS-F-042 |
-| SWE1-075 | The `wizard.py` module shall implement `--init` (interactive Q&A wizard writing `.cstylecheck.yml`) and `--preset barr-c\|minimal\|misra` (write pre-built config without wizard); `--init-output FILE` shall set the output path; `--overwrite` shall allow overwriting an existing file | Mandatory | Test | SYS-F-002, SYS-F-043 |
+| SWE1-075 | The `wizard.py` module shall implement `--init` (interactive Q&A wizard writing `.cstylecheck.yml`) and `--preset barr-c\|minimal\|misra` (write pre-built config without wizard); `--init-output FILE` shall set the output path; `--overwrite` shall allow overwriting an existing file; the `misra` preset shall enable the opt-in rules `misc.goto_usage`, `misc.assignment_in_condition`, `misc.void_pointer`, `misc.recursive_function` and `misc.empty_else`, and the `barr-c` preset shall enable `misc.multiple_statements_per_line`, `misc.sizeof_type` and `misc.empty_else`, each written with `enabled: true` and its shipped default severity; the `minimal` preset shall enable none of them and no preset shall enable `misc.boolean_comparison`; after its other questions `--init` shall ask two yes/no questions, each defaulting to No (also on end of input), to enable the MISRA C:2012 rule set and the Barr-C rule set, and shall list those 7 rules with `enabled: true` only for the rule set(s) answered yes (#420) | Mandatory | Test | SYS-F-002, SYS-F-043 |
 | SWE1-076 | The `config.py resolve_per_dir_config()` function shall walk upward from each source file's directory when `--per-dir-config` is active, deep-merging any `.cstylecheck.yml` found on top of the root config; the nearest config wins; `root: true` in any `.cstylecheck.yml` stops the upward search; results shall be cached per directory | Mandatory | Test | SYS-F-002, SYS-F-044 |
 | SWE1-077 | The `output.py _violations_to_html()` function shall produce a self-contained HTML report when `--output-format html` is specified; the report shall include inline CSS, summary cards (errors/warnings/info/total/files), and per-file violation tables; when `--log FILE` is provided the HTML shall be written to that file, otherwise to stdout | Mandatory | Test | SYS-F-027, SYS-F-045 |
 | SWE1-078 | The `_check_function_length()` method shall report `misc.function_length` when a function body (opening `{` to closing `}`, inclusive) exceeds `misc.function_length.max_lines`; when `count_comments: false` blank and comment-only lines shall be excluded from the count | Mandatory | Test | SYS-F-020 |
@@ -333,7 +334,7 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-068 to SWE1-070 | CLI and entry point | SYS-F-001, F-003 to F-005, SYS-F-037 to F-040, SYS-NF-008 | CLI module / `main()` | `test_cli.py` |
 | SWE1-072 to SWE1-073 | Inline suppression comments | SYS-F-008, SYS-F-041 | `preprocessor.parse_inline_suppressions()` | `test_inline_suppression.py` |
 | SWE1-074 | Auto-fix mode | SYS-F-020, SYS-F-042 | `fixer.py` Fixer module | `test_fix_mode.py` |
-| SWE1-075 | Config wizard and presets | SYS-F-002, SYS-F-043 | `wizard.py` Wizard module | `test_init_wizard.py` |
+| SWE1-075 | Config wizard and presets (presets / `--init` enable the standard-specific opt-in rules, #420) | SYS-F-002, SYS-F-043 | `wizard.py` Wizard module | `test_init_wizard.py` |
 | SWE1-076 | Per-directory config | SYS-F-002, SYS-F-044 | `config.resolve_per_dir_config()` | `test_per_dir_config.py` |
 | SWE1-077 | HTML report output | SYS-F-027, SYS-F-045 | `output._violations_to_html()` | `test_html_report.py` |
 | SWE1-078 | Function length | SYS-F-020 | `Checker._check_function_length()` | `test_function_length.py` |
