@@ -12,6 +12,11 @@
 - Fix **all open GitHub issues**. Issues labelled `deferred` are parked (closed as not planned) — ignore them unless reopened.
 - Never self-merge a PR — create the PR and wait for an external merge.
 
+## Approval / authorisation (ASPICE)
+
+- The repo owner's merge of a PR **is** the authorisation of every work product, review record, audit sign-off, CR approval / QA sign-off and Risk Owner confirmation that the PR introduces (CSC-DEV-002 §5.2). No signatures are collected.
+- In approval tables write `By merge (CSC-DEV-002 §5.2) | On PR merge`; never leave `*pending*` signature entries or list signatures as an open owner action.
+
 ## Git / tagging
 
 - Tag pushes (`git push origin <tag>`) return HTTP 403 from this environment's proxy. Tell the user to push tags manually from their local machine.
