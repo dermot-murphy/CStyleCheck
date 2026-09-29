@@ -155,7 +155,7 @@ misc:
 
   yoda_condition:
     enabled: true
-    severity: warning     # MISRA C:2012 Rule 14.4: constant on left of comparison.
+    severity: warning     # Constant on left of == / != comparison.
 
   block_comment_spacing:
     enabled: false

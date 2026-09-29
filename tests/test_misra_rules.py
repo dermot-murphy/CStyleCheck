@@ -969,7 +969,10 @@ class TestBooleanComparison(unittest.TestCase):
         src = "void f(int flag){ if (flag == true) { (void)flag; } }\n"
         msgs = [v.message for v in run(src, _bool_cfg()) if v.rule == RULE_BOOL]
         self.assertTrue(msgs)
-        self.assertIn("14.4", msgs[0])
+        self.assertIn("(redundant comparison with a Boolean literal)", msgs[0])
+        # #410: MISRA C:2012 Rule 14.4 is not enforced by this rule.
+        self.assertNotIn("MISRA", msgs[0])
+        self.assertNotIn("14.4", msgs[0])
 
     def test_in_comment_not_flagged(self):
         src = "void f(void){ /* if (flag == true) */ return; }\n"

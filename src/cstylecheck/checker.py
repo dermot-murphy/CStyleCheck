@@ -357,7 +357,7 @@ class Checker:
         self._check_void_pointer()                  # MISRA C:2012 Rule 11.5
         self._check_recursive_function()            # MISRA C:2012 Rule 17.2
         self._check_sizeof_type()                   # Barr-C §5.7
-        self._check_boolean_comparison()            # MISRA C:2012 Rule 14.4
+        self._check_boolean_comparison()            # style: redundant == true/false
         self._check_empty_else()                    # Barr-C §8.3
         if self._spell_dict is not None:
             self._check_spelling()
@@ -2660,12 +2660,13 @@ class Checker:
             )
 
     # -----------------------------------------------------------------------
-    # MISRA C:2012 Rule 14.4 — boolean comparison with true/false
+    # Boolean comparison with true/false (style rule)
     # -----------------------------------------------------------------------
-    # The controlling expression shall be essentially Boolean.  Comparing a
-    # boolean expression to 'true' or 'false' with == / != is redundant and
-    # may hide type coercion bugs.  Use the boolean expression directly or
-    # negate it.
+    # Comparing a boolean expression to 'true' or 'false' with == / != is
+    # redundant and may hide type coercion bugs.  Use the boolean expression
+    # directly or negate it.  This is a style rule only: MISRA C:2012
+    # Rule 14.4 (essentially Boolean controlling expressions) is NOT enforced
+    # here -- 'if (flag == true)' is compliant with it (see #410).
     #
     #   Violation:  if (flag == true)   { … }
     #   Violation:  while (done == false) { … }
@@ -2690,7 +2691,7 @@ class Checker:
                 m.start(), sev, "misc.boolean_comparison",
                 "Comparing a boolean expression to true/false with == or != "
                 "is redundant; use the expression directly or negate it with ! "
-                "(MISRA C:2012 Rule 14.4)"
+                "(redundant comparison with a Boolean literal)"
             )
 
     # -----------------------------------------------------------------------

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.14 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.15 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.15 | 2026-09-29 | Claude | Issue #410: COMP-05f table — `misc.boolean_comparison` is a style rule; MISRA 14.4 citation removed |
 | 1.14 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE3 1.18→1.19, SYS3 1.7→1.8) |
 | 1.13 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-002: add the 8 new checks (#391/#392) to COMP-05f (diagram and method table, with the previously missing v1.4.0–v1.6.0 methods), to the §8.1 run_all() sequence and to the §10 RTM (SWE1-109 to SWE1-116). AUD9-F-006: SWA-IF-09 → Counter multiset; §8.1 baseline steps. AUD9-F-011: add COMP-13 Trend-Analysis Scripts (out of package) and §10 rows for SWE1-100/101, SWE1-102 to SWE1-108 and SWE1-117. AUD9-F-015: record the #397 edits (COMP-06 functions, baseline key, SWA-IF-08) made to v1.12 without a revision; header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.12 | 2026-07-06 | Claude | ASPICE audit — v1.6.0: update scope to v1.6.0; §3.1 refs (SWE1 2.4→2.6, SWE3 1.15→1.16, SUP8 1.9→1.10); add models.py/utils.py as COMP-11/COMP-12; update COMP-01 (startup banner), COMP-05b (fn_start), COMP-07 (Tee.log_print), COMP-08 (pointer_prefix fix); update §10 RTM with SWE1-091–099 — closes #372 |
@@ -221,7 +222,7 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | `_check_void_pointer()` | `misc.void_pointer` (MISRA 11.5) |
 | `_check_recursive_function()` | `misc.recursive_function` (MISRA 17.2, direct) |
 | `_check_sizeof_type()` | `misc.sizeof_type` (Barr-C §5.7) |
-| `_check_boolean_comparison()` | `misc.boolean_comparison` (MISRA 14.4) |
+| `_check_boolean_comparison()` | `misc.boolean_comparison` (style) |
 | `_check_empty_else()` | `misc.empty_else` (Barr-C §8.3) |
 
 #### COMP-05g — Sign Checker (`class SignChecker`)

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-STD-001 | **Version** | 1.4 |
+| **Document ID** | CSC-STD-001 | **Version** | 1.5 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.5 | 2026-09-29 | Claude | Issue #410: §7.8 `misc.boolean_comparison` row — MISRA C:2012 column no longer cites Rule 14.4 (style rule; `if (flag == true)` is compliant with Rule 14.4) |
 | 1.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE3 1.18→1.19) |
 | 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-023: `goto` (P10-1, MISRA 15.1) and recursion (AV 119, MISRA 17.2) rows 🔵→🟢; add §7.8 mapping the 8 post-v1.6.0 rules (#391/#392) to the surveyed standards; footer version v1.1→v1.3. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.2 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
@@ -300,7 +301,7 @@ The matrices above are a snapshot of the v1.2 survey (2026-06-06). Rules later i
 | `misc.void_pointer` | warning | Rule 11.5 (all `void *` use) | — | — | 📏 (MISRA-only) |
 | `misc.recursive_function` | error | Rule 17.2 (direct only) | — | P10-1, AV 119 | 🔵 → 🟢 |
 | `misc.sizeof_type` | info | — | §5.7 | — | not listed |
-| `misc.boolean_comparison` | warning | Rule 14.4 | — | — | 📏 (MISRA-only) |
+| `misc.boolean_comparison` | warning | — (style rule; Rule 14.4 not enforced) | — | — | 📏 (MISRA-only) |
 | `misc.empty_else` | warning | Rule 15.7 (intent) | §8.3 | — | not listed |
 
 These rules give early, style-level feedback. They do not replace a MISRA C checker; cppcheck `--misra` remains authoritative for the MISRA rules listed (CSC-SWE1-001 Appendix A).
@@ -462,4 +463,4 @@ These rules are best handled by a dedicated formatting tool. CStyleCheck should 
 
 ---
 
-*End of Industry Standards Comparison Report — CSC-STD-001 v1.4*
+*End of Industry Standards Comparison Report — CSC-STD-001 v1.5*

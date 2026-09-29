@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.19 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.20 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.20 | 2026-09-29 | Claude | Issue #410: UNIT-134 purpose and §6.1 `misc.boolean_comparison` row — style rule; MISRA C:2012 Rule 14.4 citation removed; message suffix "(redundant comparison with a Boolean literal)" |
 | 1.19 | 2026-09-29 | Claude | Issue #407: UNIT-03 algorithm records the `os.path.normpath()` step (SWE1-096); UNIT-41 note and §8 SWE1-096 row corrected (separator applied by UNIT-03; `Violation.__str__()` renders the path verbatim); referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE4 1.22→1.24) |
 | 1.18 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-002: add UNIT-128 to UNIT-135 (8 new checker methods from #391/#392) to the §4 catalogue, §5 specs and §8 RTM, and add the §6.1 config keys. AUD9-F-007: correct the §6.3 baseline file format to {"violations":[{file,line,rule,message}]}. AUD9-F-010: UNIT-125/127 specify the safety indicators and the safety_indicators/macro_metrics charts; add a SWE1-117 RTM row. AUD9-F-011: UNIT-121 to UNIT-127 component → COMP-13. AUD9-F-012: regenerate every §4 source line reference (43 corrected, 24 added). AUD9-F-013: add §5 specs for the 35 catalogued units that had none (UNIT-06 to UNIT-94). AUD9-F-004: §8 RTM rows for SWE1-062 and SWE1-MISRA-001 to 003. AUD9-F-015: header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.17 | 2026-09-29 | Claude | Add UNIT-121 to UNIT-127 (trend-analysis C source metric helpers in `scripts/collect_metrics.py`, stacked charts in `scripts/generate_charts.py`); update §3.1 refs (SWE1 2.6→2.7, SWE4 1.20→1.21); update §8 RTM for SWE1-102 to SWE1-108; also records UNIT-37 revision and UNIT-119/UNIT-120 (baseline, issues #394/#395, PR #397) — issue #388 |
@@ -1626,9 +1627,9 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 ### UNIT-134 — `Checker._check_boolean_comparison() → None`
 
-**Purpose:** Enforce `misc.boolean_comparison` (SWE1-115, MISRA C:2012 Rule 14.4).
+**Purpose:** Enforce `misc.boolean_comparison` (SWE1-115), a style rule against redundant comparison with a Boolean literal. It does not enforce MISRA C:2012 Rule 14.4 (`if (flag == true)` is compliant with it).
 
-**Algorithm:** Return if disabled. Flag each `==` or `!=` with `true`, `false`, `TRUE` or `FALSE` on either side in `self.clean`; default severity `warning`.
+**Algorithm:** Return if disabled. Flag each `==` or `!=` with `true`, `false`, `TRUE` or `FALSE` on either side in `self.clean`; default severity `warning`. The message ends with "(redundant comparison with a Boolean literal)".
 
 ---
 
@@ -1678,7 +1679,7 @@ The top-level configuration keys and their types:
 | `misc.void_pointer.enabled` / `.severity` | `bool` / `str` | `true` / `warning` | Flag `void *` (MISRA 11.5) |
 | `misc.recursive_function.enabled` / `.severity` | `bool` / `str` | `true` / `error` | Flag direct recursion (MISRA 17.2) |
 | `misc.sizeof_type.enabled` / `.severity` | `bool` / `str` | `true` / `info` | Flag `sizeof(type)` (Barr-C §5.7) |
-| `misc.boolean_comparison.enabled` / `.severity` | `bool` / `str` | `true` / `warning` | Flag `== true/false` (MISRA 14.4) |
+| `misc.boolean_comparison.enabled` / `.severity` | `bool` / `str` | `true` / `warning` | Flag `== true/false` (style rule) |
 | `misc.empty_else.enabled` / `.severity` | `bool` / `str` | `true` / `warning` | Flag empty `else {}` (Barr-C §8.3) |
 | `sign_compatibility.enabled` | `bool` | `true` | Cross-file sign-compatibility check |
 | `sign_compatibility.plain_char_is_signed` | `bool` | `true` | Treat plain `char` as signed |
