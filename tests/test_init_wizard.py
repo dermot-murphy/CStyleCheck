@@ -124,7 +124,8 @@ class TestRunWizard(unittest.TestCase):
                             prompt_fn=self._answers("camelCase", *[""] * 20))
             self.assertEqual(rc, 0)
             data = yaml.safe_load(Path(out).read_text())
-            self.assertEqual(data["variables"]["case"], "camelCase")
+            # The on-screen label camelCase is stored as canonical "camel" (#422)
+            self.assertEqual(data["variables"]["case"], "camel")
 
     def test_wizard_aborts_if_file_exists_and_user_says_no(self):
         with tempfile.TemporaryDirectory() as td:

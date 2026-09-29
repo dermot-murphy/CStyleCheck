@@ -22,6 +22,8 @@ try:
 except ImportError:
     sys.exit("PyYAML is required: pip install pyyaml")
 
+from .utils import _CASE_PATTERNS, normalize_case_style
+
 
 # ---------------------------------------------------------------------------
 # Options file expansion  (--options-file)
@@ -248,6 +250,104 @@ def update_config(config_path: str) -> int:
     return 0
 
 
+# ---------------------------------------------------------------------------
+# Case-style validation  (#422)
+# ---------------------------------------------------------------------------
+
+# Every config key whose value is a naming case style checked through
+# utils._CASE_PATTERNS.  Values are normalised in place (aliases such as
+# PascalCase -> pascal) and anything unknown is a config error.
+_CASE_STYLE_KEYS: tuple[tuple[str, ...], ...] = (
+    ("variables", "case"),
+    ("variables", "global", "case"),
+    ("variables", "static", "case"),
+    ("variables", "local", "case"),
+    ("variables", "parameter", "case"),
+    ("constants", "case"),
+    ("macros", "case"),
+    ("typedefs", "case"),
+    ("enums", "type_case"),
+    ("enums", "member_case"),
+    ("structs", "tag_case"),
+    ("structs", "member_case"),
+    ("functions", "case"),
+    ("functions", "object_case"),
+    ("functions", "verb_case"),
+)
+
+# Style-like keys with their own (non-_CASE_PATTERNS) value sets.  Matched
+# case-insensitively; functions.style also accepts the lower_snake aliases.
+_ENUM_STYLE_KEYS: dict[tuple[str, ...], tuple[str, ...]] = {
+    ("functions", "style"):                   ("object_verb", "verb_object",
+                                               "lower_snake", "any"),
+    ("file_prefix", "case"):                  ("lower", "upper", "as_is"),
+    ("misc", "eof_comment", "filename_case"): ("lower", "upper", "preserve"),
+}
+
+
+def validate_case_styles(cfg, source: str = "config") -> list:
+    """
+    Normalise every case-style value in *cfg* in place and return a list
+    of error strings for values that are not recognised (#422).
+
+    Each error names the dotted key path, the offending value and the
+    allowed values.  An empty list means the config is valid.  Keys that
+    are absent (or whose parent is not a mapping) are skipped.
+    """
+    errors: list = []
+    if not isinstance(cfg, dict):
+        return errors
+
+    def _slot(path):
+        node = cfg
+        for k in path[:-1]:
+            node = node.get(k) if isinstance(node, dict) else None
+        if isinstance(node, dict) and path[-1] in node:
+            return node
+        return None
+
+    allowed_cases = ", ".join(_CASE_PATTERNS)
+    for path in _CASE_STYLE_KEYS:
+        node = _slot(path)
+        if node is None:
+            continue
+        raw = node[path[-1]]
+        canon = normalize_case_style(raw)
+        if isinstance(canon, str) and canon in _CASE_PATTERNS:
+            node[path[-1]] = canon
+        else:
+            errors.append(
+                f"{source}: invalid case style {raw!r} for "
+                f"'{'.'.join(path)}' (allowed: {allowed_cases}; "
+                f"aliases such as PascalCase, camelCase, UPPER_SNAKE and "
+                f"snake_case are accepted)")
+
+    for path, allowed in _ENUM_STYLE_KEYS.items():
+        node = _slot(path)
+        if node is None:
+            continue
+        raw = node[path[-1]]
+        canon = raw.strip().lower() if isinstance(raw, str) else raw
+        if path == ("functions", "style"):
+            canon = normalize_case_style(canon)
+        if canon in allowed:
+            node[path[-1]] = canon
+        else:
+            errors.append(
+                f"{source}: invalid value {raw!r} for "
+                f"'{'.'.join(path)}' (allowed: {', '.join(allowed)})")
+    return errors
+
+
+def _exit_on_case_style_errors(cfg, source: str) -> None:
+    """Validate *cfg*; on error print each message and exit with code 2."""
+    errors = validate_case_styles(cfg, source)
+    if errors:
+        for err in errors:
+            print(f"ERROR: {err}", file=sys.stderr)
+        sys.exit(2)
+
+
 def load_config(path: str) -> dict:
     cfg_path = Path(path)
     if not cfg_path.exists():
@@ -269,9 +369,12 @@ def load_config(path: str) -> dict:
             f"Save the file as UTF-8 (without BOM) and try again."
         )
     try:
-        return yaml.safe_load(text)
+        cfg = yaml.safe_load(text)
     except yaml.YAMLError as e:
         sys.exit(f"Cannot parse config file '{path}': {e}")
+    # Normalise case-style aliases; unknown styles are a config error (#422).
+    _exit_on_case_style_errors(cfg, path)
+    return cfg
 
 
 def load_spell_words(path: str) -> set:
@@ -672,6 +775,9 @@ def _walk_per_dir_configs(dirpath: Path) -> list:
             except (OSError, yaml.YAMLError):
                 data = None
             if isinstance(data, dict):
+                # Same case-style normalisation / validation as the root
+                # config: an unknown style is a config error (#422).
+                _exit_on_case_style_errors(data, str(candidate))
                 chain.append(data)
                 if data.get("root"):
                     break

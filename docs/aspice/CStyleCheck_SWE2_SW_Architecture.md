@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.20 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.21 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.21 | 2026-09-29 | Claude | Cross-reference resync with #422: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.20 | 2026-09-29 | Claude | Cross-reference resync with #420: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.19 | 2026-09-29 | Claude | Cross-reference resync with #418: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.18 | 2026-09-29 | Claude | Issue #412: COMP-05f table — `misc.boolean_comparison` marked opt-in (disabled by default); referenced-document versions resynced (4) |
@@ -54,10 +55,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.15 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.12 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.25 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.18 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.16 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.13 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.26 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.19 |
 
 ---
 
