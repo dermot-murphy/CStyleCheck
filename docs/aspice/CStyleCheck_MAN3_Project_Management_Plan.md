@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN3-001 | **Version** | 1.15 |
+| **Document ID** | CSC-MAN3-001 | **Version** | 1.16 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.16 | 2026-09-29 | Claude | #424: test total 1508→1524, 56→57 test modules (`functions.case` removal tests); referenced-document versions resynced (5) |
 | 1.15 | 2026-09-29 | Claude | #422: test total 1481→1508, 55→56 test modules (case-style config validation tests); referenced-document versions resynced (5) |
 | 1.14 | 2026-09-29 | Claude | #420: test total 1463→1481; referenced-document versions resynced (5) |
 | 1.13 | 2026-09-29 | Claude | #418 (CR-418): test total 1452→1463; referenced-document versions resynced (5) |
@@ -59,11 +60,11 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | System Requirements Specification | 2.10 |
-| CSC-SWE1-001 | Software Requirements Specification | 2.16 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.19 |
-| CSC-MAN5-001 | Risk Management Plan | 1.11 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.16 |
+| CSC-SYS2-001 | System Requirements Specification | 2.11 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.17 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.20 |
+| CSC-MAN5-001 | Risk Management Plan | 1.12 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.17 |
 
 ---
 
@@ -72,7 +73,7 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 ### 4.1 In Scope
 
 - Design, implementation, and testing of `src/cstylecheck/` package (12 sub-modules) implementing 81 rule IDs (73 at v1.6.0; 8 added on `develop` by #391/#392)
-- Test suite (1508 pytest tests across 56 test modules on `develop`, 2026-09-29, after #408, #407, #413, #412, #418, #420 and #422; 1279 at v1.6.0)
+- Test suite (1524 pytest tests across 57 test modules on `develop`, 2026-09-29, after #408, #407, #413, #412, #418, #420, #422 and #424; 1279 at v1.6.0)
 - Docker image build and multi-platform publication to GHCR and Docker Hub
 - GitHub Action integration (`action.yml`)
 - pre-commit hook integration (`.pre-commit-hooks.yml`)
@@ -135,10 +136,10 @@ Requirements  →  Architecture  →  Detailed Design  →  Implementation
 | WBS-04 | Software architecture (SWE.2) | 6h | Claude | Complete |
 | WBS-05 | Detailed design (SWE.3) | 8h | Claude | Complete |
 | WBS-06 | Core linter implementation | 80h | Claude | Complete |
-| WBS-07 | Test suite (1508 tests on `develop`) | 40h | Claude | Complete (ongoing per feature) |
+| WBS-07 | Test suite (1524 tests on `develop`) | 40h | Claude | Complete (ongoing per feature) |
 | WBS-08 | Docker packaging and CI | 8h | Claude | Complete |
 | WBS-09 | GitHub Action and pre-commit | 6h | Claude | Complete |
-| WBS-10 | Unit verification (SWE.4) | 4h | Claude | Complete — 1508 tests across 56 modules; SWE4 catalogue updated (CSC-SWE4-001 v1.24, #405, #408, #407) |
+| WBS-10 | Unit verification (SWE.4) | 4h | Claude | Complete — 1524 tests across 57 modules; SWE4 catalogue updated (CSC-SWE4-001 v1.24, #405, #408, #407) |
 | WBS-11 | Integration testing (SWE.5) | 4h | Claude | Complete — #152 closed 2026-05-28; SIT-001 to SIT-027 recorded |
 | WBS-12 | Qualification testing (SWE.6) | 4h | Claude | Complete — SWQ-001 to SWQ-012 recorded (v1.6.0); post-v1.6.0 extensions recorded 2026-09-29 |
 | WBS-13 | System integration testing (SYS.4) | 4h | Claude | Complete — SITC-001 to SITC-017 recorded |

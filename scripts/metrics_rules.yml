@@ -106,7 +106,6 @@ variables:
 functions:
   enabled: true
   severity: warning
-  case: lower_snake
   require_module_prefix: false
   style: "any"
   max_parameters: 8

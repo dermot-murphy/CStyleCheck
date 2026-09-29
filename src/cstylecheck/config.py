@@ -270,7 +270,6 @@ _CASE_STYLE_KEYS: tuple[tuple[str, ...], ...] = (
     ("enums", "member_case"),
     ("structs", "tag_case"),
     ("structs", "member_case"),
-    ("functions", "case"),
     ("functions", "object_case"),
     ("functions", "verb_case"),
 )
@@ -283,6 +282,49 @@ _ENUM_STYLE_KEYS: dict[tuple[str, ...], tuple[str, ...]] = {
     ("file_prefix", "case"):                  ("lower", "upper", "as_is"),
     ("misc", "eof_comment", "filename_case"): ("lower", "upper", "preserve"),
 }
+
+
+# Keys that are accepted but ignored by the checker.  A config that still
+# contains one gets a WARNING on stderr (not an error, so existing configs
+# keep working).  functions.case (#424) was written by the presets but never
+# read; function-name casing is controlled by functions.style.
+_DEPRECATED_KEYS: dict[tuple[str, ...], str] = {
+    ("functions", "case"): (
+        "is not used by the checker and is ignored; function-name casing "
+        "is controlled by 'functions.style' (object_verb, verb_object, "
+        "lower_snake, any). Remove 'functions.case' and use "
+        "'functions.style' instead"),
+}
+
+# (source, message) pairs already warned about, so a per-directory config
+# visited for several sub-directories warns only once per run.
+_WARNED_DEPRECATED: set = set()
+
+
+def deprecated_key_warnings(cfg, source: str = "config") -> list:
+    """
+    Return a warning string for every deprecated key present in *cfg*
+    (#424).  The keys are left in place; the checker ignores them.
+    """
+    warnings: list = []
+    if not isinstance(cfg, dict):
+        return warnings
+    for path, reason in _DEPRECATED_KEYS.items():
+        node: object = cfg
+        for k in path[:-1]:
+            node = node.get(k) if isinstance(node, dict) else None
+        if isinstance(node, dict) and path[-1] in node:
+            warnings.append(f"{source}: '{'.'.join(path)}' {reason}")
+    return warnings
+
+
+def _warn_deprecated_keys(cfg, source: str) -> None:
+    """Print each deprecated-key warning for *cfg* once per run (#424)."""
+    for msg in deprecated_key_warnings(cfg, source):
+        if (source, msg) in _WARNED_DEPRECATED:
+            continue
+        _WARNED_DEPRECATED.add((source, msg))
+        print(f"WARNING: {msg}", file=sys.stderr)
 
 
 def validate_case_styles(cfg, source: str = "config") -> list:
@@ -340,7 +382,11 @@ def validate_case_styles(cfg, source: str = "config") -> list:
 
 
 def _exit_on_case_style_errors(cfg, source: str) -> None:
-    """Validate *cfg*; on error print each message and exit with code 2."""
+    """
+    Validate *cfg*; on error print each message and exit with code 2.
+    Deprecated keys (#424) only produce a WARNING on stderr.
+    """
+    _warn_deprecated_keys(cfg, source)
     errors = validate_case_styles(cfg, source)
     if errors:
         for err in errors:
