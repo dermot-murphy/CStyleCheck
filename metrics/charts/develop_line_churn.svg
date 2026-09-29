@@ -3,23 +3,21 @@
 <text x="68" y="22" font-size="13" font-weight="600" fill="#e6edf3" font-family="ui-monospace, 'Cascadia Code', monospace">Line churn per commit — develop</text>
 <line x1="68" y1="224.0" x2="620" y2="224.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
 <text x="63" y="228.0" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">0</text>
-<line x1="68" y1="190.97154471544715" x2="620" y2="190.97154471544715" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="194.97154471544715" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">100</text>
-<line x1="68" y1="157.9430894308943" x2="620" y2="157.9430894308943" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="161.9430894308943" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">200</text>
-<line x1="68" y1="124.91463414634146" x2="620" y2="124.91463414634146" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="128.91463414634146" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">300</text>
-<line x1="68" y1="91.88617886178861" x2="620" y2="91.88617886178861" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="95.88617886178861" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">400</text>
-<line x1="68" y1="58.85772357723576" x2="620" y2="58.85772357723576" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="62.85772357723576" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">500</text>
+<line x1="68" y1="186.25319396051103" x2="620" y2="186.25319396051103" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="190.25319396051103" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">200</text>
+<line x1="68" y1="148.50638792102205" x2="620" y2="148.50638792102205" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="152.50638792102205" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">400</text>
+<line x1="68" y1="110.7595818815331" x2="620" y2="110.7595818815331" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="114.7595818815331" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">600</text>
+<line x1="68" y1="73.01277584204414" x2="620" y2="73.01277584204414" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="77.01277584204414" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">800</text>
 <line x1="68" y1="42" x2="68" y2="224" stroke="#484f58" stroke-width="1" />
 <line x1="68" y1="224" x2="620" y2="224" stroke="#484f58" stroke-width="1" />
 <text x="14" y="133" fill="#8b949e" font-family="ui-monospace, 'Cascadia Code', monospace" font-size="10" text-anchor="middle" transform="rotate(-90 14 133)">lines</text>
 <line x1="344.0" y1="224" x2="344.0" y2="228" stroke="#484f58" stroke-width="1" />
 <text x="344.0" y="240" text-anchor="middle" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Sep 29</text>
 <circle cx="344.0" cy="61.5" r="3" fill="#3fb950" />
-<circle cx="344.0" cy="172.145325203252" r="3" fill="#f85149" />
+<circle cx="344.0" cy="188.51800232288036" r="3" fill="#f85149" />
 <rect x="68" y="255" width="14" height="3" fill="#3fb950" rx="1" />
 <text x="86" y="264" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Lines added</text>
 <rect x="173" y="255" width="14" height="3" fill="#f85149" rx="1" />
