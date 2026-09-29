@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 2        # need HEAD~1 for diff stats
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
