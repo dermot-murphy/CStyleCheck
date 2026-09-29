@@ -13,6 +13,7 @@
 | **Rule count (actual)** | 81 (`src/rules.yml` and `tests/rules.yml` key sets identical) |
 | **SW requirements** | 121 (113 in scope for SWQ) |
 | **Findings** | 32 (8 High, 13 Medium, 11 Low) |
+| **Issue** | #430 |
 
 ---
 
@@ -150,16 +151,27 @@ The main new weakness is **change control of behaviour-changing fixes (SUP.10, S
 
 | Action | Finding(s) | Owner | Status |
 |---|---|---|---|
-| Register CR-412/420/422/424/425 with impact analysis and approval; update CR-418 impact and close CR-413/418; record the release-classification decision | F-001, F-002, F-010 | Dermot Murphy (approval) / Claude | Open |
-| Apply SEV labels to #410–#425 and record SLA outcomes (or amend SUP9) | F-011 | Dermot Murphy | Open |
-| Repair the SYS2 ↔ SWE1 ↔ SYS3/SYS5 traces (SYS-F-046, §6 RTM rebuild, SWE1 §5 parents) | F-003, F-004, F-005, F-025 | Claude | Open |
-| Re-execute SYS-VTC-008 and annotate the 93178cd record | F-006 | Claude | Open |
-| Align SWE1-095 / SIT-024 with the copyright format and add a unit test | F-007 | Claude | Open |
-| Correct the SWE3 UNIT-05, UNIT-98 and §4 text; update SWE2 COMP-02/09/12 and §8.2 | F-008, F-009, F-022, F-024, F-026, F-027 | Claude | Open |
-| Update MAN3, MAN5, SUP1, SUP8 and DEV-002; sign CSC-REVIEW-003 and the approval tables | F-012 … F-016, F-031 | Dermot Murphy / Claude | Open |
-| Stale counts and text: PA2, SWE5, SWE6, README, R&C, SYS5/SWE6 verdict baselines | F-017 … F-020, F-023, F-028 | Claude | Open |
-| CM/ACQ housekeeping and CHANGELOG Compatibility heading | F-029, F-030, F-032 | Claude | Open |
-| Track or close the CSC-AUD-009 residuals RR-003-004/005 | F-021 | Dermot Murphy | Open |
+| Register CR-412/420/422/424/425 with impact analysis and approval; update CR-418 impact and close CR-413/418; record the release-classification decision | F-001, F-002, F-010 | Dermot Murphy (approval) / Claude | Closed in #430. Approval recorded as owner merge of each PR (DEV-002 §5.2); QA sign-off of CR-422/CR-425 pending (owner) |
+| Apply SEV labels to #410–#425 and record SLA outcomes (or amend SUP9) | F-011 | Dermot Murphy | Closed in #430. SEV labels applied on GitHub 2026-09-29 (#422, #423 SEV-1; #412, #425 SEV-2; #408, #410, #413, #424 SEV-3); SUP9 §6.2 register added |
+| Repair the SYS2 ↔ SWE1 ↔ SYS3/SYS5 traces (SYS-F-046, §6 RTM rebuild, SWE1 §5 parents) | F-003, F-004, F-005, F-025 | Claude | Closed in #430 |
+| Re-execute SYS-VTC-008 and annotate the 93178cd record | F-006 | Claude | Closed in #430 |
+| Align SWE1-095 / SIT-024 with the copyright format and add a unit test | F-007 | Claude | Closed in #430 |
+| Correct the SWE3 UNIT-05, UNIT-98 and §4 text; update SWE2 COMP-02/09/12 and §8.2 | F-008, F-009, F-022, F-024, F-026, F-027 | Claude | Closed in #430 |
+| Update MAN3, MAN5, SUP1, SUP8 and DEV-002; sign CSC-REVIEW-003 and the approval tables | F-012 … F-016, F-031 | Dermot Murphy / Claude | Closed in #430. Signing CSC-REVIEW-003 and the approval tables remains the owner's action |
+| Stale counts and text: PA2, SWE5, SWE6, README, R&C, SYS5/SWE6 verdict baselines | F-017 … F-020, F-023, F-028 | Claude | Closed in #430 |
+| CM/ACQ housekeeping and CHANGELOG Compatibility heading | F-029, F-030, F-032 | Claude | Closed in #430 |
+| Track or close the CSC-AUD-009 residuals RR-003-004/005 | F-021 | Dermot Murphy | Tracked under #430 (PA2 §5.4 note, MAN5). Owner confirmation and CI-matrix results still pending |
+
+**Owner decisions (2026-09-29):** the next release is **v2.0.0 (Major)** per SUP10. SWE1-095 / SIT-024 follow the implemented `(C) <year> <holder>` format (no output change). SWE3 UNIT-05 step 2 is corrected to the implementation (no code change). SEV labels are applied retroactively.
+
+**Closure note (2026-09-29):** All 32 findings were corrected under #430 on branch `ccr-15d55b1c-l6c5rf` in commits `71d9505` (SWE2–SWE4, UV-CLI-018 copyright assertion, README, Rules-and-Configuration.md, CHANGELOG), `158c381` (SYS2/3/5, SWE1/5/6, STD-001; SYS-VTC-008 re-executed with the installed command, 9/9 PASS) and `924fc2c` (SUP1/8/9/10, MAN3/5, ACQ4, PA2, DEV-002). After the corrections: `python -m pytest -q` 1545 passed; `ruff check src tests` clean; `codespell` clean. No product code or package version was changed.
+
+Items still open after closure (owner actions, tracked in #430):
+- Signing CSC-REVIEW-003 and the work-product approval tables; QA sign-off of the High-impact CRs CR-422 and CR-425.
+- RR-003-004 (CI-matrix results) and RR-003-005 (Risk Owner confirmation).
+- Document-version citations (e.g. the PA2 §5.4 Version column) were out of scope and are updated at the next batched resync.
+
+The §3 ratings (4 F / 13 L) remain the audit ratings and are re-assessed at the v2.0.0 release audit.
 
 ---
 
@@ -174,5 +186,5 @@ The main new weakness is **change control of behaviour-changing fixes (SUP.10, S
 
 ---
 
-*Document: CSC-AUD-010 · Version 1.0 · 2026-09-29*
+*Document: CSC-AUD-010 · Version 1.1 · 2026-09-29 (§6.2 closure recorded, #430)*
 *Location: `docs/aspice/audits/CStyleCheck_ASPICE_Internal_Audit_2026-09-29b.md`*
