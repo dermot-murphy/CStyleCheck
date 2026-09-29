@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.10 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.11 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.11 | 2026-09-29 | Claude | #413: test total 1439→1444 |
 | 1.10 | 2026-09-29 | Claude | Issue #407: VTC-003 result note records 1439 tests after #408 and #407; referenced-document versions resynced (SUP8 1.13→1.14, SYS2 2.3→2.4, SYS3 1.7→1.8, SYS4 1.12→1.13) |
 | 1.9 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-VTC-003 → 81 rule IDs (add the non_ascii_source, constant_comparison and 8 post-v1.6.0 MISRA/Barr-C rule rows); §5/§6 counts. AUD9-F-006: SYS-VTC-007 baseline format and step 5 (line-independent matching). AUD9-F-026: CM baseline; scope text. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.8 | 2026-07-06 | Claude | ASPICE audit — SYS-VTC-003 71→73 rule IDs; update rule category table — closes #379 |
@@ -169,7 +170,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | Naming (v1.4.0) | `naming.identifier_length`, `naming.no_single_char_identifiers` | `test_identifier_length.py`, `test_no_single_char_identifiers.py` | PASS |
 | Other | `reserved_name`, `spell_check`, `sign_compatibility`, `misc.declared_not_defined` | `test_reserved_name.py`, `test_spell_check.py`, `test_sign_compatibility.py`, `test_declared_not_defined.py` | PASS |
 
-**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1439 tests, all PASS, after #408 and #407
+**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1444 tests, all PASS, after #408 and #407
 
 ---
 
