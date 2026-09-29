@@ -898,6 +898,9 @@ enums:
 
 Enum type names use `lower_snake_t`; member names use `UPPER_SNAKE` and must be
 prefixed with the enum type name (stripped of `_t`, converted to upper snake).
+Every member is checked, including the last one whether or not it is followed
+by a trailing comma; names used in an initialiser (`= OTHER_VALUE`) are values,
+not members, and are not checked.
 
 ```c
 /* ✓ PASS */

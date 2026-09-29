@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.25 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.26 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.26 | 2026-09-29 | Claude | Issue #423: BP3 evidence — suite total 1508→1521 (last enum member tests); referenced-document versions resynced (4) |
 | 1.25 | 2026-09-29 | Claude | Issue #422: SWQ-001 steps 7–8 (case-style aliases accepted and enforced; unknown case style → exit 2 naming the key) with a 2026-09-29 execution row; §6 SWE1-075 row cites UV-CASE-001 and UV-CASE-005; BP3 evidence — suite total 1481→1508; referenced-document versions resynced (4) |
 | 1.24 | 2026-09-29 | Claude | Issue #420: §6 SWE1-075 row cites UV-WIZ-001 to UV-WIZ-005 and SIT-016 (presets / `--init` enable the standard-specific opt-in rules); BP3 evidence — suite total 1463→1481; referenced-document versions resynced (4) |
 | 1.23 | 2026-09-29 | Claude | Issue #418 (CR-418): SWQ-003 post-v1.6.0 row — all 8 rules opt-in, UV-MSR-009 cited; BP3 evidence — `test_misra_rules.py` 149→160 test cases; suite total 1452→1463; referenced-document versions resynced (4) |
@@ -61,10 +62,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.16 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.22 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.16 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.19 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.17 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.23 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.17 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.20 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -509,5 +510,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1521 after #423).
 
