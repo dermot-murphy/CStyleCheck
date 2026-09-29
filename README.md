@@ -498,6 +498,18 @@ The baseline file is plain JSON — diff it in code review to see exactly which
 legacy issues have been fixed.  When a team is ready to enforce a previously
 suppressed rule, delete its entries from the baseline and commit.
 
+Matching rules:
+
+- A violation is suppressed while the baseline holds an unused entry with the
+  same **file, rule and message**.  The `line` field is recorded for reviewers
+  but ignored when matching, so accepted violations stay suppressed when
+  unrelated edits move them up or down the file.
+- Each baseline entry suppresses at most one violation, so a second copy of an
+  accepted violation is still reported as new.
+- File paths are stored with `/` separators on every platform, so a baseline
+  written on Windows works on Linux CI and vice versa.  Older baselines that
+  contain `\` separators are still accepted.
+
 ---
 
 ## New in this release

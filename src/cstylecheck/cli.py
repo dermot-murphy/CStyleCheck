@@ -31,7 +31,7 @@ from .fixer import (apply_fixes, unified_diff, FIXABLE_RULES, SAFE_RULES,
 from .utils import module_name, _cfg
 from .checker import Checker
 from .sign_checker import SignChecker, DeclaredNotDefinedChecker
-from .baseline import load_baseline, write_baseline, _baseline_key
+from .baseline import load_baseline, write_baseline, apply_baseline
 from .output import Tee, _violations_to_json, _violations_to_sarif, _violations_to_html, print_summary
 from .wizard import run_wizard, run_preset, PRESETS
 from . import _TOOL_NAME, _VERSION, _VERSION_STRING, _COPYRIGHT
@@ -740,10 +740,7 @@ def main() -> int:
         if getattr(args, "baseline_file", None):
             baseline = load_baseline(args.baseline_file)
             before   = len(all_violations)
-            all_violations = [
-                v for v in all_violations
-                if _baseline_key(v) not in baseline
-            ]
+            all_violations = apply_baseline(all_violations, baseline)
             suppressed = before - len(all_violations)
             if suppressed and output_format == "text":
                 tee.print(f"(Baseline suppressed {suppressed} known violation(s))")
