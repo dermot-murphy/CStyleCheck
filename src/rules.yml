@@ -844,11 +844,12 @@ misc:
     severity: info
 
   # -----------------------------------------------------------------------
-  # MISRA C:2012 Rule 14.4 — boolean comparison with true/false
+  # Boolean comparison with true/false (style rule)
   # -----------------------------------------------------------------------
-  # The controlling expression shall be essentially Boolean.  Comparing a
-  # boolean expression to 'true' or 'false' with == / != is redundant and
-  # may hide type-coercion bugs; use the expression directly or negate it.
+  # Comparing a boolean expression to 'true' or 'false' with == / != is
+  # redundant and may hide type-coercion bugs; use the expression directly
+  # or negate it.  Style rule only: it does not enforce MISRA C:2012
+  # Rule 14.4, with which 'if (flag == true)' is compliant.
   #
   #   Violation:  if (flag == true)   { … }
   #   Violation:  while (done == false) { … }

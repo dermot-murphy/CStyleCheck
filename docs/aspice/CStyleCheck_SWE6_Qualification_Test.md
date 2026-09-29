@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.18 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.19 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.19 | 2026-09-29 | Claude | #410: BP3 evidence no longer claims MISRA C:2012 Rule 14.4 coverage |
 | 1.18 | 2026-09-29 | Claude | Issue #407: §6 SWE1-094 row adds UV-CLI-017 to UV-CLI-019 (partial: `--quiet` clause not implemented); SWE1-096 row Covered by UV-CLI-020 to UV-CLI-022 (Windows `\` and POSIX `/`); output-behaviour row adds `test_cli_requirements.py`; BP3 note total 1439 (also records #408: `test_misra_rules.py` 140→141); referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE5 1.15→1.16, SYS5 1.9→1.10) |
 | 1.17 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SWQ-003 → 81 rule IDs; add the post-v1.6.0 MISRA/Barr-C rule row (SWE1-109 to SWE1-116); §6 rows for SWE1-094 to SWE1-117; coverage 113/113 in scope. AUD9-F-006: SWQ-007 step 4 → a moved violation stays suppressed (SWE1-100); add steps 6/7 (multiset, path normalisation); trace SWE1-100/101. AUD9-F-003: BP3 note `test_misra_rules.py` 64→140. AUD9-F-026: commit SHA / configuration under test; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.16 | 2026-07-06 | Claude | ASPICE audit — remove non-existent rule IDs `variable.local.prefix` and `variable.parameter.prefix` from SWQ-003 table; update §3.1 refs (SWE1 2.5→2.6, SWE5 1.12→1.14, SUP8 1.9→1.10); fix coverage gate note; add SWE1-094 to SWE1-099 to §3.3 criteria — closes #376 |
@@ -499,5 +500,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (141 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 14.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (141 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407).
 

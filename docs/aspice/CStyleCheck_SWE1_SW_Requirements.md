@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.9 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.10 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.10 | 2026-09-29 | Claude | Issue #410: SWE1-115 is a style rule; the MISRA C:2012 Rule 14.4 citation is removed from SWE1-115, its RTM row and Appendix A.1 (`if (flag == true)` is compliant with Rule 14.4). The `misc.yoda_condition` "Rule 14.4 (informative)" citation is also removed (operand order has no bearing on Rule 14.4). Appendix A.2, A.3 and the conclusion show Rule 14.4 as delegated to cppcheck (MISRA addon), not covered by CStyleCheck |
 | 2.9 | 2026-09-29 | Claude | Issue #407: RTM test column cites `test_cli_requirements.py` for SWE1-015 (UV-CLI-014 to 016), SWE1-094 (UV-CLI-017 to 019; `--quiet` clause not implemented) and SWE1-096 (UV-CLI-020 to 022); SWE1-096 design column names `discover_files()` `emit()` (`os.path.normpath`) as the point where `os.sep` is applied; referenced-document versions resynced (SUP8 1.13→1.14, SWE2 1.13→1.14, SYS2 2.3→2.4, SYS3 1.7→1.8) |
 | 2.8 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-001: add SWE1-109 to SWE1-116 for the 8 rules from #391/#392, with RTM rows, Appendix A.1 rows and A.2/A.3 updates. AUD9-F-007: SWE1-065 baseline file is a JSON object with a `violations` array. AUD9-F-008: SWE1-094 parent → SYS-F-046; add SYS-F-041 to SYS-F-046 and the other uncited SYS IDs as parents; add upward-trace note. AUD9-F-010: add SWE1-117 (trend safety indicators) and extend the SWE1-108 chart list. AUD9-F-011: SWE1-102 to SWE1-108 parent → CSC-MAN3-001 §10.3; add SWE1-100/101 RTM rows. AUD9-F-015: header date. AUD9-F-025: renumber §4.15 to §4.18 so sections are in order. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 2.7 | 2026-09-29 | Claude | Add §4.18 SWE1-102 to SWE1-108 (trend-analysis C source code metrics: LOC, cyclomatic complexity, size, documentation, coupling, violation quality, backward-compatible charts/wiki); update RTM; also records SWE1-065 to SWE1-067 revision and SWE1-100/SWE1-101 (baseline matching, issues #394/#395, PR #397) — issue #388 |
@@ -187,7 +188,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SWE1-112 | The `_check_void_pointer()` method shall flag every `void *` type in comment- and string-stripped source as `misc.void_pointer` (default severity `warning`) (MISRA C:2012 Rule 11.5, Advisory) | Mandatory | Test | SYS-F-020 |
 | SWE1-113 | The `_check_recursive_function()` method shall flag a function definition whose body contains a call to the function's own name (direct recursion) as `misc.recursive_function` (default severity `error`); indirect recursion is not detected (MISRA C:2012 Rule 17.2, Required — partial) | Mandatory | Test | SYS-F-020 |
 | SWE1-114 | The `_check_sizeof_type()` method shall flag `sizeof` applied to a type name (primitive type, `*_t` typedef or capitalised type name, optionally followed by `*`) as `misc.sizeof_type` (default severity `info`); `sizeof(var)` and `sizeof(*var)` shall not be flagged (Barr-C:2018 §5.7) | Mandatory | Test | SYS-F-020 |
-| SWE1-115 | The `_check_boolean_comparison()` method shall flag an `==` or `!=` comparison with `true`, `false`, `TRUE` or `FALSE` on either side as `misc.boolean_comparison` (default severity `warning`) (MISRA C:2012 Rule 14.4) | Mandatory | Test | SYS-F-020 |
+| SWE1-115 | The `_check_boolean_comparison()` method shall flag an `==` or `!=` comparison with `true`, `false`, `TRUE` or `FALSE` on either side as `misc.boolean_comparison` (default severity `warning`) (style rule; MISRA C:2012 Rule 14.4 is not enforced — `if (flag == true)` is compliant with it) | Mandatory | Test | SYS-F-020 |
 | SWE1-116 | The `_check_empty_else()` method shall flag an `else { }` block whose body is empty in the original source as `misc.empty_else` (default severity `warning`); a block containing a comment shall not be flagged (Barr-C:2018 §8.3; MISRA C:2012 Rule 15.7 intent) | Mandatory | Test | SYS-F-020 |
 
 ### 4.10 Rule Engine — Cross-File Sign Compatibility (SS-04/SS-05)
@@ -359,7 +360,7 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-112 | misc.void_pointer (MISRA 11.5) | SYS-F-020 | `Checker._check_void_pointer()` | `test_misra_rules.py` |
 | SWE1-113 | misc.recursive_function (MISRA 17.2, direct only) | SYS-F-020 | `Checker._check_recursive_function()` | `test_misra_rules.py` |
 | SWE1-114 | misc.sizeof_type (Barr-C §5.7) | SYS-F-020 | `Checker._check_sizeof_type()` | `test_misra_rules.py` |
-| SWE1-115 | misc.boolean_comparison (MISRA 14.4) | SYS-F-020 | `Checker._check_boolean_comparison()` | `test_misra_rules.py` |
+| SWE1-115 | misc.boolean_comparison (style) | SYS-F-020 | `Checker._check_boolean_comparison()` | `test_misra_rules.py` |
 | SWE1-116 | misc.empty_else (Barr-C §8.3) | SYS-F-020 | `Checker._check_empty_else()` | `test_misra_rules.py` |
 | SWE1-102 | Trend metrics — LOC classification | — (no SYS parent; CSC-MAN3-001 §10.3 trend monitoring, GP 2.1.4) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
 | SWE1-103 | Trend metrics — cyclomatic complexity / nesting | — (no SYS parent; CSC-MAN3-001 §10.3 trend monitoring, GP 2.1.4) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
@@ -402,7 +403,7 @@ CStyleCheck is a **complementary** tool to cppcheck (used for full MISRA C stati
 | `misc.lowercase_l_suffix` | `_check_lowercase_l_suffix()` | Rule 7.3 | Rule 7.3 | Required | §8.5 | `test_misra_rules.py` |
 | `misc.octal_constant` | `_check_octal_constants()` | Rule 7.1 | Rule 7.1 | Required | §8.5 | `test_misra_rules.py` |
 | `misc.trigraph` | `_check_trigraphs()` | Rule 4.2 (Advisory) | Rule 4.2 (Required) | Adv / Req | — | `test_misra_rules.py` |
-| `misc.yoda_condition` | `_check_yoda()` | Rule 14.4 (informative) | — | Advisory | §8.3 | `test_yoda_condition.py` |
+| `misc.yoda_condition` | `_check_yoda()` | — | — | — | §8.3 | `test_yoda_condition.py` |
 | `include_guard.missing` | `_check_include_guard()` | Dir 4.10 | Dir 4.10 | Required | §3.2 | `test_include_guards.py` |
 | `include_guard.format` | `_check_include_guard()` | Dir 4.10 | Dir 4.10 | Required | §3.2 | `test_include_guards.py` |
 | `variable.global.g_prefix` | `_check_variables()` | Rule 5.8 (informative) | Rule 5.8 | Advisory | §7.1.h | `test_variables.py` |
@@ -431,7 +432,7 @@ CStyleCheck is a **complementary** tool to cppcheck (used for full MISRA C stati
 | `misc.void_pointer` | `_check_void_pointer()` | Rule 11.5 (flags all `void *` use) | Rule 11.5 | Advisory | — | `test_misra_rules.py` |
 | `misc.recursive_function` | `_check_recursive_function()` | Rule 17.2 (direct recursion only) | Rule 17.2 | Required | — | `test_misra_rules.py` |
 | `misc.sizeof_type` | `_check_sizeof_type()` | — | — | — | §5.7 | `test_misra_rules.py` |
-| `misc.boolean_comparison` | `_check_boolean_comparison()` | Rule 14.4 (informative) | Rule 14.4 | Required | — | `test_misra_rules.py` |
+| `misc.boolean_comparison` | `_check_boolean_comparison()` | — (style rule; Rule 14.4 not enforced) | — | — | — | `test_misra_rules.py` |
 | `misc.empty_else` | `_check_empty_else()` | Rule 15.7 (informative) | Rule 15.7 | Required | §8.3 | `test_misra_rules.py` |
 
 ### A.2 MISRA C Rules Delegated to cppcheck
@@ -453,7 +454,7 @@ The following MISRA C rules require full compiler-level analysis and are enforce
 | Rules 11.1–11.9 | Rules 11.1–11.9 | Pointer type conversions (Rule 11.5 also partially covered by `misc.void_pointer`) | Required / Advisory |
 | Rules 12.1–12.5 | Rules 12.1–12.5 | Expressions | Required / Advisory |
 | Rules 13.1–13.6 | Rules 13.1–13.6 | Side effects (Rule 13.4 also partially covered by `misc.assignment_in_condition`) | Required |
-| Rules 14.1–14.4 | Rules 14.1–14.4 | Control flow | Required |
+| Rules 14.1–14.4 | Rules 14.1–14.4 | Control flow (Rule 14.4 is not covered by CStyleCheck; `misc.boolean_comparison` is a style rule) | Required |
 | Rules 15.1–15.7 | Rules 15.1–15.7 | Control statements (Rule 15.1 also covered by `misc.goto_usage`; Rule 15.7 partially by `misc.empty_else`) | Required / Advisory |
 | Rules 16.1–16.7 | Rules 16.1–16.7 | Switch statements | Required / Advisory |
 | Rules 17.1–17.8 | Rules 17.1–17.8 | Functions (Rule 17.2 direct recursion also covered by `misc.recursive_function`) | Required / Advisory |
@@ -471,8 +472,8 @@ The following MISRA C rules require full compiler-level analysis and are enforce
 | Identifiers | Rules 5.1–5.9 | Rules 5.3–5.5 (partial), 5.8–5.9 (advisory) | Rules 5.1, 5.2, 5.6, 5.7 | None critical |
 | Types | Rules 6.1–6.2 | — | Rules 6.1–6.2 | None |
 | Sign / type model | Rules 10.1–10.8 | Rules 10.1, 10.3 (partial) | Full coverage | Rules 10.2, 10.4–10.8 (cppcheck) |
-| Control flow | Rules 14.1–15.7 | Rule 14.4 (yoda, `misc.boolean_comparison`), 15.1 ✅ (`misc.goto_usage`), 15.7 (partial, `misc.empty_else`) | Full coverage | None critical |
+| Control flow | Rules 14.1–15.7 | 15.1 ✅ (`misc.goto_usage`), 15.7 (partial, `misc.empty_else`) | Full coverage (including Rule 14.4, MISRA addon) | None critical |
 | Side effects / pointers / functions | Rules 11.5, 13.4, 17.2 | 11.5 (`misc.void_pointer`), 13.4 (partial, `misc.assignment_in_condition`), 17.2 (direct only, `misc.recursive_function`) | Full coverage | None critical |
 
-> **Conclusion:** All MISRA C:2012/2023 Required rules are covered by the combination of CStyleCheck and cppcheck. The three new rules added in v1.1 (7.1, 7.3, 4.2) close the previously identified lexical-convention gap. The post-v1.6.0 rules (SWE1-109 to SWE1-116) add early, style-level detection for MISRA 11.5, 13.4, 14.4, 15.1, 15.7 and 17.2. cppcheck remains the authoritative checker for these rules.
+> **Conclusion:** All MISRA C:2012/2023 Required rules are covered by the combination of CStyleCheck and cppcheck. The three new rules added in v1.1 (7.1, 7.3, 4.2) close the previously identified lexical-convention gap. The post-v1.6.0 rules (SWE1-109 to SWE1-116) add early, style-level detection for MISRA 11.5, 13.4, 15.1, 15.7 and 17.2. MISRA Rule 14.4 is not covered by CStyleCheck (`misc.boolean_comparison` is a style rule; `if (flag == true)` is compliant with Rule 14.4) and is delegated to cppcheck with the MISRA addon. cppcheck remains the authoritative checker for these rules.
 

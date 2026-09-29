@@ -69,7 +69,7 @@ and `info`.
    - [9.24 `void` pointer (MISRA C Rule 11.5)](#924-void-pointer-misra-c-rule-115)
    - [9.25 Recursive function (MISRA C Rule 17.2)](#925-recursive-function-misra-c-rule-172)
    - [9.26 `sizeof` with a type operand (Barr-C §5.7)](#926-sizeof-with-a-type-operand-barr-c-57)
-   - [9.27 Boolean comparison (MISRA C Rule 14.4)](#927-boolean-comparison-misra-c-rule-144)
+   - [9.27 Boolean comparison](#927-boolean-comparison)
    - [9.28 Empty `else` (Barr-C §8.3)](#928-empty-else-barr-c-83)
 10. [Reserved names](#10-reserved-names)
 11. [Spell check](#11-spell-check)
@@ -1783,7 +1783,7 @@ memset(p_buf, 0, sizeof(*p_buf) * N);     /* ✓ */
 
 ---
 
-### 9.27 Boolean comparison (MISRA C Rule 14.4)
+### 9.27 Boolean comparison
 
 **Rule ID:** `misc.boolean_comparison`
 
@@ -1796,6 +1796,10 @@ misc:
 
 Comparing with `true`/`false` (or `TRUE`/`FALSE`) using `==` or `!=` is
 redundant and can hide type-coercion bugs.
+
+This is a style rule. It does not enforce MISRA C:2012 Rule 14.4 (the
+controlling expression shall be essentially Boolean): `if (b_ready == true)`
+is compliant with Rule 14.4. Use cppcheck with the MISRA addon for Rule 14.4.
 
 ```c
 if (b_ready == true)   /* ✗ misc.boolean_comparison */
@@ -2198,7 +2202,7 @@ are implemented, which are partially addressed, and which are explicitly out of 
 | Rule 10.x | Essential type model (implicit conversions, composite expressions) | Out of scope | — |
 | Rule 11.5 | A conversion should not be performed from pointer to void into pointer to object | Partial — every `void *` use flagged | `misc.void_pointer` |
 | Rule 13.4 | The result of an assignment operator should not be used | Partial — assignments in `if`/`while`/`for` conditions | `misc.assignment_in_condition` |
-| Rule 14.4 | The controlling expression shall be essentially Boolean | Partial — comparisons with `true`/`false` | `misc.boolean_comparison` |
+| Rule 14.4 | The controlling expression shall be essentially Boolean | Out of scope — use cppcheck MISRA addon (`misc.boolean_comparison` is a style rule and does not check Rule 14.4) | — |
 | Rule 15.1 | The `goto` statement should not be used | **Implemented** | `misc.goto_usage` |
 | Rule 15.7 | All `if … else if` constructs shall be terminated with an `else` | Partial — empty `else` blocks flagged | `misc.empty_else` |
 | Rule 17.2 | Functions shall not call themselves, directly or indirectly | Partial — direct recursion only | `misc.recursive_function` |
