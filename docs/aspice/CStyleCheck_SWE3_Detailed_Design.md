@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.21 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.22 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.21 | 2026-09-29 | Claude | Issue #413 (CR-413): UNIT-46 step 3 specifies the two-line, unconditional stderr/log banner (SWE1-094); step 5 records the `--fix` header re-read (SWE1-015 exception); §8 SWE1-094 row; referenced-document versions resynced (SWE1 2.9→2.10, SWE2 1.14→1.15, SWE4 1.24→1.25) |
 | 1.20 | 2026-09-29 | Claude | Issue #410: UNIT-134 purpose and §6.1 `misc.boolean_comparison` row — style rule; MISRA C:2012 Rule 14.4 citation removed; message suffix "(redundant comparison with a Boolean literal)" |
 | 1.19 | 2026-09-29 | Claude | Issue #407: UNIT-03 algorithm records the `os.path.normpath()` step (SWE1-096); UNIT-41 note and §8 SWE1-096 row corrected (separator applied by UNIT-03; `Violation.__str__()` renders the path verbatim); referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE4 1.22→1.24) |
@@ -52,9 +53,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.11 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.16 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.26 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.12 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.17 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.27 |
 
 ---
 

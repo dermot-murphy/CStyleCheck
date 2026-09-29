@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP9-001 | **Version** | 1.4 |
+| **Document ID** | CSC-SUP9-001 | **Version** | 1.5 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.5 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (MAN3 1.8→1.9, SUP1 1.10→1.11, SUP10 1.3→1.4, SUP8 1.13→1.14) |
 | 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.2 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
@@ -38,10 +39,10 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.9 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.14 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.4 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.11 |
+| CSC-MAN3-001 | Project Management Plan | 1.11 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.15 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.6 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.12 |
 
 ---
 

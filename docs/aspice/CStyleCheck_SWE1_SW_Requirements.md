@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.11 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.12 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.12 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.11 | 2026-09-29 | Claude | Issue #413 (CR-413, CSC-SUP10-001 §7.1): SWE1-094 rewritten to match `main()` — exactly two lines (`CStyleCheck <version>`, `(C) 2026 Dermot Murphy`) on stderr (and the `--log` file) before discovery, written even when output is piped, no suppression option (`--quiet` clause removed), never on stdout; parent SYS-F-046 unchanged; RTM row now full verification. SWE1-015: record the known `--fix` exception (pointer-prefix header rename re-reads the `.h` file). No source change. Referenced-document versions resynced (SYS2 2.4→2.5, SWE2 1.14→1.15) |
 | 2.10 | 2026-09-29 | Claude | Issue #410: SWE1-115 is a style rule; the MISRA C:2012 Rule 14.4 citation is removed from SWE1-115, its RTM row and Appendix A.1 (`if (flag == true)` is compliant with Rule 14.4). The `misc.yoda_condition` "Rule 14.4 (informative)" citation is also removed (operand order has no bearing on Rule 14.4). Appendix A.2, A.3 and the conclusion show Rule 14.4 as delegated to cppcheck (MISRA addon), not covered by CStyleCheck |
 | 2.9 | 2026-09-29 | Claude | Issue #407: RTM test column cites `test_cli_requirements.py` for SWE1-015 (UV-CLI-014 to 016), SWE1-094 (UV-CLI-017 to 019; `--quiet` clause not implemented) and SWE1-096 (UV-CLI-020 to 022); SWE1-096 design column names `discover_files()` `emit()` (`os.path.normpath`) as the point where `os.sep` is applied; referenced-document versions resynced (SUP8 1.13→1.14, SWE2 1.13→1.14, SYS2 2.3→2.4, SYS3 1.7→1.8) |
@@ -59,10 +60,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.5 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.8 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.16 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.6 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.9 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.17 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.15 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
