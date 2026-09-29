@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.28 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.29 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.29 | 2026-09-29 | Claude | Issue #423: UNIT-27 algorithm — members extracted by `_enum_members()` (top-level comma split, leading identifier per item, preprocessor lines blanked), so the last member is checked with or without a trailing comma, initialiser or trailing comment, and initialiser identifiers are no longer taken as members; `RE_ENUM_MEMBER` redefined; §4 catalogue `checker.py` line numbers updated (UNIT-21 onwards); referenced-document versions resynced (3) |
 | 1.28 | 2026-09-29 | Claude | Issue #425: new UNIT-136 `config_error()` (message to stderr, exit 2) in §4 catalogue, §4.1 package structure and §5; UNIT-46 — `main()` wraps `_main()` and maps a string-message `SystemExit` to exit 2 so the console script and the wrapper behave the same; UNIT-01, UNIT-02, UNIT-05, UNIT-06, UNIT-07, UNIT-09, UNIT-35, UNIT-36, UNIT-50 to UNIT-52 error handling call `config_error()` (UNIT-01 corrected: a missing options file is an error, not an empty list); `baseline.py` now imports `utils`; §4 `utils.py` line numbers; §1 scope UNIT-01 to UNIT-136; §8 SWE1-001/002 and SWE1-068 to 070 rows cite UNIT-136; referenced-document versions resynced (3) |
 | 1.27 | 2026-09-29 | Claude | Issue #424: UNIT-05 algorithm — `functions.case` removed from `_CASE_STYLE_KEYS`; new step 4 `_warn_deprecated_keys()` / `deprecated_key_warnings()` (`_DEPRECATED_KEYS`) prints one `WARNING` on `stderr` per file, exit code unchanged; UNIT-24 — `functions.style` is the only function-name casing key; UNIT-98 / UNIT-99 — wizard and presets no longer write `functions.case`; UNIT-100 — per-directory configs warn once; §4 catalogue line numbers (`config.py`); §4.1 package structure; §6.1 case-style keys and `functions.case` row; §8 SWE1-001/002 row; referenced-document versions resynced (3) |
 | 1.26 | 2026-09-29 | Claude | Issue #422: UNIT-05 algorithm — `validate_case_styles()` normalises every case-style key (`_CASE_STYLE_KEYS`) and `functions.style` / `file_prefix.case` / `misc.eof_comment.filename_case`; unknown value → `ERROR:` message naming file, key, value and allowed values, exit 2; UNIT-43 — `normalize_case_style()` aliases (case-insensitive), `any` style, unknown style raises `ValueError` (was `True`); UNIT-44 normalises; UNIT-98 — `WIZARD_CASE_CHOICES` labels stored as canonical names; UNIT-99 — presets write canonical names, `barr-c` typedef / enum type `lower_snake`; UNIT-100 — per-directory configs validated; §4 catalogue line numbers (`config.py`, `utils.py`, `wizard.py`); §4.1 package structure; §6.1 case-style keys; §8 SWE1-001/002 row; referenced-document versions resynced (3) |
@@ -59,9 +60,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.18 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.23 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.33 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.19 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.24 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.34 |
 
 ---
 
@@ -91,19 +92,19 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-18 | `offset_to_line_col` | `preprocessor.py:209` | COMP-04 | `preprocessor.py` |
 | UNIT-19 | `_build_brace_depths` | `preprocessor.py:182` | COMP-04 | `preprocessor.py` |
 | UNIT-20 | `_comment_only_lines` | `preprocessor.py:48` | COMP-04 | `preprocessor.py` |
-| UNIT-21 | `Checker.__init__` | `checker.py:173` | COMP-05 | `checker.py` |
-| UNIT-22 | `Checker.run_all` | `checker.py:323` | COMP-05 | `checker.py` |
-| UNIT-23 | `Checker._check_variables` | `checker.py:463` | COMP-05a | `checker.py` |
-| UNIT-24 | `Checker._check_functions` | `checker.py:969` | COMP-05b | `checker.py` |
-| UNIT-25 | `Checker._check_defines` | `checker.py:384` | COMP-05c | `checker.py` |
-| UNIT-26 | `Checker._check_typedefs` | `checker.py:1067` | COMP-05d | `checker.py` |
-| UNIT-27 | `Checker._check_enums` | `checker.py:1091` | COMP-05d | `checker.py` |
-| UNIT-28 | `Checker._check_structs` | `checker.py:1155` | COMP-05d | `checker.py` |
-| UNIT-29 | `Checker._check_include_guard` | `checker.py:1297` | COMP-05e | `checker.py` |
-| UNIT-30 | `Checker._check_misc` | `checker.py:1330` | COMP-05f | `checker.py` |
-| UNIT-31 | `Checker._check_yoda` | `checker.py:2038` | COMP-05f | `checker.py` |
-| UNIT-32 | `Checker._check_reserved_names` | `checker.py:2755` | COMP-05f | `checker.py` |
-| UNIT-33 | `Checker._check_spelling` | `checker.py:2019` | COMP-05f | `checker.py` |
+| UNIT-21 | `Checker.__init__` | `checker.py:205` | COMP-05 | `checker.py` |
+| UNIT-22 | `Checker.run_all` | `checker.py:355` | COMP-05 | `checker.py` |
+| UNIT-23 | `Checker._check_variables` | `checker.py:495` | COMP-05a | `checker.py` |
+| UNIT-24 | `Checker._check_functions` | `checker.py:1001` | COMP-05b | `checker.py` |
+| UNIT-25 | `Checker._check_defines` | `checker.py:416` | COMP-05c | `checker.py` |
+| UNIT-26 | `Checker._check_typedefs` | `checker.py:1099` | COMP-05d | `checker.py` |
+| UNIT-27 | `Checker._check_enums` | `checker.py:1123` | COMP-05d | `checker.py` |
+| UNIT-28 | `Checker._check_structs` | `checker.py:1186` | COMP-05d | `checker.py` |
+| UNIT-29 | `Checker._check_include_guard` | `checker.py:1328` | COMP-05e | `checker.py` |
+| UNIT-30 | `Checker._check_misc` | `checker.py:1361` | COMP-05f | `checker.py` |
+| UNIT-31 | `Checker._check_yoda` | `checker.py:2069` | COMP-05f | `checker.py` |
+| UNIT-32 | `Checker._check_reserved_names` | `checker.py:2801` | COMP-05f | `checker.py` |
+| UNIT-33 | `Checker._check_spelling` | `checker.py:2050` | COMP-05f | `checker.py` |
 | UNIT-34 | `SignChecker._check_calls` | `sign_checker.py:273` | COMP-05g | `sign_checker.py` |
 | UNIT-35 | `load_baseline` | `baseline.py:47` | COMP-06 | `baseline.py` |
 | UNIT-36 | `write_baseline` | `baseline.py:85` | COMP-06 | `baseline.py` |
@@ -127,22 +128,22 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-54 | `is_exempt` | `utils.py:157` | COMP-05 (shared) | `utils.py` |
 | UNIT-55 | `_cfg` | `utils.py:167` | COMP-05 (shared) | `utils.py` |
 | UNIT-56 | `extract_comments` | `preprocessor.py:158` | COMP-04 | `preprocessor.py` |
-| UNIT-57 | `Checker._violation` | `checker.py:250` | COMP-05 | `checker.py` |
-| UNIT-58 | `Checker._v` | `checker.py:254` | COMP-05 | `checker.py` |
-| UNIT-59 | `Checker._prefix` | `checker.py:261` | COMP-05 | `checker.py` |
-| UNIT-60 | `Checker._require_module_prefix` | `checker.py:267` | COMP-05 | `checker.py` |
-| UNIT-61 | `Checker._depth_at` | `checker.py:300` | COMP-05 | `checker.py` |
-| UNIT-62 | `Checker._strip_any_prefix` | `checker.py:305` | COMP-05 | `checker.py` |
-| UNIT-63 | `Checker._check_copyright_header` | `checker.py:1196` | COMP-05f | `checker.py` |
-| UNIT-64 | `Checker._body_is_object_verb` | `checker.py:937` | COMP-05b | `checker.py` |
-| UNIT-65 | `Checker._check_comment_ratio` | `checker.py:1754` | COMP-05f | `checker.py` |
-| UNIT-66 | `Checker._check_lowercase_l_suffix` | `checker.py:2269` | COMP-05f | `checker.py` |
-| UNIT-67 | `Checker._check_octal_constants` | `checker.py:2307` | COMP-05f | `checker.py` |
-| UNIT-68 | `Checker._check_trigraphs` | `checker.py:2346` | COMP-05f | `checker.py` |
-| UNIT-69 | `Checker._is_reserved` | `checker.py:2737` | COMP-05f | `checker.py` |
-| UNIT-70 | `Checker._check_name_reserved` | `checker.py:2747` | COMP-05f | `checker.py` |
-| UNIT-71 | `Checker._is_constant_token` | `checker.py:2151` | COMP-05f | `checker.py` |
-| UNIT-72 | `Checker._is_variable_token` | `checker.py:2165` | COMP-05f | `checker.py` |
+| UNIT-57 | `Checker._violation` | `checker.py:282` | COMP-05 | `checker.py` |
+| UNIT-58 | `Checker._v` | `checker.py:286` | COMP-05 | `checker.py` |
+| UNIT-59 | `Checker._prefix` | `checker.py:293` | COMP-05 | `checker.py` |
+| UNIT-60 | `Checker._require_module_prefix` | `checker.py:299` | COMP-05 | `checker.py` |
+| UNIT-61 | `Checker._depth_at` | `checker.py:332` | COMP-05 | `checker.py` |
+| UNIT-62 | `Checker._strip_any_prefix` | `checker.py:337` | COMP-05 | `checker.py` |
+| UNIT-63 | `Checker._check_copyright_header` | `checker.py:1227` | COMP-05f | `checker.py` |
+| UNIT-64 | `Checker._body_is_object_verb` | `checker.py:969` | COMP-05b | `checker.py` |
+| UNIT-65 | `Checker._check_comment_ratio` | `checker.py:1785` | COMP-05f | `checker.py` |
+| UNIT-66 | `Checker._check_lowercase_l_suffix` | `checker.py:2300` | COMP-05f | `checker.py` |
+| UNIT-67 | `Checker._check_octal_constants` | `checker.py:2338` | COMP-05f | `checker.py` |
+| UNIT-68 | `Checker._check_trigraphs` | `checker.py:2377` | COMP-05f | `checker.py` |
+| UNIT-69 | `Checker._is_reserved` | `checker.py:2783` | COMP-05f | `checker.py` |
+| UNIT-70 | `Checker._check_name_reserved` | `checker.py:2793` | COMP-05f | `checker.py` |
+| UNIT-71 | `Checker._is_constant_token` | `checker.py:2182` | COMP-05f | `checker.py` |
+| UNIT-72 | `Checker._is_variable_token` | `checker.py:2196` | COMP-05f | `checker.py` |
 | UNIT-73 | `_ParamSig` | `models.py:106` | COMP-05g | `models.py` |
 | UNIT-74 | `_FuncSig` | `models.py:114` | COMP-05g | `models.py` |
 | UNIT-75 | `_classify_tokens` | `sign_checker.py:70` | COMP-05g | `sign_checker.py` |
@@ -160,7 +161,7 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-87 | `parse_args` | `cli.py:190` | COMP-01 | `cli.py` |
 | UNIT-88 | `_build_parser` | `cli.py:195` | COMP-01 | `cli.py` |
 | UNIT-89 | `_github_annotation_category` | `utils.py:42` | COMP-07 | `utils.py` |
-| UNIT-90 | `Checker._check_whitespace_ratio` | `checker.py:1892` | COMP-05f | `checker.py` |
+| UNIT-90 | `Checker._check_whitespace_ratio` | `checker.py:1923` | COMP-05f | `checker.py` |
 | UNIT-91 | `_find_default_rules` | `config.py:95` | COMP-02 | `config.py` |
 | UNIT-92 | `_deep_merge` | `config.py:116` | COMP-02 | `config.py` |
 | UNIT-93 | `_collect_paths` | `config.py:139` | COMP-02 | `config.py` |
@@ -172,21 +173,21 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-99 | `run_preset` | `wizard.py:324` | COMP-09 | `wizard.py` |
 | UNIT-100 | `resolve_per_dir_config` | `config.py:838` | COMP-10 | `config.py` |
 | UNIT-101 | `_violations_to_html` | `output.py:182` | COMP-07 | `output.py` |
-| UNIT-102 | `_check_function_length` | `checker.py:2953` | COMP-05f | `checker.py` |
-| UNIT-103 | `_check_function_doc_header` | `checker.py:2987` | COMP-05f | `checker.py` |
-| UNIT-104 | `_check_assert_density` | `checker.py:3081` | COMP-05f | `checker.py` |
-| UNIT-105 | `_check_null_statement_comment` | `checker.py:3227` | COMP-05f | `checker.py` |
-| UNIT-106 | `_check_declaration_spacing` | `checker.py:3111` | COMP-05f | `checker.py` |
-| UNIT-107 | `_check_file_length` | `checker.py:3173` | COMP-05f | `checker.py` |
-| UNIT-108 | `_check_reserved_header_name` | `checker.py:3206` | COMP-05f | `checker.py` |
-| UNIT-109 | `_check_macro_trailing_semicolon` | `checker.py:2827` | COMP-05b | `checker.py` |
-| UNIT-110 | `_check_macro_multistatement_wrapper` | `checker.py:2883` | COMP-05b | `checker.py` |
-| UNIT-111 | `_check_identifier_length` | `checker.py:3267` | COMP-05h | `checker.py` |
-| UNIT-112 | `_check_no_single_char_identifiers` | `checker.py:3323` | COMP-05h | `checker.py` |
-| UNIT-113 | `_check_non_ascii_source` | `checker.py:2372` | COMP-05f | `checker.py` |
+| UNIT-102 | `_check_function_length` | `checker.py:2999` | COMP-05f | `checker.py` |
+| UNIT-103 | `_check_function_doc_header` | `checker.py:3033` | COMP-05f | `checker.py` |
+| UNIT-104 | `_check_assert_density` | `checker.py:3127` | COMP-05f | `checker.py` |
+| UNIT-105 | `_check_null_statement_comment` | `checker.py:3273` | COMP-05f | `checker.py` |
+| UNIT-106 | `_check_declaration_spacing` | `checker.py:3157` | COMP-05f | `checker.py` |
+| UNIT-107 | `_check_file_length` | `checker.py:3219` | COMP-05f | `checker.py` |
+| UNIT-108 | `_check_reserved_header_name` | `checker.py:3252` | COMP-05f | `checker.py` |
+| UNIT-109 | `_check_macro_trailing_semicolon` | `checker.py:2873` | COMP-05b | `checker.py` |
+| UNIT-110 | `_check_macro_multistatement_wrapper` | `checker.py:2929` | COMP-05b | `checker.py` |
+| UNIT-111 | `_check_identifier_length` | `checker.py:3313` | COMP-05h | `checker.py` |
+| UNIT-112 | `_check_no_single_char_identifiers` | `checker.py:3369` | COMP-05h | `checker.py` |
+| UNIT-113 | `_check_non_ascii_source` | `checker.py:2403` | COMP-05f | `checker.py` |
 | UNIT-114 | `print_summary` (per-file breakdown) | `output.py:269` | COMP-07 | `output.py` |
-| UNIT-115 | `_check_defines` (typedef-alias exemption) | `checker.py:384` | COMP-05c | `checker.py` |
-| UNIT-116 | `Checker._check_constant_comparison` | `checker.py:2176` | COMP-05f | `checker.py` |
+| UNIT-115 | `_check_defines` (typedef-alias exemption) | `checker.py:416` | COMP-05c | `checker.py` |
+| UNIT-116 | `Checker._check_constant_comparison` | `checker.py:2207` | COMP-05f | `checker.py` |
 | UNIT-117 | `_fix_pointer_prefix` | `fixer.py:92` | COMP-08 | `fixer.py` |
 | UNIT-118 | `fix_pointer_prefix_in_header` | `fixer.py:277` | COMP-08 | `fixer.py` |
 | UNIT-119 | `apply_baseline` | `baseline.py:67` | COMP-06 | `baseline.py` |
@@ -198,14 +199,14 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-125 | `_c_source_metrics` | `scripts/collect_metrics.py` | COMP-13 (Trend-Analysis Scripts) | `scripts/collect_metrics.py` |
 | UNIT-126 | `_summarise_violations` | `scripts/collect_metrics.py` | COMP-13 (Trend-Analysis Scripts) | `scripts/collect_metrics.py` |
 | UNIT-127 | `_make_chart` (stacked) / `_stack_series` / `_category_series` | `scripts/generate_charts.py` | COMP-13 (Trend-Analysis Scripts) | `scripts/generate_charts.py` |
-| UNIT-128 | `Checker._check_goto_usage` | `checker.py:2432` | COMP-05f | `checker.py` |
-| UNIT-129 | `Checker._check_assignment_in_condition` | `checker.py:2463` | COMP-05f | `checker.py` |
-| UNIT-130 | `Checker._check_multiple_statements_per_line` | `checker.py:2537` | COMP-05f | `checker.py` |
-| UNIT-131 | `Checker._check_void_pointer` | `checker.py:2570` | COMP-05f | `checker.py` |
-| UNIT-132 | `Checker._check_recursive_function` | `checker.py:2603` | COMP-05f | `checker.py` |
-| UNIT-133 | `Checker._check_sizeof_type` | `checker.py:2656` | COMP-05f | `checker.py` |
-| UNIT-134 | `Checker._check_boolean_comparison` | `checker.py:2698` | COMP-05f | `checker.py` |
-| UNIT-135 | `Checker._check_empty_else` | `checker.py:2725` | COMP-05f | `checker.py` |
+| UNIT-128 | `Checker._check_goto_usage` | `checker.py:2463` | COMP-05f | `checker.py` |
+| UNIT-129 | `Checker._check_assignment_in_condition` | `checker.py:2494` | COMP-05f | `checker.py` |
+| UNIT-130 | `Checker._check_multiple_statements_per_line` | `checker.py:2568` | COMP-05f | `checker.py` |
+| UNIT-131 | `Checker._check_void_pointer` | `checker.py:2601` | COMP-05f | `checker.py` |
+| UNIT-132 | `Checker._check_recursive_function` | `checker.py:2634` | COMP-05f | `checker.py` |
+| UNIT-133 | `Checker._check_sizeof_type` | `checker.py:2687` | COMP-05f | `checker.py` |
+| UNIT-134 | `Checker._check_boolean_comparison` | `checker.py:2729` | COMP-05f | `checker.py` |
+| UNIT-135 | `Checker._check_empty_else` | `checker.py:2756` | COMP-05f | `checker.py` |
 | UNIT-136 | `config_error` | `utils.py:28` | COMP-05 (shared) | `utils.py` |
 
 ---
@@ -1395,7 +1396,8 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 **Algorithm:**
 1. Return if disabled. For each `RE_TYPEDEF_ENUM` match, check `enum.type_case` and `enum.type_suffix` on the type name
 2. Derive the member prefix: strip the type suffix case-insensitively, then convert with `to_case()` to the member case
-3. For each member (`RE_ENUM_MEMBER`): emit `enum.member_case` on a case mismatch, and `enum.member_prefix` (own severity) when `member_prefix_from_type.enabled` and the member does not start with `<prefix>_` (case-insensitive)
+3. Extract the members with `_enum_members(body)` (#423): blank preprocessor lines (`RE_PP_LINE`, offsets preserved), split the body on top-level commas (commas inside `(...)` / `[...]` of an initialiser are ignored) and take the leading identifier (`RE_ENUM_MEMBER`, `\s*([A-Za-z_]\w*)`) of each non-empty item. The final item is included whether or not a trailing comma follows it, and names to the right of `=` are never taken as members. Comments were already blanked by `preprocess()`, so a trailing comment does not hide the last member. Before #423 `RE_ENUM_MEMBER` required `=`, `,` or `}` after the name; the body excludes `}`, so the last member without a trailing comma was skipped, and an initialiser identifier followed by `,` was checked as a member
+4. For each member: emit `enum.member_case` on a case mismatch, and `enum.member_prefix` (own severity) when `member_prefix_from_type.enabled` and the member does not start with `<prefix>_` (case-insensitive); the finding is reported at the member's own line and column
 
 ---
 

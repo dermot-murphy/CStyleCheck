@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.12 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.13 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.10 | 2026-09-29 | Claude | Cross-reference resync with #422: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -46,9 +47,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.21 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.11 |
-| CSC-MAN3-001 | Project Management Plan | 1.17 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.22 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.12 |
+| CSC-MAN3-001 | Project Management Plan | 1.18 |
 
 ---
 

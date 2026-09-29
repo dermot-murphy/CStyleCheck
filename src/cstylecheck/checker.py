@@ -164,7 +164,39 @@ RE_PRAGMA_ONCE          = re.compile(r"^\s*#\s*pragma\s+once", re.MULTILINE)
 RE_MAGIC_NUMBER = re.compile(r"(?<![.\w])(\d{2,})(?![.\w])")
 RE_ARRAY_INDEX  = re.compile(r"\[\s*\d+\s*\]")   # matches  [2]  or  [ 10 ]
 
-RE_ENUM_MEMBER  = re.compile(r"\b([A-Za-z_]\w*)\s*(?:=|,|\})")
+# Leading identifier of one comma-separated enumerator item (issue #423).
+# Applied to each top-level item of the enum body by _enum_members(), so the
+# last member is found whether or not it has a trailing comma, and names used
+# inside an initialiser (``A = OTHER_VALUE``) are never mistaken for members.
+RE_ENUM_MEMBER  = re.compile(r"\s*([A-Za-z_]\w*)")
+RE_PP_LINE      = re.compile(r"^[ \t]*#[^\n]*", re.MULTILINE)
+
+
+def _enum_members(body: str) -> list:
+    """Return ``(name, offset)`` for every enumerator in an enum body.
+
+    *body* is the text between the braces (comments already blanked).  The
+    body is split on top-level commas (commas nested in parentheses inside
+    an initialiser are ignored) and the leading identifier of each non-empty
+    item is taken as the member name.  Preprocessor lines are blanked first,
+    preserving offsets.  The final item is included whether or not it is
+    followed by a trailing comma (issue #423).
+    """
+    text = RE_PP_LINE.sub(lambda pm: " " * len(pm.group(0)), body)
+    members = []
+    depth = 0
+    start = 0
+    for idx, ch in enumerate(text + ","):
+        if ch in "([":
+            depth += 1
+        elif ch in ")]":
+            depth = max(depth - 1, 0)
+        elif ch == "," and depth == 0:
+            im = RE_ENUM_MEMBER.match(text, start, idx)
+            if im:
+                members.append((im.group(1), im.start(1)))
+            start = idx + 1
+    return members
 
 RE_COMMENT_WORD = re.compile(r"[A-Za-z][A-Za-z']{2,}")
 
@@ -1134,15 +1166,14 @@ class Checker:
 
             # --- member checks ---
             body_offset = m.start(1)
-            for mm in RE_ENUM_MEMBER.finditer(body_str):
-                mname = mm.group(1)
+            for mname, moff in _enum_members(body_str):
                 if not matches_case(mname, member_case):
-                    self._v(body_offset + mm.start(), type_sev, "enum.member_case",
+                    self._v(body_offset + moff, type_sev, "enum.member_case",
                             f"Enum member '{mname}' must be {member_case}")
                 if (member_pfx_cfg.get("enabled")
                         and not mname.upper().startswith(
                             member_pfx.upper() + "_")):
-                    self._v(body_offset + mm.start(),
+                    self._v(body_offset + moff,
                             member_pfx_cfg.get("severity", "warning"),
                             "enum.member_prefix",
                             f"Enum member '{mname}' should start with "

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.33 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.34 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.34 | 2026-09-29 | Claude | Issue #423: add UV-TYP-005a (`TestEnumLastMember`, 13 tests: last enum member checked for `enum.member_case` and `enum.member_prefix` with and without trailing comma, with initialiser, trailing comment, single-line and one-member enums; initialiser identifiers and `#if` lines not treated as members); §5.4 heading and §6 `test_enums.py` 11→24; total 1532→1545 (58 modules); coverage-gate text 1532→1545; §7 SWE1-040 to 042 row cites UV-TYP-005a; referenced-document versions resynced (4) |
 | 1.33 | 2026-09-29 | Claude | Issue #425: add §5.21 catalogue for `test_exit_code_entry_points.py` (UV-EXIT-001 to UV-EXIT-003, 8 tests: `config_error()`, string-exit mapping in `main()`, nine config/usage error paths exit 2 through the console-script target and `src/cstylecheck.py`); `test_config_loading.py` patches `config_error`; §6 new module row, total 1524→1532 (58 modules); coverage-gate text 1524→1532; §7 SWE1-001/002 and SWE1-068 to 070 rows cite UV-EXIT; referenced-document versions resynced (4) |
 | 1.32 | 2026-09-29 | Claude | Issue #424: add §5.20 catalogue for `test_functions_case_removed.py` (UV-FCASE-001 to UV-FCASE-004, 16 tests: no `functions.case` in presets, wizard or repo configs; not a case-style key; `WARNING` on `stderr` with unchanged exit code, once per root or per-directory config; function naming still set by `functions.style`); UV-CASE-003 — 15→14 case-style keys; §6 new module row, total 1508→1524 (57 modules); coverage-gate text 1508→1524; §7 SWE1-001/002, SWE1-030 to 034 and SWE1-075 rows cite UV-FCASE; referenced-document versions resynced (4) |
 | 1.31 | 2026-09-29 | Claude | Issue #422: add §5.19 catalogue for `test_case_style_config.py` (UV-CASE-001 to UV-CASE-005, 27 tests: canonical case names in presets and wizard output, alias normalisation, unknown style → exit 2, repo configs validate, end-to-end findings from a generated config); UV-WIZ-002 — `camelCase` stored as `camel`; §6 new module row, total 1481→1508 (56 modules); coverage-gate text 1481→1508; §7 SWE1-001/002 SWE1-040 to 042 and SWE1-075 rows cite UV-CASE; referenced-document versions resynced (4) |
@@ -68,10 +69,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.18 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.28 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.24 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.21 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.19 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.29 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.25 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.22 |
 
 ---
 
@@ -98,7 +99,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1532 tests (2026-09-29 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424 and #425) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1545 tests (2026-09-29 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425 and #423) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -198,7 +199,7 @@ Tests are organised by test module. Each module maps to one or more COMP-05 sub-
 
 ---
 
-### 5.4 Type Rules — `test_typedefs.py` (8), `test_enums.py` (11), `test_structs.py` (12)
+### 5.4 Type Rules — `test_typedefs.py` (8), `test_enums.py` (24), `test_structs.py` (12)
 
 | TC-ID | Test Name | Rule Verified | Pass Condition |
 |---|---|---|---|
@@ -207,6 +208,7 @@ Tests are organised by test module. Each module maps to one or more COMP-05 sub-
 | UV-TYP-003 | `test_multi_token_typedef` | `typedef.case` | `typedef unsigned int UINT_T` correctly detected |
 | UV-TYP-004 | `test_enum_type_suffix` | `enum.type_suffix` | `enum uart_state_t` passes; `uart_state` fails |
 | UV-TYP-005 | `test_enum_member_prefix` | `enum.member_prefix` | `UART_STATE_IDLE` passes; `STATE_IDLE` fails |
+| UV-TYP-005a | `TestEnumLastMember` (13 tests, #423) | `enum.member_case`, `enum.member_prefix` | The last member is reported for both rules without a trailing comma, with a trailing comma, with an initialiser (`badLast = 5`), with a trailing block or line comment, in a single-line two-member enum and in a one-member enum; a correctly cased last member with the wrong prefix gets `enum.member_prefix` only (with and without trailing comma); valid last members with initialisers and comments pass; identifiers inside an initialiser (`= OTHER_BASE`, `(SHIFT_A \| SHIFT_B)`) are not members; `#if` lines in the body are ignored; the finding is on the member's own line |
 | UV-TYP-006 | `test_struct_tag_suffix` | `struct.tag_suffix` | `struct uart_cfg_s` passes |
 | UV-TYP-007 | `test_struct_member_case` | `struct.member_case` | `lower_snake` enforced on members |
 
@@ -494,7 +496,7 @@ Added for issue #425. Config and usage errors called `sys.exit("message")`, whic
 | `test_functions.py` | 14 | 14 | 0 | `_check_functions` |
 | `test_defines.py` | 30 | 30 | 0 | `_check_defines` (incl. typedef-alias exemption) |
 | `test_typedefs.py` | 8 | 8 | 0 | `_check_typedefs` |
-| `test_enums.py` | 11 | 11 | 0 | `_check_enums` |
+| `test_enums.py` | 24 | 24 | 0 | `_check_enums` |
 | `test_structs.py` | 12 | 12 | 0 | `_check_structs` |
 | `test_include_guards.py` | 8 | 8 | 0 | `_check_include_guard` |
 | `test_misc.py` | 28 | 28 | 0 | `_check_misc` |
@@ -548,7 +550,7 @@ Added for issue #425. Config and usage errors called `sys.exit("message")`, whic
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
 | `test_cli_requirements.py` | 21 | 21 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
-| **Total** | **1532** | **1532** | **0** | All 81 rule IDs covered — 58 modules |
+| **Total** | **1545** | **1545** | **0** | All 81 rule IDs covered — 58 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -575,7 +577,7 @@ Added for issue #425. Config and usage errors called `sys.exit("message")`, whic
 | SWE1-017 to SWE1-029 | Variable rules | UV-VAR-001 to UV-VAR-015 |
 | SWE1-030 to SWE1-034 | Function rules | UV-FUN-001 to UV-FUN-007; UV-FCASE-004 (`functions.style` only, #424) |
 | SWE1-035 to SWE1-039, SWE1-090 | Constant/macro rules | UV-DEF-001 to UV-DEF-013 |
-| SWE1-040 to SWE1-042 | Type rules | UV-TYP-001 to UV-TYP-007; UV-CASE-005 (generated-config typedef / enum case findings, #422) |
+| SWE1-040 to SWE1-042 | Type rules | UV-TYP-001 to UV-TYP-007; UV-TYP-005a (last enum member, #423); UV-CASE-005 (generated-config typedef / enum case findings, #422) |
 | SWE1-043 to SWE1-044 | Include guard rules | UV-INC-001 to UV-INC-005 |
 | SWE1-045 to SWE1-050 | Miscellaneous rules | UV-MSC-001 to UV-MSC-007 |
 | SWE1-071 | Whitespace ratio | UV-WSR-001 to UV-WSR-027 |

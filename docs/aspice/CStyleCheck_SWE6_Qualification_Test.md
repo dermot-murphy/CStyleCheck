@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.27 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.28 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.28 | 2026-09-29 | Claude | Issue #423: BP3 evidence — suite total 1532→1545 (last enum member tests); referenced-document versions resynced (4) |
 | 1.27 | 2026-09-29 | Claude | Issue #425: SWQ-008 — three config-error scenarios (unreadable baseline, unknown case style, config error via the wrapper) with a 2026-09-29 execution note (UV-EXIT-003); §6 SWE1-068 to 070 row cites SWQ-008 and UV-EXIT; BP3 evidence — suite total 1524→1532; referenced-document versions resynced (4) |
 | 1.26 | 2026-09-29 | Claude | Issue #424: SWQ-001 step 9 (`functions.case` → one `WARNING` on stderr, exit code unchanged) with a 2026-09-29 execution row; §6 SWE1-075 row cites UV-FCASE-001; BP3 evidence — suite total 1508→1524; referenced-document versions resynced (4) |
 | 1.25 | 2026-09-29 | Claude | Issue #422: SWQ-001 steps 7–8 (case-style aliases accepted and enforced; unknown case style → exit 2 naming the key) with a 2026-09-29 execution row; §6 SWE1-075 row cites UV-CASE-001 and UV-CASE-005; BP3 evidence — suite total 1481→1508; referenced-document versions resynced (4) |
@@ -63,10 +64,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.18 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.24 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.18 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.21 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.19 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.25 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.19 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.22 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -518,5 +519,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1524 after #424; 1532 after #425).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1524 after #424; 1532 after #425; 1545 after #423).
 

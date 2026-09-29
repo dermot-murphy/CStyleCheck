@@ -132,6 +132,18 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **Last enum member is now checked (#423)** — `enum.member_case` and
+  `enum.member_prefix` skipped the last member of a `typedef enum` when it had no
+  trailing comma (e.g. `typedef enum { COLOUR_RED, badLast } colour_t;`), because the
+  member pattern required `=`, `,` or `}` after the name and the matched body excludes
+  the closing brace. Members are now found by splitting the body on top-level commas,
+  so the last member is checked with or without a trailing comma, an initialiser
+  (`LAST = 5`) or a trailing comment, including single-line and one-member enums.
+  Identifiers inside an initialiser (`COLOUR_RED = OTHER_BASE,`) are no longer checked
+  as if they were members, and `#if` / `#endif` lines in an enum body are ignored.
+  With a trailing comma both rules already reported the last member. **Projects may
+  see new `enum.member_case` / `enum.member_prefix` findings** for last members
+  written without a trailing comma. 13 new tests in `tests/test_enums.py`; total 1532→1545.
 - **Config errors exit with code 2 from the installed `cstylecheck` command (#425)** —
   config and usage errors (missing or unreadable config, malformed or non-UTF-8 YAML,
   unreadable baseline, options, alias, exclusions, defines, banned-names, spell-words,

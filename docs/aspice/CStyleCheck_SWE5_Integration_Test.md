@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.24 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.25 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.25 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.24 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.23 | 2026-09-29 | Claude | Cross-reference resync with #424: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.22 | 2026-09-29 | Claude | Cross-reference resync with #422: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -60,11 +61,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.23 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.18 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.33 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.27 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.21 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.24 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.19 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.34 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.28 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.22 |
 
 ### 3.2 Test Environment
 

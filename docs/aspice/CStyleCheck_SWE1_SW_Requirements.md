@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.18 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.19 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.19 | 2026-09-29 | Claude | Issue #423: SWE1-041 — every enumerator is checked by `enum.member_case` and `enum.member_prefix`, including the last one with or without a trailing comma, an initialiser or a trailing comment; initialiser identifiers are not members; referenced-document versions resynced (4) |
 | 2.18 | 2026-09-29 | Claude | Issue #425: SWE1-069 — every configuration or usage error prints its message to stderr and exits 2, with the same exit code and message from the installed `cstylecheck` console script and `python src/cstylecheck.py`; RTM row cites `test_exit_code_entry_points.py`; referenced-document versions resynced (4) |
 | 2.17 | 2026-09-29 | Claude | Issue #424: SWE1-001 — `functions.case` is not a case-style key; a config containing it loads normally (exit code unchanged) with one `WARNING` on `stderr` per config file (root or per-directory) saying it is not used and to use `functions.style`; SWE1-032 — function-name casing set by `functions.style` only; SWE1-075 — presets and `--init` do not write `functions.case`; RTM rows cite `test_functions_case_removed.py`; referenced-document versions resynced (4) |
 | 2.16 | 2026-09-29 | Claude | Issue #422: SWE1-001 — case-style values normalised to canonical names at load (case-insensitive, documented aliases; root and per-directory configs); SWE1-002 — an unknown case-style value is a configuration error (exit 2) naming the file, key, value and allowed values; SWE1-075 — presets and `--init` write only canonical case names; RTM rows cite `test_case_style_config.py`; referenced-document versions resynced (4) |
@@ -66,10 +67,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.12 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.15 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.23 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.21 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.13 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.16 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.24 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.22 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
@@ -165,7 +166,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SW-REQ-ID | Requirement | Priority | Verification | Parent |
 |---|---|---|---|---|
 | SWE1-040 | The `_check_typedefs()` method shall enforce `UPPER_SNAKE_CASE` with a `_T` suffix on `typedef` names; multi-token base types (e.g. `typedef unsigned int UINT_T`) shall be correctly detected | Mandatory | Test | SYS-F-011 |
-| SWE1-041 | The `_check_enums()` method shall enforce `lower_snake_t` on enum type names and `UPPER_SNAKE` with enum-name-derived prefix on enum member names | Mandatory | Test | SYS-F-011 |
+| SWE1-041 | The `_check_enums()` method shall enforce `lower_snake_t` on enum type names and `UPPER_SNAKE` with enum-name-derived prefix on enum member names; every enumerator shall be checked, including the last one whether or not it has a trailing comma, an initialiser or a trailing comment, and identifiers inside an initialiser shall not be treated as members (#423) | Mandatory | Test | SYS-F-011 |
 | SWE1-042 | The `_check_structs()` method shall enforce `lower_snake_s` on struct tag names and `lower_snake` on struct member names | Mandatory | Test | SYS-F-011 |
 
 ### 4.8 Rule Engine — Include Guards (SS-05)
