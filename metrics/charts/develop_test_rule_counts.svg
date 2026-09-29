@@ -3,29 +3,29 @@
 <text x="68" y="22" font-size="13" font-weight="600" fill="#e6edf3" font-family="ui-monospace, 'Cascadia Code', monospace">Test & rule counts — develop</text>
 <line x1="68" y1="224.0" x2="620" y2="224.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
 <text x="63" y="228.0" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">0</text>
-<line x1="68" y1="201.61707988980717" x2="620" y2="201.61707988980717" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="205.61707988980717" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">200</text>
-<line x1="68" y1="179.23415977961432" x2="620" y2="179.23415977961432" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="183.23415977961432" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">400</text>
-<line x1="68" y1="156.8512396694215" x2="620" y2="156.8512396694215" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="160.8512396694215" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">600</text>
-<line x1="68" y1="134.46831955922863" x2="620" y2="134.46831955922863" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="138.46831955922863" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">800</text>
-<line x1="68" y1="112.0853994490358" x2="620" y2="112.0853994490358" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="116.0853994490358" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">1000</text>
-<line x1="68" y1="89.70247933884298" x2="620" y2="89.70247933884298" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="93.70247933884298" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">1200</text>
-<line x1="68" y1="67.31955922865015" x2="620" y2="67.31955922865015" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="71.31955922865015" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">1400</text>
-<line x1="68" y1="44.93663911845729" x2="620" y2="44.93663911845729" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
-<text x="63" y="48.93663911845729" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">1600</text>
+<line x1="68" y1="201.78537252221463" x2="620" y2="201.78537252221463" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="205.78537252221463" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">200</text>
+<line x1="68" y1="179.57074504442926" x2="620" y2="179.57074504442926" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="183.57074504442926" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">400</text>
+<line x1="68" y1="157.3561175666439" x2="620" y2="157.3561175666439" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="161.3561175666439" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">600</text>
+<line x1="68" y1="135.14149008885852" x2="620" y2="135.14149008885852" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="139.14149008885852" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">800</text>
+<line x1="68" y1="112.92686261107313" x2="620" y2="112.92686261107313" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="116.92686261107313" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">1000</text>
+<line x1="68" y1="90.71223513328775" x2="620" y2="90.71223513328775" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="94.71223513328775" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">1200</text>
+<line x1="68" y1="68.49760765550238" x2="620" y2="68.49760765550238" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="72.49760765550238" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">1400</text>
+<line x1="68" y1="46.28298017771701" x2="620" y2="46.28298017771701" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="50.28298017771701" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">1600</text>
 <line x1="68" y1="42" x2="68" y2="224" stroke="#484f58" stroke-width="1" />
 <line x1="68" y1="224" x2="620" y2="224" stroke="#484f58" stroke-width="1" />
 <text x="14" y="133" fill="#8b949e" font-family="ui-monospace, 'Cascadia Code', monospace" font-size="10" text-anchor="middle" transform="rotate(-90 14 133)">count</text>
 <line x1="344.0" y1="224" x2="344.0" y2="228" stroke="#484f58" stroke-width="1" />
 <text x="344.0" y="240" text-anchor="middle" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Sep 29</text>
 <circle cx="344.0" cy="61.5" r="3" fill="#388bfd" />
-<circle cx="344.0" cy="215.15874655647383" r="3" fill="#3fb950" />
+<circle cx="344.0" cy="215.22522214627477" r="3" fill="#3fb950" />
 <rect x="68" y="255" width="14" height="3" fill="#388bfd" rx="1" />
 <text x="86" y="264" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Test count</text>
 <rect x="166" y="255" width="14" height="3" fill="#3fb950" rx="1" />
