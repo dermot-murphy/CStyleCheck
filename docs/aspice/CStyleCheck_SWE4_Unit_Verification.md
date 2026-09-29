@@ -22,7 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.21 | 2026-09-29 | Claude | Add §5.16 `test_collect_metrics.py` (54 tests, UV-MET-001 to UV-MET-010) for trend-analysis C source metrics; add §6 row (total 1279→1333, modules 53→54); add SWE1-102 to SWE1-108 to §7; update §3.1 refs (SWE1 2.6→2.7, SWE3 1.16→1.17) — issue #388 |
+| 1.21 | 2026-09-29 | Claude | Add §5.16 `test_collect_metrics.py` (54 tests, UV-MET-001 to UV-MET-010) for trend-analysis C source metrics; add §6 row (total 1279→1333, modules 53→54); add SWE1-102 to SWE1-108 to §7; update §3.1 refs (SWE1 2.6→2.7, SWE3 1.16→1.17); also records UV-CLI-011 to UV-CLI-013 and §5.13 and §6 test_improvements 67→80, §6 total 1333→1346 (baseline, issues #394/#395, PR #397) — issue #388 |
 | 1.20 | 2026-07-06 | Claude | ASPICE audit — update §6 per-row test counts for 8 modules (+56 total): test_defines.py 22→30, test_yoda_condition.py 37→46, test_inline_suppression.py 15→24, test_constant_comparison.py 21→27, test_parameter_prefix.py 47→51, test_pointer_prefix_fix.py 10→20, test_print_summary.py 7→11, test_unsigned_suffix_signed_params.py 9→15; update §3.1 refs (SWE1 2.4→2.6, SWE3 1.15→1.16, SWE5 1.11→1.14); add SWE1-091/092/093 to §7 traceability — closes #374 |
 | 1.19 | 2026-07-06 | Claude | v1.6.0 RC — update test total 1223→1279 (+56 across 8 modules: yoda_condition 37→46, inline_suppression 15→24, constant_comparison 21→27, defines 22→30, parameter_prefix 47→51, pointer_prefix_fix 10→20, print_summary 7→11, unsigned_suffix_signed_params 9→15); update coverage comment; update §5.5 SVD→1.22 |
 | 1.18 | 2026-07-01 | Claude | v1.6.0 — add test_constant_comparison.py (21 tests), test_unsigned_suffix_signed_params.py (9 tests), test_pointer_prefix_fix.py (10 tests); update §3.1 refs (SWE1 2.4→2.5, SWE5 1.11→1.12); update test total 1183→1223, modules 50→53; update coverage comment — closes #339 #340 #341 |
@@ -330,10 +330,13 @@ Tests are organised by test module. Each module maps to one or more COMP-05 sub-
 | UV-CLI-008 | `test_baseline_write_and_load` | UNIT-35, UNIT-36, UNIT-37 | Round-trip: write then suppress |
 | UV-CLI-009 | `test_exclude_glob_applied` | UNIT-04 | Excluded files not scanned |
 | UV-CLI-010 | `test_version_flag` | UNIT-46 | `--version` outputs version; exit 0 |
+| UV-CLI-011 | `TestBaselineSuppression.test_moved_violation_still_suppressed`, `test_key_excludes_line`, `test_baseline_still_records_line` | UNIT-37, UNIT-119 | Violation moved to another line stays suppressed; `line` still written (issue #394) |
+| UV-CLI-012 | `TestBaselineSuppression.test_extra_copy_of_baselined_violation_reported`, `test_duplicate_entries_suppress_duplicates`, `test_different_message_not_suppressed`, `test_apply_baseline_does_not_mutate` | UNIT-119 | Multiset matching: one entry suppresses one violation (issue #394) |
+| UV-CLI-013 | `TestBaselineSuppression.test_normalise_*`, `test_write_uses_forward_slashes`, `test_windows_baseline_matches_posix_path`, `test_posix_baseline_matches_windows_path` | UNIT-36, UNIT-120 | Paths normalised to `/`; Windows and Linux baselines interchangeable (issue #395) |
 
 ---
 
-### 5.13 Bug-Fix and Improvement Tests — `test_improvements.py` (67), `test_barr_c.py` (42), `test_eof_comment.py`, `test_copyright_header.py`, `test_parameter_prefix.py`, `test_exclusions.py`
+### 5.13 Bug-Fix and Improvement Tests — `test_improvements.py` (80), `test_barr_c.py` (42), `test_eof_comment.py`, `test_copyright_header.py`, `test_parameter_prefix.py`, `test_exclusions.py`
 
 These test modules provide regression coverage for previously fixed bugs and new rules. Key cases:
 
@@ -417,7 +420,7 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | `test_spell_check.py` | 9 | 9 | 0 | `_check_spelling` |
 | `test_sign_compatibility.py` | 7 | 7 | 0 | `SignChecker` |
 | `test_dictionaries.py` | 32 | 32 | 0 | COMP-03 |
-| `test_improvements.py` | 67 | 67 | 0 | Multiple |
+| `test_improvements.py` | 80 | 80 | 0 | Multiple |
 | `test_barr_c.py` | 42 | 42 | 0 | Multiple |
 | `test_cli.py` | 43 | 43 | 0 | COMP-01, COMP-07 |
 | `test_exclusions.py` | 28 | 28 | 0 | COMP-02 |
@@ -456,7 +459,7 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | `test_unsigned_suffix_signed_params.py` | 15 | 15 | 0 | COMP-05f (`_check_misc` signed-param exemption) |
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
-| **Total** | **1333** | **1333** | **0** | All rules covered — 54 modules |
+| **Total** | **1346** | **1346** | **0** | All rules covered — 54 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -483,7 +486,7 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | SWE1-054 to SWE1-055 | Reserved names | UV-RES-001 to UV-RES-004 |
 | SWE1-056 | Spell check | UV-SPL-001 to UV-SPL-004 |
 | SWE1-007 to SWE1-010 | Dictionary management | UV-DCT-001 to UV-DCT-004 |
-| SWE1-065 to SWE1-067 | Baseline suppression | UV-CLI-008 |
+| SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline suppression | UV-CLI-008, UV-CLI-011 to UV-CLI-013 |
 | SWE1-068 to SWE1-070 | CLI / entry point | UV-CLI-001 to UV-CLI-010 |
 | SWE1-072 to SWE1-073 | Inline suppression comments (`parse_inline_suppressions`, suppression logic) | `test_inline_suppression.py` |
 | SWE1-074 | Auto-fix mode (`apply_fixes`, `unified_diff`) | `test_fix_mode.py` |

@@ -22,7 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 2.7 | 2026-09-29 | Claude | Add §4.18 SWE1-102 to SWE1-108 (trend-analysis C source code metrics: LOC, cyclomatic complexity, size, documentation, coupling, violation quality, backward-compatible charts/wiki); update RTM — issue #388 |
+| 2.7 | 2026-09-29 | Claude | Add §4.18 SWE1-102 to SWE1-108 (trend-analysis C source code metrics: LOC, cyclomatic complexity, size, documentation, coupling, violation quality, backward-compatible charts/wiki); update RTM; also records SWE1-065 to SWE1-067 revision and SWE1-100/SWE1-101 (baseline matching, issues #394/#395, PR #397) — issue #388 |
 | 2.6 | 2026-07-06 | Claude | ASPICE audit — add SWE1-094 to SWE1-099 for v1.6.0 features (startup banner, copyright in --version, block-comment suppression, OS path sep, --summary restructure, fn_start correction, fn-ptr typedef exemption); update SWE1-072 for /* */ form; update SWE1-074 for pointer_prefix fix; update §3.2 cross-refs (SWE2 1.11→1.12, SUP8 1.9→1.10); update RTM — closes #371 |
 | 2.5 | 2026-07-01 | Claude | Add SWE1-091 (misc.constant_comparison), SWE1-092 (unsigned_suffix signed-param exemption), SWE1-093 (variable.pointer_prefix auto-fix); update §3.1 scope to v1.6.0; update RTM — closes #339 #340 #341 |
 | 2.4 | 2026-06-27 | Fix §3.2 cross-refs: cascade update (SWE2 1.9→1.11 + any other stale refs fixed) | Dermot Murphy |
@@ -213,9 +213,11 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | SW-REQ-ID | Requirement | Priority | Verification | Parent |
 |---|---|---|---|---|
-| SWE1-065 | The `write_baseline()` function shall serialise all violations to a JSON array and write to the specified file; each entry shall be keyed by `_baseline_key()` | Mandatory | Test | SYS-F-034 |
-| SWE1-066 | The `load_baseline()` function shall return a `frozenset` of baseline keys from the JSON file | Mandatory | Test | SYS-F-035 |
-| SWE1-067 | The rule engine shall filter out any `Violation` whose `_baseline_key()` matches an entry in the loaded baseline frozenset | Mandatory | Test | SYS-F-035 |
+| SWE1-065 | The `write_baseline()` function shall serialise all violations to a JSON array and write to the specified file; each entry shall record `file` (with `/` separators), `line`, `rule` and `message` | Mandatory | Test | SYS-F-034 |
+| SWE1-066 | The `load_baseline()` function shall return a multiset (`collections.Counter`) of `file:rule:message` baseline keys from the JSON file | Mandatory | Test | SYS-F-035 |
+| SWE1-067 | The rule engine shall filter out any `Violation` whose `_baseline_key()` matches an unused entry in the loaded baseline multiset; each baseline entry shall suppress at most one violation | Mandatory | Test | SYS-F-035 |
+| SWE1-100 | Baseline matching shall not depend on the violation line number; the `line` field shall be retained in the file for review only (issue #394) | Mandatory | Test | SYS-F-035 |
+| SWE1-101 | Baseline file paths shall be normalised to `/` separators when written, loaded and matched, so baselines are portable between Windows and Linux (issue #395) | Mandatory | Test | SYS-F-034, SYS-F-035 |
 
 ### 4.14 CLI and Entry Point (SS-01)
 

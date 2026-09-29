@@ -145,6 +145,8 @@ from .sign_checker import (              # noqa: F401, E402
 
 from .baseline import (                  # noqa: F401, E402
     _baseline_key,
+    _normalise_path,
+    apply_baseline,
     load_baseline,
     write_baseline,
 )
