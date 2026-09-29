@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-DEV-002 | **Version** | 1.11 |
+| **Document ID** | CSC-DEV-002 | **Version** | 1.12 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Approved | **Classification** | Internal |
 | **Author** | Dermot Murphy | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.12 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-014: §5.2 pull-request control states that the owner's merge of the PR is the approval record (no separate GitHub review approval, no approval timestamp) |
 | 1.11 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.10 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.9 | 2026-09-29 | Claude | Cross-reference resync with #424: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -105,7 +106,7 @@ Although the Reviewer and Approver are the same person, the following compensati
 |---|---|---|
 | **AI-assisted review** | Every document was drafted or reviewed with Claude, providing an independent analytical perspective before Dermot Murphy's human review | Commit history; CSC-DEV-001 |
 | **CI quality gates** | All source code and test changes pass automated CI (unit tests × 3 Python versions, mypy, ruff, CStyleCheck self-check) before any work product is approved | GitHub Actions CI log for each PR |
-| **Pull request review** | Every change to a controlled work product is submitted as a GitHub Pull Request. The PR mechanism creates a structured review record (diff, CI status, approval timestamp) | GitHub PR history |
+| **Pull request review** | Every change to a controlled work product is submitted as a GitHub Pull Request. The PR records the diff, the CI status and any review comments. For this solo-developer project the owner's (Dermot Murphy's) merge of the PR is the approval record; no separate GitHub review approval is given, because the author of the review and the approver would be the same person | GitHub PR history (merged-by, merge commit, merge date) |
 | **Version-controlled audit trail** | All work product changes are committed to Git with a descriptive message. The commit history is immutable and publicly auditable | GitHub repository |
 | **Systematic self-review** | Before approval, Dermot Murphy explicitly reads the document in the context of the standard clause it satisfies, comparing content against the corresponding ASPICE GP requirements | Issue-close evidence in each PR |
 

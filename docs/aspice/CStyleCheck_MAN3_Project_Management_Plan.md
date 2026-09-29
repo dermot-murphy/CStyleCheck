@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN3-001 | **Version** | 1.18 |
+| **Document ID** | CSC-MAN3-001 | **Version** | 1.19 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.19 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-002: §8 release-classification decision — next release v2.0.0 (Major) replaces the planned v1.7.0, with the compatibility changes in scope listed. AUD10-F-016: §4.3 lifecycle text refreshed (package architecture, 12 modules; post-v1.6.0 development toward v2.0.0); PH-04 names the `src/cstylecheck/` package; WBS-16/WBS-17 overlap removed |
 | 1.18 | 2026-09-29 | Claude | #423: test total 1532→1545 (last enum member tests); referenced-document versions resynced (5) |
 | 1.17 | 2026-09-29 | Claude | #425: test total 1524→1532, 57→58 test modules (config-error exit-code tests for both entry points); referenced-document versions resynced (5) |
 | 1.16 | 2026-09-29 | Claude | #424: test total 1508→1524, 56→57 test modules (`functions.case` removal tests); referenced-document versions resynced (5) |
@@ -95,8 +96,8 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 | Constraint | Assessment |
 |---|---|
-| **Technical** | Python-only implementation; single-file architecture; no exotic dependencies. Technically feasible with one engineer |
-| **Schedule** | v1.0.0 development complete; documentation phase in progress |
+| **Technical** | Python-only implementation; package architecture (`src/cstylecheck/`, 12 modules, plus the `src/cstylecheck.py` wrapper); no exotic dependencies. Technically feasible with one engineer |
+| **Schedule** | v1.6.0 released 2026-07-06; current phase is post-v1.6.0 development on `develop` toward v2.0.0 (see §8) |
 | **Resources** | Solo developer; GitHub Actions for CI/CD (zero compute cost for public repo) |
 | **Standards compliance** | ASPICE CL2 documentation producible; naming convention self-check demonstrable |
 
@@ -121,7 +122,7 @@ Requirements  →  Architecture  →  Detailed Design  →  Implementation
 | PH-01 | Requirements | SYS.2, SWE.1 | Project initiated | Requirements reviewed and approved |
 | PH-02 | Architecture | SYS.3, SWE.2 | Requirements approved | Architecture reviewed and approved |
 | PH-03 | Detailed Design | SWE.3 | Architecture approved | Design reviewed and approved |
-| PH-04 | Implementation | `cstylecheck.py` v1.0.0, test suite | Design approved | All unit tests pass (SWE.4) |
+| PH-04 | Implementation | `src/cstylecheck/` package (per release), test suite | Design approved | All unit tests pass (SWE.4) |
 | PH-05 | Integration & Verification | SWE.5, SWE.6, SYS.4, SYS.5 | Unit tests pass | All qualification tests pass |
 | PH-06 | Release | v1.0.0 tag, GHCR image, GitHub Release | All tests pass; docs approved | Release baseline created (SPL.2) |
 | PH-07 | Documentation | Full ASPICE CL2 doc set | Release complete | All documents approved |
@@ -147,8 +148,8 @@ Requirements  →  Architecture  →  Detailed Design  →  Implementation
 | WBS-13 | System integration testing (SYS.4) | 4h | Claude | Complete — SITC-001 to SITC-017 recorded |
 | WBS-14 | System verification (SYS.5) | 4h | Claude | Complete — SYS-VTC-001 to SYS-VTC-013 recorded |
 | WBS-15 | Documentation finalisation | 4h | Claude | Ongoing per release — CSC-AUD-009 corrective actions (#405) applied 2026-09-29 |
-| WBS-16 | Release | 2h | Claude | Releases v1.0.0 to v1.6.0 complete (see §8); next release (v1.7.0) planned |
-| WBS-17 | Release (v1.0.0 tag, GitHub Release) | 2h | Claude | Complete — v1.0.0 released 2026-04-12 |
+| WBS-16 | Release (tag, GitHub Release, container images) — per release | 2h | Claude | Releases v1.0.0 to v1.6.0 complete (see §8); next release v2.0.0 (Major) planned |
+| WBS-17 | *Merged into WBS-16 (was: v1.0.0 release, complete 2026-04-12)* | — | — | Withdrawn 2026-09-29 (CSC-AUD-010 AUD10-F-016) |
 
 ---
 
@@ -186,7 +187,9 @@ Requirements  →  Architecture  →  Detailed Design  →  Implementation
 | v1.5.1 release baseline (CSC-AUD-008) | 2026-06-28 | ✅ Complete | 2026-06-28 |
 | v1.6.0 release baseline | 2026-07-06 | ✅ Complete | 2026-07-06 |
 | Internal audit CSC-AUD-009 and corrective actions (#405) | 2026-09-29 | ✅ Complete | 2026-09-29 |
-| v1.7.0 release (8 MISRA/Barr-C rules, baseline matching, trend metrics); release audit and CSC-REVIEW record | 2026-Q4 | ⏳ Planned | — |
+| v2.0.0 release (Major) — 8 opt-in MISRA/Barr-C rules, baseline matching, trend metrics; compatibility changes: config with unknown case-style names rejected (#422), config/usage-error exit code 1→2 for the installed command (#425), last enum member now checked (#423), presets/`--init` enable opt-in rules (#420), `functions.case` removed with WARNING (#424); release audit and CSC-REVIEW record | 2026-Q4 | ⏳ Planned | — |
+
+**Release-classification decision (2026-09-29, Dermot Murphy):** the next release is **v2.0.0 (Major)**, not v1.7.0. Rationale: CSC-SUP10-001 §5.6 requires a Major version for changed default behaviour or an incompatible config format; CR-422 rejects configs that v1.6.0 loaded and CR-425 changes the config-error exit code of the installed command from 1 to 2. Recorded in CSC-SUP10-001 §7.2 (CSC-AUD-010 AUD10-F-002, #430).
 
 ---
 

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS3-001 | **Version** | 1.16 |
+| **Document ID** | CSC-SYS3-001 | **Version** | 1.17 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.17 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-003: §9 adds SYS-F-046 (startup banner, CR-413) → SS-01, `cli.main()` |
 | 1.16 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.15 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.14 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -250,6 +251,7 @@ If any configuration or invocation error is detected during steps 1 or 2:
 | SYS-F-043 | Config wizard (`--init`) and preset generation (`--preset`) | SS-08 (Config Wizard) |
 | SYS-F-044 | Per-directory config override resolution (`--per-dir-config`) | SS-09 (Per-directory Config) |
 | SYS-F-045 | HTML report output (`--output-format html`) | SS-06 (Output Formatter) |
+| SYS-F-046 | Startup banner (two lines on stderr before checking, unconditional; also `--log`) | SS-01 (CLI — `cli.main()` writes `_VERSION_STRING` and `_COPYRIGHT` to stderr, never stdout) |
 
 ---
 

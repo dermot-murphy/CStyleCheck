@@ -88,7 +88,7 @@ tests/
     test_variables.py       #  43 tests: all variable.* rules
     test_functions.py       #  14 tests: function.*
     test_typedefs.py        #   8 tests: typedef.*
-    test_enums.py           #  11 tests: enum.*
+    test_enums.py           #  24 tests: enum.*
     test_structs.py         #  12 tests: struct.*
     test_include_guards.py  #   8 tests: include_guard.*
     test_misc.py            #  28 tests: line_length / indentation / magic / suffix
@@ -98,6 +98,8 @@ tests/
     test_copyright_header.py #  55 tests: misc.copyright_header
     test_eof_comment.py     #  33 tests: misc.eof_comment
     test_cli.py             #  43 tests: CLI flags end-to-end
+    test_cli_requirements.py # 21 tests: startup banner, --version, path separator, single read
+    test_exit_code_entry_points.py # 8 tests: config/usage errors exit 2 (both entry points)
     test_improvements.py    #  80 tests: bugs + new features
     test_comment_ratio.py   #  24 tests: misc.comment_ratio
     test_whitespace_ratio.py #  27 tests: misc.whitespace_ratio

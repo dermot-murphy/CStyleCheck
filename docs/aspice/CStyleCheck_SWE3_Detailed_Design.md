@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.29 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.30 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.30 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-008: UNIT-05 step 2 corrected — a `None` or non-dict YAML result is returned unchanged (no exit; `validate_case_styles()` returns `[]` for a non-dict). AUD10-F-024: UNIT-98 step 4 corrected — an existing file with `overwrite=False` asks "Overwrite?" first and returns 1 only on "no". AUD10-F-026: §4 intro — `src/cstylecheck.py` is a thin entry-point wrapper, not removed; §4.1 heading level `###`. AUD10-F-027: §4 note naming `validate_case_styles()`, `deprecated_key_warnings()`, `normalize_case_style()` and `_enum_members()` as sub-units of UNIT-05, UNIT-43 and UNIT-27; referenced-document versions resynced (SWE2 1.24→1.25, SWE4 1.34→1.35) |
 | 1.29 | 2026-09-29 | Claude | Issue #423: UNIT-27 algorithm — members extracted by `_enum_members()` (top-level comma split, leading identifier per item, preprocessor lines blanked), so the last member is checked with or without a trailing comma, initialiser or trailing comment, and initialiser identifiers are no longer taken as members; `RE_ENUM_MEMBER` redefined; §4 catalogue `checker.py` line numbers updated (UNIT-21 onwards); referenced-document versions resynced (3) |
 | 1.28 | 2026-09-29 | Claude | Issue #425: new UNIT-136 `config_error()` (message to stderr, exit 2) in §4 catalogue, §4.1 package structure and §5; UNIT-46 — `main()` wraps `_main()` and maps a string-message `SystemExit` to exit 2 so the console script and the wrapper behave the same; UNIT-01, UNIT-02, UNIT-05, UNIT-06, UNIT-07, UNIT-09, UNIT-35, UNIT-36, UNIT-50 to UNIT-52 error handling call `config_error()` (UNIT-01 corrected: a missing options file is an error, not an empty list); `baseline.py` now imports `utils`; §4 `utils.py` line numbers; §1 scope UNIT-01 to UNIT-136; §8 SWE1-001/002 and SWE1-068 to 070 rows cite UNIT-136; referenced-document versions resynced (3) |
 | 1.27 | 2026-09-29 | Claude | Issue #424: UNIT-05 algorithm — `functions.case` removed from `_CASE_STYLE_KEYS`; new step 4 `_warn_deprecated_keys()` / `deprecated_key_warnings()` (`_DEPRECATED_KEYS`) prints one `WARNING` on `stderr` per file, exit code unchanged; UNIT-24 — `functions.style` is the only function-name casing key; UNIT-98 / UNIT-99 — wizard and presets no longer write `functions.case`; UNIT-100 — per-directory configs warn once; §4 catalogue line numbers (`config.py`); §4.1 package structure; §6.1 case-style keys and `functions.case` row; §8 SWE1-001/002 row; referenced-document versions resynced (3) |
@@ -61,14 +62,14 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 | Document ID | Title | Version |
 |---|---|---|
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.19 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.24 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.34 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.25 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.35 |
 
 ---
 
 ## 4. Unit Catalogue
 
-All source locations refer to the current package layout under `src/cstylecheck/` (post-package-split, issue #144). The **Target Module** column is now the **actual** module; the old monolithic `src/cstylecheck.py` no longer exists.
+All source locations refer to the current package layout under `src/cstylecheck/` (post-package-split, issue #144). The **Target Module** column is now the **actual** module; the old monolithic `src/cstylecheck.py` has been replaced by a thin entry-point wrapper (28 lines) that imports `cstylecheck.cli.main` and contains no units.
 
 | Unit ID | Unit Name | Source Location | Component | Module |
 |---|---|---|---|---|
@@ -209,9 +210,18 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-135 | `Checker._check_empty_else` | `checker.py:2756` | COMP-05f | `checker.py` |
 | UNIT-136 | `config_error` | `utils.py:28` | COMP-05 (shared) | `utils.py` |
 
+**Sub-units (helpers not catalogued separately).** The following helper functions are designed and verified as part of the unit named, not as units of their own:
+
+| Helper | Source Location | Part of | Designed in |
+|---|---|---|---|
+| `deprecated_key_warnings` | `config.py:304` | UNIT-05 `load_config` | UNIT-05 step 4 |
+| `validate_case_styles` | `config.py:330` | UNIT-05 `load_config` | UNIT-05 step 3 |
+| `normalize_case_style` | `utils.py:86` | UNIT-43 `matches_case` | UNIT-43 |
+| `_enum_members` | `checker.py:175` | UNIT-27 `Checker._check_enums` | UNIT-27 |
+
 ---
 
-## 4.1 Package Structure
+### 4.1 Package Structure
 
 Issue #144 completed the refactor of `src/cstylecheck.py` into a Python package. The current layout is:
 
@@ -334,7 +344,7 @@ src/cstylecheck/
 
 **Algorithm:**
 1. Open `path`; call `yaml.safe_load()`. A missing or unreadable file, a non-UTF-8 byte or a YAML parse error calls `config_error()` (UNIT-136): message to stderr, exit 2 (#425)
-2. If result is `None` or not a `dict` → `sys.exit(2)` with message
+2. The `yaml.safe_load()` result is not type-checked: a `None` (empty file) or non-`dict` result is passed on and returned unchanged, without an error. `validate_case_styles()` and `deprecated_key_warnings()` return `[]` for a non-dict, so no exit occurs at this point
 3. Call `validate_case_styles(cfg, path)` (#422). For each key path in `_CASE_STYLE_KEYS` (`variables.case`, `variables.{global,static,local,parameter}.case`, `constants.case`, `macros.case`, `typedefs.case`, `enums.type_case`, `enums.member_case`, `structs.tag_case`, `structs.member_case`, `functions.object_case`, `functions.verb_case`) that is present, replace the value with `normalize_case_style()` (UNIT-43); a result that is not a key of `_CASE_PATTERNS` adds the error `<path>: invalid case style '<value>' for '<key>' (allowed: lower_snake, upper_snake, camel, pascal, lower, upper, any; aliases such as PascalCase, camelCase, UPPER_SNAKE and snake_case are accepted)`. The keys in `_ENUM_STYLE_KEYS` are lower-cased and checked against their own sets: `functions.style` (`object_verb`, `verb_object`, `lower_snake`, `any`; `lower_snake` aliases accepted), `file_prefix.case` (`lower`, `upper`, `as_is`), `misc.eof_comment.filename_case` (`lower`, `upper`, `preserve`); an error reads `invalid value '<value>' for '<key>' (allowed: …)`. `functions.case` is not in `_CASE_STYLE_KEYS` (#424): any value is left untouched and is not an error
 4. Before validation, `_exit_on_case_style_errors()` calls `_warn_deprecated_keys(cfg, path)` (#424): for each key of `_DEPRECATED_KEYS` present (`functions.case`), `deprecated_key_warnings()` builds `<path>: 'functions.case' is not used by the checker and is ignored; function-name casing is controlled by 'functions.style' (object_verb, verb_object, lower_snake, any). Remove 'functions.case' and use 'functions.style' instead`, printed as `WARNING: <message>` to `stderr` once per (file, message) — `_WARNED_DEPRECATED` records what was printed — without changing the config or the exit code
 5. If there are errors, `_exit_on_case_style_errors()` prints each as `ERROR: <message>` to `stderr` and calls `sys.exit(2)` before any file is checked
@@ -898,7 +908,7 @@ src/cstylecheck/
 1. Present a short series of prompts (project name, preferred naming style, which rule categories to enable) via `_ask` / `_ask_bool` / `_ask_choice`; an empty answer or `EOFError` returns the default. The naming-style prompt shows the labels of `WIZARD_CASE_CHOICES` in order (`lower_snake`, `camelCase`, `PascalCase`; prefix answers accepted) and stores the mapped canonical name (`lower_snake`, `camel`, `pascal`) in `variables.case` (#422); `functions` gets no `case` key (#424) — function-name casing is set by `functions.style`
 2. Ask last, with `_ask_bool` (default No), "Enable MISRA C:2012 rules (…)?" and "Enable Barr-C rules (…)?" (#420); asking them last keeps the order of the earlier questions unchanged
 3. Build a YAML-serialisable config dict based on user answers; `misc` always lists the 7 rules of `MISRA_OPT_IN_RULES` ∪ `BARR_C_OPT_IN_RULES` (MISRA order first, `misc.empty_else` once) with the shipped severity from `_OPT_IN_SEVERITY`, and `enabled: true` only when the matching question was answered yes (`misc.empty_else` when either was); `misc.boolean_comparison` is not listed
-4. Write the config to `output_path` (default `.cstylecheck.yml`); if the file exists and `overwrite` is False → return 1 (abort)
+4. Before any other prompt, if `output_path` (default `.cstylecheck.yml`) exists and `overwrite` is False, ask `'<path>' already exists. Overwrite?` with `_ask_bool` (default No); on "no" print `Aborted - existing config preserved.` and return 1, on "yes" continue. After the questions, write the config to `output_path`
 5. Return 0 on success
 
 ---

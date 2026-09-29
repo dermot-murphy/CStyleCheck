@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.19 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.20 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-005: §5 RTM parent column completed from the §4 parent columns (script-verified for every row) — SWE1-001 to 006 add SYS-F-039; SWE1-011 to 016 add SYS-F-020, F-027; SWE1-017 to 029 add SYS-F-011, F-012, F-024; SWE1-030 to 034 add SYS-F-012; SWE1-035 to 039 add SYS-F-024. AUD10-F-007: SWE1-095 copyright format aligned with the code, `(C) <year> <holder>`; RTM row cites UV-CLI-018. AUD10-F-025: RTM row SWE1-040 to 042 cites `test_case_style_config.py` (UV-CASE-005) |
 | 2.19 | 2026-09-29 | Claude | Issue #423: SWE1-041 — every enumerator is checked by `enum.member_case` and `enum.member_prefix`, including the last one with or without a trailing comma, an initialiser or a trailing comment; initialiser identifiers are not members; referenced-document versions resynced (4) |
 | 2.18 | 2026-09-29 | Claude | Issue #425: SWE1-069 — every configuration or usage error prints its message to stderr and exits 2, with the same exit code and message from the installed `cstylecheck` console script and `python src/cstylecheck.py`; RTM row cites `test_exit_code_entry_points.py`; referenced-document versions resynced (4) |
 | 2.17 | 2026-09-29 | Claude | Issue #424: SWE1-001 — `functions.case` is not a case-style key; a config containing it loads normally (exit code unchanged) with one `WARNING` on `stderr` per config file (root or per-directory) saying it is not used and to use `functions.style`; SWE1-032 — function-name casing set by `functions.style` only; SWE1-075 — presets and `--init` do not write `functions.case`; RTM rows cite `test_functions_case_removed.py`; referenced-document versions resynced (4) |
@@ -279,7 +280,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SW-REQ-ID | Requirement | Priority | Verification | Parent |
 |---|---|---|---|---|
 | SWE1-094 | The `main()` entry point shall write a startup banner to `stderr` after the configuration is loaded and before file discovery and checking begin. The banner shall consist of exactly two lines: the tool name and version string (`_VERSION_STRING`, `CStyleCheck <version>`) followed by the copyright notice (`_COPYRIGHT`, `(C) 2026 Dermot Murphy`). It shall be written on every checking run, whether or not stdout or stderr is a terminal (including when output is piped or redirected) and for every `--output-format`; no option shall suppress it. The banner shall not be written to stdout; when `--log FILE` is given it shall also be written to the log file. The early-exit paths (`--version`, `--help`, `--init`, `--preset`, `--update-config`) do not write the banner | Mandatory | Test | SYS-F-046 |
-| SWE1-095 | The `--version` flag output shall include both the version string and the copyright notice on separate lines; the copyright notice shall conform to the format `Copyright (C) YYYY Dermot Murphy` | Mandatory | Test | SYS-F-032 |
+| SWE1-095 | The `--version` flag output shall include both the version string and the copyright notice on separate lines; the copyright notice shall conform to the format `(C) <year> <holder>` (`_COPYRIGHT`, currently `(C) 2026 Dermot Murphy`; the word "Copyright" is not printed), the same line as the second startup-banner line (SWE1-094) | Mandatory | Test | SYS-F-032 |
 | SWE1-096 | The output formatter shall render file paths in violation messages using the OS-native path separator (`os.sep`) so that paths on Windows use backslash and paths on POSIX systems use forward-slash | Mandatory | Test | SYS-F-027 |
 | SWE1-097 | The `print_summary()` function shall print a "Files" section (listing per-file violation counts) **before** the "Results" section (listing per-rule counts); the summary header shall include the tool name, version, and a UTC timestamp; the horizontal separator line shall be dynamically sized to match the longest output line | Mandatory | Test | SYS-F-032 |
 | SWE1-098 | The `_check_functions()` method shall correct the reported line number for a function definition when the opening brace appears on a line later than the function name line (multi-line signature); the violation shall be reported at the line containing the function return type and name, not at the opening brace | Mandatory | Test | SYS-F-015 |
@@ -317,13 +318,13 @@ The following criteria shall be met by all software requirements above. They are
 
 | SW-REQ-ID | Software Requirement Summary | Parent SYS REQ | SWE.2 Design Element | SWE.4 Test Reference |
 |---|---|---|---|---|
-| SWE1-001 to SWE1-006 | Configuration loading | SYS-F-002, F-006, F-007, F-008, F-025, F-026, SYS-NF-007, SYS-NF-009 | Configuration Loader module | `test_cli.py`, `test_dictionaries.py`; SWE1-001/002 case-style normalisation and validation: `test_case_style_config.py` (#422); SWE1-001 `functions.case` warning: `test_functions_case_removed.py` (#424) |
+| SWE1-001 to SWE1-006 | Configuration loading | SYS-F-002, F-006, F-007, F-008, F-025, F-026, SYS-F-039, SYS-NF-007, SYS-NF-009 | Configuration Loader module | `test_cli.py`, `test_dictionaries.py`; SWE1-001/002 case-style normalisation and validation: `test_case_style_config.py` (#422); SWE1-001 `functions.case` warning: `test_functions_case_removed.py` (#424) |
 | SWE1-007 to SWE1-010 | Dictionary management | SYS-F-009 | Dictionary Manager module | `test_dictionaries.py` |
-| SWE1-011 to SWE1-016 | Source parsing and cache | SYS-F-010, SYS-NF-001, SYS-NF-002 | Source Parser / Cache | `test_misc.py`, `test_preprocessor.py`; SWE1-015: `test_cli_requirements.py` (UV-CLI-014 to 016); `--fix` header re-read is a documented exception |
-| SWE1-017 to SWE1-029 | Variable rules | SYS-F-013, F-014, F-017, F-018 | `Checker._check_variables()` | `test_variables.py` |
-| SWE1-030 to SWE1-034 | Function rules | SYS-F-015, F-016, F-017 | `Checker._check_functions()` | `test_functions.py`; SWE1-032 `functions.style` only: `test_functions_case_removed.py` (#424) |
-| SWE1-035 to SWE1-039 | Constant and macro rules | SYS-F-011, F-012, F-017, F-018 | `Checker._check_defines()` | `test_defines.py` |
-| SWE1-040 to SWE1-042 | Type rules | SYS-F-011 | `Checker._check_typedefs/enums/structs()` | `test_typedefs.py`, `test_enums.py`, `test_structs.py` |
+| SWE1-011 to SWE1-016 | Source parsing and cache | SYS-F-010, F-020, F-027, SYS-NF-001, SYS-NF-002 | Source Parser / Cache | `test_misc.py`, `test_preprocessor.py`; SWE1-015: `test_cli_requirements.py` (UV-CLI-014 to 016); `--fix` header re-read is a documented exception |
+| SWE1-017 to SWE1-029 | Variable rules | SYS-F-011, F-012, F-013, F-014, F-017, F-018, F-024 | `Checker._check_variables()` | `test_variables.py` |
+| SWE1-030 to SWE1-034 | Function rules | SYS-F-012, F-015, F-016, F-017 | `Checker._check_functions()` | `test_functions.py`; SWE1-032 `functions.style` only: `test_functions_case_removed.py` (#424) |
+| SWE1-035 to SWE1-039 | Constant and macro rules | SYS-F-011, F-012, F-017, F-018, F-024 | `Checker._check_defines()` | `test_defines.py` |
+| SWE1-040 to SWE1-042 | Type rules | SYS-F-011 | `Checker._check_typedefs/enums/structs()` | `test_typedefs.py`, `test_enums.py`, `test_structs.py`; generated-config typedef / enum case findings: `test_case_style_config.py` (UV-CASE-005, #422) |
 | SWE1-043 to SWE1-044 | Include guard rules | SYS-F-019 | `Checker._check_include_guard()` | `test_include_guards.py` |
 | SWE1-045 to SWE1-050 | Miscellaneous rules | SYS-F-020 | `Checker._check_misc()`, `_check_yoda()` | `test_misc.py`, `test_yoda_condition.py`, `test_block_comment_spacing.py` |
 | SWE1-071 | Whitespace ratio | SYS-F-020 | `Checker._check_whitespace_ratio()` | `test_whitespace_ratio.py` |
@@ -358,7 +359,7 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | SYS-F-020 | `Checker._check_misc()` | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix: rename in signature, body, doxygen, header | SYS-F-020 | `fixer._fix_pointer_prefix()`, `fixer.fix_pointer_prefix_in_header()` | `test_pointer_prefix_fix.py` |
 | SWE1-094 | Two-line startup banner to stderr at tool entry (unconditional; also `--log`) | SYS-F-046 | `main()` in `cli.py` | `test_cli_requirements.py` (UV-CLI-017 to 019) — full |
-| SWE1-095 | Copyright notice in `--version` output | SYS-F-032 | `main()`, `_build_parser()` | `test_cli.py` |
+| SWE1-095 | Copyright notice in `--version` output (`(C) <year> <holder>`) | SYS-F-032 | `main()`, `_build_parser()` | `test_cli.py`; `--version` copyright line format: `test_cli_requirements.py` (UV-CLI-018) |
 | SWE1-096 | OS-native path separator in violation output | SYS-F-027 | `discover_files()` `emit()` (`os.path.normpath`); `Violation.__str__()` renders verbatim | `test_cli_requirements.py` (UV-CLI-020 to 022) |
 | SWE1-097 | `print_summary()` restructure: Files before Results, header, dynamic separator | SYS-F-032 | `output.print_summary()` | `test_print_summary.py` |
 | SWE1-098 | `fn_start` line-number correction for multi-line signatures | SYS-F-015 | `Checker._check_functions()` | `test_functions.py` |

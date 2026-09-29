@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.13 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.14 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-001: §7 register rows and §7.1 records for CR-412, CR-420, CR-422, CR-424 and CR-425. AUD10-F-002: new §7.2 release-classification decision (next release v2.0.0, Major). AUD10-F-010: CR-418 impact superseded by CR-420; CR-413 and CR-418 set to Closed with PR and merge commit. AUD10-F-015: §5.4 branch table allows `claude/<topic>-<id>` |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -117,8 +118,8 @@ Accepted changes are implemented following the Git Flow process defined in CSC-S
 
 | Change Type | Branch | Target |
 |---|---|---|
-| New feature or enhancement | `feature/<issue-id>-<description>` | `develop` |
-| Configuration or documentation | `feature/<issue-id>-<description>` | `develop` |
+| New feature or enhancement | `feature/<issue-id>-<description>` or `claude/<topic>-<id>` | `develop` |
+| Configuration or documentation | `feature/<issue-id>-<description>` or `claude/<topic>-<id>` | `develop` |
 | Urgent backwards-compatible fix affecting released version | `hotfix/<issue-id>-<description>` | `main` and `develop` |
 
 Commit messages must reference the Issue: `Implements #<issue-id>: <description>`
@@ -172,8 +173,13 @@ Summary view:
 | Issue # | Type | Title | Impact | Status | Target Release |
 |---|---|---|---|---|---|
 | \<Auto-populated from GitHub Issues — see Issues board\> | | | | | |
-| #413 | `documentation` | [CR] Align startup-banner requirements SYS-F-046 and SWE1-094 with the implementation | Medium | Implemented on `claude/banner-reqs-413`; closes on PR merge | Next release after v1.6.0 |
-| #418 | `config-change` | [CR] New-rule opt-in policy: the 7 remaining post-v1.6.0 MISRA/Barr-C rules disabled by default | High | Implemented on `claude/optin-policy-418`; closes on PR merge | Next release after v1.6.0 |
+| #412 | `bug`, `config-change` | Make `misc.boolean_comparison` opt-in and lowercase-only | Medium | Closed — PR #417, merge `eaa4b87` | v2.0.0 |
+| #413 | `documentation` | [CR] Align startup-banner requirements SYS-F-046 and SWE1-094 with the implementation | Medium | Closed — PR #415, merge `5533d16` | v2.0.0 |
+| #418 | `config-change` | [CR] New-rule opt-in policy: the 7 remaining post-v1.6.0 MISRA/Barr-C rules disabled by default | High | Closed — PR #419, merge `d247396` | v2.0.0 |
+| #420 | `enhancement`, `config-change` | Presets and `--init` enable the standard-specific opt-in rules | Medium | Closed — PR #421, merge `29c1241` | v2.0.0 |
+| #422 | `bug`, `config-change` | Normalise case-style aliases and reject unknown case-style names | High | Closed — PR #426, merge `e2555f0` | v2.0.0 |
+| #424 | `bug`, `config-change` | Remove unused `functions.case`; warn when a config still sets it | Medium | Closed — PR #427, merge `31acd91` | v2.0.0 |
+| #425 | `bug` | Config and usage errors exit 2 from the installed `cstylecheck` command | High | Closed — PR #428, merge `7ddf732` | v2.0.0 |
 
 ### 7.1 Change Request Records
 
@@ -200,11 +206,86 @@ Summary view:
 | **Change** | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type` and `misc.empty_else` ship `enabled: false` in `src/rules.yml` and `tests/rules.yml`, and each `_check_*` method reads `cfg.get("enabled", False)`. `misc.boolean_comparison` was already opt-in (#412). `--update-config` adds the keys as `enabled: false`. The sample profile `examples/embedded_project/config/strict.yml` enables all 8 at their default severities |
 | **Policy** | New rules ship `enabled: false` and default to disabled when the key is absent; they may be enabled in presets. Recorded in `CONTRIBUTING.md` (New Rule Policy) and enforced by the UV-MSR-009 policy tests |
 | **Requirements change** | SWE1-109 to SWE1-114 and SWE1-116 each gain "The rule shall be disabled by default, including when the configuration key is absent (opt-in, #418)"; RTM rows marked opt-in. SYS-F-020 is unchanged (it states what can be enforced, not the defaults). IDs and traces are unchanged |
-| **Impact on behaviour** | With a project config that does not set `enabled: true` for these rules (including configs written by `--init` or `--preset`, which do not list them), the 7 rules no longer report violations. Upgrading therefore adds no new findings to an existing project. Projects that want the rules set `misc.<rule>.enabled: true`. Detection logic, rule IDs, severities and messages are unchanged |
+| **Impact on behaviour** | With a project config that does not set `enabled: true` for these rules (the 7 rules no longer report violations. Upgrading therefore adds no new findings to an existing project. *Superseded in part by CR-420:* configs written by `--init` or `--preset` now enable the opt-in rules that belong to the selected standard, so those configs do report them. Projects that want the rules set `misc.<rule>.enabled: true`. Detection logic, rule IDs, severities and messages are unchanged |
 | **Rationale** | `misc.boolean_comparison`, when on by default, produced 433 new warnings on a reference project (#412). Turning on new rules by default on upgrade has the same risk for the other 7 rules. Opt-in keeps upgrades stable and lets each project adopt a rule when it is ready |
 | **Impact on code** | `src/cstylecheck/checker.py` (7 `enabled` defaults), `src/rules.yml`, `tests/rules.yml`, `examples/embedded_project/config/strict.yml` |
 | **Affected documents** | CSC-SWE1-001 v2.14, CSC-SWE3-001 v1.24, CSC-SWE4-001 v1.29, CSC-SWE5-001 v1.20, CSC-SWE6-001 v1.23, CSC-SYS4-001 v1.17, CSC-SYS5-001 v1.14, CSC-PA2-001 v1.28, CSC-MAN3-001 v1.13, CONTRIBUTING, README, Rules-and-Configuration, CHANGELOG |
 | **Verification** | 11 tests added to `tests/test_misra_rules.py` (UV-MSR-009): one key-absent test per rule, plus policy tests. The policy tests check that all 8 opt-in rules ship disabled, that none fires with an empty `misc` config, that every `misc` rule shipped `enabled: false` defaults to off in code, and that `--update-config` adds the rules as disabled. SIT-027 and SITC-017 updated; 1463 tests PASS |
+
+| Field | CR-412 |
+|---|---|
+| **Issue / PR** | [#412](https://github.com/dermot-murphy/CStyleCheck/issues/412) / PR #417 (merge `eaa4b87`) |
+| **Date** | 2026-09-29 |
+| **Raised by / implemented by** | Dermot Murphy / Claude |
+| **Type** | `bug`, `config-change` — default-configuration and requirement change |
+| **Impact level** | Medium — changes several CIs (`checker.py`, `src/rules.yml`, `tests/rules.yml`) and modifies one requirement (SWE1-115), see §5.3. Not High: the rule had not been released (added after v1.6.0), so no released behaviour or config becomes incompatible |
+| **Affected work products** | SWE1-115; CSC-SWE3-001, CSC-SWE4-001, CSC-SYS4-001, CHANGELOG, Rules-and-Configuration |
+| **Impact analysis** | `misc.boolean_comparison` ships `enabled: false` and only flags lowercase `true`/`false`. On the reference project the rule, on by default, raised 433 warnings; after the change an upgrade adds no findings unless the project enables the rule. Rule ID, severity and message unchanged |
+| **Verification** | Tests added to `tests/test_misra_rules.py`; test total 1444→1452 |
+| **Approval** | Approved by owner merge of PR #417 |
+| **Status / target release** | Closed / v2.0.0 |
+
+| Field | CR-420 |
+|---|---|
+| **Issue / PR** | [#420](https://github.com/dermot-murphy/CStyleCheck/issues/420) / PR #421 (merge `29c1241`) |
+| **Date** | 2026-09-29 |
+| **Raised by / implemented by** | Dermot Murphy / Claude |
+| **Type** | `enhancement`, `config-change` |
+| **Impact level** | Medium — changes one CI (`wizard.py`) and the `--init` / `--preset` output interface, with a minor requirement change (SWE1-075). Not High: existing configs are not affected; only newly generated configs differ |
+| **Affected work products** | SWE1-075; CSC-SWE3-001, CSC-SWE4-001, CSC-SWE5-001 (SIT-016), CSC-SYS4-001, README, CHANGELOG |
+| **Impact analysis** | The `misra` and `barr-c` presets and the `--init` wizard (new MISRA C:2012 / Barr-C questions, default No) now write `enabled: true` for the opt-in rules of the selected standard. Supersedes the CR-418 statement that preset/`--init` configs report none of the opt-in rules. A config regenerated after upgrade can report findings that the v1.6.0-generated config did not |
+| **Verification** | Tests added to `tests/test_init_wizard.py`; SIT-016 steps 4–5; test total 1463→1481 |
+| **Approval** | Approved by owner merge of PR #421 |
+| **Status / target release** | Closed / v2.0.0 |
+
+| Field | CR-422 |
+|---|---|
+| **Issue / PR** | [#422](https://github.com/dermot-murphy/CStyleCheck/issues/422) / PR #426 (merge `e2555f0`) |
+| **Date** | 2026-09-29 |
+| **Raised by / implemented by** | Dermot Murphy / Claude |
+| **Type** | `bug`, `config-change` — requirement and configuration-format change |
+| **Impact level** | High — breaks backwards compatibility (§4.2): a config with a case-style value that is not a canonical name or known alias, which v1.6.0 loaded, is now rejected with exit 2. The barr-c preset typedef/enum case values change to canonical names |
+| **Affected work products** | SWE1-001, SWE1-002; CSC-SWE2-001, CSC-SWE3-001 (UNIT-05), CSC-SWE4-001, CSC-SYS4-001, CSC-SYS5-001, Rules-and-Configuration, CHANGELOG (⚠️ note) |
+| **Impact analysis** | `load_config()` normalises aliases to canonical case names and reports every unknown case-style value as a configuration error. Projects with a misspelt or unsupported value must correct the config on upgrade. Presets and the wizard write canonical names. Drives the Major release classification (§7.2) |
+| **Verification** | `tests/test_case_style_config.py`; test total 1481→1508 |
+| **Approval** | Approved by owner merge of PR #426 (owner decision 2026-09-29 accepts the incompatibility for v2.0.0; QA sign-off is the owner's open action, #430) |
+| **Status / target release** | Closed / v2.0.0 |
+
+| Field | CR-424 |
+|---|---|
+| **Issue / PR** | [#424](https://github.com/dermot-murphy/CStyleCheck/issues/424) / PR #427 (merge `31acd91`) |
+| **Date** | 2026-09-29 |
+| **Raised by / implemented by** | Dermot Murphy / Claude |
+| **Type** | `bug`, `config-change` — configuration key removed |
+| **Impact level** | Medium — changes several CIs (`config.py`, `wizard.py`, `__init__.py`) and two requirements (SWE1-001, SWE1-032). Not High: `functions.case` never had an effect, so no check result changes and a config that still sets it loads with a WARNING, not an error |
+| **Affected work products** | SWE1-001, SWE1-032; CSC-SWE3-001, CSC-SWE4-001, CSC-SYS4-001, Rules-and-Configuration, CHANGELOG |
+| **Impact analysis** | The unused `functions.case` key is removed from shipped configs, presets and the wizard; a config that sets it gets a deprecation WARNING on stderr. Function-name casing is controlled by `functions.style` only. Findings and exit codes are unchanged |
+| **Verification** | `tests/test_functions_case_removed.py`; test total 1508→1524 |
+| **Approval** | Approved by owner merge of PR #427 |
+| **Status / target release** | Closed / v2.0.0 |
+
+| Field | CR-425 |
+|---|---|
+| **Issue / PR** | [#425](https://github.com/dermot-murphy/CStyleCheck/issues/425) / PR #428 (merge `7ddf732`) |
+| **Date** | 2026-09-29 |
+| **Raised by / implemented by** | Dermot Murphy / Claude |
+| **Type** | `bug` — exit-code interface change (SUP.9 SEV-2) handled under this plan for change control |
+| **Impact level** | High — breaks backwards compatibility (§4.2): configuration and usage errors from the installed `cstylecheck` command now exit 2 instead of 1, so CI scripts that tested for 1 behave differently |
+| **Affected work products** | SWE1-069; CSC-SWE3-001 (UNIT-136 `config_error`), CSC-SWE4-001, CSC-SYS4-001, CSC-SYS5-001, README, CHANGELOG (⚠️ note) |
+| **Impact analysis** | `sys.exit("message")` calls replaced by `config_error()` (exit 2) in `config.py`, `cli.py`, `baseline.py`, `utils.py` and the `src/cstylecheck.py` wrapper, so both entry points match SYS-F-039. Exit codes 0 and 1 for checking are unchanged. Drives the Major release classification (§7.2) |
+| **Verification** | `tests/test_exit_code_entry_points.py`; test total 1524→1532 |
+| **Approval** | Approved by owner merge of PR #428 (QA sign-off is the owner's open action, #430) |
+| **Status / target release** | Closed / v2.0.0 |
+
+### 7.2 Release Classification Decision
+
+| Field | Value |
+|---|---|
+| **Decision** | The next release is **v2.0.0 (Major)** |
+| **Decided by / date** | Dermot Murphy, 2026-09-29 (CSC-AUD-010 AUD10-F-002, #430) |
+| **Rationale** | §5.6 requires a Major version for changed default behaviour or an incompatible config format. CR-422 rejects configs that v1.6.0 loaded, and CR-425 changes the configuration-error exit code of the installed command from 1 to 2 |
+| **Compatibility changes in scope** | CR-422 (config rejection, canonical case names), CR-425 (exit code 1→2), #423 (last enum member now checked; new findings possible), CR-420 (preset / `--init` output enables opt-in rules), CR-424 (`functions.case` removed, WARNING), CR-412 / CR-418 (post-v1.6.0 rules opt-in) |
+| **Record** | CSC-MAN3-001 §8; CHANGELOG [Unreleased] ⚠️ notes |
 
 ---
 

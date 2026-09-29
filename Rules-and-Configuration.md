@@ -222,7 +222,7 @@ variables:
     # ... (add project-specific acronyms)
 ```
 
-**`case`** values: `lower_snake` · `upper_snake` · `camel` · `pascal`.
+**`case`** values: `lower_snake` · `upper_snake` · `camel` · `pascal` · `lower` · `upper` · `any` (see [Case-style values](#case-style-values) for the accepted aliases).
 
 **`allow_single_char_loop_vars`** — when `true`, a bare `i`, `j`, or `k` used
 as a `for`-loop counter is exempt from `min_length`.

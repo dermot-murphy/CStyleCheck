@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP1-001 | **Version** | 1.19 |
+| **Document ID** | CSC-SUP1-001 | **Version** | 1.20 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-013: GATE-02 names the `cstylecheck_rules.yml` workflow and its real scope (`src/**`, `source/**/*.[ch]`); WP-01 names the `src/cstylecheck/` package and `src/cstylecheck.py` wrapper. AUD10-F-014: §6 states that the owner's merge of the PR is the approval record (matches CSC-DEV-002 §5.2). AUD10-F-002: §5.4 gate record names the next release v2.0.0 |
 | 1.19 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.18 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.17 | 2026-09-29 | Claude | Cross-reference resync with #424: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -91,7 +92,7 @@ QA activities for CStyleCheck verify that project processes are followed as plan
 
 | WP-ID | Work Product | Quality Criteria | Verification Method |
 |---|---|---|---|
-| WP-01 | `cstylecheck.py` | Zero naming violations; all tests pass; coverage ≥ targets | CI (automated) |
+| WP-01 | `src/cstylecheck/` package (12 modules) and `src/cstylecheck.py` wrapper | Zero naming violations; all tests pass; coverage ≥ targets | CI (automated) |
 | WP-02 | Test suite | All tests pass; each test has clear assertion; test IDs traceable to requirements | Peer review; CI |
 | WP-03 | `rules.yml` | Valid YAML; loads without error; each rule documented in README | CI parse check; inspection |
 | WP-04 | `Dockerfile` | Builds successfully; image runs `--help`; both platforms available | CI `docker_publish.yml` |
@@ -106,7 +107,7 @@ The following CI checks act as automated quality gates. Merging to `develop` or 
 | Gate ID | CI Workflow | Check | Branch |
 |---|---|---|---|
 | GATE-01 | `cstylecheck_tests.yml` | All pytest tests pass (Python 3.10, 3.11, 3.12) | `develop`, `main` |
-| GATE-02 | `rules.yml` | `cstylecheck.py` passes its own naming rules (zero errors) | All branches touching `src/` |
+| GATE-02 | `cstylecheck_rules.yml` | CStyleCheck (`src/cstylecheck.py` wrapper with `src/rules.yml`) checks the C sources `source/**/*.[ch]` (excluding `source/cots/`) with zero errors | Push / PR touching `src/**` or `source/**/*.[ch]` |
 | GATE-03 | `docker_publish.yml` | Docker image builds successfully | `main`, `v*.*.*` tags |
 
 ### 5.4 Pre-Release Quality Review Checklist
@@ -134,7 +135,7 @@ Performed by the QA role before creating the release baseline:
 | v1.4.x | CSC-REVIEW-002 (`CStyleCheck_Review_Record_v1.4.md`) | CSC-AUD-007 | Met |
 | v1.5.0 / v1.5.1 | Not produced at release | CSC-AUD-008 (v1.5.1) | **Not met.** Covered retrospectively by CSC-REVIEW-003 (AUD9-F-022, #405) |
 | v1.6.0 | Not produced at release | None at release | **Not met.** Covered retrospectively by CSC-REVIEW-003 and CSC-AUD-009 (AUD9-F-021/022, #405) |
-| v1.7.0 (planned) | CSC-REVIEW-004 required | Release audit required | Open |
+| v2.0.0 (planned; was v1.7.0) | CSC-REVIEW-004 required | Release audit required | Open |
 
 ---
 
@@ -148,6 +149,7 @@ All QA evidence is retained as follows:
 | Coverage reports (`coverage.xml`) | GitHub Actions artefacts | 30 days per run |
 | Docker image digests | GitHub Actions run logs + GHCR manifest | Indefinite (GHCR) |
 | Process audit records | GitHub PR review comments; this document | Indefinite (GitHub) |
+| Change approval records | The owner's (Dermot Murphy's) merge of the implementing PR is the approval record: merged-by, merge commit and date in the PR history. For this solo-developer project no separate GitHub review approval is recorded (CSC-DEV-002 §5.2) | Indefinite (GitHub) |
 | Work product review records | Reviewer/approver tables in each ASPICE document; per-release peer-review records `docs/aspice/CStyleCheck_Review_Record_v*.md` (CSC-REVIEW-nnn) | CM baseline (Git) |
 | Internal audit records | `docs/aspice/audits/` (CSC-AUD-nnn) | CM baseline (Git) |
 | Problem reports | GitHub Issues | Indefinite |

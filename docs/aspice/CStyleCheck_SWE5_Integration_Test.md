@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.25 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.26 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.26 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-007: SIT-024 step 2 expects the copyright line in the code's format `(C) <year> <holder>` (no word "Copyright"; SWE1-095, UV-CLI-018). AUD10-F-019: post-v1.6.0 test-count note extended through #422 (1508), #424 (1524), #425 (1532) and #423 (1545) |
 | 1.25 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.24 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.23 | 2026-09-29 | Claude | Cross-reference resync with #424: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -645,7 +646,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
 | 1 | Run tool with any valid source file | Standard subprocess invocation (stdout piped) | `stderr` starts with the two-line banner `CStyleCheck <version>` / `(C) 2026 Dermot Murphy` |
-| 2 | Run with `--version` | `--version` flag | stdout or stderr contains both the version string and "Copyright" on separate lines |
+| 2 | Run with `--version` | `--version` flag | stdout contains the version string `CStyleCheck <version>` and the copyright notice `(C) <year> <holder>` (`(C) 2026 Dermot Murphy`) on separate lines (SWE1-095; UV-CLI-018) |
 | 3 | Run with `--quiet` | `--quiet` | Option rejected (exit 2); the banner has no suppression option (SWE1-094, #413) |
 | 4 | Verify banner does not appear in `stdout` violation output | Normal run | `stdout` violation lines are not prefixed with banner content |
 
@@ -765,7 +766,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 **Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence)
 
-**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests; #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: 1452 tests; #418 (the other 7 post-v1.6.0 rules opt-in) adds 11: 1463 tests; #420 (presets / `--init` enable the standard-specific opt-in rules) adds 18: 1481 tests, all PASS (local run, Python 3.11).
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests; #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: 1452 tests; #418 (the other 7 post-v1.6.0 rules opt-in) adds 11: 1463 tests; #420 (presets / `--init` enable the standard-specific opt-in rules) adds 18: 1481 tests; #422 (case-style config validation) adds 27: 1508 tests; #424 (`functions.case` removed) adds 16: 1524 tests; #425 (config errors exit 2 from both entry points) adds 8: 1532 tests; #423 (last enum member checked) adds 13: 1545 tests, all PASS (local run, Python 3.11).
 
 > **📋 Note:** All 10 defined software architecture interfaces must be covered before integration testing is considered complete. Any uncovered interface must be resolved via a new or updated test case.
 
