@@ -9,6 +9,20 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Baseline matching ignores line numbers (#394)** — `--baseline-file` now matches
+  on `(file, rule, message)` as a multiset instead of `file:line:rule:message`.
+  Accepted violations stay suppressed when unrelated edits move them up or down the
+  file. Each baseline entry suppresses at most one violation, so an extra copy of an
+  accepted violation is still reported as new. The `line` field is still written for
+  review. New helper `apply_baseline()`; `load_baseline()` now returns a
+  `collections.Counter` instead of a `frozenset`.
+- **Baseline paths are platform-independent (#395)** — baseline file paths are
+  normalised to `/` separators (and `./` removed) when written, loaded and matched,
+  so baselines written on Windows and Linux are interchangeable. Existing baselines
+  containing backslashes are still honoured. New helper `_normalise_path()`.
+
 ---
 
 ## [1.6.0] — 2026-07-06

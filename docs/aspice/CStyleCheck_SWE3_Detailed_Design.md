@@ -93,9 +93,9 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-32 | `Checker._check_reserved_names` | `checker.py:2047` | COMP-05f | `checker.py` |
 | UNIT-33 | `Checker._check_spelling` | `checker.py:1802` | COMP-05f | `checker.py` |
 | UNIT-34 | `SignChecker._check_calls` | `sign_checker.py:273` | COMP-05g | `sign_checker.py` |
-| UNIT-35 | `load_baseline` | `baseline.py:25` | COMP-06 | `baseline.py` |
-| UNIT-36 | `write_baseline` | `baseline.py:40` | COMP-06 | `baseline.py` |
-| UNIT-37 | `_baseline_key` | `baseline.py:20` | COMP-06 | `baseline.py` |
+| UNIT-35 | `load_baseline` | `baseline.py:47` | COMP-06 | `baseline.py` |
+| UNIT-36 | `write_baseline` | `baseline.py:85` | COMP-06 | `baseline.py` |
+| UNIT-37 | `_baseline_key` | `baseline.py:36` | COMP-06 | `baseline.py` |
 | UNIT-38 | `_violations_to_json` | `output.py:40` | COMP-07 | `output.py` |
 | UNIT-39 | `_violations_to_sarif` | `output.py:72` | COMP-07 | `output.py` |
 | UNIT-40 | `print_summary` | `output.py:125` | COMP-07 | `output.py` |
@@ -177,6 +177,8 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-116 | `Checker._check_constant_comparison` | `checker.py` | COMP-05f | `checker.py` |
 | UNIT-117 | `_fix_pointer_prefix` | `fixer.py` | COMP-08 | `fixer.py` |
 | UNIT-118 | `fix_pointer_prefix_in_header` | `fixer.py` | COMP-08 | `fixer.py` |
+| UNIT-119 | `apply_baseline` | `baseline.py:67` | COMP-06 | `baseline.py` |
+| UNIT-120 | `_normalise_path` | `baseline.py:23` | COMP-06 | `baseline.py` |
 
 ---
 
@@ -210,7 +212,7 @@ src/cstylecheck/
                      sign-analysis helpers (_classify_tokens,
                      _signedness_of_type, _classify_arg,
                      _extract_call_args)
-  baseline.py      — load_baseline, write_baseline, _baseline_key
+  baseline.py      — load_baseline, write_baseline, apply_baseline, _baseline_key, _normalise_path
   output.py        — Tee, _violations_to_json, _violations_to_sarif,
                      _violations_to_html, print_summary
   fixer.py         — apply_fixes, unified_diff
@@ -441,9 +443,32 @@ src/cstylecheck/
 
 **Purpose:** Produce a stable string key for a violation used in baseline suppression.
 
-**Algorithm:** Return `f"{v.filepath}:{v.line}:{v.rule}:{v.message}"`
+**Algorithm:** Return `f"{_normalise_path(v.filepath)}:{v.rule}:{v.message}"`
 
-**Design note:** Line number is included so the same violation at a different location is treated as new.
+**Design note:** The line number is excluded (issue #394) so an accepted violation stays suppressed when unrelated edits move it. Duplicate violations are distinguished by multiset counting in UNIT-119 rather than by line.
+
+---
+
+### UNIT-119 — `apply_baseline(violations: list, baseline: Counter) → list`
+
+**Purpose:** Remove baselined violations from the result list.
+
+**Algorithm:**
+1. Copy *baseline* into a working `Counter` (the input is not mutated)
+2. For each violation in order: if the working count for `_baseline_key(v)` is > 0, decrement it and drop the violation; otherwise keep it
+3. Return the kept violations
+
+**Design note:** Each baseline entry suppresses at most one violation, so an additional copy of an accepted violation is reported as new.
+
+---
+
+### UNIT-120 — `_normalise_path(path: str) → str`
+
+**Purpose:** Make baseline file paths platform-independent (issue #395).
+
+**Algorithm:** Replace every `\` with `/`, then apply `posixpath.normpath()` (removes `./` and redundant separators). Empty input is returned unchanged.
+
+**Design note:** Backslashes are converted on every platform so baselines written on Windows by earlier releases are honoured on Linux.
 
 ---
 
@@ -1198,7 +1223,7 @@ Violation:
 | SWE1-061 | GitHub annotations | UNIT-42, UNIT-89 |
 | SWE1-063 | Summary | UNIT-40 |
 | SWE1-064 | Copyright header check | UNIT-52, UNIT-63 |
-| SWE1-065 to SWE1-067 | Baseline | UNIT-35, UNIT-36, UNIT-37 |
+| SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline | UNIT-35, UNIT-36, UNIT-37, UNIT-119, UNIT-120 |
 | SWE1-068 to SWE1-070 | CLI / entry point | UNIT-01, UNIT-02, UNIT-03, UNIT-04, UNIT-46, UNIT-87, UNIT-88 |
 | SWE1-072 to SWE1-073 | Inline suppression comments | UNIT-95 |
 | SWE1-074 | Auto-fix mode | UNIT-96, UNIT-97 |

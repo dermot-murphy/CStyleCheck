@@ -212,9 +212,11 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | SW-REQ-ID | Requirement | Priority | Verification | Parent |
 |---|---|---|---|---|
-| SWE1-065 | The `write_baseline()` function shall serialise all violations to a JSON array and write to the specified file; each entry shall be keyed by `_baseline_key()` | Mandatory | Test | SYS-F-034 |
-| SWE1-066 | The `load_baseline()` function shall return a `frozenset` of baseline keys from the JSON file | Mandatory | Test | SYS-F-035 |
-| SWE1-067 | The rule engine shall filter out any `Violation` whose `_baseline_key()` matches an entry in the loaded baseline frozenset | Mandatory | Test | SYS-F-035 |
+| SWE1-065 | The `write_baseline()` function shall serialise all violations to a JSON array and write to the specified file; each entry shall record `file` (with `/` separators), `line`, `rule` and `message` | Mandatory | Test | SYS-F-034 |
+| SWE1-066 | The `load_baseline()` function shall return a multiset (`collections.Counter`) of `file:rule:message` baseline keys from the JSON file | Mandatory | Test | SYS-F-035 |
+| SWE1-067 | The rule engine shall filter out any `Violation` whose `_baseline_key()` matches an unused entry in the loaded baseline multiset; each baseline entry shall suppress at most one violation | Mandatory | Test | SYS-F-035 |
+| SWE1-100 | Baseline matching shall not depend on the violation line number; the `line` field shall be retained in the file for review only (issue #394) | Mandatory | Test | SYS-F-035 |
+| SWE1-101 | Baseline file paths shall be normalised to `/` separators when written, loaded and matched, so baselines are portable between Windows and Linux (issue #395) | Mandatory | Test | SYS-F-034, SYS-F-035 |
 
 ### 4.14 CLI and Entry Point (SS-01)
 

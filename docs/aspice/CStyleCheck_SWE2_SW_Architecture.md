@@ -86,7 +86,7 @@ src/cstylecheck/   (package — 12 sub-modules)
 │   ├── [COMP-05g] Sign Checker        (class SignChecker — _check_calls)
 │   └── [COMP-05h] Naming Checker      (_check_identifier_length,
 │                                       _check_no_single_char_identifiers)
-├── [COMP-06] Baseline Manager         (load_baseline, write_baseline, _baseline_key)
+├── [COMP-06] Baseline Manager         (load_baseline, write_baseline, apply_baseline, _baseline_key)
 ├── [COMP-07] Output Formatter         (_violations_to_json, _violations_to_sarif,
 │                                       _violations_to_html, print_summary,
 │                                       class Tee, Violation.github_annotation)
@@ -216,9 +216,9 @@ The `Checker` class is the central analysis component. It is instantiated once p
 
 | Attribute | Value |
 |---|---|
-| **Source functions** | `_baseline_key()`, `load_baseline()`, `write_baseline()` |
+| **Source functions** | `_normalise_path()`, `_baseline_key()`, `load_baseline()`, `apply_baseline()`, `write_baseline()` |
 | **Responsibility** | Serialise/deserialise violation baselines; generate stable violation keys for suppression matching |
-| **Baseline key** | `"{rule}::{filepath}::{line}::{message}"` |
+| **Baseline key** | `"{filepath}:{rule}:{message}"` — `filepath` normalised to `/` separators; line number excluded; matched as a multiset (issues #394, #395) |
 
 ### COMP-07 — Output Formatter
 
@@ -296,7 +296,7 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | SWA-IF-05 | COMP-03 | COMP-05 | Keyword `frozenset`, stdlib `frozenset`, spell `set`, banned `frozenset` | Constructor args |
 | SWA-IF-06 | COMP-04 | COMP-05 | `clean` source, `_line_map`, `_brace_depths`, `_comment_only` | Constructor args via `Checker.__init__` |
 | SWA-IF-07 | COMP-04 | COMP-05g | Raw source (cached) | Cross-file sign check reuses cached content |
-| SWA-IF-08 | COMP-05 | COMP-06 | `List[Violation]` | Passed to `write_baseline()` or filtered by `load_baseline()` |
+| SWA-IF-08 | COMP-05 | COMP-06 | `List[Violation]` | Passed to `write_baseline()` or filtered by `apply_baseline()` against `load_baseline()` |
 | SWA-IF-09 | COMP-06 | COMP-05 | `frozenset` of baseline keys | Used in `main()` to filter violations |
 | SWA-IF-10 | COMP-05 | COMP-07 | `List[Violation]`, `files_checked: int` | Rendered to stdout / file / JSON / SARIF |
 

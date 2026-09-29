@@ -9,7 +9,7 @@
 
 ## Issue workflow
 
-- Fix **all open GitHub issues except #191 and #194**.
+- Fix **all open GitHub issues**. Issues labelled `deferred` are parked (closed as not planned) — ignore them unless reopened.
 - Never self-merge a PR — create the PR and wait for an external merge.
 
 ## Git / tagging

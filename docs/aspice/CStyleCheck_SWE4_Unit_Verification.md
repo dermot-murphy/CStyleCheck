@@ -329,10 +329,13 @@ Tests are organised by test module. Each module maps to one or more COMP-05 sub-
 | UV-CLI-008 | `test_baseline_write_and_load` | UNIT-35, UNIT-36, UNIT-37 | Round-trip: write then suppress |
 | UV-CLI-009 | `test_exclude_glob_applied` | UNIT-04 | Excluded files not scanned |
 | UV-CLI-010 | `test_version_flag` | UNIT-46 | `--version` outputs version; exit 0 |
+| UV-CLI-011 | `TestBaselineSuppression.test_moved_violation_still_suppressed`, `test_key_excludes_line`, `test_baseline_still_records_line` | UNIT-37, UNIT-119 | Violation moved to another line stays suppressed; `line` still written (issue #394) |
+| UV-CLI-012 | `TestBaselineSuppression.test_extra_copy_of_baselined_violation_reported`, `test_duplicate_entries_suppress_duplicates`, `test_different_message_not_suppressed`, `test_apply_baseline_does_not_mutate` | UNIT-119 | Multiset matching: one entry suppresses one violation (issue #394) |
+| UV-CLI-013 | `TestBaselineSuppression.test_normalise_*`, `test_write_uses_forward_slashes`, `test_windows_baseline_matches_posix_path`, `test_posix_baseline_matches_windows_path` | UNIT-36, UNIT-120 | Paths normalised to `/`; Windows and Linux baselines interchangeable (issue #395) |
 
 ---
 
-### 5.13 Bug-Fix and Improvement Tests — `test_improvements.py` (67), `test_barr_c.py` (42), `test_eof_comment.py`, `test_copyright_header.py`, `test_parameter_prefix.py`, `test_exclusions.py`
+### 5.13 Bug-Fix and Improvement Tests — `test_improvements.py` (80), `test_barr_c.py` (42), `test_eof_comment.py`, `test_copyright_header.py`, `test_parameter_prefix.py`, `test_exclusions.py`
 
 These test modules provide regression coverage for previously fixed bugs and new rules. Key cases:
 
@@ -464,7 +467,7 @@ Added in v1.13. Covers the per-file breakdown extension to `print_summary()` (SW
 | SWE1-054 to SWE1-055 | Reserved names | UV-RES-001 to UV-RES-004 |
 | SWE1-056 | Spell check | UV-SPL-001 to UV-SPL-004 |
 | SWE1-007 to SWE1-010 | Dictionary management | UV-DCT-001 to UV-DCT-004 |
-| SWE1-065 to SWE1-067 | Baseline suppression | UV-CLI-008 |
+| SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline suppression | UV-CLI-008, UV-CLI-011 to UV-CLI-013 |
 | SWE1-068 to SWE1-070 | CLI / entry point | UV-CLI-001 to UV-CLI-010 |
 | SWE1-072 to SWE1-073 | Inline suppression comments (`parse_inline_suppressions`, suppression logic) | `test_inline_suppression.py` |
 | SWE1-074 | Auto-fix mode (`apply_fixes`, `unified_diff`) | `test_fix_mode.py` |
