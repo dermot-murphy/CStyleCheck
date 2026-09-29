@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN5-001 | **Version** | 1.5 |
+| **Document ID** | CSC-MAN5-001 | **Version** | 1.6 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.6 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (MAN3 1.8→1.9, SUP10 1.3→1.4, SUP8 1.13→1.14) |
 | 1.5 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-019: record the overdue RISK-003 and RISK-005 reviews (2026-09-29) and set the next review to 2026-12-29; RISK-003 treatment records Dependabot `target-branch: develop`, hotfix #399 / back-merge #403 and the Actions updates #400 to #402 and #404. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.4 | 2026-06-26 | Claude | Implement RISK-003 and RISK-005 treatments: add `.github/dependabot.yml` (Dependabot for PyPI and GitHub Actions); add `CONTRIBUTING.md` (community onboarding); update §3 scope to v1.4.1 |
 | 1.3 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
@@ -37,9 +38,9 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.8 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.13 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.3 |
+| CSC-MAN3-001 | Project Management Plan | 1.9 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.14 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.4 |
 
 ---
 

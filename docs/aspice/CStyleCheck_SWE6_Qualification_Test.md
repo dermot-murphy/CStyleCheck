@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.17 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.18 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.18 | 2026-09-29 | Claude | Issue #407: §6 SWE1-094 row adds UV-CLI-017 to UV-CLI-019 (partial: `--quiet` clause not implemented); SWE1-096 row Covered by UV-CLI-020 to UV-CLI-022 (Windows `\` and POSIX `/`); output-behaviour row adds `test_cli_requirements.py`; BP3 note total 1439 (also records #408: `test_misra_rules.py` 140→141); referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE5 1.15→1.16, SYS5 1.9→1.10) |
 | 1.17 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SWQ-003 → 81 rule IDs; add the post-v1.6.0 MISRA/Barr-C rule row (SWE1-109 to SWE1-116); §6 rows for SWE1-094 to SWE1-117; coverage 113/113 in scope. AUD9-F-006: SWQ-007 step 4 → a moved violation stays suppressed (SWE1-100); add steps 6/7 (multiset, path normalisation); trace SWE1-100/101. AUD9-F-003: BP3 note `test_misra_rules.py` 64→140. AUD9-F-026: commit SHA / configuration under test; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.16 | 2026-07-06 | Claude | ASPICE audit — remove non-existent rule IDs `variable.local.prefix` and `variable.parameter.prefix` from SWQ-003 table; update §3.1 refs (SWE1 2.5→2.6, SWE5 1.12→1.14, SUP8 1.9→1.10); fix coverage gate note; add SWE1-094 to SWE1-099 to §3.3 criteria — closes #376 |
 | 1.15 | 2026-07-06 | Claude | v1.6.0 RC — update test count 1223→1279; §3.1 SWE5→1.13, SVD→1.22; add SWQ-003 row for constant_comparison/output behaviour improvements; update §8 execution results |
@@ -53,10 +54,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.8 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.15 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.9 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.13 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.9 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.16 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.10 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -166,7 +167,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Misc — constant comparison (v1.6.0) | `misc.constant_comparison` | `test_constant_comparison.py` | PASS |
 | Misc — unsigned_suffix signed-param exemption (v1.6.0) | `misc.unsigned_suffix` false-positive fix for signed-typed parameters | `test_unsigned_suffix_signed_params.py` | PASS |
 | Variable — pointer_prefix auto-fix (v1.6.0) | `variable.pointer_prefix` auto-fix via `--fix` | `test_pointer_prefix_fix.py` | PASS |
-| Output — v1.6.0 output behaviour (startup banner, --summary restructure, OS path sep) | `print_summary` restructure; stderr startup banner; OS-native path in output | `test_cli.py`, `test_print_summary.py` | PASS |
+| Output — v1.6.0 output behaviour (startup banner, --summary restructure, OS path sep) | `print_summary` restructure; stderr startup banner; OS-native path in output | `test_cli.py`, `test_cli_requirements.py`, `test_print_summary.py` | PASS |
 | Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-008, 76 tests) | PASS (2026-09-29, develop `296e91b`, Python 3.11 local run) |
 
 **SWQ-003 Overall Result:** PASS
@@ -418,8 +419,8 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | SWE1-091 | `misc.constant_comparison` — flag constant==constant comparisons | SWQ-003 | Covered |
 | SWE1-092 | `misc.unsigned_suffix` signed-parameter argument exemption | SWQ-003 | Covered |
 | SWE1-093 | `variable.pointer_prefix` auto-fix via `--fix` | SWQ-003 | Covered |
-| SWE1-094, SWE1-095 | Startup banner; copyright in `--version` | SIT-024 (integration level) | Covered |
-| SWE1-096 | OS-native path separator in output | SWQ-004 step 1 (POSIX runner only); Windows `\` rendering verified by inspection | Covered (partial) |
+| SWE1-094, SWE1-095 | Startup banner; copyright in `--version` | SIT-024 (integration level); SWE1-094 unit tests UV-CLI-017 to UV-CLI-019 (#407). The SWE1-094 `--quiet` clause is not implemented (see CSC-SWE4-001 §7 note) | Covered (partial — SWE1-094 `--quiet`) |
+| SWE1-096 | OS-native path separator in output | SWQ-004 step 1 (POSIX runner); Windows `\` and POSIX `/` rendering verified by unit tests UV-CLI-020 to UV-CLI-022 (#407) | Covered |
 | SWE1-097 | `print_summary()` restructure | SIT-026, SWQ-004 | Covered |
 | SWE1-098, SWE1-099 | `fn_start` line correction; function-pointer typedef exemption | SWQ-003 | Covered |
 | SWE1-102 to SWE1-108, SWE1-117 | Trend-analysis metrics (CI scripts, COMP-13) | Outside SWE.6 scope (not part of the delivered `cstylecheck` package); verified by SWE.4 UV-MET-001 to UV-MET-010 | N/A |
@@ -498,5 +499,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (141 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 14.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (141 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 14.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407).
 

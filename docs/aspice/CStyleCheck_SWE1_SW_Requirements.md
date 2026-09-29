@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.8 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.9 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.9 | 2026-09-29 | Claude | Issue #407: RTM test column cites `test_cli_requirements.py` for SWE1-015 (UV-CLI-014 to 016), SWE1-094 (UV-CLI-017 to 019; `--quiet` clause not implemented) and SWE1-096 (UV-CLI-020 to 022); SWE1-096 design column names `discover_files()` `emit()` (`os.path.normpath`) as the point where `os.sep` is applied; referenced-document versions resynced (SUP8 1.13→1.14, SWE2 1.13→1.14, SYS2 2.3→2.4, SYS3 1.7→1.8) |
 | 2.8 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-001: add SWE1-109 to SWE1-116 for the 8 rules from #391/#392, with RTM rows, Appendix A.1 rows and A.2/A.3 updates. AUD9-F-007: SWE1-065 baseline file is a JSON object with a `violations` array. AUD9-F-008: SWE1-094 parent → SYS-F-046; add SYS-F-041 to SYS-F-046 and the other uncited SYS IDs as parents; add upward-trace note. AUD9-F-010: add SWE1-117 (trend safety indicators) and extend the SWE1-108 chart list. AUD9-F-011: SWE1-102 to SWE1-108 parent → CSC-MAN3-001 §10.3; add SWE1-100/101 RTM rows. AUD9-F-015: header date. AUD9-F-025: renumber §4.15 to §4.18 so sections are in order. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 2.7 | 2026-09-29 | Claude | Add §4.18 SWE1-102 to SWE1-108 (trend-analysis C source code metrics: LOC, cyclomatic complexity, size, documentation, coupling, violation quality, backward-compatible charts/wiki); update RTM; also records SWE1-065 to SWE1-067 revision and SWE1-100/SWE1-101 (baseline matching, issues #394/#395, PR #397) — issue #388 |
 | 2.6 | 2026-07-06 | Claude | ASPICE audit — add SWE1-094 to SWE1-099 for v1.6.0 features (startup banner, copyright in --version, block-comment suppression, OS path sep, --summary restructure, fn_start correction, fn-ptr typedef exemption); update SWE1-072 for /* */ form; update SWE1-074 for pointer_prefix fix; update §3.2 cross-refs (SWE2 1.11→1.12, SUP8 1.9→1.10); update RTM — closes #371 |
@@ -56,10 +57,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.3 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.7 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.13 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.13 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.4 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.8 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.14 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
@@ -308,7 +309,7 @@ The following criteria shall be met by all software requirements above. They are
 |---|---|---|---|---|
 | SWE1-001 to SWE1-006 | Configuration loading | SYS-F-002, F-006, F-007, F-008, F-025, F-026, SYS-NF-007, SYS-NF-009 | Configuration Loader module | `test_cli.py`, `test_dictionaries.py` |
 | SWE1-007 to SWE1-010 | Dictionary management | SYS-F-009 | Dictionary Manager module | `test_dictionaries.py` |
-| SWE1-011 to SWE1-016 | Source parsing and cache | SYS-F-010, SYS-NF-001, SYS-NF-002 | Source Parser / Cache | `test_misc.py` |
+| SWE1-011 to SWE1-016 | Source parsing and cache | SYS-F-010, SYS-NF-001, SYS-NF-002 | Source Parser / Cache | `test_misc.py`, `test_preprocessor.py`; SWE1-015: `test_cli_requirements.py` (UV-CLI-014 to 016) |
 | SWE1-017 to SWE1-029 | Variable rules | SYS-F-013, F-014, F-017, F-018 | `Checker._check_variables()` | `test_variables.py` |
 | SWE1-030 to SWE1-034 | Function rules | SYS-F-015, F-016, F-017 | `Checker._check_functions()` | `test_functions.py` |
 | SWE1-035 to SWE1-039 | Constant and macro rules | SYS-F-011, F-012, F-017, F-018 | `Checker._check_defines()` | `test_defines.py` |
@@ -346,9 +347,9 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-091 | misc.constant_comparison — flag constant-to-constant == / != | SYS-F-020 | `Checker._check_constant_comparison()` | `test_constant_comparison.py` |
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | SYS-F-020 | `Checker._check_misc()` | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix: rename in signature, body, doxygen, header | SYS-F-020 | `fixer._fix_pointer_prefix()`, `fixer.fix_pointer_prefix_in_header()` | `test_pointer_prefix_fix.py` |
-| SWE1-094 | Startup banner to stderr at tool entry | SYS-F-046 | `main()` in `cli.py` | `test_cli.py` |
+| SWE1-094 | Startup banner to stderr at tool entry | SYS-F-046 | `main()` in `cli.py` | `test_cli_requirements.py` (UV-CLI-017 to 019); `--quiet` clause not implemented (see CSC-SWE4-001 §7 note) |
 | SWE1-095 | Copyright notice in `--version` output | SYS-F-032 | `main()`, `_build_parser()` | `test_cli.py` |
-| SWE1-096 | OS-native path separator in violation output | SYS-F-027 | `Violation.__str__()` / `emit()` | `test_cli.py` |
+| SWE1-096 | OS-native path separator in violation output | SYS-F-027 | `discover_files()` `emit()` (`os.path.normpath`); `Violation.__str__()` renders verbatim | `test_cli_requirements.py` (UV-CLI-020 to 022) |
 | SWE1-097 | `print_summary()` restructure: Files before Results, header, dynamic separator | SYS-F-032 | `output.print_summary()` | `test_print_summary.py` |
 | SWE1-098 | `fn_start` line-number correction for multi-line signatures | SYS-F-015 | `Checker._check_functions()` | `test_functions.py` |
 | SWE1-099 | Function-pointer typedef exemption from `variable.pointer_prefix` | SYS-F-014 | `Checker._check_variables()` | `test_variables.py` |
