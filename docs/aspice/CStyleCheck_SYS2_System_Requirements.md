@@ -66,7 +66,7 @@ The system is deployed in four integration modes:
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.8 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.10 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.11 |
 
 ### 3.4 Glossary
 

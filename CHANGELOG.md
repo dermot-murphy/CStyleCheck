@@ -24,7 +24,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
   - `misc.sizeof_type` (info) — `sizeof` applied to a type name instead of an object
     (Barr-C §5.7).
   - `misc.boolean_comparison` (warning) — `==`/`!=` against `true`/`false`
-    (MISRA C:2012 Rule 14.4).
+    (style rule).
   - `misc.empty_else` (warning) — empty `else { }` block; a block containing a comment
     is accepted (Barr-C §8.3).
 
@@ -79,6 +79,13 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **`misc.boolean_comparison` message citation (#410)** — the rule no longer cites
+  MISRA C:2012 Rule 14.4. Rule 14.4 requires controlling expressions to be essentially
+  Boolean, and `if (flag == true)` is compliant with it, so the citation overstated MISRA
+  coverage. The rule is now a style rule; its message ends with
+  "(redundant comparison with a Boolean literal)" instead of "(MISRA C:2012 Rule 14.4)".
+  The `misc.yoda_condition` "Rule 14.4 (informative)" citation in the ASPICE documents
+  was also removed as unrelated. Tools that match on the exact message text need updating.
 - **`misc.multiple_statements_per_line` message citation (#408)** — the violation message
   no longer cites MISRA C:2012 Rule 15.5 (single point of exit), which is unrelated; it now
   cites Barr-C §3.2 only. Tools that match on the exact message text need updating.

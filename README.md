@@ -525,7 +525,7 @@ Matching rules:
   `misc.goto_usage` (MISRA 15.1, error), `misc.assignment_in_condition` (MISRA 13.4),
   `misc.multiple_statements_per_line` (Barr-C §3.2), `misc.void_pointer` (MISRA 11.5),
   `misc.recursive_function` (MISRA 17.2, direct recursion, error),
-  `misc.sizeof_type` (Barr-C §5.7, info), `misc.boolean_comparison` (MISRA 14.4) and
+  `misc.sizeof_type` (Barr-C §5.7, info), `misc.boolean_comparison` (style) and
   `misc.empty_else` (Barr-C §8.3). See [Rules and Configuration](Rules-and-Configuration.md).
 - **Baseline matching without line numbers** (#394) and **platform-independent baseline
   paths** (#395).

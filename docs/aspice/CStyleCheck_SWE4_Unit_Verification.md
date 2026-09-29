@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.25 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.26 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,7 +22,8 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.25 | 2026-09-29 | Claude | Issue #413 (CR-413): SWE1-094 now matches the code, so UV-CLI-017 to UV-CLI-019 verify it in full; 5 tests added (piped stdout, `--log` copy, exactly two lines, copyright line format, no `--quiet` option); §5.17 and §6 `test_cli_requirements.py` 16→21; total 1439→1444; coverage-gate text 1439→1444; §7 SWE1-094 row full and the partial-verification note removed; referenced-document versions resynced (SWE1 2.9→2.10, SWE3 1.19→1.20, SWE5 1.16→1.17) |
+| 1.26 | 2026-09-29 | Claude | Issue #413 (CR-413): SWE1-094 now matches the code, so UV-CLI-017 to UV-CLI-019 verify it in full; 5 tests added (piped stdout, `--log` copy, exactly two lines, copyright line format, no `--quiet` option); §5.17 and §6 `test_cli_requirements.py` 16→21; total 1439→1444; coverage-gate text 1439→1444; §7 SWE1-094 row full and the partial-verification note removed; referenced-document versions resynced (SWE1 2.9→2.10, SWE3 1.19→1.20, SWE5 1.16→1.17) |
+| 1.25 | 2026-09-29 | Claude | #410: UV-MSR-007 no longer cites MISRA C:2012 Rule 14.4 (`misc.boolean_comparison` is a style rule) |
 | 1.24 | 2026-09-29 | Claude | Issue #407 (RR-003-001, AUD9-F-004): add §5.17 `test_cli_requirements.py` (16 tests, UV-CLI-014 to UV-CLI-022) giving SWE1-015 (single read per file), SWE1-094 (startup banner on stderr) and SWE1-096 (OS-native path separator) dedicated unit tests; §6 row (total 1423→1439, modules 54→55); coverage-gate text 1423→1439; §7 rows for SWE1-015, SWE1-094 and SWE1-096 now cite the UV IDs (SWE1-094 `--quiet` suppression and one-line form not implemented — see §7 note); §3.1 referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE3 1.18→1.19, SWE5 1.15→1.16) |
 | 1.23 | 2026-09-29 | Claude | #408: add `test_message_cites_barr_c_only` to UV-MSR-003 (8→9 tests); `test_misra_rules.py` 140→141; total 1422→1423 |
 | 1.22 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-003: catalogue the 76 tests from #391/#392 (UV-MSR-001 to UV-MSR-008); `test_misra_rules.py` 64→140; total 1346→1422 (54 modules); coverage-gate text 1279→1422; scope text. AUD9-F-004: §7 rows for SWE1-001 to 006, 011 to 016, 057 to 064, 094 to 099 and SWE1-MISRA-001 to 003 (SWE1-015, 094 and 096 have no dedicated unit test and are recorded as gaps). AUD9-F-001/F-010: §7 rows for SWE1-109 to SWE1-117. AUD9-F-015: header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
@@ -60,8 +61,8 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.10 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.20 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.11 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.21 |
 | CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.17 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
 
@@ -372,7 +373,7 @@ ASPICE traceability: SWE1-MISRA-001 (Rule 7.3), SWE1-MISRA-002 (Rule 7.1), SWE1-
 | UV-MSR-004 | Rule 11.5 — `TestVoidPointer` | 8 tests | `void *` flagged in declarations; typed pointer, `void` return type and comments not flagged; disabled; severity; message (SWE1-112) |
 | UV-MSR-005 | Rule 17.2 — `TestRecursiveFunction` | 8 tests | Direct recursion flagged with the function name and rule 17.2 in the message; non-recursive code, `if (` keyword and comments not flagged; disabled; severity (SWE1-113) |
 | UV-MSR-006 | Barr-C §5.7 — `TestSizeofType` | 7 tests | `sizeof(primitive)` and `sizeof(*_t)` flagged; `sizeof(var)` and `sizeof(*ptr)` not flagged; disabled; severity; message (SWE1-114) |
-| UV-MSR-007 | Rule 14.4 — `TestBooleanComparison` | 10 tests | `== true`, `== false`, `!= true` and `TRUE` flagged; direct use, negation and comments not flagged; disabled; severity; message (SWE1-115) |
+| UV-MSR-007 | Style rule (no MISRA citation, #410) — `TestBooleanComparison` | 10 tests | `== true`, `== false`, `!= true` and `TRUE` flagged; direct use, negation and comments not flagged; disabled; severity; message (SWE1-115) |
 | UV-MSR-008 | Barr-C §8.3 — `TestEmptyElse` | 9 tests | `else {}` flagged; `else` with a comment, non-empty `else`, `else if`, no `else` and comments not flagged; disabled; severity; message (SWE1-116) |
 
 Each test class verifies: positive detection, negative non-detection, disabled-rule suppression, configurable severity, and violation message content.
