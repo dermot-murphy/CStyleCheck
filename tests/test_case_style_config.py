@@ -219,7 +219,7 @@ class TestUnknownCaseStyleIsConfigError(unittest.TestCase):
 
     def test_non_naming_style_keys_rejected(self):
         cfg = {"functions": {"style": "objectverb"},
-               "file_prefix": {"case": "uper"},
+               "file_prefix": {"case": "titlecase"},
                "misc": {"eof_comment": {"filename_case": "keep"}}}
         errors = validate_case_styles(cfg, "cfg.yml")
         self.assertEqual(len(errors), 3)
