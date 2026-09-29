@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.16 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.17 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.6 |
@@ -22,11 +22,12 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.17 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SWQ-003 → 81 rule IDs; add the post-v1.6.0 MISRA/Barr-C rule row (SWE1-109 to SWE1-116); §6 rows for SWE1-094 to SWE1-117; coverage 113/113 in scope. AUD9-F-006: SWQ-007 step 4 → a moved violation stays suppressed (SWE1-100); add steps 6/7 (multiset, path normalisation); trace SWE1-100/101. AUD9-F-003: BP3 note `test_misra_rules.py` 64→140. AUD9-F-026: commit SHA / configuration under test; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.16 | 2026-07-06 | Claude | ASPICE audit — remove non-existent rule IDs `variable.local.prefix` and `variable.parameter.prefix` from SWQ-003 table; update §3.1 refs (SWE1 2.5→2.6, SWE5 1.12→1.14, SUP8 1.9→1.10); fix coverage gate note; add SWE1-094 to SWE1-099 to §3.3 criteria — closes #376 |
 | 1.15 | 2026-07-06 | Claude | v1.6.0 RC — update test count 1223→1279; §3.1 SWE5→1.13, SVD→1.22; add SWQ-003 row for constant_comparison/output behaviour improvements; update §8 execution results |
 | 1.14 | 2026-07-01 | Claude | Add misc.constant_comparison, unsigned_suffix signed-param, pointer_prefix fix to SWQ-003; update rule count 72→73; req coverage 91→94; §3.1 SWE1→2.5, SWE5→1.12; version under test 1.5.0→1.6.0 |
-| 1.13 | 2026-06-27 | Fix §3.1 cross-ref: SWE1 2.3→2.4 | Dermot Murphy |
-| 1.12 | 2026-06-27 | Fix §3.1 cross-ref: SWE1 2.1→2.3 | Dermot Murphy |
+| 1.13 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-ref: SWE1 2.3→2.4 |
+| 1.12 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-ref: SWE1 2.1→2.3 |
 | 1.11 | 2026-06-27 | Claude | ASPICE audit — populate SWQ-010 execution evidence; fill §7 coverage values; fix §8 issue #54 status; fix §9 branch coverage; fix §10 v1.0.0→v1.5.0; update Review & Approval dates — closes #318 #323 |
 | 1.10 | 2026-06-26 | Claude | ASPICE audit corrections: update §3.2 config under test to v1.5.0; fix §3.1/§3.3/§9/Appendix A stale references; populate execution results for SWQ-001/002/004/005/006/007 — closes #310 |
 | 1.9 | 2026-06-26 | Claude | Correct rule count 74→72 throughout (§3 SWQ-003, §7 RTM): 72 is the confirmed count from source-code analysis; macro.trailing_semicolon/multistatement_wrapper were already in the 71 base |
@@ -44,7 +45,7 @@
 
 ## 3. Purpose & Scope
 
-This Software Qualification Test Specification defines the qualification test cases that verify **CStyleCheck v1.6.0** against its software requirements (CSC-SWE1-001) as a complete software build. It satisfies **Automotive SPICE® PAM v4.0, SWE.6 — Software Verification**.
+This Software Qualification Test Specification defines the qualification test cases that verify **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline** against its software requirements (CSC-SWE1-001) as a complete software build. It satisfies **Automotive SPICE® PAM v4.0, SWE.6 — Software Verification**.
 
 Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they verify the software against its **specification**, not its internal architecture. They confirm that all SWE.1 requirements are met by the delivered software artefact and provide the final evidence gate before the software is released via SPL.2.
 
@@ -52,10 +53,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.6 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.14 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.6 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.10 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.8 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.15 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.9 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.13 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -63,7 +64,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 |---|---|
 | **Software Version** | 1.6.0 |
 | **Git Tag** | v1.6.0 |
-| **Commit SHA** | (pending merge of claude/embedded-c-style-standards-pgqhdc) |
+| **Commit SHA** | `a6102d6` (v1.6.0 release). Post-v1.6.0 additions (SWQ-003 rules for SWE1-109 to SWE1-116, SWQ-007 steps 4/6/7): `develop` `296e91b` |
 | **Python Version** | 3.11 (primary); 3.10 and 3.12 (regression) |
 | **OS** | Ubuntu 24.04 |
 | **Test Execution Date** | 2026-06-26 |
@@ -133,13 +134,13 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 ---
 
-### SWQ-003 — All 73 Rule IDs Detected
+### SWQ-003 — All 81 Rule IDs Detected
 
 | Field | Value |
 |---|---|
 | **Test Case ID** | SWQ-003 |
-| **Objective** | Verify all 73 rule IDs are implemented and detect violations when triggered (SWE1-017 to SWE1-093) |
-| **SW-REQ** | SWE1-017 to SWE1-056, SWE1-MISRA-001 to SWE1-MISRA-004, SWE1-063, SWE1-071, SWE1-078 to SWE1-093 |
+| **Objective** | Verify all 81 rule IDs are implemented and detect violations when triggered (SWE1-017 to SWE1-093, SWE1-109 to SWE1-116) |
+| **SW-REQ** | SWE1-017 to SWE1-056, SWE1-MISRA-001 to SWE1-MISRA-004, SWE1-063, SWE1-071, SWE1-078 to SWE1-093, SWE1-098, SWE1-099, SWE1-109 to SWE1-116 |
 
 | Rule Category | Rule IDs | Test Module | Result |
 |---|---|---|---|
@@ -166,6 +167,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Misc — unsigned_suffix signed-param exemption (v1.6.0) | `misc.unsigned_suffix` false-positive fix for signed-typed parameters | `test_unsigned_suffix_signed_params.py` | PASS |
 | Variable — pointer_prefix auto-fix (v1.6.0) | `variable.pointer_prefix` auto-fix via `--fix` | `test_pointer_prefix_fix.py` | PASS |
 | Output — v1.6.0 output behaviour (startup banner, --summary restructure, OS path sep) | `print_summary` restructure; stderr startup banner; OS-native path in output | `test_cli.py`, `test_print_summary.py` | PASS |
+| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-008, 76 tests) | PASS (2026-09-29, develop `296e91b`, Python 3.11 local run) |
 
 **SWQ-003 Overall Result:** PASS
 
@@ -246,20 +248,23 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Field | Value |
 |---|---|
 | **Test Case ID** | SWQ-007 |
-| **Objective** | Verify baseline write, load, and filtering requirements (SWE1-065 to SWE1-067) |
-| **SW-REQ** | SWE1-065, SWE1-066, SWE1-067 |
+| **Objective** | Verify baseline write, load, and filtering requirements (SWE1-065 to SWE1-067, SWE1-100, SWE1-101) |
+| **SW-REQ** | SWE1-065, SWE1-066, SWE1-067, SWE1-100, SWE1-101 |
 
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
 | 1 | Write baseline | `--write-baseline b.json` with 2 violations | `b.json` is valid JSON; 2 entries; exit 0 |
 | 2 | Suppress all | Same source + `--baseline-file b.json` | 0 violations; exit 0 |
 | 3 | New violation added | Source v2 (3 violations) + `--baseline-file b.json` | 1 new violation reported; exit 1 |
-| 4 | Baseline key stability | Move violation to different line | Different line → not suppressed (line number in key) |
-| 5 | Plain JSON format | Inspect `b.json` | Human-readable; parseable with `jq` |
+| 4 | Baseline key stability | Move a baselined violation to a different line (unrelated edit above it) | Still suppressed: the line number is not part of the key (`file:rule:message`, SWE1-100) |
+| 5 | Plain JSON format | Inspect `b.json` | Human-readable JSON object `{"violations": [...]}`; `line` recorded for review; parseable with `jq` |
+| 6 | Duplicate of a baselined violation | Source with one extra copy of an accepted violation | The extra copy is reported as new; exit 1 (multiset matching) |
+| 7 | Cross-platform baseline | Baseline written with `\` separators, checked on Linux | Violations suppressed; `file` written with `/` separators (SWE1-101) |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
-| 2026-06-26 | GitHub Actions (automated) | 3.10 / 3.11 / 3.12 | PASS | |
+| 2026-06-26 | GitHub Actions (automated) | 3.10 / 3.11 / 3.12 | PASS | Steps 1–3, 5 (pre-#397 step 4 expectation) |
+| 2026-09-29 | Local pytest run, develop `296e91b` (`TestBaselineSuppression`, 22 tests) | 3.11 | PASS | Steps 1–7 against the #397 behaviour |
 
 ---
 
@@ -366,11 +371,11 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 |---|---|---|---|---|
 | SWQ-001 | Configuration loading | SWE1-001 to SWE1-006 | PASS | |
 | SWQ-002 | File discovery and CLI | SWE1-068 to SWE1-070 | PASS | |
-| SWQ-003 | All 73 rule IDs | SWE1-017 to SWE1-056, SWE1-MISRA-001–004, SWE1-063, SWE1-071, SWE1-078–093 | PASS | |
+| SWQ-003 | All 81 rule IDs | SWE1-017 to SWE1-056, SWE1-MISRA-001–004, SWE1-063, SWE1-071, SWE1-078–093, SWE1-098, SWE1-099, SWE1-109–116 | PASS | |
 | SWQ-004 | Output format qualification | SWE1-057 to SWE1-064 | PASS | |
 | SWQ-005 | Dictionary and spell check | SWE1-007 to SWE1-010, SWE1-056 | PASS | |
 | SWQ-006 | Cross-file sign compatibility | SWE1-051 to SWE1-053 | PASS | |
-| SWQ-007 | Baseline suppression | SWE1-065 to SWE1-067 | PASS | |
+| SWQ-007 | Baseline suppression | SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | PASS | |
 | SWQ-008 | Exit code qualification | SWE1-069 | PASS | |
 | SWQ-009 | Source cache single read | SWE1-015 | PASS | |
 | SWQ-010 | Multi-token typedef detection | SWE1-040 | PASS | |
@@ -397,7 +402,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | SWE1-051 to SWE1-053 | Sign compatibility | SWQ-006 | Covered |
 | SWE1-054 to SWE1-056 | Reserved names / spell check | SWQ-003, SWQ-005 | Covered |
 | SWE1-057 to SWE1-064 | Output formats | SWQ-004 | Covered |
-| SWE1-065 to SWE1-067 | Baseline suppression | SWQ-007 | Covered |
+| SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline suppression (incl. line-independent, multiset, path-normalised matching) | SWQ-007 | Covered |
 | SWE1-068 to SWE1-070 | CLI and entry point | SWQ-002 | Covered |
 | SWE1-071 | Whitespace ratio check | SWQ-003 (via pytest) | Covered |
 | SWE1-MISRA-001 to SWE1-MISRA-004 | MISRA C lexical rules (lowercase_l, octal, trigraph, non_ascii) | SWQ-003 | Covered |
@@ -413,8 +418,14 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | SWE1-091 | `misc.constant_comparison` — flag constant==constant comparisons | SWQ-003 | Covered |
 | SWE1-092 | `misc.unsigned_suffix` signed-parameter argument exemption | SWQ-003 | Covered |
 | SWE1-093 | `variable.pointer_prefix` auto-fix via `--fix` | SWQ-003 | Covered |
+| SWE1-094, SWE1-095 | Startup banner; copyright in `--version` | SIT-024 (integration level) | Covered |
+| SWE1-096 | OS-native path separator in output | SWQ-004 step 1 (POSIX runner only); Windows `\` rendering verified by inspection | Covered (partial) |
+| SWE1-097 | `print_summary()` restructure | SIT-026, SWQ-004 | Covered |
+| SWE1-098, SWE1-099 | `fn_start` line correction; function-pointer typedef exemption | SWQ-003 | Covered |
+| SWE1-102 to SWE1-108, SWE1-117 | Trend-analysis metrics (CI scripts, COMP-13) | Outside SWE.6 scope (not part of the delivered `cstylecheck` package); verified by SWE.4 UV-MET-001 to UV-MET-010 | N/A |
+| SWE1-109 to SWE1-116 | Post-v1.6.0 MISRA/Barr-C rules (#391/#392) | SWQ-003, SIT-027 | Covered |
 
-**Requirements Coverage:** 94 / 94 requirements covered (100%)
+**Requirements Coverage:** 113 / 113 in-scope requirements covered (100%). SWE1 defines 121 requirements (SWE1-001 to SWE1-117 plus SWE1-MISRA-001 to 004); the 8 trend-metrics requirements (SWE1-102 to SWE1-108, SWE1-117) are outside SWE.6 scope.
 
 ---
 
@@ -459,10 +470,10 @@ The following conditions were assessed for the **v1.6.0** release baseline (2026
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-07-01 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-07-01 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-07-01 |
-| Approver | Dermot Murphy | Approved | 2026-07-01 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** Software qualification is the final gate before release. This document must be approved and all release readiness conditions in §9 satisfied before the v1.6.0 release baseline is created and the product is released via SPL.2.
 
@@ -487,5 +498,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (64 test cases) provides direct verification evidence for MISRA Rules 4.2, 7.1, and 7.3. All other CStyleCheck-enforced rules are covered by the existing test suite (1279 total passing tests as of v1.6.0).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (140 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 14.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`).
 

@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.11 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.12 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.4 |
@@ -20,9 +20,10 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.12 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SITC-017 for the 8 post-v1.6.0 MISRA/Barr-C rules (all 81 rule IDs covered), with §5 and §6 rows. AUD9-F-006: SITC-007 step 2 baseline format; add step 6 (line-independent matching). AUD9-F-026: CM baseline ID per test-case group; scope text v1.5.0→v1.6.0/develop. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.11 | 2026-07-06 | Claude | ASPICE audit — add SITC-016 for v1.6.0 block-comment inline suppression — closes #379 |
 | 1.10 | 2026-07-06 | Claude | v1.6.0 RC — update §5 overall result 1183→1279; update §3.3 SWE5→1.13, SVD→1.22 |
-| 1.9 | 2026-06-27 | Fix §3.3 cross-ref: SYS2 1.9→2.0 | Dermot Murphy |
+| 1.9 | 2026-06-27 | Dermot Murphy | Fix §3.3 cross-ref: SYS2 1.9→2.0 |
 | 1.8 | 2026-06-27 | Claude | ASPICE audit — replace §6 SWE5 traceability placeholders with actual SIT-001–SIT-014 test case IDs; update Review & Approval dates — closes #320 #323 |
 | 1.7 | 2026-06-26 | Claude | ASPICE audit — update §3.3 SYS2 ref (1.8→1.9); update §5 overall result test count (965→1183) — closes #306 #311 |
 | 1.6 | 2026-06-26 | Claude | v1.5.0 release — update product version reference in §3.1 scope |
@@ -39,7 +40,7 @@
 
 ### 3.1 Purpose
 
-This System Integration Test Specification defines the integration test cases that verify the correct assembly, interface behaviour, and end-to-end operation of the **CStyleCheck v1.5.0** system across its six subsystems and five deployment modes. It satisfies **Automotive SPICE® PAM v4.0, SYS.4 — System Integration and Integration Verification**.
+This System Integration Test Specification defines the integration test cases that verify the correct assembly, interface behaviour, and end-to-end operation of the **CStyleCheck v1.6.0 (and post-v1.6.0 `develop` baseline)** system across its six subsystems and five deployment modes. It satisfies **Automotive SPICE® PAM v4.0, SYS.4 — System Integration and Integration Verification**.
 
 ### 3.2 Scope
 
@@ -57,9 +58,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.0 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.5 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.7 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.3 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.7 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.9 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
@@ -70,7 +71,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | **Python Versions** | 3.10, 3.11, 3.12 (matrix) |
 | **Test Framework** | pytest + subprocess (for integration tests) |
 | **Docker Runtime** | Docker CLI on GitHub Actions runner |
-| **CM Baseline ID** | 93178cd (develop HEAD after PR #158 merge, 2026-05-28) |
+| **CM Baseline ID** | SITC-001 to SITC-014: `93178cd` (2026-05-28); SITC-015/016: v1.6.0 (`a6102d6`); SITC-007 re-run and SITC-017: `develop` `296e91b` (2026-09-29) |
 
 ### 3.5 Verification Criteria
 
@@ -241,14 +242,16 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
 | 1 | Invoke: `python cstylecheck.py --write-baseline baseline.json violating_v1.c` | File with 1 violation | baseline.json created; exit code = 0 |
-| 2 | Inspect baseline.json | JSON file | Valid JSON; contains the 1 violation entry |
+| 2 | Inspect baseline.json | JSON file | Valid JSON object `{"violations": [...]}` containing the 1 violation entry (`file` with `/` separators, `line`, `rule`, `message`) |
 | 3 | Add second violation to source → `violating_v2.c` | Source with 2 violations | — |
 | 4 | Invoke: `python cstylecheck.py --baseline-file baseline.json violating_v2.c` | Source v2 + baseline | Only the new (2nd) violation reported; original suppressed |
 | 5 | Check exit code | — | Exit code = 1 (new error present) |
+| 6 | Insert blank lines above the baselined violation and re-run with the baseline | Shifted source + baseline | Baselined violation still suppressed (line-independent matching, #394) |
 
 | Execution Date | Tester | SW Version | Result | Deviation Ref |
 |---|---|---|---|---|
 | 2026-05-28 | GitHub Actions (automated) / Dermot Murphy (manual review) | 93178cd | PASS | |
+| 2026-09-29 | Local pytest run (`TestBaselineSuppression`) | develop `296e91b` | PASS | Step 6 added for #394 |
 
 ---
 
@@ -464,6 +467,31 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 ---
 
+### SITC-017 — Post-v1.6.0 MISRA/Barr-C Rule Coverage
+
+| Field | Value |
+|---|---|
+| **Test Case ID** | SITC-017 |
+| **Test Objective** | Verify end-to-end that the 8 rules added by #391/#392 (`misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else`) are loaded from `rules.yml`, detect their violations, honour `enabled`/`severity`, and are reported through the standard output path |
+| **Architecture Interface** | IF-01, IF-06, IF-08, IF-09 |
+| **Requirement Reference** | SYS-F-011, SYS-F-020, SYS-F-025, SYS-F-026 |
+
+| Step | Action | Expected Result |
+|---|---|---|
+| 1 | Run cstylecheck on a C file containing one instance of each of the 8 constructs | One violation per rule ID with the default severity (`goto_usage` and `recursive_function` error; `sizeof_type` info; others warning) |
+| 2 | Re-run with each rule's `enabled: false` | No violation for the disabled rule |
+| 3 | Re-run with an overridden `severity` | Reported severity matches the configuration |
+| 4 | Place the constructs inside comments or string literals | No violation |
+
+| Execution Details | Value |
+|---|---|
+| **Result** | PASS |
+| **Date** | 2026-09-29 |
+| **Environment** | Python 3.11, develop `296e91b` (local pytest run) |
+| **Evidence** | `tests/test_misra_rules.py` — UV-MSR-001 to UV-MSR-008 (76 tests); SIT-027 |
+
+---
+
 ## 5. Integration Test Results Summary
 
 | SITC-ID | Test Case | Status | Deviation Ref |
@@ -484,8 +512,11 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-014 | `--warnings-as-errors` promotion | PASS | |
 | SITC-015 | v1.4.0 rule coverage (macro safety, function quality, file constraints, naming) | PASS | |
 | SITC-016 | v1.6.0 inline suppression — block-comment form and all directive variants | PASS | |
+| SITC-017 | Post-v1.6.0 MISRA/Barr-C rules (8 rule IDs; all 81 rule IDs now covered) | PASS | |
 
 **Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016), GitHub Actions (automated) / Dermot Murphy (manual review), 1279 tests all PASS on Python 3.10 / 3.11 / 3.12.
+
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11).
 
 > **📋 Note:** All SITC test cases must achieve PASS status before the system verification (SYS.5) activities commence. Any FAIL result must be tracked as a GitHub Issue and resolved via the change control process (SUP.10).
 
@@ -511,6 +542,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-014 | SYS-F-040 | IF-09 | SIT-014 |
 | SITC-015 | SYS-F-011, SYS-F-017, SYS-F-020 | IF-01, IF-02, IF-06, IF-08, IF-09 | SIT-019 |
 | SITC-016 | SYS-F-041 | IF-01, IF-06, IF-08, IF-09 | SIT-025 |
+| SITC-017 | SYS-F-011, SYS-F-020, SYS-F-025, SYS-F-026 | IF-01, IF-06, IF-08, IF-09 | SIT-027 |
 
 ---
 
@@ -518,9 +550,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

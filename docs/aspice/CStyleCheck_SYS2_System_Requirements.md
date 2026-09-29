@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.2 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.3 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.2 |
@@ -20,8 +20,9 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-F-011 73→81 rule IDs; SYS-F-020 lists the 8 post-v1.6.0 MISRA/Barr-C rules; scope text. AUD9-F-006: RTM SYS-F-034 to 036 → add SWE1-100/101. AUD9-F-008: SYS-F-046 → SWE1-094 (was SWE1-091); add SWE1-072/073, 074, 077, 091 to 093, 095 to 099 and 109 to 116 to the RTM; add bidirectional-trace note. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 2.2 | 2026-07-06 | Claude | ASPICE audit — SYS-F-011 73 rule IDs; scope v1.5.0→v1.6.0; add SYS-F-046 startup banner requirement — closes #379 |
-| 2.1 | 2026-06-27 | Fix §3.3 cross-refs: SUP8 1.7→1.9, SWE1 2.2→2.4 | Dermot Murphy |
+| 2.1 | 2026-06-27 | Dermot Murphy | Fix §3.3 cross-refs: SUP8 1.7→1.9, SWE1 2.2→2.4 |
 | 2.0 | 2026-06-27 | Claude | ASPICE audit — §3.1 scope v1.4.1→v1.5.0 and 71→72 rule IDs; §3.3 SWE1 ref 1.9→2.2; SYS-F-011 71→72; §6 RTM add SWE1-MISRA-004/SWE1-089/SWE1-090 traceability; update Review & Approval dates — closes #319 #323 |
 | 1.9 | 2026-06-26 | Claude | §6 RTM: replace all `\<SWE.1-REQ-xxx\>` placeholders with actual SWE1-xxx IDs; add CSC-SWE1-001 to §3.3; update §3.1 scope to v1.4.1 — closes issue #292 |
 | 1.8 | 2026-06-26 | Claude | Update SYS-F-020 to include v1.4.0 misc and macro-safety rules — closes issue #261 |
@@ -40,7 +41,7 @@
 
 ### 3.1 Purpose
 
-This System Requirements Specification (SRS) defines the complete, structured set of system-level requirements for **CStyleCheck v1.6.0** — an embedded C naming-convention linter implementing Barr-C:2018 and MISRA-C complementary rules across 73 rule IDs.
+This System Requirements Specification (SRS) defines the complete, structured set of system-level requirements for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline** — an embedded C naming-convention linter implementing Barr-C:2018 and MISRA-C complementary rules across 81 rule IDs (73 at v1.6.0).
 
 This document satisfies the requirements of **Automotive SPICE® PAM v4.0, SYS.2 — System Requirements Analysis**.
 
@@ -61,9 +62,9 @@ The system is deployed in four integration modes:
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.9 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.5 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.4 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.13 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.7 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.8 |
 
 ### 3.4 Glossary
 
@@ -116,7 +117,7 @@ The following table summarises the stakeholder needs from which the system requi
 
 | REQ-ID | Requirement | Priority | Verification Method | Derived From |
 |---|---|---|---|---|
-| SYS-F-011 | The system shall enforce naming rules across 73 rule IDs covering: constants/macros, variables (by scope), functions, types (typedef/enum/struct), include guards, and miscellaneous rules (including MISRA C:2012/2023 Rule 4.1 non-ASCII source checking) | Mandatory | Test | STK-001, STK-002 |
+| SYS-F-011 | The system shall enforce naming rules across 81 rule IDs covering: constants/macros, variables (by scope), functions, types (typedef/enum/struct), include guards, and miscellaneous rules (including MISRA C:2012/2023 Rule 4.1 non-ASCII source checking and the MISRA/Barr-C control-flow and type-safety rules listed in SYS-F-020) | Mandatory | Test | STK-001, STK-002 |
 | SYS-F-012 | The system shall enforce module-prefix requirements on global variables, file-scope static variables, public functions, macros, and constants | Mandatory | Test | STK-001 |
 | SYS-F-013 | The system shall enforce scope-aware variable rules: global (`g_` prefix), file-static (`s_` prefix), local, and parameter — each independently configurable | Mandatory | Test | STK-001 |
 | SYS-F-014 | The system shall enforce pointer-prefix rules: single pointer (`p_`), double pointer (`pp_`), boolean (`b_`), and handle variables (`h_`) | Mandatory | Test | STK-001 |
@@ -125,7 +126,7 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-017 | The system shall enforce min-length and max-length constraints on variable, function, constant, and macro identifiers | Mandatory | Test | STK-001 |
 | SYS-F-018 | The system shall enforce case rules (`lower_snake`, `UPPER_SNAKE`, `UpperCamelCase`) per identifier category | Mandatory | Test | STK-001 |
 | SYS-F-019 | The system shall enforce include guard presence and format rules | Mandatory | Test | STK-001 |
-| SYS-F-020 | The system shall enforce miscellaneous and macro-safety rules: line length, indentation, magic number detection, unsigned integer suffix (`U`/`UL`), yoda conditions, block comment spacing, function length, function documentation header, assert density, null statement commenting, declaration spacing, file length, reserved header name, macro trailing semicolon, and macro multistatement wrapper | Mandatory | Test | STK-001 |
+| SYS-F-020 | The system shall enforce miscellaneous and macro-safety rules: line length, indentation, magic number detection, unsigned integer suffix (`U`/`UL`), yoda conditions, block comment spacing, function length, function documentation header, assert density, null statement commenting, declaration spacing, file length, reserved header name, macro trailing semicolon, macro multistatement wrapper, and (post-v1.6.0) `goto` usage (MISRA 15.1), assignment in a condition (MISRA 13.4), multiple statements per line (Barr-C §3.2), `void *` usage (MISRA 11.5), direct recursion (MISRA 17.2), `sizeof` with a type operand (Barr-C §5.7), comparison with `true`/`false` (MISRA 14.4) and empty `else` (Barr-C §8.3) | Mandatory | Test | STK-001 |
 | SYS-F-021 | The system shall perform cross-file sign-compatibility checking between related `.c` and `.h` files | Mandatory | Test | STK-001 |
 | SYS-F-022 | The system shall perform spell-checking on identifier tokens against a configurable dictionary | Mandatory | Test | STK-001 |
 | SYS-F-023 | The system shall detect reserved C/C++ keyword and stdlib name usage as identifiers | Mandatory | Test | STK-001 |
@@ -211,10 +212,10 @@ The following table summarises the stakeholder needs from which the system requi
 
 | REQ-ID | Category | Stakeholder Need | SYS.3 Architecture Element | SWE.1 SW Requirement |
 |---|---|---|---|---|
-| SYS-F-001 to SYS-F-010 | Input handling | STK-001, STK-002 | SS-01 (CLI), SS-02 (Config Loader), SS-04 (Source Parser) | SWE1-001 to SWE1-016, SWE1-068 to SWE1-070 |
-| SYS-F-011 to SYS-F-026 | Rule engine | STK-001, STK-002 | SS-05 (Rule Engine) | SWE1-017 to SWE1-056, SWE1-MISRA-001 to SWE1-MISRA-004, SWE1-071, SWE1-078 to SWE1-090 |
-| SYS-F-027 to SYS-F-033 | Output / reporting | STK-003, STK-005, STK-007 | SS-06 (Output Formatter) | SWE1-057 to SWE1-064, SWE1-089 |
-| SYS-F-034 to SYS-F-036 | Baseline suppression | STK-004 | SS-01 (CLI), SS-05 (Rule Engine) | SWE1-065 to SWE1-067 |
+| SYS-F-001 to SYS-F-010 | Input handling | STK-001, STK-002 | SS-01 (CLI), SS-02 (Config Loader), SS-04 (Source Parser) | SWE1-001 to SWE1-016, SWE1-068 to SWE1-070, SWE1-072, SWE1-073 |
+| SYS-F-011 to SYS-F-026 | Rule engine | STK-001, STK-002 | SS-05 (Rule Engine) | SWE1-017 to SWE1-056, SWE1-MISRA-001 to SWE1-MISRA-004, SWE1-071, SWE1-074, SWE1-078 to SWE1-093, SWE1-098, SWE1-099, SWE1-109 to SWE1-116 |
+| SYS-F-027 to SYS-F-033 | Output / reporting | STK-003, STK-005, STK-007 | SS-06 (Output Formatter) | SWE1-057 to SWE1-064, SWE1-077, SWE1-089, SWE1-095 to SWE1-097 |
+| SYS-F-034 to SYS-F-036 | Baseline suppression | STK-004 | SS-01 (CLI), SS-05 (Rule Engine) | SWE1-065 to SWE1-067, SWE1-100, SWE1-101 |
 | SYS-F-037 to SYS-F-040 | Exit codes | STK-003 | SS-01 (CLI / Entry Point) | SWE1-069 |
 | SYS-NF-001 to SYS-NF-002 | Performance | STK-003 | SS-04 (Source Cache) | SWE1-015 |
 | SYS-NF-003 to SYS-NF-006 | Portability | STK-001, STK-006 | Build / packaging (`pyproject.toml`, `Dockerfile`) | Verified at system level by CI matrix (SWE1-069 entry point exercised on Python 3.10 / 3.11 / 3.12) |
@@ -227,7 +228,9 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-043 | Config wizard and presets | STK-002 | `wizard.py` Wizard module | SWE1-075 |
 | SYS-F-044 | Per-directory config | STK-002 | `config.resolve_per_dir_config()` | SWE1-076 |
 | SYS-F-045 | HTML report output | STK-007 | `output._violations_to_html()` | SWE1-077 |
-| SYS-F-046 | Startup banner | STK-001 | `cli.py` — startup banner output to stderr | SWE1-091 |
+| SYS-F-046 | Startup banner | STK-001 | `cli.py` — startup banner output to stderr | SWE1-094 |
+
+> **Bidirectional-trace note (AUD9-F-008):** Each SWE1 requirement listed above cites the SYS requirement in this row as its parent (CSC-SWE1-001 v2.8 parent column). SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts) have no SYS parent; they derive from CSC-MAN3-001 §10.3 process monitoring. SYS-NF-003 to SYS-NF-006 are verified at system level (CI matrix, Docker build), and SYS-NF-010 to SYS-NF-012 are deferred or out of scope.
 
 ---
 
@@ -235,9 +238,9 @@ The following table summarises the stakeholder needs from which the system requi
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

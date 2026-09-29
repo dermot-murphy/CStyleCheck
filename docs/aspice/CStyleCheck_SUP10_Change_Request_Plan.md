@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.2 |
-| **Project** | CStyleCheck | **Date** | 2026-06-18 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.3 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.10 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.2 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.1 | 2026-05-28 | Claude | Reviewed and updated for v1.1.0 release; revision history maintained per ASPICE GP 2.2.4 |
 | 1.0 | 2026-04-12 | Claude | Initial release |
@@ -36,9 +37,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.7 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.2 |
-| CSC-MAN3-001 | Project Management Plan | 1.6 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.13 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.3 |
+| CSC-MAN3-001 | Project Management Plan | 1.8 |
 
 ---
 
@@ -179,9 +180,9 @@ Summary view:
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-04-15 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-04-15 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-04-15 |
-| Approver | Dermot Murphy | Approved | 2026-04-15 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

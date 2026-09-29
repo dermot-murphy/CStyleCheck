@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.14 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.15 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.5 |
@@ -20,11 +20,12 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.15 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SIT-027 for the 8 rules from #391/#392 (SWE1-109 to SWE1-116), with §6 and §7 rows and a post-v1.6.0 result note. AUD9-F-006: SWA-IF-09 → Counter multiset; SIT-012 step 4 → {"violations":[…]} with `file`; add steps 5–7 (moved violation, duplicate, Windows path); trace SIT-012 to SWE1-100/101 and UV-CLI-011 to 013. AUD9-F-026: CM baseline ID → v1.6.0 tag / develop 296e91b; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.14 | 2026-07-06 | Claude | ASPICE audit — add SIT-024 body (missing from doc); add SIT-025 (block-comment suppression), SIT-026 (--summary restructure); update §3.1 refs (SWE2 1.11→1.12, SWE4 1.18→1.20, SWE6 1.14→1.16); update §6 and §7 — closes #375 |
 | 1.13 | 2026-07-06 | Claude | v1.6.0 RC — update §6 overall result 1223→1279; §3.1 SWE4→1.19, SVD→1.22; add SIT-024 (startup banner/copyright output) |
 | 1.12 | 2026-07-01 | Claude | Add SIT-021/022/023 (constant_comparison, unsigned_suffix signed-param, pointer_prefix fix); update §3 scope to v1.6.0; §6 overall result 1183→1223; §3.1 SWE1→2.5, SWE4→1.18, SWE6→1.14 |
-| 1.11 | 2026-06-27 | Fix §3.1 cross-refs: SWE4 1.16→1.17, SWE6 1.12→1.13, SYS4 1.7→1.9; fix header date | Dermot Murphy |
-| 1.10 | 2026-06-27 | Fix §3.1 cross-refs: SWE4 1.14→1.16, SWE6 1.10→1.12 | Dermot Murphy |
+| 1.11 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SWE4 1.16→1.17, SWE6 1.12→1.13, SYS4 1.7→1.9; fix header date |
+| 1.10 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SWE4 1.14→1.16, SWE6 1.10→1.12 |
 | 1.9 | 2026-06-26 | Claude | ASPICE audit — update §3.1 refs (SWE2 1.8→1.9, SWE4 1.12→1.14, SWE6 1.7→1.10, SYS4 1.5→1.7); update §3.2 CM baseline to v1.5.0 tag; update §6 overall result 1182→1183 — closes #306 #309 |
 | 1.8 | 2026-06-26 | Claude | v1.5.0 release — update product version reference in §3 scope |
 | 1.7 | 2026-06-26 | Claude | Add SIT-020 for non_ascii_source (Rule 4.1), per-file summary breakdown, and typedef-alias constant.case exemption — issues #279 #278 #272 #244 |
@@ -40,7 +41,7 @@
 
 ## 3. Purpose & Scope
 
-This document defines the software integration test specification for **CStyleCheck v1.6.0**, verifying that the software components integrate correctly across the interfaces defined in CSC-SWE2-001. It satisfies **Automotive SPICE® PAM v4.0, SWE.5 — Software Integration and Integration Verification**.
+This document defines the software integration test specification for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**, verifying that the software components integrate correctly across the interfaces defined in CSC-SWE2-001. It satisfies **Automotive SPICE® PAM v4.0, SWE.5 — Software Integration and Integration Verification**.
 
 Integration tests operate at a higher level than unit tests (SWE.4): they exercise data flows **across component boundaries** — primarily the path from COMP-01 (CLI) through COMP-04 (Parser) into COMP-05 (Rule Engine) and COMP-07 (Output Formatter) — rather than individual method logic.
 
@@ -50,11 +51,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.12 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.5 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.20 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.16 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.9 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.13 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.8 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.22 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.17 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.12 |
 
 ### 3.2 Test Environment
 
@@ -64,7 +65,7 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 | **Python Versions** | 3.10, 3.11, 3.12 |
 | **Test runner** | pytest 7+ via `cstylecheck_tests.yml` CI workflow |
 | **Invocation method** | `subprocess.run()` — full process invocation including argument parsing |
-| **CM Baseline ID** | v1.6.0 (pending merge of claude/embedded-c-style-standards-pgqhdc to develop/main) |
+| **CM Baseline ID** | SIT-001 to SIT-026: release tag `v1.6.0` (commit `a6102d6`, 2026-07-06). SIT-012 re-run and SIT-027: `develop` commit `296e91b` (2026-09-29) |
 
 ### 3.3 Integration Verification Criteria
 
@@ -91,7 +92,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SWA-IF-06 | COMP-04 → COMP-05: clean source, line_map, brace_depths | SIT-001, SIT-005 |
 | SWA-IF-07 | COMP-04 → COMP-05g: cached source for cross-file sign check | SIT-011 |
 | SWA-IF-08 | COMP-05 → COMP-06: violation list to baseline manager | SIT-012 |
-| SWA-IF-09 | COMP-06 → COMP-05: baseline frozenset for filtering | SIT-012 |
+| SWA-IF-09 | COMP-06 → COMP-05: baseline `Counter` multiset (`file:rule:message`) for filtering | SIT-012 |
 | SWA-IF-10 | COMP-05 → COMP-07: violation list to output formatter | SIT-001, SIT-006, SIT-007 |
 
 ---
@@ -343,18 +344,22 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | **Test Case ID** | SIT-012 |
 | **Objective** | Verify SWA-IF-08 and IF-09: violation list written to baseline correctly filters rule engine output on reload |
 | **Interfaces** | SWA-IF-08, SWA-IF-09 |
-| **SW-REQ** | SWE1-065, SWE1-066, SWE1-067 |
+| **SW-REQ** | SWE1-065, SWE1-066, SWE1-067, SWE1-100, SWE1-101 |
 
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
 | 1 | `--write-baseline baseline.json` with 2-violation source | Source v1 | `baseline.json` created; 2 entries; exit 0 |
 | 2 | `--baseline-file baseline.json` same source | Source v1 + baseline | 0 violations output; exit 0 |
 | 3 | Add third violation to source | Source v2 | 1 violation reported (new); 2 suppressed; exit 1 |
-| 4 | Inspect `baseline.json` | File | Valid JSON array with `rule`, `filepath`, `line`, `message` per entry |
+| 4 | Inspect `baseline.json` | File | Valid JSON object `{"violations": [...]}`; each entry has `file` (with `/` separators), `line`, `rule`, `message` |
+| 5 | Insert blank lines above the baselined violations | Source v1 shifted + baseline | Moved violations remain suppressed; exit 0 (line number not part of the key — SWE1-100) |
+| 6 | Duplicate one baselined violation | Source v3 + baseline | The extra copy is reported as new; exit 1 (multiset matching) |
+| 7 | Load a baseline whose `file` values use `\` separators | Windows-style baseline + source | Violations suppressed (paths normalised — SWE1-101) |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
-| 2026-05-28 | GitHub Actions (automated) | 3.11 | PASS | |
+| 2026-05-28 | GitHub Actions (automated) | 3.11 | PASS | Steps 1–4 (pre-#397 key) |
+| 2026-09-29 | Local pytest run, develop `296e91b` (`test_improvements.py::TestBaselineSuppression`, 22 tests) | 3.11 | PASS | Steps 1–7 |
 
 ---
 
@@ -683,6 +688,35 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 ---
 
+### SIT-027 — Post-v1.6.0 MISRA/Barr-C Rules Integration (COMP-02 → COMP-04 → COMP-05f → COMP-07)
+
+| Field | Value |
+|---|---|
+| **Test Case ID** | SIT-027 |
+| **Objective** | Verify end-to-end integration of the 8 rules added by PRs #391/#392: each rule reads its `misc.*` config (enabled, severity), runs on the comment/string-stripped source and reports through the Violation / output path |
+| **Interfaces** | SWA-IF-03, SWA-IF-06, SWA-IF-10 |
+| **SW-REQ** | SWE1-109, SWE1-110, SWE1-111, SWE1-112, SWE1-113, SWE1-114, SWE1-115, SWE1-116 |
+| **Test file** | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-008, via `tests/harness.py` `run()` with `tests/rules.yml`) |
+
+| Step | Action | Input | Expected Result |
+|---|---|---|---|
+| 1 | `goto cleanup;` | Default config | `misc.goto_usage` error |
+| 2 | `if (x = foo())`, `while (p = next(p))`, `for (i = 0; j = k; i++)` | Default config | `misc.assignment_in_condition` warning for each condition assignment; none for the `for` init |
+| 3 | `x = 1; y = 2;` and a `for (…; …; …)` header | Default config | `misc.multiple_statements_per_line` for the first line only |
+| 4 | `void *buf;` and `uint8_t *buf;` | Default config | `misc.void_pointer` for `void *` only |
+| 5 | `int fact(int n) { return n * fact(n - 1); }` | Default config | `misc.recursive_function` error naming `fact` |
+| 6 | `sizeof(uint32_t)`, `sizeof(*p)` | Default config | `misc.sizeof_type` info for the type operand only |
+| 7 | `if (flag == true)`, `if (flag)` | Default config | `misc.boolean_comparison` for the comparison only |
+| 8 | `} else {}` and `} else { /* intentionally empty */ }` | Default config | `misc.empty_else` for the empty block only |
+| 9 | Each rule with `enabled: false`, and with an overridden `severity` | Modified config | No violation when disabled; configured severity reported |
+| 10 | Rule keywords inside comments or strings | Default config | No violation |
+
+| Date | Tester | Python | Result | Deviation |
+|---|---|---|---|---|
+| 2026-09-29 | Local pytest run, develop `296e91b` (76 tests) | 3.11 | PASS | CI matrix run (3.10 / 3.11 / 3.12) to be recorded at the next release |
+
+---
+
 ## 6. Integration Test Results Summary
 
 | SIT-ID | Test Case | Interfaces | Status | Deviation Ref |
@@ -713,8 +747,11 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SIT-024 | Startup banner and `--version` copyright output | IF-02, IF-10 | PASS | |
 | SIT-025 | Block-comment `/* */` inline suppression form | IF-06 | PASS | |
 | SIT-026 | `--summary` output restructure (Files before Results, header, dynamic separator) | IF-10 | PASS | |
+| SIT-027 | Post-v1.6.0 MISRA/Barr-C rules (goto, assignment in condition, multiple statements, void pointer, recursion, sizeof type, boolean comparison, empty else) | IF-03, IF-06, IF-10 | PASS | |
 
 **Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence)
+
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage.
 
 > **📋 Note:** All 10 defined software architecture interfaces must be covered before integration testing is considered complete. Any uncovered interface must be resolved via a new or updated test case.
 
@@ -735,7 +772,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SIT-009 | SWE1-003 | IF-04 | — | SWQ-003 |
 | SIT-010 | SWE1-007, SWE1-008, SWE1-009 | IF-05 | UV-DCT-001, UV-DCT-002 | SWQ-005 |
 | SIT-011 | SWE1-015, SWE1-051, SWE1-052 | IF-07 | UV-SGN-001, UV-SGN-004 | SWQ-006 |
-| SIT-012 | SWE1-065, SWE1-066, SWE1-067 | IF-08, IF-09 | UV-CLI-008 | SWQ-007 |
+| SIT-012 | SWE1-065, SWE1-066, SWE1-067, SWE1-100, SWE1-101 | IF-08, IF-09 | UV-CLI-008, UV-CLI-011 to UV-CLI-013 | SWQ-007 |
 | SIT-013 | SWE1-062 | IF-10 | — | SWQ-004 |
 | SIT-014 | SWE1-072, SWE1-073 | IF-06 | `test_inline_suppression.py` | — |
 | SIT-015 | SWE1-074 | IF-10 | `test_fix_mode.py` | — |
@@ -750,6 +787,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SIT-024 | SWE1-094, SWE1-095 | IF-02, IF-10 | `test_cli.py` | SWQ-004 |
 | SIT-025 | SWE1-072 | IF-06 | `test_inline_suppression.py` | — |
 | SIT-026 | SWE1-097 | IF-10 | `test_print_summary.py` | SWQ-004 |
+| SIT-027 | SWE1-109 to SWE1-116 | IF-03, IF-06, IF-10 | `test_misra_rules.py` — UV-MSR-001 to UV-MSR-008 | SWQ-003 |
 
 ---
 
@@ -757,9 +795,9 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

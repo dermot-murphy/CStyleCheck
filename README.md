@@ -8,7 +8,7 @@ The purpose of this project is three-fold:
 ![Logo](logo/cstylecheck.jpg)
 
 Embedded C Style Compliance Checker for GitHub Actions / pre-commit hooks.
-Implements **Barr-C:2018** and MISRA-C complementary rules across **73 rule IDs**.
+Implements **Barr-C:2018** and MISRA-C complementary rules across **81 rule IDs**.
 
 [![Tests](https://github.com/dermot-murphy/CStyleCheck/actions/workflows/cstylecheck_tests.yml/badge.svg)](https://github.com/dermot-murphy/CStyleCheck/actions/workflows/cstylecheck_tests.yml)
 [![Naming Convention](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/cstylecheck/badge.json)](https://dermot-murphy.github.io/CStyleCheck/cstylecheck/)
@@ -17,7 +17,7 @@ Implements **Barr-C:2018** and MISRA-C complementary rules across **73 rule IDs*
 Contributions are very welcome.
 
 📖 **[Rules and Configuration Reference](Rules-and-Configuration.md)** — full
-documentation for all 73 rules with YAML configuration and annotated C examples.
+documentation for all 81 rules with YAML configuration and annotated C examples.
 
 Draft companion documents (pending rule population, not yet authoritative):
 [Embedded C Style Guide](embedded_c_style_guide.md) ·
@@ -31,7 +31,7 @@ Draft companion documents (pending rule population, not yet authoritative):
 Code quality metrics tracked after every PR merge to `main` and `develop`.
 Full charts and history on the **[Trend Analysis](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis)** wiki page.
 
-`scripts/collect_metrics.py` also records industry-standard C source metrics for `examples/` (pure-Python heuristics, no compiler): LOC composition (SLOC / comment / doxygen / blank), cyclomatic complexity (max, average, distribution) and nesting depth, function size and parameter counts, doxygen coverage, coupling (global/static variables, fan-out, recursion) and violation quality (violations per KLOC, by rule category, top rules). The thresholds used (function > 60 lines, > 5 parameters, V(G) > 10) are documented in `scripts/metrics_rules.yml`.
+`scripts/collect_metrics.py` also records industry-standard C source metrics for `examples/` (pure-Python heuristics, no compiler): LOC composition (SLOC / comment / doxygen / blank), cyclomatic complexity (max, average, distribution) and nesting depth, function size and parameter counts, doxygen coverage, coupling (global/static variables, fan-out, recursion), safety indicators (`assert`, `goto`, `void *`, C-style cast and macro counts, assert density) and violation quality (violations per KLOC, by rule category, top rules). The thresholds used (function > 60 lines, > 5 parameters, V(G) > 10) are documented in `scripts/metrics_rules.yml`.
 
 | Chart | main | develop |
 |---|---|---|
@@ -47,7 +47,7 @@ Full charts and history on the **[Trend Analysis](https://github.com/dermot-murp
 ```
 .pre-commit-hooks.yml   # pre-commit hook definition (id: cstylecheck)
 pyproject.toml           # pip / pipx / pre-commit packaging metadata
-Rules-and-Configuration.md  # wiki: all 73 rules with config and examples
+Rules-and-Configuration.md  # wiki: all 81 rules with config and examples
 src/
     cstylecheck.py          # thin CLI shim (backward-compatible entry point)
     cstylecheck/            # checker package (12 sub-modules)
@@ -57,7 +57,7 @@ src/
         models.py           # Violation, CheckResult, shared constants
         preprocessor.py     # comment/string stripping, token extraction
         utils.py            # case matching, module name helpers
-        checker.py          # main Checker class — all 73 rule implementations
+        checker.py          # main Checker class — all 81 rule implementations
         sign_checker.py     # cross-file sign-compatibility and declared_not_defined
         baseline.py         # baseline load/write
         output.py           # text / JSON / SARIF / HTML formatters, Tee, summary
@@ -98,11 +98,11 @@ tests/
     test_copyright_header.py #  55 tests: misc.copyright_header
     test_eof_comment.py     #  33 tests: misc.eof_comment
     test_cli.py             #  43 tests: CLI flags end-to-end
-    test_improvements.py    #  67 tests: bugs + new features
+    test_improvements.py    #  80 tests: bugs + new features
     test_comment_ratio.py   #  24 tests: misc.comment_ratio
     test_whitespace_ratio.py #  27 tests: misc.whitespace_ratio
     test_declared_not_defined.py # 39 tests: misc.declared_not_defined
-    test_misra_rules.py     #  64 tests: MISRA C rule coverage
+    test_misra_rules.py     # 140 tests: MISRA C / Barr-C rule coverage
     test_parameter_prefix.py #  51 tests: variable.parameter.*
     test_print_summary.py   #  11 tests: --summary per-file breakdown
     test_exclusions.py      #  28 tests: per-file exclusions
@@ -137,10 +137,11 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1279 tests)
-    rules.yml    # runs linter + trend page on C source commits
+    cstylecheck_tests.yml      # runs the test suite on every commit (1422 tests)
+    cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
+    metrics.yml              # trend-analysis metrics, SVG charts and wiki page
 requirements.txt             # pip dependencies
 ```
 
@@ -518,6 +519,20 @@ Matching rules:
 
 ## New in this release
 
+### Unreleased (on `develop`)
+
+- **8 new MISRA C / Barr-C rules** (#391, #392), all enabled by default:
+  `misc.goto_usage` (MISRA 15.1, error), `misc.assignment_in_condition` (MISRA 13.4),
+  `misc.multiple_statements_per_line` (Barr-C §3.2), `misc.void_pointer` (MISRA 11.5),
+  `misc.recursive_function` (MISRA 17.2, direct recursion, error),
+  `misc.sizeof_type` (Barr-C §5.7, info), `misc.boolean_comparison` (MISRA 14.4) and
+  `misc.empty_else` (Barr-C §8.3). See [Rules and Configuration](Rules-and-Configuration.md).
+- **Baseline matching without line numbers** (#394) and **platform-independent baseline
+  paths** (#395).
+- **Trend-analysis C source metrics** (#388), including safety indicators.
+
+8 new rules; **81 rule IDs** total. 143 new tests (1422 total).
+
 ### New in v1.2.0 (2026-05-29)
 
 #### Package refactor
@@ -803,7 +818,7 @@ Rule ID: `misc.eof_comment` · Default severity: `warning`
 
 ---
 
-## Rule IDs (73 total)
+## Rule IDs (81 total)
 
 | Category | Rule IDs |
 |---|---|
@@ -813,7 +828,7 @@ Rule ID: `misc.eof_comment` · Default severity: `warning`
 | Naming | `naming.identifier_length` `naming.no_single_char_identifiers` |
 | Types | `typedef.case` `typedef.suffix` `enum.type_case` `enum.type_suffix` `enum.member_case` `enum.member_prefix` `struct.tag_case` `struct.tag_suffix` `struct.member_case` |
 | Include guards | `include_guard.missing` `include_guard.format` |
-| Misc | `misc.copyright_header` `misc.eof_comment` `misc.line_length` `misc.indentation` `misc.magic_number` `misc.unsigned_suffix` `misc.lowercase_l_suffix` `misc.yoda_condition` `misc.block_comment_spacing` `misc.comment_ratio` `misc.whitespace_ratio` `misc.declared_not_defined` `misc.function_length` `misc.function_doc_header` `misc.assert_density` `misc.null_statement_comment` `misc.declaration_spacing` `misc.file_length` `misc.reserved_header_name` `misc.non_ascii_source` `misc.octal_constant` `misc.trigraph` `misc.constant_comparison` |
+| Misc | `misc.copyright_header` `misc.eof_comment` `misc.line_length` `misc.indentation` `misc.magic_number` `misc.unsigned_suffix` `misc.lowercase_l_suffix` `misc.yoda_condition` `misc.block_comment_spacing` `misc.comment_ratio` `misc.whitespace_ratio` `misc.declared_not_defined` `misc.function_length` `misc.function_doc_header` `misc.assert_density` `misc.null_statement_comment` `misc.declaration_spacing` `misc.file_length` `misc.reserved_header_name` `misc.non_ascii_source` `misc.octal_constant` `misc.trigraph` `misc.constant_comparison` `misc.goto_usage` `misc.assignment_in_condition` `misc.multiple_statements_per_line` `misc.void_pointer` `misc.recursive_function` `misc.sizeof_type` `misc.boolean_comparison` `misc.empty_else` |
 | Other | `reserved_name` `spell_check` `sign_compatibility` |
 
 ---
@@ -1070,8 +1085,19 @@ jobs:
 ### Test workflow (`cstylecheck_tests.yml`)
 Triggers on pushes touching `src/` (including dictionary files), `tests/`, or `requirements.txt`.
 
-### Linter workflow (`rules.yml`)
+### Linter workflow (`cstylecheck_rules.yml`)
 Triggers on pushes/PRs touching C source. Publishes a violation-trend page and badge.
+
+### Metrics workflow (`metrics.yml`)
+Runs on pushes and PRs to `main`/`develop`. Collects the trend-analysis metrics
+(`scripts/collect_metrics.py`), renders SVG charts, updates the Trend-Analysis wiki
+page and, on PRs, uploads a metrics comparison report.
+
+### Wiki workflow (`wiki_publish.yml`)
+Publishes the GitHub Wiki from the README and the ASPICE documents.
+
+Dependabot (`.github/dependabot.yml`) opens weekly update PRs for pip and GitHub
+Actions dependencies against `develop`.
 
 ### Docker workflow (`docker_publish.yml`)
 Triggers on `main`/`master` when `Dockerfile/` or `src/` changes, and on `v*.*.*` tags.
