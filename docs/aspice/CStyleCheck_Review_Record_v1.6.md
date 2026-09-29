@@ -87,7 +87,7 @@ The per-document tables of the template are condensed into one matrix: one row p
 |---|---|---|---|---|---|
 | RR-003-001 | CSC-SWE4-001 | C3 | Minor | SWE1-015 (single read), SWE1-094 (startup banner) and SWE1-096 (OS path separator) have no dedicated unit test. They are verified at integration level or by inspection only | Open — add unit tests in the v1.7.0 cycle |
 | RR-003-002 | CSC-SVD-001 | C2 | Observation | Release-baselined at v1.6.0: cites superseded document versions and has 3 revision rows with swapped Author/Description columns. Left unchanged by decision (CSC-AUD-009) | Open — update at v1.7.0 release preparation |
-| RR-003-003 | CSC-SUP8-001 / `checker.py` | C4 | Minor | The runtime violation message of `misc.multiple_statements_per_line` still cites "MISRA C:2012 Rule 15.5". Only comments were corrected (AUD9-F-027) because the message text is observable behaviour | Open — change the message with a test update in a code PR |
+| RR-003-003 | CSC-SUP8-001 / `checker.py` | C4 | Minor | The runtime violation message of `misc.multiple_statements_per_line` still cites "MISRA C:2012 Rule 15.5". Only comments were corrected (AUD9-F-027) because the message text is observable behaviour | Closed — message corrected to cite Barr-C §3.2 only, with a unit test (#408) |
 | RR-003-004 | CSC-SWE5/SWE6/SYS4/SYS5 | C4 | Minor | Post-v1.6.0 test results (SIT-027, SITC-017, SWQ-003/007 extensions, SYS-VTC-003/007) were recorded from a local run on Python 3.11 only | Open — record the CI matrix run (3.10/3.11/3.12) at v1.7.0 |
 | RR-003-005 | CSC-MAN5-001 | C4 | Observation | The RISK-003/005 reviews of 2026-09-29 were performed by the AI tool during CSC-AUD-009; Risk Owner confirmation is pending | Open — Risk Owner to confirm |
 

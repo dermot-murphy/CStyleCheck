@@ -72,6 +72,9 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **`misc.multiple_statements_per_line` message citation (#408)** — the violation message
+  no longer cites MISRA C:2012 Rule 15.5 (single point of exit), which is unrelated; it now
+  cites Barr-C §3.2 only. Tools that match on the exact message text need updating.
 - **Baseline matching ignores line numbers (#394)** — `--baseline-file` now matches
   on `(file, rule, message)` as a multiset instead of `file:line:rule:message`.
   Accepted violations stay suppressed when unrelated edits move them up or down the

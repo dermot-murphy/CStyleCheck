@@ -2542,7 +2542,7 @@ class Checker:
                         "misc.multiple_statements_per_line",
                         "Multiple statements on one line; each statement should be "
                         "on its own line for readability and debuggability "
-                        "(Barr-C §3.2 / MISRA C:2012 Rule 15.5)"
+                        "(Barr-C §3.2)"
                     )
             offset += len(line)
 

@@ -799,6 +799,14 @@ class TestMultipleStatementsPerLine(unittest.TestCase):
         self.assertTrue(viols)
         self.assertEqual(viols[0].severity, "error")
 
+    def test_message_cites_barr_c_only(self):
+        # Issue #408: MISRA C:2012 Rule 15.5 (single exit point) is unrelated.
+        src = "void f(void){ int x; x = 1; x = 2; }\n"
+        viols = [v for v in run(src, _multi_cfg()) if v.rule == RULE_MULTI]
+        self.assertTrue(viols)
+        self.assertIn("Barr-C §3.2", viols[0].message)
+        self.assertNotIn("MISRA", viols[0].message)
+
     def test_comment_not_flagged(self):
         # Semicolons only in a comment must not fire
         src = "void f(void){ /* x = 1; y = 2; */ int z;\n}\n"

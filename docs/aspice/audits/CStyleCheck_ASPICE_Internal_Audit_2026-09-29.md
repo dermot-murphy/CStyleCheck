@@ -165,7 +165,7 @@ All High findings must be closed before the next release is tagged. Otherwise, S
 | Update ACQ4, MAN5, MAN3 and STD-001 | AUD9-F-018, F-019, F-020, F-023 | Claude / Dermot Murphy | Closed in #405 (`7ca8e40`). Risk Owner confirmation of the RISK-003/005 reviews is pending (RR-003-005) |
 | Update PA2 to v1.23 with CSC-AUD-009 ratings, and add CSC-REVIEW-003 | AUD9-F-021, F-022 | Claude / Dermot Murphy | Closed in #405 (`7ca8e40`). CSC-REVIEW-003 is a self-review under CSC-DEV-002 and is pending the Review Owner's signature |
 | Final cross-reference resync, header dates and revision-table fixes (after all other corrections) | AUD9-F-014, F-015, F-024, F-025, F-026 | Claude | Closed in #405 (`6ece0e7`, `7ca8e40`, `3240651`). CSC-SVD-001 intentionally unchanged (release-baselined); its stale citations and swapped revision rows are updated at the next release (RR-003-002) |
-| Correct the MISRA 15.5 citation; record the hotfix policy | AUD9-F-027, F-028 | Claude | Closed in #405 (`9d15f96`, `7ca8e40`). The runtime message of `misc.multiple_statements_per_line` still cites Rule 15.5; changing it changes output and is left for a code PR (RR-003-003). No tag or version change |
+| Correct the MISRA 15.5 citation; record the hotfix policy | AUD9-F-027, F-028 | Claude | Closed in #405 (`9d15f96`, `7ca8e40`). The runtime message of `misc.multiple_statements_per_line` still cites Rule 15.5; changing it changes output and is left for a code PR (RR-003-003). No tag or version change. **Residual closed in #408:** message now cites Barr-C §3.2 only; unit test added |
 
 
 **Closure note (2026-09-29):** All 28 findings were corrected under #405 on branch `claude/aspice-audit-2026-09-29` in commits `6ece0e7` (SWE/SYS work products), `7ca8e40` (support and management work products, CSC-REVIEW-003), `bb0324c` (README, Rules-and-Configuration.md, CHANGELOG), `9d15f96` (comment-only MISRA citation fix) and `3240651` (cross-reference resync, done last).
@@ -175,7 +175,7 @@ After the corrections the suite passes (`python -m pytest -q`: 1422 passed) and 
 Items still open after closure:
 - 3 SW requirements have no dedicated unit test (RR-003-001).
 - CSC-SVD-001 is unchanged until the next release (RR-003-002).
-- The runtime message text still cites Rule 15.5 (RR-003-003).
+- ~~The runtime message text still cites Rule 15.5 (RR-003-003).~~ Closed in #408.
 - Post-v1.6.0 test results have not yet been recorded from the CI matrix (RR-003-004).
 - The Risk Owner and Review Owner have not yet confirmed or signed (RR-003-005, §7).
 
