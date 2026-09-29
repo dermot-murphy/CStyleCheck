@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.26 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.27 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.27 | 2026-09-29 | Claude | Issue #425: new UNIT-136 `config_error()` (message to stderr, exit 2) in §4 catalogue, §4.1 package structure and §5; UNIT-46 — `main()` wraps `_main()` and maps a string-message `SystemExit` to exit 2 so the console script and the wrapper behave the same; UNIT-01, UNIT-02, UNIT-05, UNIT-06, UNIT-07, UNIT-09, UNIT-35, UNIT-36, UNIT-50 to UNIT-52 error handling call `config_error()` (UNIT-01 corrected: a missing options file is an error, not an empty list); `baseline.py` now imports `utils`; §4 `utils.py` line numbers; §8 SWE1-001/002 and SWE1-068 to 070 rows cite UNIT-136; referenced-document versions resynced (3) |
 | 1.26 | 2026-09-29 | Claude | Issue #422: UNIT-05 algorithm — `validate_case_styles()` normalises every case-style key (`_CASE_STYLE_KEYS`) and `functions.style` / `file_prefix.case` / `misc.eof_comment.filename_case`; unknown value → `ERROR:` message naming file, key, value and allowed values, exit 2; UNIT-43 — `normalize_case_style()` aliases (case-insensitive), `any` style, unknown style raises `ValueError` (was `True`); UNIT-44 normalises; UNIT-98 — `WIZARD_CASE_CHOICES` labels stored as canonical names; UNIT-99 — presets write canonical names, `barr-c` typedef / enum type `lower_snake`; UNIT-100 — per-directory configs validated; §4 catalogue line numbers (`config.py`, `utils.py`, `wizard.py`); §4.1 package structure; §6.1 case-style keys; §8 SWE1-001/002 row; referenced-document versions resynced (3) |
 | 1.25 | 2026-09-29 | Claude | Issue #420: UNIT-98 algorithm — two new yes/no prompts (default No) for the MISRA C:2012 and Barr-C opt-in rule sets, rules listed with shipped severity; UNIT-99 — `PRESETS` enable the matching opt-in rules via `MISRA_OPT_IN_RULES` / `BARR_C_OPT_IN_RULES`, deterministic ordered output, `barr-c` suffix keys in nested form; §4 catalogue line numbers (`wizard.py:191`, `wizard.py:307`); referenced-document versions resynced (3) |
 | 1.24 | 2026-09-29 | Claude | Issue #418 (CR-418): UNIT-128 to UNIT-133 and UNIT-135 algorithms — `enabled` defaults to `false` when the key is absent (opt-in); §6.1 `enabled` default `true`→`false` for `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type` and `misc.empty_else`; UNIT-128 to UNIT-135 `checker.py` line numbers updated; referenced-document versions resynced (3) |
@@ -57,9 +58,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.16 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.21 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.31 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.17 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.22 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.32 |
 
 ---
 
@@ -111,9 +112,9 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-40 | `print_summary` | `output.py:269` | COMP-07 | `output.py` |
 | UNIT-41 | `Violation.__str__` | `models.py:59` | COMP-07 | `models.py` |
 | UNIT-42 | `Violation.github_annotation` | `models.py:45` | COMP-07 | `models.py` |
-| UNIT-43 | `matches_case` | `utils.py:84` | COMP-05 (shared) | `utils.py` |
-| UNIT-44 | `matches_case_abbrev` | `utils.py:100` | COMP-05 (shared) | `utils.py` |
-| UNIT-45 | `module_name` | `utils.py:133` | COMP-05 (shared) | `utils.py` |
+| UNIT-43 | `matches_case` | `utils.py:104` | COMP-05 (shared) | `utils.py` |
+| UNIT-44 | `matches_case_abbrev` | `utils.py:120` | COMP-05 (shared) | `utils.py` |
+| UNIT-45 | `module_name` | `utils.py:153` | COMP-05 (shared) | `utils.py` |
 | UNIT-46 | `main` | `cli.py:367` | Entry point | `cli.py` |
 | UNIT-47 | `append_trend_record` (script) | `scripts/ci/append_trend_record.py` | CI script | (unchanged) |
 | UNIT-48 | `generate_trend` (script) | `scripts/ci/generate_trend.py` | CI script | (unchanged) |
@@ -121,9 +122,9 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-50 | `load_spell_words` | `config.py:380` | COMP-02 | `config.py` |
 | UNIT-51 | `load_banned_names_file` | `config.py:643` | COMP-02 | `config.py` |
 | UNIT-52 | `load_copyright_file` | `config.py:678` | COMP-02 | `config.py` |
-| UNIT-53 | `to_case` | `utils.py:123` | COMP-05 (shared) | `utils.py` |
-| UNIT-54 | `is_exempt` | `utils.py:137` | COMP-05 (shared) | `utils.py` |
-| UNIT-55 | `_cfg` | `utils.py:147` | COMP-05 (shared) | `utils.py` |
+| UNIT-53 | `to_case` | `utils.py:143` | COMP-05 (shared) | `utils.py` |
+| UNIT-54 | `is_exempt` | `utils.py:157` | COMP-05 (shared) | `utils.py` |
+| UNIT-55 | `_cfg` | `utils.py:167` | COMP-05 (shared) | `utils.py` |
 | UNIT-56 | `extract_comments` | `preprocessor.py:158` | COMP-04 | `preprocessor.py` |
 | UNIT-57 | `Checker._violation` | `checker.py:250` | COMP-05 | `checker.py` |
 | UNIT-58 | `Checker._v` | `checker.py:254` | COMP-05 | `checker.py` |
@@ -153,11 +154,11 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-82 | `SignChecker._build_typedef_map` | `sign_checker.py:192` | COMP-05g | `sign_checker.py` |
 | UNIT-83 | `SignChecker._build_signatures` | `sign_checker.py:231` | COMP-05g | `sign_checker.py` |
 | UNIT-84 | `DeclaredNotDefinedChecker` (class) | `sign_checker.py:319` | COMP-05g | `sign_checker.py` |
-| UNIT-85 | `_strip_module_prefix` | `utils.py:162` | COMP-05 (shared) | `utils.py` |
+| UNIT-85 | `_strip_module_prefix` | `utils.py:182` | COMP-05 (shared) | `utils.py` |
 | UNIT-86 | `Tee` | `output.py:18` | COMP-07 | `output.py` |
 | UNIT-87 | `parse_args` | `cli.py:190` | COMP-01 | `cli.py` |
 | UNIT-88 | `_build_parser` | `cli.py:195` | COMP-01 | `cli.py` |
-| UNIT-89 | `_github_annotation_category` | `utils.py:22` | COMP-07 | `utils.py` |
+| UNIT-89 | `_github_annotation_category` | `utils.py:42` | COMP-07 | `utils.py` |
 | UNIT-90 | `Checker._check_whitespace_ratio` | `checker.py:1892` | COMP-05f | `checker.py` |
 | UNIT-91 | `_find_default_rules` | `config.py:95` | COMP-02 | `config.py` |
 | UNIT-92 | `_deep_merge` | `config.py:116` | COMP-02 | `config.py` |
@@ -204,6 +205,7 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-133 | `Checker._check_sizeof_type` | `checker.py:2656` | COMP-05f | `checker.py` |
 | UNIT-134 | `Checker._check_boolean_comparison` | `checker.py:2698` | COMP-05f | `checker.py` |
 | UNIT-135 | `Checker._check_empty_else` | `checker.py:2725` | COMP-05f | `checker.py` |
+| UNIT-136 | `config_error` | `utils.py:28` | COMP-05 (shared) | `utils.py` |
 
 ---
 
@@ -222,7 +224,8 @@ src/cstylecheck/
   utils.py         — _CASE_PATTERNS, _CASE_ALIASES, normalize_case_style,
                      matches_case, matches_case_abbrev, to_case,
                      module_name, is_exempt, _cfg,
-                     _strip_module_prefix, _github_annotation_category
+                     _strip_module_prefix, _github_annotation_category,
+                     config_error, EXIT_CONFIG_ERROR
   config.py        — _read_options_file, _expand_options_file,
                      _find_default_rules, _deep_merge, _collect_paths,
                      update_config, validate_case_styles, load_config,
@@ -258,7 +261,7 @@ src/cstylecheck/
 4. `config.py` — imports from `preprocessor`, `utils`, `models`
 5. `checker.py` — imports from `models`, `preprocessor`, `utils`, `config`
 6. `sign_checker.py` — imports from `models`, `preprocessor`, `checker` (regex patterns)
-7. `baseline.py` — imports from `models`
+7. `baseline.py` — imports from `models`, `utils`
 8. `output.py` — imports from `models`
 9. `cli.py` — imports from all of the above
 10. `__init__.py` — imports from all sub-modules; re-exports the public API
@@ -279,7 +282,7 @@ src/cstylecheck/
 3. Apply `shlex.split()` to tokenise shell-quoted values
 4. Return concatenated token list
 
-**Error handling:** `FileNotFoundError` → caller receives empty list (non-fatal); `ValueError` (shlex parse error) → emit warning to stderr
+**Error handling:** `OSError` (including a missing file) → `config_error()` (UNIT-136): message to stderr, exit 2 (#425); `ValueError` (shlex parse error) → emit warning to stderr
 
 **Constraints:** Must not modify `sys.argv` directly
 
@@ -294,6 +297,7 @@ src/cstylecheck/
 2. If found: extract `FILE`; call `_read_options_file(FILE)` → `opts_tokens`
 3. Return: `argv_before_flag + opts_tokens + argv_after_flag`
 4. If not found: return `argv` unchanged
+5. `--options-file` as the last token (no path) → `config_error()` (UNIT-136), exit 2 (#425)
 
 **Key constraint:** Direct CLI args must follow options-file args to allow override (SWE1-068)
 
@@ -326,7 +330,7 @@ src/cstylecheck/
 **Purpose:** Load and return the YAML configuration as a Python dictionary, with every case-style value normalised and validated (#422).
 
 **Algorithm:**
-1. Open `path`; call `yaml.safe_load()`
+1. Open `path`; call `yaml.safe_load()`. A missing or unreadable file, a non-UTF-8 byte or a YAML parse error calls `config_error()` (UNIT-136): message to stderr, exit 2 (#425)
 2. If result is `None` or not a `dict` → `sys.exit(2)` with message
 3. Call `validate_case_styles(cfg, path)` (#422). For each key path in `_CASE_STYLE_KEYS` (`variables.case`, `variables.{global,static,local,parameter}.case`, `constants.case`, `macros.case`, `typedefs.case`, `enums.type_case`, `enums.member_case`, `structs.tag_case`, `structs.member_case`, `functions.case`, `functions.object_case`, `functions.verb_case`) that is present, replace the value with `normalize_case_style()` (UNIT-43); a result that is not a key of `_CASE_PATTERNS` adds the error `<path>: invalid case style '<value>' for '<key>' (allowed: lower_snake, upper_snake, camel, pascal, lower, upper, any; aliases such as PascalCase, camelCase, UPPER_SNAKE and snake_case are accepted)`. The keys in `_ENUM_STYLE_KEYS` are lower-cased and checked against their own sets: `functions.style` (`object_verb`, `verb_object`, `lower_snake`, `any`; `lower_snake` aliases accepted), `file_prefix.case` (`lower`, `upper`, `as_is`), `misc.eof_comment.filename_case` (`lower`, `upper`, `preserve`); an error reads `invalid value '<value>' for '<key>' (allowed: …)`
 4. If there are errors, `_exit_on_case_style_errors()` prints each as `ERROR: <message>` to `stderr` and calls `sys.exit(2)` before any file is checked
@@ -533,7 +537,7 @@ src/cstylecheck/
 2. Add the lowercased word to result set
 3. Return result set
 
-**Error handling:** `OSError` → `sys.exit` with message
+**Error handling:** `OSError` → `config_error()` (UNIT-136): message to stderr, exit 2 (#425)
 
 ---
 
@@ -546,7 +550,7 @@ src/cstylecheck/
 2. Add name (case-sensitive) to result set
 3. Return `frozenset(result)`
 
-**Error handling:** `OSError` → `sys.exit` with message
+**Error handling:** `OSError` → `config_error()` (UNIT-136): message to stderr, exit 2 (#425)
 
 ---
 
@@ -561,7 +565,7 @@ src/cstylecheck/
 4. Compile joined pattern anchored with `\A`
 5. Return `(template_text, compiled_re)`
 
-**Error handling:** `OSError` → `sys.exit`; no block comment found → `sys.exit`
+**Error handling:** `OSError` or no block comment found → `config_error()` (UNIT-136): message to stderr, exit 2 (#425)
 
 ---
 
@@ -1257,7 +1261,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 **Purpose:** Load the module-alias map for `--aliases` (SWE1-004).
 
 **Algorithm:**
-1. Read the file as UTF-8 (`errors="replace"`); on `OSError` call `sys.exit()` with a message
+1. Read the file as UTF-8 (`errors="replace"`); on `OSError` call `config_error()` (UNIT-136, exit 2) with a message
 2. Skip blank lines and lines starting with `#`
 3. Split each line on whitespace; lines with fewer than 2 words produce a stderr warning and are skipped
 4. Lower-case both stems and register each as an alias of the other (bidirectional, no duplicates)
@@ -1270,7 +1274,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 **Purpose:** Load the per-file rule exclusion YAML for `--exclusions` (SWE1-005).
 
 **Algorithm:**
-1. `yaml.safe_load()` the file; on `OSError` call `sys.exit()`; a non-mapping document returns `{}`
+1. `yaml.safe_load()` the file; on `OSError` call `config_error()` (UNIT-136, exit 2); a non-mapping document returns `{}`
 2. For each `pattern → body` mapping: `file_rules` = frozenset of `body.disabled_rules` (empty if not a list)
 3. For each `body.identifiers.<ident>.disabled_rules` list, build `ident_rules[ident]` = frozenset
 4. Return `{pattern: {"file_rules": …, "ident_rules": …}}`
@@ -1293,7 +1297,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 **Purpose:** Load the project defines file for `--defines` (SWE1-003).
 
 **Algorithm:**
-1. Read the file; on `OSError` call `sys.exit()`
+1. Read the file; on `OSError` call `config_error()` (UNIT-136, exit 2)
 2. Skip blank and `#` lines; split each line on the first whitespace run into `token` and `expansion`
 3. Lines without an expansion, or with a token that fails to compile, produce a stderr warning and are skipped
 4. Compile `\btoken\b` (whole-word) and append `(pattern, expansion)` in file order
@@ -1446,7 +1450,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 **Purpose:** Load a baseline file as a multiset of keys (SWE1-066, SWE1-100, SWE1-101).
 
 **Algorithm:**
-1. Parse the JSON; on `OSError` or `JSONDecodeError` call `sys.exit()`
+1. Parse the JSON; on `OSError` or `JSONDecodeError` call `config_error()` (UNIT-136, exit 2)
 2. For each entry in `data["violations"]`, build the key `_normalise_path(file):rule:message` (line ignored) and increment its count
 3. Return the `collections.Counter`
 
@@ -1456,7 +1460,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Serialise the current violations as a baseline (SWE1-065, SWE1-101).
 
-**Algorithm:** Build `{"violations": [{"file": _normalise_path(v.filepath), "line": v.line, "rule": v.rule, "message": v.message}, …]}` and write it with `json.dumps(indent=2)` as UTF-8. On `OSError` call `sys.exit()`. The format is shown in §6.3.
+**Algorithm:** Build `{"violations": [{"file": _normalise_path(v.filepath), "line": v.line, "rule": v.rule, "message": v.message}, …]}` and write it with `json.dumps(indent=2)` as UTF-8. On `OSError` call `config_error()` (UNIT-136, exit 2). The format is shown in §6.3.
 
 ---
 
@@ -1516,7 +1520,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** CLI entry point (SWE1-068 to SWE1-070, SWE1-094, SWE1-095).
 
-**Algorithm:**
+**Algorithm:** `main()` is the console-script target (`cstylecheck = "cstylecheck:main"`) and is also called by the `src/cstylecheck.py` wrapper; it runs the steps below in `_main()`. A `SystemExit` whose code is a string (a `sys.exit("message")`, which Python maps to exit code 1) is caught, the message printed to stderr and re-raised as `SystemExit(2)`; integer exit codes and normal returns pass through unchanged. Both entry points therefore give the same exit code (#425).
 1. Fast path for `--version` / `--help`; expand `--options-file` (UNIT-02) and parse arguments
 2. Handle `--update-config` (UNIT-94), `--preset` and `--init` (UNIT-98/99), then exit
 3. Load the configuration, dictionaries, defines, banned names, copyright template, aliases and exclusions; open `--log`; write the two-line startup banner (`_VERSION_STRING`, then `_COPYRIGHT`) to stderr and to the log via `Tee.log_print()`, never to stdout; the write is unconditional (no TTY check, no suppression option) (SWE1-094)
@@ -1524,7 +1528,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 5. Run the cross-file checks (`SignChecker`, `DeclaredNotDefinedChecker`); apply `--fix` / `--dry-run` (UNIT-96). Without `--dry-run`, the `variable.pointer_prefix` header rename (UNIT-118) re-reads each companion `.h` file from disk, because it may already have been rewritten in this fix pass — the documented exception to SWE1-015
 6. `--write-baseline`: write (UNIT-36) and return 0. `--baseline-file`: filter with UNIT-35 and UNIT-119
 7. Apply `--warnings-as-errors`; emit JSON, SARIF or HTML output; print the summary (UNIT-40)
-8. Return 1 if any error-severity violation remains, otherwise 0; configuration errors exit with 2
+8. Return 1 if any error-severity violation remains, otherwise 0; configuration errors exit with 2 through `config_error()` (UNIT-136), e.g. an unopenable `--log` file (#425)
 
 ---
 
@@ -1658,6 +1662,16 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 ---
 
+### UNIT-136 — `config_error(message: str) → NoReturn`
+
+**Purpose:** Report a configuration or usage error and exit with the documented code 2 (SWE1-002, SWE1-069, #425).
+
+**Algorithm:** Print *message* unchanged to `stderr`, then call `sys.exit(EXIT_CONFIG_ERROR)` (`EXIT_CONFIG_ERROR = 2`).
+
+**Callers:** every config/usage error path — UNIT-01, UNIT-02, UNIT-05, UNIT-06, UNIT-07, UNIT-09, UNIT-35, UNIT-36, UNIT-50, UNIT-51, UNIT-52, the other supplementary-file loaders in `config.py`, the PyYAML import check, and the `--log` open in UNIT-46. It replaces `sys.exit("message")`, which exits with code 1 and so could not be told apart from a run that found violations when the installed console script called `main()` directly.
+
+---
+
 ## 6. Data Design
 
 ### 6.1 Configuration Schema (YAML)
@@ -1749,7 +1763,7 @@ Written by `write_baseline()` (UNIT-36) and read by `load_baseline()` (UNIT-35).
 
 | SW-REQ-ID | Requirement Area | Implementing Units |
 |---|---|---|
-| SWE1-001 to SWE1-002 | Config loading (case-style normalisation and validation, #422) | UNIT-05, UNIT-43, UNIT-100 |
+| SWE1-001 to SWE1-002 | Config loading (case-style normalisation and validation, #422; config errors exit 2 via `config_error()`, #425) | UNIT-05, UNIT-43, UNIT-100, UNIT-136 |
 | SWE1-003 | Defines substitution | UNIT-09, UNIT-10 |
 | SWE1-004 | Alias file | UNIT-06 |
 | SWE1-005 to SWE1-006 | exclusions | UNIT-07, UNIT-08 |
@@ -1771,7 +1785,7 @@ Written by `write_baseline()` (UNIT-36) and read by `load_baseline()` (UNIT-35).
 | SWE1-063 | Summary | UNIT-40 |
 | SWE1-064 | Copyright header check | UNIT-52, UNIT-63 |
 | SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline | UNIT-35, UNIT-36, UNIT-37, UNIT-119, UNIT-120 |
-| SWE1-068 to SWE1-070 | CLI / entry point | UNIT-01, UNIT-02, UNIT-03, UNIT-04, UNIT-46, UNIT-87, UNIT-88 |
+| SWE1-068 to SWE1-070 | CLI / entry point (both entry points exit 2 on config errors, #425) | UNIT-01, UNIT-02, UNIT-03, UNIT-04, UNIT-46, UNIT-87, UNIT-88, UNIT-136 |
 | SWE1-072 to SWE1-073 | Inline suppression comments | UNIT-95 |
 | SWE1-074 | Auto-fix mode | UNIT-96, UNIT-97 |
 | SWE1-075 | Config wizard and presets | UNIT-98, UNIT-99 |

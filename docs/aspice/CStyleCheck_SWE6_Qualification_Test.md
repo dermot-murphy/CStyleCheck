@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.25 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.26 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.26 | 2026-09-29 | Claude | Issue #425: SWQ-008 — three config-error scenarios (unreadable baseline, unknown case style, config error via the wrapper) with a 2026-09-29 execution note (UV-EXIT-003); §6 SWE1-068 to 070 row cites SWQ-008 and UV-EXIT; BP3 evidence — suite total 1508→1516; referenced-document versions resynced (4) |
 | 1.25 | 2026-09-29 | Claude | Issue #422: SWQ-001 steps 7–8 (case-style aliases accepted and enforced; unknown case style → exit 2 naming the key) with a 2026-09-29 execution row; §6 SWE1-075 row cites UV-CASE-001 and UV-CASE-005; BP3 evidence — suite total 1481→1508; referenced-document versions resynced (4) |
 | 1.24 | 2026-09-29 | Claude | Issue #420: §6 SWE1-075 row cites UV-WIZ-001 to UV-WIZ-005 and SIT-016 (presets / `--init` enable the standard-specific opt-in rules); BP3 evidence — suite total 1463→1481; referenced-document versions resynced (4) |
 | 1.23 | 2026-09-29 | Claude | Issue #418 (CR-418): SWQ-003 post-v1.6.0 row — all 8 rules opt-in, UV-MSR-009 cited; BP3 evidence — `test_misra_rules.py` 149→160 test cases; suite total 1452→1463; referenced-document versions resynced (4) |
@@ -61,10 +62,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.16 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.22 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.16 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.19 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.17 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.23 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.17 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.20 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -299,6 +300,11 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | `--help` | `cstylecheck --help` | 0 | |
 | `--exit-zero` + errors | `cstylecheck --exit-zero violating.c` | 0 | |
 | `--write-baseline` + errors | `cstylecheck --write-baseline b.json violating.c` | 0 | |
+| Unreadable baseline (#425) | `cstylecheck --baseline-file bad.json clean.c` | 2 | PASS |
+| Unknown case style (#425) | `cstylecheck --config bad_case.yml clean.c` | 2 | PASS |
+| Config error via the wrapper (#425) | `python src/cstylecheck.py --config missing.yaml clean.c` | 2 (same message on stderr as `cstylecheck`) | PASS |
+
+The #425 rows were executed on 2026-09-29 by `tests/test_exit_code_entry_points.py` (UV-EXIT-003, local pytest run, Python 3.11), which runs nine config/usage error paths through the console-script target in `pyproject.toml` and through `python src/cstylecheck.py`. Before #425 the installed `cstylecheck` command exited 1 on these errors.
 
 **SWQ-008 Overall Result:** PASS
 
@@ -414,7 +420,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | SWE1-054 to SWE1-056 | Reserved names / spell check | SWQ-003, SWQ-005 | Covered |
 | SWE1-057 to SWE1-064 | Output formats | SWQ-004 | Covered |
 | SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline suppression (incl. line-independent, multiset, path-normalised matching) | SWQ-007 | Covered |
-| SWE1-068 to SWE1-070 | CLI and entry point | SWQ-002 | Covered |
+| SWE1-068 to SWE1-070 | CLI and entry point | SWQ-002; SWE1-069 exit codes: SWQ-008, `test_exit_code_entry_points.py` (UV-EXIT-001 to UV-EXIT-003, #425) | Covered |
 | SWE1-071 | Whitespace ratio check | SWQ-003 (via pytest) | Covered |
 | SWE1-MISRA-001 to SWE1-MISRA-004 | MISRA C lexical rules (lowercase_l, octal, trigraph, non_ascii) | SWQ-003 | Covered |
 | SWE1-072 to SWE1-073 | Inline suppression comments | `test_inline_suppression.py` (via pytest) | Covered |
@@ -509,5 +515,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1516 after #425).
 

@@ -3,16 +3,36 @@ utils.py — Naming/case helpers and shared utility functions for CStyleCheck.
 
 Contains _CASE_PATTERNS, _CASE_ALIASES, normalize_case_style,
 matches_case, matches_case_abbrev, to_case, module_name, is_exempt,
-_cfg, _strip_module_prefix, and _github_annotation_category.
+_cfg, _strip_module_prefix, _github_annotation_category and config_error.
 
 No internal dependencies (stdlib only).
 """
 from __future__ import annotations
 
 import re
+import sys
 from pathlib import Path
+from typing import NoReturn
 
 from .models import _MISRA_ANNOTATION_RULES, _NAMING_ANNOTATION_PREFIXES
+
+
+# ---------------------------------------------------------------------------
+# Configuration / usage error exit (issue #425)
+# ---------------------------------------------------------------------------
+
+#: Documented exit code for configuration and usage errors.
+EXIT_CONFIG_ERROR = 2
+
+
+def config_error(message: str) -> NoReturn:
+    """Print *message* to stderr and exit with code 2 (config/usage error).
+
+    Replaces ``sys.exit("message")``, which exits with code 1 and so is
+    indistinguishable from a run that found violations (issue #425).
+    """
+    print(message, file=sys.stderr)
+    sys.exit(EXIT_CONFIG_ERROR)
 
 
 # ---------------------------------------------------------------------------

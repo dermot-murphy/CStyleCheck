@@ -17,12 +17,12 @@ import shlex
 import sys
 from pathlib import Path
 
+from .utils import _CASE_PATTERNS, config_error, normalize_case_style
+
 try:
     import yaml
 except ImportError:
-    sys.exit("PyYAML is required: pip install pyyaml")
-
-from .utils import _CASE_PATTERNS, normalize_case_style
+    config_error("PyYAML is required: pip install pyyaml")
 
 
 # ---------------------------------------------------------------------------
@@ -46,7 +46,7 @@ def _read_options_file(path: str) -> list:
     try:
         text = Path(path).read_text(encoding="utf-8", errors="replace")
     except OSError as e:
-        sys.exit(f"Cannot read options file '{path}': {e}")
+        config_error(f"Cannot read options file '{path}': {e}")
     tokens: list = []
     for lineno, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
@@ -78,7 +78,7 @@ def _expand_options_file(argv: list) -> list:
         if arg == "--options-file":
             i += 1
             if i >= len(argv):
-                sys.exit("ERROR: --options-file requires a path argument")
+                config_error("ERROR: --options-file requires a path argument")
             result.extend(_read_options_file(argv[i]))
         elif arg.startswith("--options-file="):
             result.extend(_read_options_file(arg[len("--options-file="):]))
@@ -351,11 +351,11 @@ def _exit_on_case_style_errors(cfg, source: str) -> None:
 def load_config(path: str) -> dict:
     cfg_path = Path(path)
     if not cfg_path.exists():
-        sys.exit(f"Config file not found: {path}")
+        config_error(f"Config file not found: {path}")
     try:
         raw = cfg_path.read_bytes()
     except OSError as e:
-        sys.exit(f"Cannot read config file '{path}': {e}")
+        config_error(f"Cannot read config file '{path}': {e}")
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError as e:
@@ -363,7 +363,7 @@ def load_config(path: str) -> dict:
         # Common cause: Windows text editor saved the file as Windows-1252 or
         # Latin-1 (e.g. an ellipsis character U+2026 encoded as 0x85).
         bad_byte = raw[e.start] if e.start < len(raw) else 0
-        sys.exit(
+        config_error(
             f"Config file '{path}' contains a non-UTF-8 byte "
             f"0x{bad_byte:02X} at offset {e.start}. "
             f"Save the file as UTF-8 (without BOM) and try again."
@@ -371,7 +371,7 @@ def load_config(path: str) -> dict:
     try:
         cfg = yaml.safe_load(text)
     except yaml.YAMLError as e:
-        sys.exit(f"Cannot parse config file '{path}': {e}")
+        config_error(f"Cannot parse config file '{path}': {e}")
     # Normalise case-style aliases; unknown styles are a config error (#422).
     _exit_on_case_style_errors(cfg, path)
     return cfg
@@ -386,7 +386,7 @@ def load_spell_words(path: str) -> set:
             if word and not word.startswith("#"):
                 result.add(word.lower())
     except OSError as e:
-        sys.exit(f"Cannot read spell-words file '{path}': {e}")
+        config_error(f"Cannot read spell-words file '{path}': {e}")
     return result
 
 
@@ -417,7 +417,7 @@ def load_alias_file(path: str) -> dict:
     try:
         text = Path(path).read_text(encoding="utf-8", errors="replace")
     except OSError as e:
-        sys.exit(f"Cannot read alias file '{path}': {e}")
+        config_error(f"Cannot read alias file '{path}': {e}")
     for lineno, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
         if not line or line.startswith("#"):
@@ -466,7 +466,7 @@ def load_exclusions_file(path: str) -> dict:
         data = yaml.safe_load(
             Path(path).read_text(encoding="utf-8", errors="replace"))
     except OSError as e:
-        sys.exit(f"Cannot read exclusions file '{path}': {e}")
+        config_error(f"Cannot read exclusions file '{path}': {e}")
     if not isinstance(data, dict):
         return {}
     result: dict = {}
@@ -545,7 +545,7 @@ def load_defines_file(path: str) -> list:
     try:
         text = Path(path).read_text(encoding="utf-8", errors="replace")
     except OSError as e:
-        sys.exit(f"Cannot read defines file '{path}': {e}")
+        config_error(f"Cannot read defines file '{path}': {e}")
     for lineno, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
         if not line or line.startswith("#"):
@@ -651,7 +651,7 @@ def load_banned_names_file(path: str) -> frozenset:
     try:
         text = Path(path).read_text(encoding="utf-8", errors="replace")
     except OSError as e:
-        sys.exit(f"Cannot read banned-names file '{path}': {e}")
+        config_error(f"Cannot read banned-names file '{path}': {e}")
     for raw in text.splitlines():
         name = raw.strip()
         if name and not name.startswith("#"):
@@ -693,13 +693,13 @@ def load_copyright_file(path: str) -> tuple:
     try:
         raw = Path(path).read_text(encoding='utf-8', errors='replace')
     except OSError as e:
-        sys.exit(f"Cannot read copyright file '{path}': {e}")
+        config_error(f"Cannot read copyright file '{path}': {e}")
 
     text = raw.replace('\r\n', '\n').replace('\r', '\n')
 
     m = re.search(r'/\*.*?\*/', text, re.DOTALL)
     if not m:
-        sys.exit(
+        config_error(
             f"Copyright file '{path}' contains no block comment (/* ... */)."
         )
 

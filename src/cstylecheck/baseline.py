@@ -9,11 +9,11 @@ Imports from: models.
 from __future__ import annotations
 
 import posixpath
-import sys
 from collections import Counter
 from pathlib import Path
 
 from .models import Violation
+from .utils import config_error
 
 
 # ---------------------------------------------------------------------------
@@ -55,7 +55,7 @@ def load_baseline(path: str) -> Counter:
     try:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as e:
-        sys.exit(f"Cannot read baseline file '{path}': {e}")
+        config_error(f"Cannot read baseline file '{path}': {e}")
     keys: Counter = Counter()
     for entry in data.get("violations", []):
         key = (f"{_normalise_path(str(entry.get('file', '')))}:"
@@ -102,4 +102,4 @@ def write_baseline(violations: list, path: str) -> None:
     try:
         Path(path).write_text(json.dumps(data, indent=2), encoding="utf-8")
     except OSError as e:
-        sys.exit(f"Cannot write baseline file '{path}': {e}")
+        config_error(f"Cannot write baseline file '{path}': {e}")

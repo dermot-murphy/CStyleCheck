@@ -116,6 +116,21 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **Config errors exit with code 2 from the installed `cstylecheck` command (#425)** —
+  config and usage errors (missing or unreadable config, malformed or non-UTF-8 YAML,
+  unreadable baseline, options, alias, exclusions, defines, banned-names, spell-words,
+  copyright or log file, `--options-file` without a path) called `sys.exit("message")`,
+  which exits with code `1`. Only the `python src/cstylecheck.py` wrapper converted this
+  to `2`; the installed console script (`cstylecheck = "cstylecheck:main"`) calls
+  `main()` directly, so it exited `1` and CI could not tell a broken config from a run
+  that found violations. The new helper `config_error()` in `utils.py` prints the
+  message to stderr and exits `2`, and all 18 of these call sites now use it. `main()`
+  itself now reports any other string-message `SystemExit` on stderr and exits `2`, so
+  both entry points behave the same; the duplicate conversion in `src/cstylecheck.py`
+  and in `cli.py`'s `__main__` block was removed. Error message text is unchanged.
+  8 new tests in `tests/test_exit_code_entry_points.py` run each error path through the
+  console-script target and the wrapper; total 1508→1516
+  (issue [#425](https://github.com/dermot-murphy/CStyleCheck/issues/425)).
 - **Unknown case-style names no longer pass silently (#422)** — `matches_case()`
   returned True for any style name it did not know, and the `barr-c` preset wrote
   `PascalCase` / `UPPER_SNAKE` while the `--init` wizard wrote `camelCase` /

@@ -16,7 +16,6 @@ updates the existing entry rather than duplicating it.
 
 import argparse
 import json
-import os
 import re
 import subprocess
 import sys
@@ -126,10 +125,6 @@ def _test_and_rule_counts():
 
 def _count_rule_ids(cfg):
     """Approximate rule count from the YAML config structure."""
-    known_groups = {
-        "variables", "functions", "constants", "typedefs",
-        "enums", "structs", "include_guards", "misc"
-    }
     # A more robust approach: scan Python source for rule_id strings
     count = 0
     for py_file in (REPO_ROOT / "src" / "cstylecheck").glob("*.py"):

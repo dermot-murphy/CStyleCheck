@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.21 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.22 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-09-29 | Claude | Issue #425: §8.2 error handling — config/usage errors exit 2 through `config_error()` (`utils.py`); PyYAML-missing row corrected (was `sys.exit("…")`, exit 1); rows for unreadable supplementary files and string-message `SystemExit` mapped to 2 in `main()`; both entry points return the same exit code; referenced-document versions resynced (4) |
 | 1.21 | 2026-09-29 | Claude | Cross-reference resync with #422: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.20 | 2026-09-29 | Claude | Cross-reference resync with #420: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.19 | 2026-09-29 | Claude | Cross-reference resync with #418: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -55,10 +56,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.16 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.13 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.26 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.19 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.17 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.14 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.27 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.20 |
 
 ---
 
@@ -407,10 +408,14 @@ main()
 
 | Error Condition | Detection Point | Response |
 |---|---|---|
-| YAML config missing or malformed | `load_config()` (COMP-02) | `sys.exit(2)` with message to stderr |
+| YAML config missing or malformed | `load_config()` (COMP-02) | `config_error()`: message to stderr, exit 2 |
 | Source file unreadable | `main()` file read loop | Warning to stderr; file skipped |
-| Baseline file malformed | `load_baseline()` (COMP-06) | `sys.exit(2)` with message to stderr |
-| PyYAML not installed | Module import | `sys.exit("PyYAML is required")` |
+| Baseline file malformed | `load_baseline()` (COMP-06) | `config_error()`: message to stderr, exit 2 |
+| PyYAML not installed | Module import | `config_error("PyYAML is required: pip install pyyaml")`: exit 2 |
+| Supplementary file unreadable (options, aliases, exclusions, defines, banned names, spell words, copyright, log) | Loader in COMP-01 / COMP-02, `main()` for `--log` | `config_error()`: message to stderr, exit 2 |
+| Any other `SystemExit` with a string message | `main()` (COMP-01) | Message to stderr, re-raised as exit 2 |
+
+All config/usage errors go through `config_error()` (`utils.py`), which prints the message and exits with code 2. `main()` also maps a string-message `SystemExit` to exit 2, so the installed `cstylecheck` console script (which calls `main()` directly) and the `python src/cstylecheck.py` wrapper return the same exit code (#425).
 
 ---
 

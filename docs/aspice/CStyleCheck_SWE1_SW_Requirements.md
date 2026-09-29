@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.16 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.17 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.17 | 2026-09-29 | Claude | Issue #425: SWE1-069 — every configuration or usage error prints its message to stderr and exits 2, with the same exit code and message from the installed `cstylecheck` console script and `python src/cstylecheck.py`; RTM row cites `test_exit_code_entry_points.py`; referenced-document versions resynced (4) |
 | 2.16 | 2026-09-29 | Claude | Issue #422: SWE1-001 — case-style values normalised to canonical names at load (case-insensitive, documented aliases; root and per-directory configs); SWE1-002 — an unknown case-style value is a configuration error (exit 2) naming the file, key, value and allowed values; SWE1-075 — presets and `--init` write only canonical case names; RTM rows cite `test_case_style_config.py`; referenced-document versions resynced (4) |
 | 2.15 | 2026-09-29 | Claude | Issue #420: SWE1-075 extended — `--preset misra` enables `misc.goto_usage`, `misc.assignment_in_condition`, `misc.void_pointer`, `misc.recursive_function` and `misc.empty_else`; `--preset barr-c` enables `misc.multiple_statements_per_line`, `misc.sizeof_type` and `misc.empty_else` (shipped severities; `minimal` unchanged; `misc.boolean_comparison` in no preset); `--init` asks two yes/no questions (default No) for the MISRA C:2012 and Barr-C rule sets; RTM row updated. No new requirement ID (extension of the existing preset/wizard requirement); referenced-document versions resynced (4) |
 | 2.14 | 2026-09-29 | Claude | Issue #418 (CR-418, CSC-SUP10-001 §7.1): SWE1-109 to SWE1-114 and SWE1-116 — `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type` and `misc.empty_else` disabled by default, including when the configuration key is absent (opt-in policy: new rules ship `enabled: false`); RTM rows marked opt-in; referenced-document versions resynced (4) |
@@ -64,10 +65,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.10 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.13 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.21 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.19 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.11 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.14 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.22 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.20 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
@@ -241,7 +242,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SW-REQ-ID | Requirement | Priority | Verification | Parent |
 |---|---|---|---|---|
 | SWE1-068 | The `_expand_options_file()` function shall insert options-file tokens before direct CLI tokens so that direct CLI arguments take precedence | Mandatory | Test | SYS-F-003, SYS-NF-008 |
-| SWE1-069 | The `main()` function shall return exit code `0`, `1`, or `2` as defined in SYS-F-037 to SYS-F-039, and the `cstylecheck` entry point defined in `pyproject.toml` shall invoke `main()` | Mandatory | Test | SYS-F-037, SYS-F-038, SYS-F-039, SYS-F-040 |
+| SWE1-069 | The `main()` function shall return exit code `0`, `1`, or `2` as defined in SYS-F-037 to SYS-F-039, and the `cstylecheck` entry point defined in `pyproject.toml` shall invoke `main()`; every configuration or usage error (missing, unreadable, non-UTF-8 or malformed config; unreadable baseline, options, alias, exclusions, defines, banned-names, spell-words, copyright or log file; `--options-file` without a path) shall print its message to stderr and exit with code `2`, with the same exit code and message from the installed `cstylecheck` console script and from `python src/cstylecheck.py` (#425) | Mandatory | Test | SYS-F-037, SYS-F-038, SYS-F-039, SYS-F-040 |
 | SWE1-070 | The `discover_files()` function shall expand `--include` globs, de-duplicate paths, and apply `--exclude` filters using `_path_matches_exclude()` | Mandatory | Test | SYS-F-001, SYS-F-004, SYS-F-005 |
 
 ### 4.15 New Features — Inline Suppression, Auto-fix, Config Wizard, Per-directory Config, HTML Output
@@ -332,7 +333,7 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-065 to SWE1-067 | Baseline suppression | SYS-F-034 to F-036 | Baseline Manager | `test_cli.py`, `test_improvements.py` |
 | SWE1-100 | Baseline matching independent of line number (multiset) | SYS-F-035 | `baseline.apply_baseline()`, `_baseline_key()` | `test_improvements.py` |
 | SWE1-101 | Baseline path normalisation to `/` | SYS-F-034, SYS-F-035 | `baseline._normalise_path()` | `test_improvements.py` |
-| SWE1-068 to SWE1-070 | CLI and entry point | SYS-F-001, F-003 to F-005, SYS-F-037 to F-040, SYS-NF-008 | CLI module / `main()` | `test_cli.py` |
+| SWE1-068 to SWE1-070 | CLI and entry point | SYS-F-001, F-003 to F-005, SYS-F-037 to F-040, SYS-NF-008 | CLI module / `main()` | `test_cli.py`; SWE1-069 exit code 2 from both entry points: `test_exit_code_entry_points.py` (#425) |
 | SWE1-072 to SWE1-073 | Inline suppression comments | SYS-F-008, SYS-F-041 | `preprocessor.parse_inline_suppressions()` | `test_inline_suppression.py` |
 | SWE1-074 | Auto-fix mode | SYS-F-020, SYS-F-042 | `fixer.py` Fixer module | `test_fix_mode.py` |
 | SWE1-075 | Config wizard and presets (presets / `--init` enable the standard-specific opt-in rules, #420) | SYS-F-002, SYS-F-043 | `wizard.py` Wizard module | `test_init_wizard.py`; canonical case names: `test_case_style_config.py` (#422) |

@@ -23,10 +23,6 @@ if _HERE not in sys.path:
 from cstylecheck.cli import main  # noqa: E402
 
 if __name__ == "__main__":
-    try:
-        sys.exit(main())
-    except SystemExit as _e:
-        if isinstance(_e.code, str):
-            print(_e.code, file=sys.stderr)
-            sys.exit(2)
-        raise
+    # main() itself maps config/usage errors to exit code 2 (#425), so this
+    # wrapper and the installed ``cstylecheck`` console script behave the same.
+    sys.exit(main())
