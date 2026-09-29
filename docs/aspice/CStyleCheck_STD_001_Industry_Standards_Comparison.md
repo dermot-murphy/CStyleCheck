@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-STD-001 | **Version** | 1.2 |
-| **Project** | CStyleCheck | **Date** | 2026-06-18 |
+| **Document ID** | CSC-STD-001 | **Version** | 1.3 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.1 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-023: `goto` (P10-1, MISRA 15.1) and recursion (AV 119, MISRA 17.2) rows 🔵→🟢; add §7.8 mapping the 8 post-v1.6.0 rules (#391/#392) to the surveyed standards; footer version v1.1→v1.3 |
 | 1.2 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.1 | 2026-06-06 | Claude | Add `misc.file_length` (max lines per file) as unique opportunity #12; create change-request issues for all 12 opportunities |
 | 1.0 | 2026-06-06 | Claude | Initial document — full survey of 11 industry standards with coverage matrix; closes issue #217 |
@@ -107,7 +108,7 @@ The ten rules were designed by Gerard J. Holzmann explicitly to be **mechanicall
 
 | Rule | Description | CStyleCheck | astyle | MISRA C checker | Notes |
 |---|---|---|---|---|---|
-| P10-1 | No `goto`, `setjmp`, `longjmp` | 🔵 | — | 📏 MISRA 15.1, 21.4 | Could add `goto` check; MISRA already covers it |
+| P10-1 | No `goto`, `setjmp`, `longjmp` | 🟢 (`goto` only) | — | 📏 MISRA 15.1, 21.4 | `goto` covered by `misc.goto_usage` (post-v1.6.0, #391); `setjmp`/`longjmp` left to MISRA 21.4 |
 | P10-2 | All loops have a fixed upper bound (no `while(1)` / `for(;;)` without a counter) | 🔵 | — | 📏 MISRA 15.4 | Partial: `for(;;)` detectable by regex |
 | P10-3 | No dynamic memory after init (`malloc`/`calloc`/`realloc`/`free`) | 🔵 | — | 📏 MISRA 21.3 | Grep-detectable; MISRA 21.3 covers |
 | P10-4 | Functions ≤ 60 lines (configurable) | ⭐ | — | — | **Not in MISRA or Barr-C**; line-count between braces; unique opportunity |
@@ -190,7 +191,7 @@ Publicly available at stroustrup.com. The following rules apply to C (not C++ sp
 | JSF Rule | Description | CStyleCheck | astyle | MISRA C checker | Notes |
 |---|---|---|---|---|---|
 | AV Rule 111 | No variadic functions (`...` parameter) | 🔵 | — | 📏 MISRA 17.1 | MISRA 17.1 covers |
-| AV Rule 119 | No recursion | 🔵 | — | 📏 MISRA 17.2 | MISRA 17.2 covers |
+| AV Rule 119 | No recursion | 🟢 (direct) | — | 📏 MISRA 17.2 | Direct recursion covered by `misc.recursive_function` (post-v1.6.0, #392); indirect recursion left to MISRA 17.2 |
 | AV Rule 206 | No dynamic memory (`malloc`/`free`) | 🔵 | — | 📏 MISRA 21.3 | MISRA 21.3 covers |
 
 **Summary (S6):** 7 already covered (🟢), 5 unique opportunities (⭐), 5 already in MISRA, 1 not feasible.
@@ -286,6 +287,23 @@ Rules currently implemented in CStyleCheck that go beyond the base standards:
 | `sign_compatibility` | Cross-file signed/unsigned parameter compatibility | CStyleCheck original |
 | `spell_check` | Spell-checking identifiers against a dictionary | CStyleCheck original |
 
+### 7.8 Post-v1.6.0 Additions (PRs #391, #392)
+
+The matrices above are a snapshot of the v1.2 survey (2026-06-06). Rules later implemented, such as function length and assert density (v1.4.0), are shown with their original survey symbol except where updated in this revision. The 8 rules added on `develop` after v1.6.0 map to the surveyed standards as follows:
+
+| CStyleCheck rule | Default severity | MISRA C:2012 | Barr-C:2018 | Power of 10 / JSF | Previous matrix status |
+|---|---|---|---|---|---|
+| `misc.goto_usage` | error | Rule 15.1 | — | P10-1 | 🔵 → 🟢 |
+| `misc.assignment_in_condition` | warning | Rule 13.4 (conditions only) | — | — | 📏 (MISRA-only) |
+| `misc.multiple_statements_per_line` | warning | — | §3.2 | — | not listed |
+| `misc.void_pointer` | warning | Rule 11.5 (all `void *` use) | — | — | 📏 (MISRA-only) |
+| `misc.recursive_function` | error | Rule 17.2 (direct only) | — | P10-1, AV 119 | 🔵 → 🟢 |
+| `misc.sizeof_type` | info | — | §5.7 | — | not listed |
+| `misc.boolean_comparison` | warning | Rule 14.4 | — | — | 📏 (MISRA-only) |
+| `misc.empty_else` | warning | Rule 15.7 (intent) | §8.3 | — | not listed |
+
+These rules give early, style-level feedback. They do not replace a MISRA C checker; cppcheck `--misra` remains authoritative for the MISRA rules listed (CSC-SWE1-001 Appendix A).
+
 ---
 
 ## 8. Consolidated Unique Opportunity Rules (⭐)
@@ -340,9 +358,9 @@ These rules are best handled by a dedicated formatting tool. CStyleCheck should 
 | `switch` must have `default` label | CERT MSC01-C, MISRA 16.4 | 🔵 | — | 📏 | ✅ |
 | No dead code / unreachable code | CERT MSC07-C, MISRA 2.1 | 🔵 | — | 📏 | ⚠️ Partial |
 | No statements with no effect | CERT MSC12-C, MISRA 2.2 | 🔵 | — | 📏 | ⚠️ Partial |
-| No `goto` | Power of 10 R1, MISRA 15.1 | 🔵 | — | 📏 | ✅ |
+| No `goto` | Power of 10 R1, MISRA 15.1 | 🟢 `misc.goto_usage` | — | 📏 | ✅ |
 | No `setjmp`/`longjmp` | Power of 10 R1, MISRA 21.4 | 🔵 | — | 📏 | ✅ |
-| No recursion | Power of 10 R1, MISRA 17.2 | 🔵 | — | 📏 | ⚠️ Direct only |
+| No recursion | Power of 10 R1, MISRA 17.2 | 🟢 `misc.recursive_function` (direct only) | — | 📏 | ⚠️ Direct only |
 | Fixed upper bound on all loops | Power of 10 R2, MISRA 15.4 | 🔵 | — | 📏 | ⚠️ Partial |
 | No dynamic memory allocation | Power of 10 R3, MISRA 21.3 | 🔵 | — | 📏 | ✅ |
 | **Function length limit** | **Power of 10 R4, JSF 200** | **⭐** | **—** | **—** | **✅** |
@@ -434,13 +452,13 @@ These rules are best handled by a dedicated formatting tool. CStyleCheck should 
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-06 |
-| Technical Reviewer | Dermot Murphy | Pending | — |
-| Quality Assurance | Dermot Murphy | Pending | — |
-| Approver | Dermot Murphy | Pending | — |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.
 
 ---
 
-*End of Industry Standards Comparison Report — CSC-STD-001 v1.1*
+*End of Industry Standards Comparison Report — CSC-STD-001 v1.3*

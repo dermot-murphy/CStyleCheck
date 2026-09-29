@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.12 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.13 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.8 |
@@ -20,10 +20,11 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.13 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-009: add CI-045 to CI-060 (checker package `src/cstylecheck/*.py`, `.github/dependabot.yml`, CHANGELOG, CONTRIBUTING, Rules-and-Configuration, `src/project.defines`, `scripts/build.bat`/`test.bat`, `tests/__init__.py`, LICENSE, ASPICE WPs, audit records, repository configuration, CLAUDE.md, examples, draft standards); fix the CI-027 path; clarify CI-001/CI-002/CI-044. AUD9-F-019: §7.5 Dependabot target-branch rule. AUD9-F-028: add §7.6 hotfix versioning/tagging policy and record hotfix #399. AUD9-F-015: header date. AUD9-F-024: Author and Description columns swapped back in the v1.9 row |
 | 1.12 | 2026-09-29 | Claude | Add trend-analysis metrics workflow, scripts, threshold config and unit tests to CI list (CI-038 to CI-044) — issue #388 |
 | 1.11 | 2026-07-06 | Claude | ASPICE audit — add prerelease_check.sh, check_my_project.bat, DOCKERHUB_README.md to CI list — closes #379 |
 | 1.10 | 2026-07-01 | Claude | v1.6.0 release — update §3.1 scope to v1.6.0; update §3.3 SWE1 ref 2.4→2.5 |
-| 1.9 | 2026-06-27 | Fix §3.3 cross-ref: SWE1 2.2→2.4 (+ any other stale refs fixed) | Dermot Murphy |
+| 1.9 | 2026-06-27 | Dermot Murphy | Fix §3.3 cross-ref: SWE1 2.2→2.4 (+ any other stale refs fixed) |
 | 1.8 | 2026-06-27 | Claude | ASPICE audit — §3.1 scope v1.2.0→v1.5.0; §3.3 SWE1 ref 1.9→2.2; update Review & Approval dates — closes #321 #323 |
 | 1.7 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.6 | 2026-06-04 | Claude | Deep accuracy audit: fix CI-024 workflow filename (rules.yml→cstylecheck_rules.yml), fix §7.5 reference, update SWE1-001 version in §3.3 — resolves issue #163 |
@@ -120,8 +121,8 @@ All items in the following table are placed under configuration control.
 
 | CI ID | Item | Path in Repository | Type |
 |---|---|---|---|
-| CI-001 | Main linter source | `src/cstylecheck.py` | Source code |
-| CI-002 | Version file | `src/_version.py` | Generated / version |
+| CI-001 | CLI entry-point shim (backward-compatible) | `src/cstylecheck.py` | Source code |
+| CI-002 | Version file (generated at build time from `git describe`; git-ignored, not stored in the repository) | `src/_version.py` | Generated / version |
 | CI-003 | Production naming convention config | `src/rules.yml` | Configuration |
 | CI-004 | CLI options defaults file | `src/options.txt` | Configuration |
 | CI-005 | Exclusions configuration | `src/exclusions.yml` | Configuration |
@@ -146,7 +147,7 @@ All items in the following table are placed under configuration control.
 | CI-024 | CI — naming convention workflow | `.github/workflows/cstylecheck_rules.yml` | CI/CD |
 | CI-025 | CI — Docker publish workflow | `.github/workflows/docker_publish.yml` | CI/CD |
 | CI-026 | Project README | `README.md` | Documentation |
-| CI-027 | This CM Plan | `CStyleCheck_SUP8_CM_Plan.md` | Documentation |
+| CI-027 | This CM Plan | `docs/aspice/CStyleCheck_SUP8_CM_Plan.md` | Documentation |
 | CI-028 | AI Authorship Deviation Record | `docs/aspice/CStyleCheck_DEV001_AI_Authorship_Deviation.md` | Documentation |
 | CI-029 | CI trend-record append script | `scripts/ci/append_trend_record.py` | CI script |
 | CI-030 | CI trend HTML and badge generation script | `scripts/ci/generate_trend.py` | CI script |
@@ -163,7 +164,23 @@ All items in the following table are placed under configuration control.
 | CI-041 | Trend-Analysis wiki page generation script | `scripts/update_wiki_metrics.py` | CI script |
 | CI-042 | PR metrics comparison report script | `scripts/compare_metrics.py` | CI script |
 | CI-043 | Trend metrics CStyleCheck config and threshold documentation | `scripts/metrics_rules.yml` | CI config |
-| CI-044 | Trend metrics unit tests | `tests/test_collect_metrics.py` | Test |
+| CI-044 | Trend metrics unit tests (subset of CI-017, listed separately because it verifies COMP-13 rather than the package) | `tests/test_collect_metrics.py` | Test |
+| CI-045 | Checker package source (12 modules: `__init__`, `baseline`, `checker`, `cli`, `config`, `fixer`, `models`, `output`, `preprocessor`, `sign_checker`, `utils`, `wizard`) | `src/cstylecheck/*.py` | Source code |
+| CI-046 | Dependabot configuration (`pip` and `github-actions`, `target-branch: develop`) | `.github/dependabot.yml` | CI/CD configuration |
+| CI-047 | Change log | `CHANGELOG.md` | Documentation |
+| CI-048 | Contribution guide | `CONTRIBUTING.md` | Documentation |
+| CI-049 | Rules and configuration reference (wiki source) | `Rules-and-Configuration.md` | Documentation |
+| CI-050 | Example project preprocessor defines | `src/project.defines` | Configuration |
+| CI-051 | Windows build helper script | `scripts/build.bat` | Build script |
+| CI-052 | Windows test helper script | `scripts/test.bat` | Build script |
+| CI-053 | Test package marker | `tests/__init__.py` | Test |
+| CI-054 | Licence | `LICENSE` | Documentation |
+| CI-055 | ASPICE work products (each identified by its CSC document ID and version, e.g. CSC-SWE1-001; includes review records and the review template) | `docs/aspice/CStyleCheck_*.md` | Documentation |
+| CI-056 | ASPICE internal audit records (CSC-AUD-nnn) | `docs/aspice/audits/*.md` | Documentation |
+| CI-057 | Repository configuration | `.gitignore`, `.gitattributes`, `.codespellrc` | Repository configuration |
+| CI-058 | AI assistant standing instructions (see CSC-DEV-001) | `CLAUDE.md` | Documentation |
+| CI-059 | Example C sources (trend-metrics input, CI-038 to CI-043) and example project | `examples/**` | Example / test data |
+| CI-060 | Draft companion standards documents | `embedded_c_style_guide.md`, `embedded_c_coding_standard.md`, `external_standards_analysis.md` | Documentation (draft) |
 
 ### 6.2 Identification Scheme
 
@@ -225,8 +242,20 @@ main ──► hotfix/* ──► main ──► tag v1.0.1
 - All merges to `develop` and `main` require CI (`cstylecheck_tests.yml`) to pass
 - The `cstylecheck_rules.yml` workflow runs the linter against the project's own source on every commit touching C files, enforcing self-hosting of the tool's own rules
 - Supporting branches are deleted after merge
+- Dependabot (CI-046) opens dependency-update pull requests against `develop` (`target-branch: develop`, #399/#403). Dependabot PRs follow the normal feature-PR rules and reach `main` only through a release
 
 > **📋 Note:** The `release/*` branch is the only branch where version-bump commits (`_version.py`, `pyproject.toml`) and release notes updates are permitted outside of `develop`. No new features may be introduced on a `release/*` branch.
+
+### 7.6 Hotfix Versioning and Tagging Policy
+
+| Hotfix content | Version bump | Tag | Records |
+|---|---|---|---|
+| Change to the delivered software (`src/`, `pyproject.toml`, `Dockerfile/`, `action.yml`, `.pre-commit-hooks.yml`) | Mandatory PATCH bump (e.g. 1.6.0 → 1.6.1) in `pyproject.toml` | Annotated tag `vX.Y.Z` on the `main` merge commit (pushed manually by the repository owner; tag pushes are not possible from the AI environment) | CHANGELOG entry, SVD update, GitHub Release |
+| CI / repository-configuration only (`.github/`, `scripts/ci/`, documentation), no change to the delivered software | No version bump | No tag. The `main` HEAD remains a development baseline (§8.1) of the last release | CHANGELOG `[Unreleased]` / next SVD "CI and repository changes" entry; the hotfix PR is referenced in the next release notes |
+
+Every hotfix is back-merged into `develop` immediately. Hotfix branches may use the `claude/<topic>-<id>` naming used for AI-authored work (see CLAUDE.md) in place of `hotfix/<issue-id>-…`, provided the PR is labelled as a hotfix and targets `main`.
+
+> **Record (AUD9-F-028):** Hotfix #399 (commits `8da22b9`/`945dd02`, Dependabot `target-branch: develop`) was a CI-configuration-only change. Under this policy it needed no patch version or tag. It was back-merged into `develop` by #403 and is to be recorded in the next SVD. `main` therefore holds `v1.6.0` plus #399 with no new tag.
 
 ---
 
@@ -359,9 +388,9 @@ Performed after tagging to verify:
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

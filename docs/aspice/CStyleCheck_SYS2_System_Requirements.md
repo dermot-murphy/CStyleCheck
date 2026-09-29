@@ -20,9 +20,9 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 2.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-F-011 73→81 rule IDs; SYS-F-020 lists the 8 post-v1.6.0 MISRA/Barr-C rules; scope text. AUD9-F-006: RTM SYS-F-034 to 036 → add SWE1-100/101. AUD9-F-008: SYS-F-046 → SWE1-094 (was SWE1-091); add SWE1-072/073, 074, 077, 091 to 093, 095 to 099 and 109 to 116 to the RTM; add bidirectional-trace note |
+| 2.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-F-011 73→81 rule IDs; SYS-F-020 lists the 8 post-v1.6.0 MISRA/Barr-C rules; scope text. AUD9-F-006: RTM SYS-F-034 to 036 → add SWE1-100/101. AUD9-F-008: SYS-F-046 → SWE1-094 (was SWE1-091); add SWE1-072/073, 074, 077, 091 to 093, 095 to 099 and 109 to 116 to the RTM; add bidirectional-trace note. AUD9-F-024: Author and Description columns swapped back in earlier revision rows |
 | 2.2 | 2026-07-06 | Claude | ASPICE audit — SYS-F-011 73 rule IDs; scope v1.5.0→v1.6.0; add SYS-F-046 startup banner requirement — closes #379 |
-| 2.1 | 2026-06-27 | Fix §3.3 cross-refs: SUP8 1.7→1.9, SWE1 2.2→2.4 | Dermot Murphy |
+| 2.1 | 2026-06-27 | Dermot Murphy | Fix §3.3 cross-refs: SUP8 1.7→1.9, SWE1 2.2→2.4 |
 | 2.0 | 2026-06-27 | Claude | ASPICE audit — §3.1 scope v1.4.1→v1.5.0 and 71→72 rule IDs; §3.3 SWE1 ref 1.9→2.2; SYS-F-011 71→72; §6 RTM add SWE1-MISRA-004/SWE1-089/SWE1-090 traceability; update Review & Approval dates — closes #319 #323 |
 | 1.9 | 2026-06-26 | Claude | §6 RTM: replace all `\<SWE.1-REQ-xxx\>` placeholders with actual SWE1-xxx IDs; add CSC-SWE1-001 to §3.3; update §3.1 scope to v1.4.1 — closes issue #292 |
 | 1.8 | 2026-06-26 | Claude | Update SYS-F-020 to include v1.4.0 misc and macro-safety rules — closes issue #261 |

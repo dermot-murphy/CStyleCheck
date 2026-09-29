@@ -20,10 +20,10 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.13 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-002: add the 8 new checks (#391/#392) to COMP-05f (diagram and method table, with the previously missing v1.4.0–v1.6.0 methods), to the §8.1 run_all() sequence and to the §10 RTM (SWE1-109 to SWE1-116). AUD9-F-006: SWA-IF-09 → Counter multiset; §8.1 baseline steps. AUD9-F-011: add COMP-13 Trend-Analysis Scripts (out of package) and §10 rows for SWE1-100/101, SWE1-102 to SWE1-108 and SWE1-117. AUD9-F-015: record the #397 edits (COMP-06 functions, baseline key, SWA-IF-08) made to v1.12 without a revision; header date |
+| 1.13 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-002: add the 8 new checks (#391/#392) to COMP-05f (diagram and method table, with the previously missing v1.4.0–v1.6.0 methods), to the §8.1 run_all() sequence and to the §10 RTM (SWE1-109 to SWE1-116). AUD9-F-006: SWA-IF-09 → Counter multiset; §8.1 baseline steps. AUD9-F-011: add COMP-13 Trend-Analysis Scripts (out of package) and §10 rows for SWE1-100/101, SWE1-102 to SWE1-108 and SWE1-117. AUD9-F-015: record the #397 edits (COMP-06 functions, baseline key, SWA-IF-08) made to v1.12 without a revision; header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows |
 | 1.12 | 2026-07-06 | Claude | ASPICE audit — v1.6.0: update scope to v1.6.0; §3.1 refs (SWE1 2.4→2.6, SWE3 1.15→1.16, SUP8 1.9→1.10); add models.py/utils.py as COMP-11/COMP-12; update COMP-01 (startup banner), COMP-05b (fn_start), COMP-07 (Tee.log_print), COMP-08 (pointer_prefix fix); update §10 RTM with SWE1-091–099 — closes #372 |
-| 1.11 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.3→2.4, SWE3 1.14→1.15; fix header date | Dermot Murphy |
-| 1.10 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.1→2.3, SWE3 1.12→1.14 | Dermot Murphy |
+| 1.11 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SWE1 2.3→2.4, SWE3 1.14→1.15; fix header date |
+| 1.10 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SWE1 2.1→2.3, SWE3 1.12→1.14 |
 | 1.9 | 2026-06-26 | Claude | v1.9 — ASPICE audit corrections: fix §3 scope text (v1.2.x→v1.5.0); update §3.1 SWE1/SWE3 version refs; add v1.4.0/v1.5.0 methods to §8.1 run_all() sequence; add SWE1-MISRA-004/SWE1-089/SWE1-090 to §10 RTM — closes #307 |
 | 1.8 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.7 | 2026-06-08 | Claude | ASPICE audit #238 — add COMP-05h (naming rules); extend §10 RTM with SWE1-078–088 |

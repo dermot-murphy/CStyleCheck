@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-ACQ4-001 | **Version** | 1.3 |
-| **Project** | CStyleCheck | **Date** | 2026-06-26 |
+| **Document ID** | CSC-ACQ4-001 | **Version** | 1.4 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | ACQ.4 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.4 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-018: §5.2 Actions versions @v6→@v7 with the Docker and third-party actions; workflow list 3→5 (`rules.yml` → `cstylecheck_rules.yml`, add `wiki_publish.yml`, `metrics.yml`); Dependabot (`target-branch: develop`) monitoring row; add SUP-07 (Docker, Inc. actions) and SUP-08 (tj-actions, peter-evans) and §5.7 monitoring; SHA-pinning policy |
 | 1.3 | 2026-06-26 | Claude | Add SUP-06 Anthropic/Claude AI tool supplier entry (§3, §4, §5.6, §6); update CSC-MAN5-001 ref to 1.4; advance ACQ.4 to Full — closes issue #269 |
 | 1.2 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.1 | 2026-05-28 | Claude | Reviewed and updated for v1.1.0 release; revision history maintained per ASPICE GP 2.2.4 |
@@ -63,6 +64,8 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 | SUP-04 | Python Software Foundation | CPython interpreter | Runtime platform | 3.10, 3.11, 3.12 | RISK-002 |
 | SUP-05 | Docker, Inc. | `python:3.12-slim` base image | Container base | Pinned via `ARG PYTHON_VERSION=3.12` | RISK-008 |
 | SUP-06 | Anthropic, PBC | Claude AI assistant (code generation, document authoring, test generation, ASPICE compliance analysis) | AI/SaaS tool | N/A (SaaS; prompt-based; see CSC-DEV-001) | RISK-005 |
+| SUP-07 | Docker, Inc. (GitHub Actions publisher) | `docker/login-action`, `docker/setup-qemu-action`, `docker/setup-buildx-action`, `docker/metadata-action`, `docker/build-push-action` (used in `docker_publish.yml`) | CI/CD action | Major-version tags (`@v4.6.0`, `@v4`, `@v4`, `@v6`, `@v7`); updated by Dependabot | RISK-004, RISK-008 |
+| SUP-08 | Third-party GitHub Action publishers (`tj-actions`, `peter-evans`) | `tj-actions/changed-files` (`cstylecheck_rules.yml`), `peter-evans/dockerhub-description` (`docker_publish.yml`) | CI/CD action | `tj-actions/changed-files` pinned to full commit SHA `9426d40962ed5378910ee2e21d5f8c6fcbf2dd96` (v47.0.6); `peter-evans/dockerhub-description@v5` | RISK-008 |
 
 ---
 
@@ -85,18 +88,23 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 
 | Activity | Method | Frequency | Owner | Evidence |
 |---|---|---|---|---|
-| CI workflow availability | Monitor `cstylecheck_tests.yml`, `rules.yml`, `docker_publish.yml` job completion | Per commit | GitHub Actions status | CI badge on README; Actions run log |
+| CI workflow availability | Monitor `cstylecheck_tests.yml`, `cstylecheck_rules.yml`, `docker_publish.yml`, `wiki_publish.yml` and `metrics.yml` job completion | Per commit | GitHub Actions status | CI badge on README; Actions run log |
+| Action version updates | Dependabot `github-actions` ecosystem (`.github/dependabot.yml`, weekly, `target-branch: develop`) raises update PRs; each PR is reviewed and must pass CI before merge | Weekly | Dependabot / Dermot Murphy | Dependabot PRs (e.g. #400–#402, #404) |
 | GHCR availability | Verify Docker images pullable after each push | Per `docker_publish.yml` run | GitHub Actions | `docker manifest inspect` in publish job |
 | Actions runner version changes | Monitor GitHub changelog for breaking changes to `ubuntu-latest` runner | Monthly | Claude | GitHub blog / changelog review |
 | API deprecation notices | Monitor GitHub Actions deprecation notices (e.g., deprecated action versions) | Monthly | Claude | GitHub announcement emails |
 
-**Actions versions pinned:**
-- `actions/checkout@v6`
-- `actions/setup-python@v6`
-- `actions/upload-artifact@v6`
+**Actions versions in use (`develop`, 2026-09-29):**
+- `actions/checkout@v7` (#402)
+- `actions/setup-python@v7` (#386, #404)
+- `actions/upload-artifact@v7` (#400)
+- `docker/login-action@v4.6.0` (#387, #401), `docker/setup-qemu-action@v4`, `docker/setup-buildx-action@v4`, `docker/metadata-action@v6`, `docker/build-push-action@v7` (SUP-07)
+- `peter-evans/dockerhub-description@v5` and `tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96` (v47.0.6) (SUP-08)
+
+**Pinning policy:** first-party (`actions/*`) and Docker, Inc. actions are pinned to major-version tags and updated by Dependabot. Third-party actions whose publisher has had a supply-chain compromise (`tj-actions/changed-files`, March 2025) are pinned to a full commit SHA, with the version in a trailing comment.
 
 **Acceptance criteria for GitHub:**
-- All three CI workflows complete successfully on every push to `develop`/`main`
+- All five CI workflows complete successfully when triggered on `develop`/`main`
 - GHCR image available and pullable within 30 minutes of `docker_publish.yml` completion
 
 ### 5.3 Docker Hub (SUP-03)
@@ -150,6 +158,16 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 - No unreviewed AI-generated outputs committed to the repository
 - CSC-DEV-001 AI Authorship Deviation Record remains current and approved
 
+### 5.7 GitHub Action Publishers (SUP-07, SUP-08)
+
+| Activity | Method | Frequency | Owner | Evidence |
+|---|---|---|---|---|
+| Version updates | Dependabot `github-actions` PRs against `develop`; review release notes before merge | Weekly | Dermot Murphy | Dependabot PRs |
+| Supply-chain advisories | Check GitHub Security Advisories for each action in use; for SHA-pinned actions, re-verify the SHA against the upstream tag before bumping | Monthly | Claude | Advisory review note in the GitHub Issue |
+| Permissions review | Confirm each workflow's `permissions:` block grants only what the action needs | Per workflow change | Claude | PR review |
+
+**Acceptance criteria:** every action in `.github/workflows/*.yml` appears in the §5.2 list with its current version, and third-party actions are SHA-pinned or on a Dependabot-tracked tag.
+
 ---
 
 ## 6. Supplier Interface Summary
@@ -185,9 +203,9 @@ All non-conformances are recorded as GitHub Issues (label: `supplier-issue`) and
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-04-15 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-04-15 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-04-15 |
-| Approver | Dermot Murphy | Approved | 2026-04-15 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

@@ -22,12 +22,12 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.17 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SWQ-003 → 81 rule IDs; add the post-v1.6.0 MISRA/Barr-C rule row (SWE1-109 to SWE1-116); §6 rows for SWE1-094 to SWE1-117; coverage 113/113 in scope. AUD9-F-006: SWQ-007 step 4 → a moved violation stays suppressed (SWE1-100); add steps 6/7 (multiset, path normalisation); trace SWE1-100/101. AUD9-F-003: BP3 note `test_misra_rules.py` 64→140. AUD9-F-026: commit SHA / configuration under test; scope text |
+| 1.17 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SWQ-003 → 81 rule IDs; add the post-v1.6.0 MISRA/Barr-C rule row (SWE1-109 to SWE1-116); §6 rows for SWE1-094 to SWE1-117; coverage 113/113 in scope. AUD9-F-006: SWQ-007 step 4 → a moved violation stays suppressed (SWE1-100); add steps 6/7 (multiset, path normalisation); trace SWE1-100/101. AUD9-F-003: BP3 note `test_misra_rules.py` 64→140. AUD9-F-026: commit SHA / configuration under test; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows |
 | 1.16 | 2026-07-06 | Claude | ASPICE audit — remove non-existent rule IDs `variable.local.prefix` and `variable.parameter.prefix` from SWQ-003 table; update §3.1 refs (SWE1 2.5→2.6, SWE5 1.12→1.14, SUP8 1.9→1.10); fix coverage gate note; add SWE1-094 to SWE1-099 to §3.3 criteria — closes #376 |
 | 1.15 | 2026-07-06 | Claude | v1.6.0 RC — update test count 1223→1279; §3.1 SWE5→1.13, SVD→1.22; add SWQ-003 row for constant_comparison/output behaviour improvements; update §8 execution results |
 | 1.14 | 2026-07-01 | Claude | Add misc.constant_comparison, unsigned_suffix signed-param, pointer_prefix fix to SWQ-003; update rule count 72→73; req coverage 91→94; §3.1 SWE1→2.5, SWE5→1.12; version under test 1.5.0→1.6.0 |
-| 1.13 | 2026-06-27 | Fix §3.1 cross-ref: SWE1 2.3→2.4 | Dermot Murphy |
-| 1.12 | 2026-06-27 | Fix §3.1 cross-ref: SWE1 2.1→2.3 | Dermot Murphy |
+| 1.13 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-ref: SWE1 2.3→2.4 |
+| 1.12 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-ref: SWE1 2.1→2.3 |
 | 1.11 | 2026-06-27 | Claude | ASPICE audit — populate SWQ-010 execution evidence; fill §7 coverage values; fix §8 issue #54 status; fix §9 branch coverage; fix §10 v1.0.0→v1.5.0; update Review & Approval dates — closes #318 #323 |
 | 1.10 | 2026-06-26 | Claude | ASPICE audit corrections: update §3.2 config under test to v1.5.0; fix §3.1/§3.3/§9/Appendix A stale references; populate execution results for SWQ-001/002/004/005/006/007 — closes #310 |
 | 1.9 | 2026-06-26 | Claude | Correct rule count 74→72 throughout (§3 SWQ-003, §7 RTM): 72 is the confirmed count from source-code analysis; macro.trailing_semicolon/multistatement_wrapper were already in the 71 base |

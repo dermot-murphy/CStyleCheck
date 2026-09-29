@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN5-001 | **Version** | 1.4 |
-| **Project** | CStyleCheck | **Date** | 2026-06-26 |
+| **Document ID** | CSC-MAN5-001 | **Version** | 1.5 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | MAN.5 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.5 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-019: record the overdue RISK-003 and RISK-005 reviews (2026-09-29) and set the next review to 2026-12-29; RISK-003 treatment records Dependabot `target-branch: develop`, hotfix #399 / back-merge #403 and the Actions updates #400 to #402 and #404 |
 | 1.4 | 2026-06-26 | Claude | Implement RISK-003 and RISK-005 treatments: add `.github/dependabot.yml` (Dependabot for PyPI and GitHub Actions); add `CONTRIBUTING.md` (community onboarding); update §3 scope to v1.4.1 |
 | 1.3 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.2 | 2026-05-28 | Dermot Murphy | RISK-003: add Dependabot; update owner and review date. RISK-005: add CONTRIBUTING.md and AI-reproducibility mitigations; update owner and review date — closes issue #155 |
@@ -141,12 +142,12 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Impact** | 3 (Moderate) — security advisory required; patched release needed |
 | **RPN** | 6 (Medium) |
 | **Treatment Option** | Mitigate |
-| **Treatment Activities** | Pin `pyyaml>=6.0,<7.0` in `pyproject.toml` (already in place); use `yaml.safe_load()` (never `yaml.load()`); enable GitHub Dependabot for `pyproject.toml` to receive automated CVE alerts; monitor PyPI security advisories; **Implemented (2026-06-26):** `.github/dependabot.yml` committed — weekly automated scan for PyPI (`pyproject.toml`) and GitHub Actions dependencies; alerts delivered as automated PRs |
+| **Treatment Activities** | Pin `pyyaml>=6.0,<7.0` in `pyproject.toml` (already in place); use `yaml.safe_load()` (never `yaml.load()`); enable GitHub Dependabot for `pyproject.toml` to receive automated CVE alerts; monitor PyPI security advisories; **Implemented (2026-06-26):** `.github/dependabot.yml` committed — weekly automated scan for PyPI (`pyproject.toml`) and GitHub Actions dependencies; alerts delivered as automated PRs. **Update (2026-09-29, #399/#403):** `target-branch: develop` added for both ecosystems so Dependabot PRs follow Gitflow (CSC-SUP8-001 §7.5). Before this change, Dependabot PRs opened against `main`; the configuration was corrected by hotfix #399 on `main` and back-merged by #403. Dependabot has since delivered the GitHub Actions updates `actions/checkout@v7`, `actions/setup-python@v7`, `actions/upload-artifact@v7` and `docker/login-action@v4.6.0` (#400–#402, #404); supplier record in CSC-ACQ4-001 §5.2 |
 | **Residual Likelihood** | 2 |
 | **Residual Impact** | 2 |
 | **Residual RPN** | 4 (Low) |
 | **Owner** | Dermot Murphy |
-| **Review Date** | 2026-08-28 |
+| **Review Date** | 2026-12-29 (next quarterly review). Reviewed 2026-09-29 during CSC-AUD-009 (#405): no Dependabot PR or alert for PyYAML in the repository history; Dependabot active on `develop`; ratings unchanged. Owner confirmation pending |
 | **Status** | Released |
 
 ---
@@ -188,7 +189,7 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Residual Impact** | 3 |
 | **Residual RPN** | 6 (Medium) |
 | **Owner** | Dermot Murphy |
-| **Review Date** | 2026-08-28 |
+| **Review Date** | 2026-12-29 (next quarterly review). Reviewed 2026-09-29 during CSC-AUD-009 (#405): still a single human contributor; mitigations in place; ratings unchanged. Owner confirmation pending |
 | **Status** | Released |
 
 ---
@@ -289,9 +290,9 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-04-15 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-04-15 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-04-15 |
-| Approver | Dermot Murphy | Approved | 2026-04-15 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

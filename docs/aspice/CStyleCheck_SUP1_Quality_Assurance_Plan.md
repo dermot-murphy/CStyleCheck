@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP1-001 | **Version** | 1.9 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SUP1-001 | **Version** | 1.10 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.1 |
@@ -20,8 +20,9 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.10 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-022: §5.4 records per-release gate compliance (v1.5.x and v1.6.0 peer-review gate not met, covered retrospectively by CSC-REVIEW-003); add the internal-audit release gate; §6 lists review and audit record locations. AUD9-F-024: Author and Description columns swapped back in the v1.8 row; scope text |
 | 1.9 | 2026-07-06 | Claude | ASPICE audit — update quality objectives to v1.6.0 actuals — closes #379 |
-| 1.8 | 2026-06-27 | Fix §3.1 cross-refs: SUP8 1.7→1.9, SWE4 1.14→1.17 | Dermot Murphy |
+| 1.8 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SUP8 1.7→1.9, SWE4 1.14→1.17 |
 | 1.7 | 2026-06-26 | Claude | ASPICE audit — update §3.1 SWE4 ref (1.12→1.14) — closes #306 #329 |
 | 1.6 | 2026-06-26 | Claude | Update §3 scope to v1.5.0 (minor release: F-017 misc.non_ascii_source, F-018 per-file summary, F-019 constant.case typedef exemption, B-004 RE_FUNCTION_DECL fix) |
 | 1.5 | 2026-06-26 | Claude | §5.4: add per-release peer-review record production as a release gate checklist item; update §3 scope to v1.4.1 — closes issue #268 |
@@ -35,7 +36,7 @@
 
 ## 3. Purpose & Scope
 
-This Quality Assurance Plan defines the QA strategy, activities, criteria, and records for **CStyleCheck v1.5.0**. It satisfies **Automotive SPICE® PAM v4.0, SUP.1 — Quality Assurance**.
+This Quality Assurance Plan defines the QA strategy, activities, criteria, and records for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**. It satisfies **Automotive SPICE® PAM v4.0, SUP.1 — Quality Assurance**.
 
 QA activities for CStyleCheck verify that project processes are followed as planned and that work products meet their defined quality criteria. Because CStyleCheck is itself a quality tool (a naming-convention linter), the project benefits from self-hosting its own quality checks.
 
@@ -114,6 +115,17 @@ Performed by the QA role before creating the release baseline:
 - [ ] Docker image digest recorded in GitHub Actions log
 - [ ] CM baseline checklist in CSC-SUP8-001 §11 completed
 - [ ] **Peer-review record produced**: copy `CStyleCheck_Review_Template.md`, populate as `CStyleCheck_Review_Record_v<X.Y>.md`, commit to `docs/aspice/`, and reference from CSC-PA2-001 §5.4 (per CSC-REVIEW-TEMPLATE-001; ASPICE GP 2.2.3)
+- [ ] **Internal audit record produced**: `docs/aspice/audits/CStyleCheck_ASPICE_Internal_Audit_<date>.md` (CSC-AUD-nnn) for the release baseline, with all High findings closed before tagging
+
+**Gate compliance record:**
+
+| Release | Peer-review record | Internal audit | Status |
+|---|---|---|---|
+| v1.2.x | CSC-REVIEW-001 (`CStyleCheck_Review_Record_v1.2.md`) | CSC-AUD-002 | Met |
+| v1.4.x | CSC-REVIEW-002 (`CStyleCheck_Review_Record_v1.4.md`) | CSC-AUD-007 | Met |
+| v1.5.0 / v1.5.1 | Not produced at release | CSC-AUD-008 (v1.5.1) | **Not met.** Covered retrospectively by CSC-REVIEW-003 (AUD9-F-022, #405) |
+| v1.6.0 | Not produced at release | None at release | **Not met.** Covered retrospectively by CSC-REVIEW-003 and CSC-AUD-009 (AUD9-F-021/022, #405) |
+| v1.7.0 (planned) | CSC-REVIEW-004 required | Release audit required | Open |
 
 ---
 
@@ -127,7 +139,8 @@ All QA evidence is retained as follows:
 | Coverage reports (`coverage.xml`) | GitHub Actions artefacts | 30 days per run |
 | Docker image digests | GitHub Actions run logs + GHCR manifest | Indefinite (GHCR) |
 | Process audit records | GitHub PR review comments; this document | Indefinite (GitHub) |
-| Work product review records | Reviewer/approver tables in each ASPICE document | CM baseline (Git) |
+| Work product review records | Reviewer/approver tables in each ASPICE document; per-release peer-review records `docs/aspice/CStyleCheck_Review_Record_v*.md` (CSC-REVIEW-nnn) | CM baseline (Git) |
+| Internal audit records | `docs/aspice/audits/` (CSC-AUD-nnn) | CM baseline (Git) |
 | Problem reports | GitHub Issues | Indefinite |
 | Change requests | GitHub Issues (labelled `change-request`) | Indefinite |
 
@@ -150,9 +163,9 @@ When a QA gate failure or non-conformance is identified:
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

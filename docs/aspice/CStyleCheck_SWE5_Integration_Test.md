@@ -20,12 +20,12 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.15 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SIT-027 for the 8 rules from #391/#392 (SWE1-109 to SWE1-116), with §6 and §7 rows and a post-v1.6.0 result note. AUD9-F-006: SWA-IF-09 → Counter multiset; SIT-012 step 4 → {"violations":[…]} with `file`; add steps 5–7 (moved violation, duplicate, Windows path); trace SIT-012 to SWE1-100/101 and UV-CLI-011 to 013. AUD9-F-026: CM baseline ID → v1.6.0 tag / develop 296e91b; scope text |
+| 1.15 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SIT-027 for the 8 rules from #391/#392 (SWE1-109 to SWE1-116), with §6 and §7 rows and a post-v1.6.0 result note. AUD9-F-006: SWA-IF-09 → Counter multiset; SIT-012 step 4 → {"violations":[…]} with `file`; add steps 5–7 (moved violation, duplicate, Windows path); trace SIT-012 to SWE1-100/101 and UV-CLI-011 to 013. AUD9-F-026: CM baseline ID → v1.6.0 tag / develop 296e91b; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows |
 | 1.14 | 2026-07-06 | Claude | ASPICE audit — add SIT-024 body (missing from doc); add SIT-025 (block-comment suppression), SIT-026 (--summary restructure); update §3.1 refs (SWE2 1.11→1.12, SWE4 1.18→1.20, SWE6 1.14→1.16); update §6 and §7 — closes #375 |
 | 1.13 | 2026-07-06 | Claude | v1.6.0 RC — update §6 overall result 1223→1279; §3.1 SWE4→1.19, SVD→1.22; add SIT-024 (startup banner/copyright output) |
 | 1.12 | 2026-07-01 | Claude | Add SIT-021/022/023 (constant_comparison, unsigned_suffix signed-param, pointer_prefix fix); update §3 scope to v1.6.0; §6 overall result 1183→1223; §3.1 SWE1→2.5, SWE4→1.18, SWE6→1.14 |
-| 1.11 | 2026-06-27 | Fix §3.1 cross-refs: SWE4 1.16→1.17, SWE6 1.12→1.13, SYS4 1.7→1.9; fix header date | Dermot Murphy |
-| 1.10 | 2026-06-27 | Fix §3.1 cross-refs: SWE4 1.14→1.16, SWE6 1.10→1.12 | Dermot Murphy |
+| 1.11 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SWE4 1.16→1.17, SWE6 1.12→1.13, SYS4 1.7→1.9; fix header date |
+| 1.10 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SWE4 1.14→1.16, SWE6 1.10→1.12 |
 | 1.9 | 2026-06-26 | Claude | ASPICE audit — update §3.1 refs (SWE2 1.8→1.9, SWE4 1.12→1.14, SWE6 1.7→1.10, SYS4 1.5→1.7); update §3.2 CM baseline to v1.5.0 tag; update §6 overall result 1182→1183 — closes #306 #309 |
 | 1.8 | 2026-06-26 | Claude | v1.5.0 release — update product version reference in §3 scope |
 | 1.7 | 2026-06-26 | Claude | Add SIT-020 for non_ascii_source (Rule 4.1), per-file summary breakdown, and typedef-alias constant.case exemption — issues #279 #278 #272 #244 |
