@@ -791,7 +791,7 @@ misc:
     severity: warning
 
   # -----------------------------------------------------------------------
-  # Multiple statements per line — Barr-C §3.2 / MISRA C:2012 Rule 15.5
+  # Multiple statements per line — Barr-C §3.2 (no direct MISRA C:2012 rule)
   # -----------------------------------------------------------------------
   # Each statement shall appear on its own line.  Multiple statements on
   # one line obscure control flow and make targeted breakpoints impossible.

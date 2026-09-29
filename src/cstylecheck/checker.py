@@ -353,7 +353,7 @@ class Checker:
         self._check_non_ascii_source()          # MISRA C:2012/2023 Rule 4.1
         self._check_goto_usage()                    # MISRA C:2012 Rule 15.1
         self._check_assignment_in_condition()       # MISRA C:2012 Rule 13.4
-        self._check_multiple_statements_per_line()  # Barr-C §3.2 / MISRA 15.5
+        self._check_multiple_statements_per_line()  # Barr-C §3.2
         self._check_void_pointer()                  # MISRA C:2012 Rule 11.5
         self._check_recursive_function()            # MISRA C:2012 Rule 17.2
         self._check_sizeof_type()                   # Barr-C §5.7
@@ -2513,7 +2513,7 @@ class Checker:
                 )
 
     # -----------------------------------------------------------------------
-    # MISRA C:2012 Rule 15.5 / Barr-C §3.2 — multiple statements per line
+    # Barr-C §3.2 — multiple statements per line (no direct MISRA C:2012 rule)
     # -----------------------------------------------------------------------
     # Each statement shall appear on its own line.  Multiple statements on
     # one line hide control-flow structure, complicate diffs, and make it
