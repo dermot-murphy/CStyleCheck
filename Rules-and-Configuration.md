@@ -58,6 +58,19 @@ and `info`.
    - [9.13 Declaration spacing](#913-declaration-spacing)
    - [9.14 File length](#914-file-length)
    - [9.15 Reserved header name](#915-reserved-header-name)
+   - [9.16 Comment ratio](#916-comment-ratio)
+   - [9.17 Whitespace ratio](#917-whitespace-ratio)
+   - [9.18 Declared but not defined](#918-declared-but-not-defined)
+   - [9.19 Non-ASCII source characters (MISRA C Rule 4.1)](#919-non-ascii-source-characters-misra-c-rule-41)
+   - [9.20 Constant comparison](#920-constant-comparison)
+   - [9.21 `goto` usage (MISRA C Rule 15.1)](#921-goto-usage-misra-c-rule-151)
+   - [9.22 Assignment in condition (MISRA C Rule 13.4)](#922-assignment-in-condition-misra-c-rule-134)
+   - [9.23 Multiple statements per line (Barr-C §3.2)](#923-multiple-statements-per-line-barr-c-32)
+   - [9.24 `void` pointer (MISRA C Rule 11.5)](#924-void-pointer-misra-c-rule-115)
+   - [9.25 Recursive function (MISRA C Rule 17.2)](#925-recursive-function-misra-c-rule-172)
+   - [9.26 `sizeof` with a type operand (Barr-C §5.7)](#926-sizeof-with-a-type-operand-barr-c-57)
+   - [9.27 Boolean comparison (MISRA C Rule 14.4)](#927-boolean-comparison-misra-c-rule-144)
+   - [9.28 Empty `else` (Barr-C §8.3)](#928-empty-else-barr-c-83)
 10. [Reserved names](#10-reserved-names)
 11. [Spell check](#11-spell-check)
 12. [Sign compatibility](#12-sign-compatibility)
@@ -1533,6 +1546,286 @@ POSIX.1-2017 header set (e.g. `stdio.h`, `stdlib.h`, `pthread.h`).
 
 ---
 
+### 9.16 Comment ratio
+
+**Rule ID:** `misc.comment_ratio`
+
+```yaml
+misc:
+  comment_ratio:
+    enabled: false
+    severity: warning
+    warning_threshold: 0.15   # ratio below this → warning
+    error_threshold: 0.05     # ratio below this → error
+    min_code_lines: 10        # files with fewer code lines are not checked
+```
+
+The ratio is explanatory comment lines to code lines, measured after the file
+header. Leading comment and blank lines (copyright and licence blocks) and
+Doxygen `/** … */` blocks are excluded. A code line with a trailing `//`
+comment counts as code. One violation is reported per file.
+
+---
+
+### 9.17 Whitespace ratio
+
+**Rule ID:** `misc.whitespace_ratio`
+
+```yaml
+misc:
+  whitespace_ratio:
+    enabled: false
+    severity: warning
+    warning_threshold: 0.10   # blank/code ratio below this → warning
+    error_threshold: 0.01     # blank/code ratio below this → error
+    min_lines: 20             # files with fewer code lines are not checked
+```
+
+Flags dense code with too few blank lines. The ratio is blank lines to code
+lines, measured after the file header. Comment-only lines count as neither.
+
+---
+
+### 9.18 Declared but not defined
+
+**Rule ID:** `misc.declared_not_defined`
+
+```yaml
+misc:
+  declared_not_defined:
+    enabled: false
+    severity: warning
+    extern_macros: []   # project macros that expand to 'extern'
+```
+
+A cross-file check: an object declared `extern` (or through a macro listed in
+`extern_macros`) must have a definition in one of the files checked in the same
+invocation. A single-file run never reports this rule, because the definition
+may live in an unscanned translation unit.
+
+---
+
+### 9.19 Non-ASCII source characters (MISRA C Rule 4.1)
+
+**Rule ID:** `misc.non_ascii_source`
+
+```yaml
+misc:
+  non_ascii_source:
+    enabled: true
+    severity: error
+    exempt_string_literals: false
+```
+
+Only TAB, LF, CR and printable ASCII (0x20–0x7E) are allowed in source files.
+Any other character, including a UTF-8 BOM or a non-ASCII character in a
+comment, is flagged. Set `exempt_string_literals: true` to allow non-ASCII
+text inside `"…"` string literals.
+
+---
+
+### 9.20 Constant comparison
+
+**Rule ID:** `misc.constant_comparison`
+
+```yaml
+misc:
+  constant_comparison:
+    enabled: true
+    severity: warning
+```
+
+Flags `==` / `!=` where **both** operands are compile-time constants (numeric
+or char literals, `true`/`false`/`TRUE`/`FALSE`/`NULL`/`nullptr`, or ALL_CAPS
+identifiers). `#define` bodies and `return` statements are exempt.
+
+```c
+if (MAX_RETRIES == 3U) { … }   /* ✗ misc.constant_comparison */
+if (retries == MAX_RETRIES)    /* ✓ one side is a variable   */
+```
+
+---
+
+### 9.21 `goto` usage (MISRA C Rule 15.1)
+
+**Rule ID:** `misc.goto_usage`
+
+```yaml
+misc:
+  goto_usage:
+    enabled: true
+    severity: error
+```
+
+Every `goto` statement is flagged. `goto` inside comments or strings, and
+identifiers that merely contain `goto`, are ignored.
+
+```c
+    goto cleanup;               /* ✗ misc.goto_usage */
+
+    if (err != 0) { return err; }   /* ✓ early return instead */
+```
+
+---
+
+### 9.22 Assignment in condition (MISRA C Rule 13.4)
+
+**Rule ID:** `misc.assignment_in_condition`
+
+```yaml
+misc:
+  assignment_in_condition:
+    enabled: true
+    severity: warning
+```
+
+Flags a plain `=` inside the controlling expression of `if` and `while`, and
+inside the condition clause of `for`. `==`, `!=`, `<=`, `>=`, compound
+assignments (`+=` etc.) and the `for` init/increment clauses are not flagged.
+
+```c
+if (status = uart_Read())          /* ✗ misc.assignment_in_condition */
+while (p_node = list_Next(p_node)) /* ✗ */
+
+status = uart_Read();              /* ✓ */
+if (status != 0) { … }
+```
+
+---
+
+### 9.23 Multiple statements per line (Barr-C §3.2)
+
+**Rule ID:** `misc.multiple_statements_per_line`
+
+```yaml
+misc:
+  multiple_statements_per_line:
+    enabled: true
+    severity: warning
+```
+
+Each statement must be on its own line. A `;` followed on the same line by
+another statement is flagged. Lines containing a `for (…; …; …)` header are
+exempt.
+
+```c
+x = 1; y = 2;                   /* ✗ misc.multiple_statements_per_line */
+for (i = 0U; i < n; i++)        /* ✓ for-header semicolons are separators */
+```
+
+---
+
+### 9.24 `void` pointer (MISRA C Rule 11.5)
+
+**Rule ID:** `misc.void_pointer`
+
+```yaml
+misc:
+  void_pointer:
+    enabled: true
+    severity: warning
+```
+
+Every `void *` in code (declarations, parameters, casts) is flagged, because it
+removes compile-time type checking. A `void` return type or `(void)` parameter
+list is not flagged.
+
+```c
+void *p_buf = pool_Get();       /* ✗ misc.void_pointer */
+uint8_t *p_buf = pool_Get();    /* ✓ */
+```
+
+---
+
+### 9.25 Recursive function (MISRA C Rule 17.2)
+
+**Rule ID:** `misc.recursive_function`
+
+```yaml
+misc:
+  recursive_function:
+    enabled: true
+    severity: error
+```
+
+Flags a function whose body calls itself (**direct** recursion only; indirect
+recursion A → B → A is not detected). Recursion makes worst-case stack usage
+unbounded on fixed-size RTOS stacks.
+
+```c
+uint32_t math_Factorial(uint32_t n)
+{
+    return (n <= 1U) ? 1U : n * math_Factorial(n - 1U);   /* ✗ misc.recursive_function */
+}
+```
+
+---
+
+### 9.26 `sizeof` with a type operand (Barr-C §5.7)
+
+**Rule ID:** `misc.sizeof_type`
+
+```yaml
+misc:
+  sizeof_type:
+    enabled: true
+    severity: info
+```
+
+`sizeof(type)` silently becomes wrong when the variable's type changes. Use
+`sizeof(var)` or `sizeof(*p_var)`. Flags primitive types, `*_t` typedefs and
+capitalised type names.
+
+```c
+memset(p_buf, 0, sizeof(uint32_t) * N);   /* ✗ misc.sizeof_type */
+memset(p_buf, 0, sizeof(*p_buf) * N);     /* ✓ */
+```
+
+---
+
+### 9.27 Boolean comparison (MISRA C Rule 14.4)
+
+**Rule ID:** `misc.boolean_comparison`
+
+```yaml
+misc:
+  boolean_comparison:
+    enabled: true
+    severity: warning
+```
+
+Comparing with `true`/`false` (or `TRUE`/`FALSE`) using `==` or `!=` is
+redundant and can hide type-coercion bugs.
+
+```c
+if (b_ready == true)   /* ✗ misc.boolean_comparison */
+if (b_ready)           /* ✓ */
+if (!b_done)           /* ✓ */
+```
+
+---
+
+### 9.28 Empty `else` (Barr-C §8.3)
+
+**Rule ID:** `misc.empty_else`
+
+```yaml
+misc:
+  empty_else:
+    enabled: true
+    severity: warning
+```
+
+An `else { }` with an empty body is either a forgotten placeholder or dead
+code. A block that contains a comment is accepted as intentional.
+
+```c
+} else { }                           /* ✗ misc.empty_else */
+} else { /* intentionally empty */ } /* ✓ */
+```
+
+---
+
 ## 10. Reserved names
 
 **Rule ID:** `reserved_name`
@@ -1868,6 +2161,21 @@ comma-separated lists.
 | `misc.reserved_header_name` | error | `misc.reserved_header_name.enabled` | `true` |
 | `naming.identifier_length` | warning | `naming.identifier_length.enabled` | `false` |
 | `naming.no_single_char_identifiers` | warning | `naming.no_single_char_identifiers.enabled` | `false` |
+| `variable.local.prefix` | error | `variables.local.require_module_prefix` | `false` |
+| `variable.parameter.prefix` | warning | `variables.parameter.require_module_prefix` | `false` |
+| `misc.comment_ratio` | warning | `misc.comment_ratio.enabled` | `false` |
+| `misc.whitespace_ratio` | warning | `misc.whitespace_ratio.enabled` | `false` |
+| `misc.declared_not_defined` | warning | `misc.declared_not_defined.enabled` | `false` |
+| `misc.non_ascii_source` | error | `misc.non_ascii_source.enabled` | `true` |
+| `misc.constant_comparison` | warning | `misc.constant_comparison.enabled` | `true` |
+| `misc.goto_usage` | error | `misc.goto_usage.enabled` | `true` |
+| `misc.assignment_in_condition` | warning | `misc.assignment_in_condition.enabled` | `true` |
+| `misc.multiple_statements_per_line` | warning | `misc.multiple_statements_per_line.enabled` | `true` |
+| `misc.void_pointer` | warning | `misc.void_pointer.enabled` | `true` |
+| `misc.recursive_function` | error | `misc.recursive_function.enabled` | `true` |
+| `misc.sizeof_type` | info | `misc.sizeof_type.enabled` | `true` |
+| `misc.boolean_comparison` | warning | `misc.boolean_comparison.enabled` | `true` |
+| `misc.empty_else` | warning | `misc.empty_else.enabled` | `true` |
 
 ---
 
@@ -1879,6 +2187,7 @@ are implemented, which are partially addressed, and which are explicitly out of 
 
 | MISRA C:2012 Rule | Topic | CStyleCheck Support | Rule ID |
 |---|---|---|---|
+| Rule 4.1 (as mapped in CSC-SWE1-001 SWE1-MISRA-004) | Source character set — characters outside printable ASCII, TAB, LF and CR | Partial | `misc.non_ascii_source` |
 | Rule 4.2 | Trigraphs shall not be used | **Implemented** | `misc.trigraph` |
 | Rule 5.1 | External identifiers shall be distinct | Partial — naming rules reduce collision risk | `variable.*`, `function.*` |
 | Rule 5.2 | Identifiers declared in the same scope shall be distinct | Partial — naming convention enforcement | `variable.*` |
@@ -1887,8 +2196,14 @@ are implemented, which are partially addressed, and which are explicitly out of 
 | Rule 7.3 | The lowercase character 'l' shall not be used in a literal suffix | **Implemented** | `misc.lowercase_l_suffix` |
 | Rule 7.4 | A string literal shall not be assigned to an object unless the type is `const char *` | Out of scope | — |
 | Rule 10.x | Essential type model (implicit conversions, composite expressions) | Out of scope | — |
-| Rule 14.x / 15.x | Control flow (unreachable code, goto, switch) | Out of scope | — |
-| Rule 17.x | Function usage (recursion, variable-argument functions) | Out of scope | — |
+| Rule 11.5 | A conversion should not be performed from pointer to void into pointer to object | Partial — every `void *` use flagged | `misc.void_pointer` |
+| Rule 13.4 | The result of an assignment operator should not be used | Partial — assignments in `if`/`while`/`for` conditions | `misc.assignment_in_condition` |
+| Rule 14.4 | The controlling expression shall be essentially Boolean | Partial — comparisons with `true`/`false` | `misc.boolean_comparison` |
+| Rule 15.1 | The `goto` statement should not be used | **Implemented** | `misc.goto_usage` |
+| Rule 15.7 | All `if … else if` constructs shall be terminated with an `else` | Partial — empty `else` blocks flagged | `misc.empty_else` |
+| Rule 17.2 | Functions shall not call themselves, directly or indirectly | Partial — direct recursion only | `misc.recursive_function` |
+| Rule 14.x / 15.x (others) | Control flow (unreachable code, switch) | Out of scope | — |
+| Rule 17.x (others) | Function usage (variable-argument functions, return values) | Out of scope | — |
 | Rule 18.x | Pointer type conversion and arithmetic | Out of scope | — |
 | Rule 20.7 | Expressions resulting from the expansion of macro parameters shall be enclosed in parentheses | Partial — `macro.multistatement_wrapper` enforces do-while wrapper | `macro.multistatement_wrapper` |
 | Rule 20.10 | The `#` and `##` preprocessor operators should not be used | Out of scope | — |

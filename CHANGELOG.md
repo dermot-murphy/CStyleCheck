@@ -11,6 +11,33 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- **8 new MISRA C / Barr-C rules** (81 rule IDs in total), all enabled by default in `src/rules.yml`:
+  - `misc.goto_usage` (error) — every `goto` (MISRA C:2012 Rule 15.1)
+    ([#391](https://github.com/dermot-murphy/CStyleCheck/pull/391)).
+  - `misc.assignment_in_condition` (warning) — `=` inside an `if`/`while` condition or a
+    `for` condition clause (MISRA C:2012 Rule 13.4)
+    ([#391](https://github.com/dermot-murphy/CStyleCheck/pull/391)).
+  - `misc.multiple_statements_per_line` (warning) — more than one statement on a line;
+    `for` headers exempt (Barr-C §3.2).
+  - `misc.void_pointer` (warning) — `void *` usage (MISRA C:2012 Rule 11.5).
+  - `misc.recursive_function` (error) — direct recursion (MISRA C:2012 Rule 17.2).
+  - `misc.sizeof_type` (info) — `sizeof` applied to a type name instead of an object
+    (Barr-C §5.7).
+  - `misc.boolean_comparison` (warning) — `==`/`!=` against `true`/`false`
+    (MISRA C:2012 Rule 14.4).
+  - `misc.empty_else` (warning) — empty `else { }` block; a block containing a comment
+    is accepted (Barr-C §8.3).
+
+  The last six were added in [#392](https://github.com/dermot-murphy/CStyleCheck/pull/392).
+  Projects upgrading with an existing `rules.yml` can add the new keys with
+  `--update-config`. 76 new tests in `tests/test_misra_rules.py`.
+- **Trend analysis — safety indicators** — `scripts/collect_metrics.py` records
+  `assert_count`, `assert_density` (per KLOC SLOC), `goto_count`, `void_ptr_count`,
+  `cast_count` (C-style casts) and `macro_count` (excluding include guards), counted on
+  comment- and string-stripped text. `scripts/generate_charts.py` adds the
+  `safety_indicators` and `macro_metrics` charts, and `scripts/update_wiki_metrics.py`
+  adds snapshot rows for them
+  ([#392](https://github.com/dermot-murphy/CStyleCheck/pull/392)).
 - **Trend analysis — industry-standard C source code metrics** — `scripts/collect_metrics.py`
   now uses a comment/string-aware lexer (`strip_comments_and_strings()`, `classify_lines()`,
   `extract_functions()`, `count_file_scope_variables()`) so keywords, braces and calls inside
@@ -30,6 +57,12 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- **Dependabot targets `develop`** — `.github/dependabot.yml` sets `target-branch: develop`
+  for the `pip` and `github-actions` ecosystems (hotfix
+  [#399](https://github.com/dermot-murphy/CStyleCheck/pull/399), back-merged in
+  [#403](https://github.com/dermot-murphy/CStyleCheck/pull/403)). GitHub Actions updated:
+  `actions/checkout@v7`, `actions/setup-python@v7`, `actions/upload-artifact@v7`,
+  `docker/login-action@v4.6.0` (#386, #387, #400–#402, #404).
 - **Trend metrics accuracy** — cyclomatic complexity no longer counts `do` separately from
   its `while`; `assert`/`goto`/`void *`/cast/macro counters ignore comments and strings;
   `func_over_params` threshold is now > 5 parameters (was > 6); function length is measured
