@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.20 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.21 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.21 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.20 | 2026-09-29 | Claude | Issue #413 (CR-413): SWE1-094 requirement aligned with the code; §6 SWE1-094/095 row Covered in full (partial `--quiet` note removed); BP3 note total 1444; referenced-document versions resynced (SWE1 2.9→2.10, SWE5 1.16→1.17) |
 | 1.19 | 2026-09-29 | Claude | #410: BP3 evidence no longer claims MISRA C:2012 Rule 14.4 coverage |
 | 1.18 | 2026-09-29 | Claude | Issue #407: §6 SWE1-094 row adds UV-CLI-017 to UV-CLI-019 (partial: `--quiet` clause not implemented); SWE1-096 row Covered by UV-CLI-020 to UV-CLI-022 (Windows `\` and POSIX `/`); output-behaviour row adds `test_cli_requirements.py`; BP3 note total 1439 (also records #408: `test_misra_rules.py` 140→141); referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE5 1.15→1.16, SYS5 1.9→1.10) |
@@ -56,10 +57,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.11 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.17 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.10 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.12 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.18 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.12 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.15 |
 
 ### 3.2 Software Configuration Under Test
 

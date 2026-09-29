@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-STD-001 | **Version** | 1.5 |
+| **Document ID** | CSC-STD-001 | **Version** | 1.6 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.5 | 2026-09-29 | Claude | Issue #410: §7.8 `misc.boolean_comparison` row — MISRA C:2012 column no longer cites Rule 14.4 (style rule; `if (flag == true)` is compliant with Rule 14.4) |
 | 1.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE3 1.18→1.19) |
 | 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-023: `goto` (P10-1, MISRA 15.1) and recursion (AV 119, MISRA 17.2) rows 🔵→🟢; add §7.8 mapping the 8 post-v1.6.0 rules (#391/#392) to the surveyed standards; footer version v1.1→v1.3. AUD9-F-014: referenced-document versions resynced to current revisions |
@@ -44,9 +45,9 @@ The findings are presented in a unified coverage matrix and a prioritised list o
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.9 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.14 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.19 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.12 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.17 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.22 |
 
 ---
 

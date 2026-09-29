@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.11 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.12 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.12 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | #413: test total 1439→1444 |
 | 1.10 | 2026-09-29 | Claude | Issue #407: VTC-003 result note records 1439 tests after #408 and #407; referenced-document versions resynced (SUP8 1.13→1.14, SYS2 2.3→2.4, SYS3 1.7→1.8, SYS4 1.12→1.13) |
 | 1.9 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-VTC-003 → 81 rule IDs (add the non_ascii_source, constant_comparison and 8 post-v1.6.0 MISRA/Barr-C rule rows); §5/§6 counts. AUD9-F-006: SYS-VTC-007 baseline format and step 5 (line-independent matching). AUD9-F-026: CM baseline; scope text. AUD9-F-014: referenced-document versions resynced to current revisions |
@@ -47,11 +48,11 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.4 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.8 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.13 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.6 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.9 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.15 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.15 |
 
 ### 3.3 System Configuration Under Test
 

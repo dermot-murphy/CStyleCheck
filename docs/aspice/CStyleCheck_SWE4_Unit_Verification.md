@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.26 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.27 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.27 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.26 | 2026-09-29 | Claude | Issue #413 (CR-413): SWE1-094 now matches the code, so UV-CLI-017 to UV-CLI-019 verify it in full; 5 tests added (piped stdout, `--log` copy, exactly two lines, copyright line format, no `--quiet` option); §5.17 and §6 `test_cli_requirements.py` 16→21; total 1439→1444; coverage-gate text 1439→1444; §7 SWE1-094 row full and the partial-verification note removed; referenced-document versions resynced (SWE1 2.9→2.10, SWE3 1.19→1.20, SWE5 1.16→1.17) |
 | 1.25 | 2026-09-29 | Claude | #410: UV-MSR-007 no longer cites MISRA C:2012 Rule 14.4 (`misc.boolean_comparison` is a style rule) |
 | 1.24 | 2026-09-29 | Claude | Issue #407 (RR-003-001, AUD9-F-004): add §5.17 `test_cli_requirements.py` (16 tests, UV-CLI-014 to UV-CLI-022) giving SWE1-015 (single read per file), SWE1-094 (startup banner on stderr) and SWE1-096 (OS-native path separator) dedicated unit tests; §6 row (total 1423→1439, modules 54→55); coverage-gate text 1423→1439; §7 rows for SWE1-015, SWE1-094 and SWE1-096 now cite the UV IDs (SWE1-094 `--quiet` suppression and one-line form not implemented — see §7 note); §3.1 referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE3 1.18→1.19, SWE5 1.15→1.16) |
@@ -61,10 +62,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.11 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.21 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.17 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.12 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.22 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.18 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.15 |
 
 ---
 

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.17 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.18 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.18 | 2026-09-29 | Claude | Release-prep cross-reference resync: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.17 | 2026-09-29 | Claude | Issue #413 (CR-413): SIT-024 step 1 expects the two-line stderr banner with stdout piped; step 3 expects `--quiet` to be rejected (no suppression); post-v1.6.0 note 1439→1444 tests; referenced-document versions resynced (SWE2 1.14→1.15, SWE1 2.9→2.10, SWE4 1.24→1.25, SWE6 1.18→1.19) |
 | 1.16 | 2026-09-29 | Claude | Issue #407: §7 SIT-011 and SIT-024 rows cite UV-CLI-014 to UV-CLI-016 and UV-CLI-017 to UV-CLI-019; post-v1.6.0 note records 1439 tests after #408 and #407; referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE4 1.22→1.24, SWE6 1.17→1.18, SYS4 1.12→1.13) |
 | 1.15 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SIT-027 for the 8 rules from #391/#392 (SWE1-109 to SWE1-116), with §6 and §7 rows and a post-v1.6.0 result note. AUD9-F-006: SWA-IF-09 → Counter multiset; SIT-012 step 4 → {"violations":[…]} with `file`; add steps 5–7 (moved violation, duplicate, Windows path); trace SIT-012 to SWE1-100/101 and UV-CLI-011 to 013. AUD9-F-026: CM baseline ID → v1.6.0 tag / develop 296e91b; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
@@ -53,11 +54,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.16 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.11 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.26 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.20 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.13 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.17 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.12 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.27 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.21 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.15 |
 
 ### 3.2 Test Environment
 

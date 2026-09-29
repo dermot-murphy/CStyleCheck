@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN3-001 | **Version** | 1.10 |
+| **Document ID** | CSC-MAN3-001 | **Version** | 1.11 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.11 | 2026-09-29 | Claude | Release-prep cross-reference resync: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.10 | 2026-09-29 | Claude | #413: test total 1439→1444 |
 | 1.9 | 2026-09-29 | Claude | Issue #407: §4.1 scope, WBS-07 and WBS-10 → 1439 tests / 55 modules (CSC-SWE4-001 v1.24); referenced-document versions resynced (MAN5 1.5→1.6, SUP1 1.10→1.11, SUP8 1.13→1.14, SWE1 2.8→2.9, SYS2 2.3→2.4) |
 | 1.8 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-020: §3.1 version 1.2.0→1.6.0; §4.1 scope (12 modules, 81 rules, 1422 tests / 54 modules, 5 workflows, Dependabot); WBS-07/10 to 16 statuses; §8 schedule adds actuals for v1.2.0 to v1.6.0, CSC-AUD-009 and the planned v1.7.0. AUD9-F-011: add §10.3 Trend-Analysis Metrics Monitoring (parent of SWE1-102 to SWE1-108 and SWE1-117) and a §10.1 row; `rules.yml` → `cstylecheck_rules.yml`. AUD9-F-014: referenced-document versions resynced to current revisions |
@@ -54,11 +55,11 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | System Requirements Specification | 2.4 |
-| CSC-SWE1-001 | Software Requirements Specification | 2.9 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.14 |
-| CSC-MAN5-001 | Risk Management Plan | 1.6 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.11 |
+| CSC-SYS2-001 | System Requirements Specification | 2.6 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.12 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.15 |
+| CSC-MAN5-001 | Risk Management Plan | 1.7 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.12 |
 
 ---
 
