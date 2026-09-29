@@ -7,6 +7,36 @@
 # Structural / style rules remain enabled to produce
 # meaningful warning/error counts over time.
 # ============================================================
+#
+# ------------------------------------------------------------
+# Trend-analysis metric thresholds (issue #388)
+# ------------------------------------------------------------
+# The C source metrics computed by scripts/collect_metrics.py
+# use the thresholds below.  They are documented here for
+# reference only (this file is a CStyleCheck config and these
+# lines are comments); the authoritative values are the module
+# constants in scripts/collect_metrics.py — keep both in sync.
+#
+#   Metric                 Threshold  Constant / field            Source
+#   ---------------------  ---------  --------------------------  ---------------------------
+#   Function length        > 60 lines FUNC_LENGTH_LIMIT           Barr-C:2018, JPL Power of 10 R4
+#                                     -> func_over_length
+#   Function parameters    > 5        FUNC_PARAM_LIMIT            HIS "PARAM" metric
+#                                     -> func_over_params
+#   Cyclomatic complexity  > 10       CC_LIMIT                    McCabe / HIS "v(G)",
+#                                     -> cc_over_threshold        ISO 26262-6 Table 1
+#   CC histogram buckets   1-5, 6-10, CC_BUCKETS                  informational
+#                          11-15, 16+ -> cc_bucket_1_5 ..
+#                                        cc_bucket_16_plus
+#
+# Recommended (advisory, not enforced) target values:
+#   nesting_max            <= 4       HIS "LEVEL" metric
+#   dox_coverage_pct       100 %      ASPICE SWE.3 BP (unit interface documentation)
+#   loc_comment_density    >= 0.20    HIS "COMF" metric (comment/SLOC)
+#   global_vars            0          MISRA C:2012 Rule 8.9 / AUTOSAR BSW
+#   recursive_func_count   0          MISRA C:2012 Rule 17.2, JPL Power of 10 R1
+#   defect_density         trending down (violations per KLOC SLOC)
+# ------------------------------------------------------------
 
 file_prefix:
   enabled: false          # disabled: examples have no project prefix

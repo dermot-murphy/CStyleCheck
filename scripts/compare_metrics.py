@@ -42,7 +42,7 @@ METRICS = [
     ("func_length_avg",    "Avg function length",   False),
     ("func_over_length",   "Functions over 60 LOC", False),
     ("func_param_max",     "Max parameters",        False),
-    ("func_over_params",   "Functions over 6 params", False),
+    ("func_over_params",   "Functions over 5 params", False),
     # Cyclomatic complexity
     ("cc_max",             "CC max",                False),
     ("cc_avg",             "CC avg",                False),
@@ -54,6 +54,15 @@ METRICS = [
     ("file_length_max",    "Max file length",       False),
     # Quality index
     ("defect_density",     "Defect density (v/KLOC)", False),
+    # Extended C source metrics (issue #388)
+    ("c_file_count",       ".c files",              None),
+    ("h_file_count",       ".h files",              None),
+    ("cc_bucket_16_plus",  "Functions CC 16+",      False),
+    ("dox_coverage_pct",   "Doxygen coverage %",    True),
+    ("global_vars",        "Global variables",      False),
+    ("fanout_avg",         "Avg fan-out",           None),
+    ("recursive_func_count", "Recursive functions", False),
+    ("files_zero_violations", "Files with 0 violations", True),
 ]
 
 

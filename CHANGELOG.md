@@ -9,6 +9,34 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Trend analysis — industry-standard C source code metrics** — `scripts/collect_metrics.py`
+  now uses a comment/string-aware lexer (`strip_comments_and_strings()`, `classify_lines()`,
+  `extract_functions()`, `count_file_scope_variables()`) so keywords, braces and calls inside
+  comments or strings are never counted. New per-commit data-point fields (existing fields
+  are unchanged; older data points without them still chart):
+  `c_file_count`, `h_file_count`, `cc_bucket_1_5`, `cc_bucket_6_10`, `cc_bucket_11_15`,
+  `cc_bucket_16_plus`, `dox_coverage_pct`, `global_vars`, `fanout_avg`,
+  `recursive_func_count`, `violations_by_category`, `files_zero_violations`, `top_rules`.
+  New charts in `scripts/generate_charts.py`: `cc_distribution` (stacked),
+  `function_size`, `violations_by_category` (stacked), `documentation_coverage`,
+  `coupling`; `loc_breakdown` is now a stacked-area LOC composition chart and
+  `defect_density` plots defect density alone. `scripts/update_wiki_metrics.py` adds
+  snapshot rows for the new metrics plus violations-by-category and top-5-rules tables;
+  `scripts/compare_metrics.py` compares the new scalar metrics. Thresholds are documented
+  in `scripts/metrics_rules.yml`
+  (issue [#388](https://github.com/dermot-murphy/CStyleCheck/issues/388)).
+
+### Changed
+
+- **Trend metrics accuracy** — cyclomatic complexity no longer counts `do` separately from
+  its `while`; `assert`/`goto`/`void *`/cast/macro counters ignore comments and strings;
+  `func_over_params` threshold is now > 5 parameters (was > 6); function length is measured
+  from the function-name line to the closing brace; static-variable counting handles
+  multi-line and multi-declarator definitions. Expect a one-off step in these series
+  (issue [#388](https://github.com/dermot-murphy/CStyleCheck/issues/388)).
+
 ### Fixed
 
 - **Baseline matching ignores line numbers (#394)** — `--baseline-file` now matches

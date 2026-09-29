@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.11 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.12 |
 | **Project** | CStyleCheck | **Date** | 2026-07-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.12 | 2026-09-29 | Claude | Add trend-analysis metrics workflow, scripts, threshold config and unit tests to CI list (CI-038 to CI-044) — issue #388 |
 | 1.11 | 2026-07-06 | Claude | ASPICE audit — add prerelease_check.sh, check_my_project.bat, DOCKERHUB_README.md to CI list — closes #379 |
 | 1.10 | 2026-07-01 | Claude | v1.6.0 release — update §3.1 scope to v1.6.0; update §3.3 SWE1 ref 2.4→2.5 |
 | 1.9 | 2026-06-27 | Fix §3.3 cross-ref: SWE1 2.2→2.4 (+ any other stale refs fixed) | Dermot Murphy |
@@ -156,6 +157,13 @@ All items in the following table are placed under configuration control.
 | CI-035 | Pre-release validation script | `scripts/prerelease_check.sh` | CI/CD script |
 | CI-036 | Pre-release validation script (Windows) | `scripts/check_my_project.bat` | CI/CD script |
 | CI-037 | DockerHub repository description | `DOCKERHUB_README.md` | Documentation |
+| CI-038 | CI — trend-analysis metrics workflow | `.github/workflows/metrics.yml` | CI/CD |
+| CI-039 | Trend metrics collection script (C source metrics) | `scripts/collect_metrics.py` | CI script |
+| CI-040 | Trend chart (SVG) generation script | `scripts/generate_charts.py` | CI script |
+| CI-041 | Trend-Analysis wiki page generation script | `scripts/update_wiki_metrics.py` | CI script |
+| CI-042 | PR metrics comparison report script | `scripts/compare_metrics.py` | CI script |
+| CI-043 | Trend metrics CStyleCheck config and threshold documentation | `scripts/metrics_rules.yml` | CI config |
+| CI-044 | Trend metrics unit tests | `tests/test_collect_metrics.py` | Test |
 
 ### 6.2 Identification Scheme
 

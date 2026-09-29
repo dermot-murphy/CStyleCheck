@@ -121,13 +121,57 @@ def main():
         ("Void pointer count",      "void_ptr_count"),
         ("C-style cast count",      "cast_count"),
         ("Macro count",             "macro_count"),
+        # Extended C source metrics (issue #388)
+        (".c files",                "c_file_count"),
+        (".h files",                "h_file_count"),
+        ("Funcs over 5 params",     "func_over_params"),
+        ("Funcs CC > 10",           "cc_over_threshold"),
+        ("Funcs CC 1-5",            "cc_bucket_1_5"),
+        ("Funcs CC 6-10",           "cc_bucket_6_10"),
+        ("Funcs CC 11-15",          "cc_bucket_11_15"),
+        ("Funcs CC 16+",            "cc_bucket_16_plus"),
+        ("Doxygen coverage %",      "dox_coverage_pct"),
+        ("Global vars",             "global_vars"),
+        ("Avg fan-out",             "fanout_avg"),
+        ("Recursive functions",     "recursive_func_count"),
+        ("Files with 0 violations", "files_zero_violations"),
     ]
 
     for label, key in metrics:
         vals = [points[b].get(key) if points[b] else None for b in BRANCHES]
         lines.append(_table_row(label, *vals))
 
-    lines += ["", "---", ""]
+    lines += [""]
+
+    # Violations by rule category (issue #388)
+    cats = sorted({c for b in BRANCHES if points[b]
+                   for c in (points[b].get("violations_by_category") or {})})
+    if cats:
+        lines += ["### Violations by rule category", ""]
+        lines.append("| " + " | ".join(["Category"] + BRANCHES) + " |")
+        lines.append("| " + " | ".join("---" for _ in range(len(BRANCHES) + 1)) + " |")
+        for cat in cats:
+            vals = [((points[b].get("violations_by_category") or {}).get(cat, 0)
+                     if points[b] and points[b].get("violations_by_category") is not None
+                     else None) for b in BRANCHES]
+            lines.append(_table_row(f"`{cat}`", *vals))
+        lines.append("")
+
+    # Top-5 violated rules (issue #388)
+    if any(points[b] and points[b].get("top_rules") for b in BRANCHES):
+        lines += ["### Top 5 violated rules", ""]
+        lines.append("| Rank | " + " | ".join(BRANCHES) + " |")
+        lines.append("| " + " | ".join("---" for _ in range(len(BRANCHES) + 1)) + " |")
+        for rank in range(5):
+            cells = []
+            for b in BRANCHES:
+                tr = (points[b] or {}).get("top_rules") or []
+                cells.append(f"`{tr[rank]['rule']}` ({tr[rank]['count']})"
+                             if rank < len(tr) else "—")
+            lines.append(f"| {rank + 1} | " + " | ".join(cells) + " |")
+        lines.append("")
+
+    lines += ["---", ""]
 
     # Charts per branch
     chart_keys = [
@@ -137,9 +181,14 @@ def main():
         ("file_churn",            "File churn per commit"),
         ("ratios",                "Comment & whitespace ratios"),
         ("test_rule_counts",      "Test & rule counts"),
-        ("loc_breakdown",         "LOC breakdown (SLOC / comment / doxygen / blank)"),
+        ("loc_breakdown",         "LOC composition (SLOC / comment / doxygen / blank, stacked)"),
         ("cyclomatic_complexity", "Cyclomatic complexity & nesting depth"),
-        ("defect_density",        "Defect density & documentation coverage"),
+        ("cc_distribution",       "Cyclomatic complexity distribution (stacked)"),
+        ("function_size",         "Function count & average length"),
+        ("defect_density",        "Defect density (violations per KLOC SLOC)"),
+        ("violations_by_category", "Violations by rule category (stacked)"),
+        ("documentation_coverage", "Documentation coverage (comment density % & doxygen coverage %)"),
+        ("coupling",              "Coupling (global/static vars, fan-out, recursion)"),
         ("func_metrics",          "Function count, max length & static variables"),
         ("safety_indicators",     "Safety indicators (goto, void ptr, casts, asserts)"),
         ("macro_metrics",         "Macro count & assert density"),

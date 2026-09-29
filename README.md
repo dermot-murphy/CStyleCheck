@@ -31,10 +31,13 @@ Draft companion documents (pending rule population, not yet authoritative):
 Code quality metrics tracked after every PR merge to `main` and `develop`.
 Full charts and history on the **[Trend Analysis](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis)** wiki page.
 
+`scripts/collect_metrics.py` also records industry-standard C source metrics for `examples/` (pure-Python heuristics, no compiler): LOC composition (SLOC / comment / doxygen / blank), cyclomatic complexity (max, average, distribution) and nesting depth, function size and parameter counts, doxygen coverage, coupling (global/static variables, fan-out, recursion) and violation quality (violations per KLOC, by rule category, top rules). The thresholds used (function > 60 lines, > 5 parameters, V(G) > 10) are documented in `scripts/metrics_rules.yml`.
+
 | Chart | main | develop |
 |---|---|---|
 | Violations | [![violations-main](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/main_errors_warnings.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) | [![violations-develop](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/develop_errors_warnings.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) |
 | File stats | [![files-main](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/main_file_stats.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) | [![files-develop](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/develop_file_stats.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) |
+| LOC composition | [![loc-main](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/main_loc_breakdown.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) | [![loc-develop](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/develop_loc_breakdown.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) |
 | Ratios | [![ratios-main](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/main_ratios.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) | [![ratios-develop](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/develop_ratios.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) |
 
 ---
@@ -129,6 +132,7 @@ tests/
     test_constant_comparison.py # 27 tests: misc.constant_comparison
     test_unsigned_suffix_signed_params.py # 15 tests: misc.unsigned_suffix signed-param exemption
     test_pointer_prefix_fix.py # 20 tests: variable.pointer_prefix auto-fix
+    test_collect_metrics.py # 54 tests: trend-analysis C source metrics (scripts/)
 Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
