@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-DEV-002 | **Version** | 1.10 |
+| **Document ID** | CSC-DEV-002 | **Version** | 1.11 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Approved | **Classification** | Internal |
 | **Author** | Dermot Murphy | **Reviewer** | Dermot Murphy |
@@ -20,7 +20,8 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.10 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.11 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.10 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.9 | 2026-09-29 | Claude | Cross-reference resync with #424: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.8 | 2026-09-29 | Claude | Cross-reference resync with #422: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.7 | 2026-09-29 | Claude | Cross-reference resync with #420: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -160,9 +161,9 @@ This deviation is accepted on the basis that CStyleCheck is a single-person proj
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-DEV-001 | Process Deviation — AI-Assisted Authorship | 1.11 |
-| CSC-PA2-001 | Process Capability Records | 1.32 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.21 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.11 |
-| CSC-SUP10-001 | Change Request Plan | 1.12 |
+| CSC-DEV-001 | Process Deviation — AI-Assisted Authorship | 1.12 |
+| CSC-PA2-001 | Process Capability Records | 1.33 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.22 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.12 |
+| CSC-SUP10-001 | Change Request Plan | 1.13 |
 | GitHub Issue #61 | Designate independent reviewer (not approver) for SWE1, SWE4, SWE6 work products | — |
