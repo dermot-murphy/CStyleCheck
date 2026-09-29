@@ -81,12 +81,16 @@ from .utils import (                     # noqa: F401, E402
     _strip_module_prefix,
     _github_annotation_category,
     _CASE_PATTERNS,
+    _CASE_ALIASES,
+    normalize_case_style,
 )
 
 from .config import (                    # noqa: F401, E402
     _read_options_file,
     _expand_options_file,
     load_config,
+    validate_case_styles,
+    _CASE_STYLE_KEYS,
     load_spell_words,
     load_alias_file,
     load_exclusions_file,
@@ -170,6 +174,7 @@ from .wizard import (                    # noqa: F401, E402
     run_wizard,
     run_preset,
     PRESETS,
+    WIZARD_CASE_CHOICES,
 )
 
 from .cli import (                       # noqa: F401, E402

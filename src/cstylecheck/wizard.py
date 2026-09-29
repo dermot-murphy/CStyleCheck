@@ -38,6 +38,16 @@ _OPT_IN_SEVERITY: dict[str, str] = {
 }
 
 
+# --init wizard naming-convention choices: on-screen label -> canonical
+# case-style name written to the config (a key of utils._CASE_PATTERNS).
+# Label order is the prompt order (#422).
+WIZARD_CASE_CHOICES: dict[str, str] = {
+    "lower_snake": "lower_snake",
+    "camelCase":   "camel",
+    "PascalCase":  "pascal",
+}
+
+
 def _opt_in(rules: tuple[str, ...]) -> dict:
     """Return ordered ``misc`` entries enabling *rules* at shipped severity."""
     return {r: {"enabled": True, "severity": _OPT_IN_SEVERITY[r]} for r in rules}
@@ -57,14 +67,18 @@ _PRESET_BARR_C = {
     "functions":    {"enabled": True,  "severity": "error", "case": "lower_snake",
                      "min_length": 3, "max_length": 40},
     "typedefs":     {"enabled": True,  "severity": "error",
-                     "case": "PascalCase",
+                     # Barr-C §5.1.a: type names are lower-case with an
+                     # _t suffix.  Canonical case names only (#422); the
+                     # old "PascalCase" was unknown (silently passed) and
+                     # is unsatisfiable together with the _t suffix.
+                     "case": "lower_snake",
                      # nested {enabled, suffix} form per rules.yml; a bare
                      # string crashed the checker (#420)
                      "suffix": {"enabled": True, "suffix": "_t"}},
     "enums":        {"enabled": True,  "severity": "error",
-                     "type_case": "PascalCase",
+                     "type_case": "lower_snake",   # Barr-C §5.1.a (#422)
                      "type_suffix": {"enabled": True, "suffix": "_t"},
-                     "member_case": "UPPER_SNAKE"},
+                     "member_case": "upper_snake"},
     "misc": {
         "line_length":        {"enabled": True,  "severity": "warning", "max": 120},
         "magic_numbers":      {"enabled": True,  "severity": "warning",
@@ -210,12 +224,15 @@ def run_wizard(
     print_fn("\nCStyleCheck config wizard - press Enter to accept defaults.\n")
 
     # ---- Naming convention ----
-    var_case = _ask_choice(
+    # Friendly labels on screen; the canonical _CASE_PATTERNS name is
+    # what gets written to the config (#422).
+    var_case_label = _ask_choice(
         "Variable naming convention?",
-        ["lower_snake", "camelCase", "PascalCase"],
+        list(WIZARD_CASE_CHOICES),
         "lower_snake",
         prompt_fn=prompt_fn,
     )
+    var_case = WIZARD_CASE_CHOICES[var_case_label]
 
     min_len_str = _ask("Minimum variable name length?", "2", prompt_fn=prompt_fn)
     try:

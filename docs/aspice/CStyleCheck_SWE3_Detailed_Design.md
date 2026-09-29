@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.25 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.26 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.26 | 2026-09-29 | Claude | Issue #422: UNIT-05 algorithm — `validate_case_styles()` normalises every case-style key (`_CASE_STYLE_KEYS`) and `functions.style` / `file_prefix.case` / `misc.eof_comment.filename_case`; unknown value → `ERROR:` message naming file, key, value and allowed values, exit 2; UNIT-43 — `normalize_case_style()` aliases (case-insensitive), `any` style, unknown style raises `ValueError` (was `True`); UNIT-44 normalises; UNIT-98 — `WIZARD_CASE_CHOICES` labels stored as canonical names; UNIT-99 — presets write canonical names, `barr-c` typedef / enum type `lower_snake`; UNIT-100 — per-directory configs validated; §4 catalogue line numbers (`config.py`, `utils.py`, `wizard.py`); §4.1 package structure; §6.1 case-style keys; §8 SWE1-001/002 row; referenced-document versions resynced (3) |
 | 1.25 | 2026-09-29 | Claude | Issue #420: UNIT-98 algorithm — two new yes/no prompts (default No) for the MISRA C:2012 and Barr-C opt-in rule sets, rules listed with shipped severity; UNIT-99 — `PRESETS` enable the matching opt-in rules via `MISRA_OPT_IN_RULES` / `BARR_C_OPT_IN_RULES`, deterministic ordered output, `barr-c` suffix keys in nested form; §4 catalogue line numbers (`wizard.py:191`, `wizard.py:307`); referenced-document versions resynced (3) |
 | 1.24 | 2026-09-29 | Claude | Issue #418 (CR-418): UNIT-128 to UNIT-133 and UNIT-135 algorithms — `enabled` defaults to `false` when the key is absent (opt-in); §6.1 `enabled` default `true`→`false` for `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type` and `misc.empty_else`; UNIT-128 to UNIT-135 `checker.py` line numbers updated; referenced-document versions resynced (3) |
 | 1.23 | 2026-09-29 | Claude | Issue #412: UNIT-134 algorithm — disabled by default (also when the key is absent), lowercase `true`/`false` only; §6.1 `misc.boolean_comparison.enabled` default `true`→`false`; referenced-document versions resynced (3) |
@@ -56,9 +57,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.15 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.20 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.30 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.16 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.21 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.31 |
 
 ---
 
@@ -68,19 +69,19 @@ All source locations refer to the current package layout under `src/cstylecheck/
 
 | Unit ID | Unit Name | Source Location | Component | Module |
 |---|---|---|---|---|
-| UNIT-01 | `_read_options_file` | `config.py:30` | COMP-01 | `config.py` |
-| UNIT-02 | `_expand_options_file` | `config.py:61` | COMP-01 | `config.py` |
+| UNIT-01 | `_read_options_file` | `config.py:32` | COMP-01 | `config.py` |
+| UNIT-02 | `_expand_options_file` | `config.py:63` | COMP-01 | `config.py` |
 | UNIT-03 | `discover_files` | `cli.py:118` | COMP-01 | `cli.py` |
 | UNIT-04 | `_path_matches_exclude` | `cli.py:44` | COMP-01 | `cli.py` |
-| UNIT-05 | `load_config` | `config.py:251` | COMP-02 | `config.py` |
-| UNIT-06 | `load_alias_file` | `config.py:294` | COMP-02 | `config.py` |
-| UNIT-07 | `load_exclusions_file` | `config.py:340` | COMP-02 | `config.py` |
-| UNIT-08 | `_disabled_rules_for_file` | `config.py:389` | COMP-02 | `config.py` |
-| UNIT-09 | `load_defines_file` | `config.py:418` | COMP-02 | `config.py` |
-| UNIT-10 | `apply_defines` | `config.py:467` | COMP-02 | `config.py` |
-| UNIT-11 | `_load_dict_file` | `config.py:484` | COMP-03 | `config.py` |
-| UNIT-12 | `_data_file` | `config.py:503` | COMP-03 | `config.py` |
-| UNIT-13 | `_build_spell_dict` | `config.py:642` | COMP-03 | `config.py` |
+| UNIT-05 | `load_config` | `config.py:351` | COMP-02 | `config.py` |
+| UNIT-06 | `load_alias_file` | `config.py:397` | COMP-02 | `config.py` |
+| UNIT-07 | `load_exclusions_file` | `config.py:443` | COMP-02 | `config.py` |
+| UNIT-08 | `_disabled_rules_for_file` | `config.py:492` | COMP-02 | `config.py` |
+| UNIT-09 | `load_defines_file` | `config.py:521` | COMP-02 | `config.py` |
+| UNIT-10 | `apply_defines` | `config.py:570` | COMP-02 | `config.py` |
+| UNIT-11 | `_load_dict_file` | `config.py:587` | COMP-03 | `config.py` |
+| UNIT-12 | `_data_file` | `config.py:606` | COMP-03 | `config.py` |
+| UNIT-13 | `_build_spell_dict` | `config.py:745` | COMP-03 | `config.py` |
 | UNIT-14 | `strip_comments` | `preprocessor.py:19` | COMP-04 | `preprocessor.py` |
 | UNIT-15 | `strip_strings` | `preprocessor.py:29` | COMP-04 | `preprocessor.py` |
 | UNIT-16 | `preprocess` | `preprocessor.py:44` | COMP-04 | `preprocessor.py` |
@@ -110,19 +111,19 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-40 | `print_summary` | `output.py:269` | COMP-07 | `output.py` |
 | UNIT-41 | `Violation.__str__` | `models.py:59` | COMP-07 | `models.py` |
 | UNIT-42 | `Violation.github_annotation` | `models.py:45` | COMP-07 | `models.py` |
-| UNIT-43 | `matches_case` | `utils.py:48` | COMP-05 (shared) | `utils.py` |
-| UNIT-44 | `matches_case_abbrev` | `utils.py:53` | COMP-05 (shared) | `utils.py` |
-| UNIT-45 | `module_name` | `utils.py:84` | COMP-05 (shared) | `utils.py` |
+| UNIT-43 | `matches_case` | `utils.py:84` | COMP-05 (shared) | `utils.py` |
+| UNIT-44 | `matches_case_abbrev` | `utils.py:100` | COMP-05 (shared) | `utils.py` |
+| UNIT-45 | `module_name` | `utils.py:133` | COMP-05 (shared) | `utils.py` |
 | UNIT-46 | `main` | `cli.py:367` | Entry point | `cli.py` |
 | UNIT-47 | `append_trend_record` (script) | `scripts/ci/append_trend_record.py` | CI script | (unchanged) |
 | UNIT-48 | `generate_trend` (script) | `scripts/ci/generate_trend.py` | CI script | (unchanged) |
 | UNIT-49 | `update_readme_badge` (script) | `scripts/ci/update_readme_badge.py` | CI script | (unchanged) |
-| UNIT-50 | `load_spell_words` | `config.py:277` | COMP-02 | `config.py` |
-| UNIT-51 | `load_banned_names_file` | `config.py:540` | COMP-02 | `config.py` |
-| UNIT-52 | `load_copyright_file` | `config.py:575` | COMP-02 | `config.py` |
-| UNIT-53 | `to_case` | `utils.py:75` | COMP-05 (shared) | `utils.py` |
-| UNIT-54 | `is_exempt` | `utils.py:88` | COMP-05 (shared) | `utils.py` |
-| UNIT-55 | `_cfg` | `utils.py:98` | COMP-05 (shared) | `utils.py` |
+| UNIT-50 | `load_spell_words` | `config.py:380` | COMP-02 | `config.py` |
+| UNIT-51 | `load_banned_names_file` | `config.py:643` | COMP-02 | `config.py` |
+| UNIT-52 | `load_copyright_file` | `config.py:678` | COMP-02 | `config.py` |
+| UNIT-53 | `to_case` | `utils.py:123` | COMP-05 (shared) | `utils.py` |
+| UNIT-54 | `is_exempt` | `utils.py:137` | COMP-05 (shared) | `utils.py` |
+| UNIT-55 | `_cfg` | `utils.py:147` | COMP-05 (shared) | `utils.py` |
 | UNIT-56 | `extract_comments` | `preprocessor.py:158` | COMP-04 | `preprocessor.py` |
 | UNIT-57 | `Checker._violation` | `checker.py:250` | COMP-05 | `checker.py` |
 | UNIT-58 | `Checker._v` | `checker.py:254` | COMP-05 | `checker.py` |
@@ -152,22 +153,22 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-82 | `SignChecker._build_typedef_map` | `sign_checker.py:192` | COMP-05g | `sign_checker.py` |
 | UNIT-83 | `SignChecker._build_signatures` | `sign_checker.py:231` | COMP-05g | `sign_checker.py` |
 | UNIT-84 | `DeclaredNotDefinedChecker` (class) | `sign_checker.py:319` | COMP-05g | `sign_checker.py` |
-| UNIT-85 | `_strip_module_prefix` | `utils.py:113` | COMP-05 (shared) | `utils.py` |
+| UNIT-85 | `_strip_module_prefix` | `utils.py:162` | COMP-05 (shared) | `utils.py` |
 | UNIT-86 | `Tee` | `output.py:18` | COMP-07 | `output.py` |
 | UNIT-87 | `parse_args` | `cli.py:190` | COMP-01 | `cli.py` |
 | UNIT-88 | `_build_parser` | `cli.py:195` | COMP-01 | `cli.py` |
-| UNIT-89 | `_github_annotation_category` | `utils.py:21` | COMP-07 | `utils.py` |
+| UNIT-89 | `_github_annotation_category` | `utils.py:22` | COMP-07 | `utils.py` |
 | UNIT-90 | `Checker._check_whitespace_ratio` | `checker.py:1892` | COMP-05f | `checker.py` |
-| UNIT-91 | `_find_default_rules` | `config.py:93` | COMP-02 | `config.py` |
-| UNIT-92 | `_deep_merge` | `config.py:114` | COMP-02 | `config.py` |
-| UNIT-93 | `_collect_paths` | `config.py:137` | COMP-02 | `config.py` |
-| UNIT-94 | `update_config` | `config.py:148` | COMP-02 | `config.py` |
+| UNIT-91 | `_find_default_rules` | `config.py:95` | COMP-02 | `config.py` |
+| UNIT-92 | `_deep_merge` | `config.py:116` | COMP-02 | `config.py` |
+| UNIT-93 | `_collect_paths` | `config.py:139` | COMP-02 | `config.py` |
+| UNIT-94 | `update_config` | `config.py:150` | COMP-02 | `config.py` |
 | UNIT-95 | `parse_inline_suppressions` | `preprocessor.py:77` | COMP-04 | `preprocessor.py` |
 | UNIT-96 | `apply_fixes` | `fixer.py:337` | COMP-08 | `fixer.py` |
 | UNIT-97 | `unified_diff` | `fixer.py:386` | COMP-08 | `fixer.py` |
-| UNIT-98 | `run_wizard` | `wizard.py:191` | COMP-09 | `wizard.py` |
-| UNIT-99 | `run_preset` | `wizard.py:307` | COMP-09 | `wizard.py` |
-| UNIT-100 | `resolve_per_dir_config` | `config.py:686` | COMP-10 | `config.py` |
+| UNIT-98 | `run_wizard` | `wizard.py:205` | COMP-09 | `wizard.py` |
+| UNIT-99 | `run_preset` | `wizard.py:324` | COMP-09 | `wizard.py` |
+| UNIT-100 | `resolve_per_dir_config` | `config.py:792` | COMP-10 | `config.py` |
 | UNIT-101 | `_violations_to_html` | `output.py:182` | COMP-07 | `output.py` |
 | UNIT-102 | `_check_function_length` | `checker.py:2953` | COMP-05f | `checker.py` |
 | UNIT-103 | `_check_function_doc_header` | `checker.py:2987` | COMP-05f | `checker.py` |
@@ -218,12 +219,14 @@ src/cstylecheck/
                      build_line_map, offset_to_line_col,
                      _build_brace_depths, _comment_only_lines,
                      extract_comments, parse_inline_suppressions
-  utils.py         — matches_case, matches_case_abbrev, to_case,
+  utils.py         — _CASE_PATTERNS, _CASE_ALIASES, normalize_case_style,
+                     matches_case, matches_case_abbrev, to_case,
                      module_name, is_exempt, _cfg,
                      _strip_module_prefix, _github_annotation_category
   config.py        — _read_options_file, _expand_options_file,
                      _find_default_rules, _deep_merge, _collect_paths,
-                     update_config, load_config, load_spell_words,
+                     update_config, validate_case_styles, load_config,
+                     load_spell_words,
                      load_alias_file, load_exclusions_file,
                      _disabled_rules_for_file, load_defines_file,
                      apply_defines, _load_dict_file, _data_file,
@@ -320,12 +323,14 @@ src/cstylecheck/
 
 ### UNIT-05 — `load_config(path: str) → dict`
 
-**Purpose:** Load and return the YAML configuration as a Python dictionary.
+**Purpose:** Load and return the YAML configuration as a Python dictionary, with every case-style value normalised and validated (#422).
 
 **Algorithm:**
 1. Open `path`; call `yaml.safe_load()`
 2. If result is `None` or not a `dict` → `sys.exit(2)` with message
-3. Return config dict
+3. Call `validate_case_styles(cfg, path)` (#422). For each key path in `_CASE_STYLE_KEYS` (`variables.case`, `variables.{global,static,local,parameter}.case`, `constants.case`, `macros.case`, `typedefs.case`, `enums.type_case`, `enums.member_case`, `structs.tag_case`, `structs.member_case`, `functions.case`, `functions.object_case`, `functions.verb_case`) that is present, replace the value with `normalize_case_style()` (UNIT-43); a result that is not a key of `_CASE_PATTERNS` adds the error `<path>: invalid case style '<value>' for '<key>' (allowed: lower_snake, upper_snake, camel, pascal, lower, upper, any; aliases such as PascalCase, camelCase, UPPER_SNAKE and snake_case are accepted)`. The keys in `_ENUM_STYLE_KEYS` are lower-cased and checked against their own sets: `functions.style` (`object_verb`, `verb_object`, `lower_snake`, `any`; `lower_snake` aliases accepted), `file_prefix.case` (`lower`, `upper`, `as_is`), `misc.eof_comment.filename_case` (`lower`, `upper`, `preserve`); an error reads `invalid value '<value>' for '<key>' (allowed: …)`
+4. If there are errors, `_exit_on_case_style_errors()` prints each as `ERROR: <message>` to `stderr` and calls `sys.exit(2)` before any file is checked
+5. Return config dict (values now canonical)
 
 ---
 
@@ -882,7 +887,7 @@ src/cstylecheck/
 **Purpose:** Interactive Q&A wizard that prompts the user for project preferences, writes `.cstylecheck.yml` directly, and returns 0 on success or 1 on abort.
 
 **Algorithm:**
-1. Present a short series of prompts (project name, preferred naming style, which rule categories to enable) via `_ask` / `_ask_bool` / `_ask_choice`; an empty answer or `EOFError` returns the default
+1. Present a short series of prompts (project name, preferred naming style, which rule categories to enable) via `_ask` / `_ask_bool` / `_ask_choice`; an empty answer or `EOFError` returns the default. The naming-style prompt shows the labels of `WIZARD_CASE_CHOICES` in order (`lower_snake`, `camelCase`, `PascalCase`; prefix answers accepted) and stores the mapped canonical name (`lower_snake`, `camel`, `pascal`) in `variables.case` and `functions.case` (#422)
 2. Ask last, with `_ask_bool` (default No), "Enable MISRA C:2012 rules (…)?" and "Enable Barr-C rules (…)?" (#420); asking them last keeps the order of the earlier questions unchanged
 3. Build a YAML-serialisable config dict based on user answers; `misc` always lists the 7 rules of `MISRA_OPT_IN_RULES` ∪ `BARR_C_OPT_IN_RULES` (MISRA order first, `misc.empty_else` once) with the shipped severity from `_OPT_IN_SEVERITY`, and `enabled: true` only when the matching question was answered yes (`misc.empty_else` when either was); `misc.boolean_comparison` is not listed
 4. Write the config to `output_path` (default `.cstylecheck.yml`); if the file exists and `overwrite` is False → return 1 (abort)
@@ -901,6 +906,8 @@ src/cstylecheck/
 
 **`PRESETS` contents for the opt-in rules (#420):** `_opt_in()` builds ordered `misc` entries `{enabled: true, severity: <shipped default>}` from `MISRA_OPT_IN_RULES` (`goto_usage`, `assignment_in_condition`, `void_pointer`, `recursive_function`, `empty_else`) for `misra` and from `BARR_C_OPT_IN_RULES` (`multiple_statements_per_line`, `sizeof_type`, `empty_else`) for `barr-c`; `minimal` lists none of them and no preset lists `boolean_comparison`. The `barr-c` preset writes `typedefs.suffix` and `enums.type_suffix` in the nested `{enabled, suffix}` form read by UNIT-26/UNIT-27 (a bare string raised `AttributeError` in the checker).
 
+**Case-style values (#422):** every preset writes only canonical names (keys of `_CASE_PATTERNS`). `barr-c` writes `typedefs.case: lower_snake`, `enums.type_case: lower_snake` (Barr-C §5.1.a; `pascal` cannot be satisfied together with the `_t` suffix) and `enums.member_case: upper_snake`; it previously wrote `PascalCase` / `UPPER_SNAKE`, which UNIT-43 did not know and silently passed.
+
 ---
 
 ### UNIT-100 — `resolve_per_dir_config(filepath: str, root_cfg: dict, cache: dict) → dict`
@@ -913,6 +920,8 @@ src/cstylecheck/
 3. If found: load and collect; stop if `root: true` is present; continue otherwise
 4. Deep-merge collected configs (nearest wins) on top of `root_cfg`
 5. Store in `cache[dir]` and return merged result
+
+**Case-style validation (#422):** each `.cstylecheck.yml` collected by `_walk_per_dir_configs()` is passed to `validate_case_styles()` (UNIT-05 step 3) as soon as it is loaded; aliases are normalised in place and an unknown value prints `ERROR: <file>: …` and exits with code 2.
 
 ---
 
@@ -1483,7 +1492,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Test an identifier against a named case style (used by all naming rules).
 
-**Algorithm:** Look up the compiled regex for *style* in `_CASE_PATTERNS` (`lower_snake`, `upper_snake`, `camel`, `pascal`, `lower`, `upper`) and return whether it matches. An unknown style returns `True`.
+**Algorithm:** Normalise *style* with `normalize_case_style()`: strip and lower-case it; a key of `_CASE_PATTERNS` is returned as is, otherwise the `_CASE_ALIASES` entry (`pascalcase`/`pascal_case` → `pascal`; `camelcase`/`camel_case` → `camel`; `upper_snake_case`/`screaming_snake`/`screaming_snake_case` → `upper_snake`; `snake_case`/`lower_snake_case`/`snake` → `lower_snake`), or the original value when neither matches. `lower` and `upper` are canonical styles, not aliases. Look up the compiled regex in `_CASE_PATTERNS` (`lower_snake`, `upper_snake`, `camel`, `pascal`, `lower`, `upper`, and `any`, which matches everything) and return whether it matches. An unknown style raises `ValueError` (#422; before #422 it returned `True`, so naming checks silently passed). Configs loaded by UNIT-05 are validated first, so the CLI reports an unknown style as a config error (exit 2) instead.
 
 ---
 
@@ -1491,7 +1500,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Case check that tolerates allowed upper-case abbreviations (e.g. `read_FIFO_count`).
 
-**Algorithm:** For styles other than `lower_snake` / `lower`, or when *abbrevs* is empty, delegate to UNIT-43. Otherwise split on `_`: each non-empty segment must either be an allowed abbreviation (any case) or match `^[a-z0-9]+$`.
+**Algorithm:** Normalise *style* as UNIT-43 does. For styles other than `lower_snake` / `lower`, or when *abbrevs* is empty, delegate to UNIT-43. Otherwise split on `_`: each non-empty segment must either be an allowed abbreviation (any case) or match `^[a-z0-9]+$`.
 
 ---
 
@@ -1666,7 +1675,8 @@ The top-level configuration keys and their types:
 | `variables.global.g_prefix.enabled` | `bool` | `true` | Enforce `g_` prefix on globals |
 | `variables.static.s_prefix.enabled` | `bool` | `true` | Enforce `s_` prefix on file-statics |
 | `variables.pointer_prefix.enabled` | `bool` | `true` | Enforce `p_` on single-pointer variables |
-| `functions.style` | `str` | `"object_verb"` | Function naming style |
+| `functions.style` | `str` | `"object_verb"` | Function naming style (`object_verb`, `verb_object`, `lower_snake`, `any`; validated at load, #422) |
+| Case-style keys (`variables.case` and per-scope `case`, `constants.case`, `macros.case`, `typedefs.case`, `enums.type_case`, `enums.member_case`, `structs.tag_case`, `structs.member_case`, `functions.case`, `functions.object_case`, `functions.verb_case`) | `str` | per key | A key of `_CASE_PATTERNS` (`lower_snake`, `upper_snake`, `camel`, `pascal`, `lower`, `upper`, `any`); aliases normalised at load; an unknown value exits 2 (#422) |
 | `functions.static_prefix.enabled` | `bool` | `false` | Enforce static function prefix |
 | `misc.line_length.max` | `int` | `120` | Maximum line length in characters |
 | `misc.magic_numbers.enabled` | `bool` | `true` | Detect magic number literals |
@@ -1739,7 +1749,7 @@ Written by `write_baseline()` (UNIT-36) and read by `load_baseline()` (UNIT-35).
 
 | SW-REQ-ID | Requirement Area | Implementing Units |
 |---|---|---|
-| SWE1-001 to SWE1-002 | Config loading | UNIT-05 |
+| SWE1-001 to SWE1-002 | Config loading (case-style normalisation and validation, #422) | UNIT-05, UNIT-43, UNIT-100 |
 | SWE1-003 | Defines substitution | UNIT-09, UNIT-10 |
 | SWE1-004 | Alias file | UNIT-06 |
 | SWE1-005 to SWE1-006 | exclusions | UNIT-07, UNIT-08 |

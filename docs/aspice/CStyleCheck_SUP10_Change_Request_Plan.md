@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.9 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.10 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.10 | 2026-09-29 | Claude | Cross-reference resync with #422: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.9 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.8 | 2026-09-29 | Claude | Issue #418: §7 register row and new §7.1 record for CR-418 (new-rule opt-in policy; the 7 remaining post-v1.6.0 MISRA/Barr-C rules disabled by default, also when the key is absent; requirements change SWE1-109 to SWE1-114 and SWE1-116; impact on behaviour); referenced-document versions resynced (3) |
 | 1.7 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -43,9 +44,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.18 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.8 |
-| CSC-MAN3-001 | Project Management Plan | 1.14 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.19 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.9 |
+| CSC-MAN3-001 | Project Management Plan | 1.15 |
 
 ---
 

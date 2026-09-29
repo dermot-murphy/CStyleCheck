@@ -14,6 +14,7 @@ and `info`.
 
 ## Table of contents
 
+- [Case-style values](#case-style-values)
 1. [File-level module prefix](#1-file-level-module-prefix)
 2. [Variables](#2-variables)
    - [2.1 Scope-level case and length](#21-scope-level-case-and-length)
@@ -80,6 +81,63 @@ and `info`.
 14. [Inline suppression comments](#14-inline-suppression-comments)
 15. [Quick reference table](#15-quick-reference-table)
 16. [MISRA C:2012/2023 coverage matrix](#16-misra-c20122023-coverage-matrix)
+
+---
+
+## Case-style values
+
+Every key that selects a naming case style takes one of these canonical
+names:
+
+| Name | Matches | Example |
+|---|---|---|
+| `lower_snake` | lower-case letters, digits, `_` | `uart_rx_count` |
+| `upper_snake` | upper-case letters, digits, `_` | `UART_RX_COUNT` |
+| `camel` | starts lower-case, letters and digits, no `_` | `uartRxCount` |
+| `pascal` | starts upper-case, letters and digits, no `_` | `UartRxCount` |
+| `lower` | lower-case letters and digits, no `_` | `uartrxcount` |
+| `upper` | upper-case letters and digits, no `_` | `UARTRXCOUNT` |
+| `any` | anything (turns the case check off for that key) | — |
+
+Keys that take these values: `variables.case`, `variables.global.case`,
+`variables.static.case`, `variables.local.case`, `variables.parameter.case`,
+`constants.case`, `macros.case`, `typedefs.case`, `enums.type_case`,
+`enums.member_case`, `structs.tag_case`, `structs.member_case`,
+`functions.case`, `functions.object_case` and `functions.verb_case`.
+
+These aliases are also accepted and are converted to the canonical name when
+the config is loaded.  Matching ignores letter case, so `PASCALCASE` and
+`pascalcase` also work.
+
+| Alias | Canonical name |
+|---|---|
+| `PascalCase`, `Pascal`, `pascal_case` | `pascal` |
+| `camelCase`, `camel_case` | `camel` |
+| `UPPER_SNAKE`, `UPPER_SNAKE_CASE`, `SCREAMING_SNAKE`, `SCREAMING_SNAKE_CASE` | `upper_snake` |
+| `snake_case`, `lower_snake_case`, `snake` | `lower_snake` |
+
+`lower` and `upper` are separate styles, not aliases of `lower_snake` and
+`upper_snake`: they reject underscores.
+
+Three other keys have their own value sets, also matched ignoring letter case:
+
+| Key | Values |
+|---|---|
+| `functions.style` | `object_verb`, `verb_object`, `lower_snake` (or any `lower_snake` alias), `any` |
+| `file_prefix.case` | `lower`, `upper`, `as_is` |
+| `misc.eof_comment.filename_case` | `lower`, `upper`, `preserve` |
+
+**An unknown value is a config error.**  CStyleCheck stops before checking any
+file and exits with code `2`.  The message names the config file, the key, the
+value and the allowed values:
+
+```text
+ERROR: rules.yml: invalid case style 'PascalCaes' for 'typedefs.case' (allowed: lower_snake, upper_snake, camel, pascal, lower, upper, any; aliases such as PascalCase, camelCase, UPPER_SNAKE and snake_case are accepted)
+```
+
+The same check applies to per-directory `.cstylecheck.yml` overrides
+(`--per-dir-config`).  Before #422 an unknown name was ignored and
+the check always passed.
 
 ---
 

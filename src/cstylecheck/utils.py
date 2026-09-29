@@ -1,7 +1,8 @@
 """
 utils.py — Naming/case helpers and shared utility functions for CStyleCheck.
 
-Contains matches_case, matches_case_abbrev, to_case, module_name, is_exempt,
+Contains _CASE_PATTERNS, _CASE_ALIASES, normalize_case_style,
+matches_case, matches_case_abbrev, to_case, module_name, is_exempt,
 _cfg, _strip_module_prefix, and _github_annotation_category.
 
 No internal dependencies (stdlib only).
@@ -42,12 +43,58 @@ _CASE_PATTERNS = {
     "pascal":      re.compile(r"^[A-Z][a-zA-Z0-9]*$"),
     "lower":       re.compile(r"^[a-z][a-z0-9]*$"),    # no underscores
     "upper":       re.compile(r"^[A-Z][A-Z0-9]*$"),    # no underscores
+    "any":         re.compile(r"^.*$", re.DOTALL),     # explicit opt-out
+}
+
+# Accepted spellings of the canonical case-style names (#422).  Keys are
+# lower-cased; lookup is case-insensitive.  "lower" / "upper" are NOT
+# aliases: they are distinct canonical styles (no underscores allowed).
+_CASE_ALIASES = {
+    "pascalcase":           "pascal",
+    "pascal_case":          "pascal",
+    "camelcase":            "camel",
+    "camel_case":           "camel",
+    "upper_snake_case":     "upper_snake",
+    "screaming_snake":      "upper_snake",
+    "screaming_snake_case": "upper_snake",
+    "snake_case":           "lower_snake",
+    "lower_snake_case":     "lower_snake",
+    "snake":                "lower_snake",
 }
 
 
+def normalize_case_style(style):
+    """
+    Return the canonical ``_CASE_PATTERNS`` name for *style* (#422).
+
+    Matching is case-insensitive and accepts the aliases in
+    ``_CASE_ALIASES`` (e.g. ``PascalCase`` -> ``pascal``, ``UPPER_SNAKE``
+    -> ``upper_snake``).  A value that is not a canonical name or alias is
+    returned unchanged so the caller can report it; non-strings are returned
+    unchanged too.
+    """
+    if not isinstance(style, str):
+        return style
+    key = style.strip().lower()
+    if key in _CASE_PATTERNS:
+        return key
+    return _CASE_ALIASES.get(key, style)
+
+
 def matches_case(name: str, style: str) -> bool:
-    pat = _CASE_PATTERNS.get(style)
-    return pat.match(name) is not None if pat else True
+    """
+    True if *name* matches case *style* (canonical name or alias).
+
+    An unknown style raises ``ValueError`` rather than silently passing
+    (#422); configs loaded through ``load_config`` are validated up front
+    so the CLI reports this as a config error (exit 2) instead.
+    """
+    pat = _CASE_PATTERNS.get(normalize_case_style(style))
+    if pat is None:
+        raise ValueError(
+            f"Unknown case style {style!r}; allowed: "
+            f"{', '.join(_CASE_PATTERNS)}")
+    return pat.match(name) is not None
 
 
 def matches_case_abbrev(name: str, style: str, abbrevs: set) -> bool:
@@ -59,6 +106,7 @@ def matches_case_abbrev(name: str, style: str, abbrevs: set) -> bool:
     Example:  read_FIFO_registers  passes lower_snake when FIFO is in abbrevs.
     For all other styles the function behaves identically to matches_case().
     """
+    style = normalize_case_style(style)
     if style not in ("lower_snake", "lower") or not abbrevs:
         return matches_case(name, style)
     segments = name.split("_")
@@ -74,6 +122,7 @@ def matches_case_abbrev(name: str, style: str, abbrevs: set) -> bool:
 
 def to_case(name: str, style: str) -> str:
     """Convert *name* to *style* — used to derive enum member prefixes."""
+    style = normalize_case_style(style)
     if style in ("upper_snake", "upper"):
         return name.upper()
     if style in ("lower_snake", "lower", "camel"):

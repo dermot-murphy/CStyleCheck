@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.30 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.31 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.31 | 2026-09-29 | Claude | Issue #422: add §5.19 catalogue for `test_case_style_config.py` (UV-CASE-001 to UV-CASE-005, 27 tests: canonical case names in presets and wizard output, alias normalisation, unknown style → exit 2, repo configs validate, end-to-end findings from a generated config); UV-WIZ-002 — `camelCase` stored as `camel`; §6 new module row, total 1481→1508 (56 modules); coverage-gate text 1481→1508; §7 SWE1-001/002 SWE1-040 to 042 and SWE1-075 rows cite UV-CASE; referenced-document versions resynced (4) |
 | 1.30 | 2026-09-29 | Claude | Issue #420: add §5.18 catalogue for `test_init_wizard.py` (UV-WIZ-001 to UV-WIZ-005; UV-WIZ-004/005 are the 18 new preset and wizard opt-in rule tests); §6 `test_init_wizard.py` 15→33; total 1463→1481 (55 modules); coverage-gate text 1463→1481; §7 SWE1-075 cites UV-WIZ-001 to UV-WIZ-005; referenced-document versions resynced (4) |
 | 1.29 | 2026-09-29 | Claude | Issue #418 (CR-418): add UV-MSR-009 (11 opt-in policy tests: 7 key-absent tests, one per rule made opt-in; shipped-disabled check for all 8 rules; empty-`misc` no-fire test; code-default vs shipped-default check; `--update-config` adds the keys as `false`); §5.14 heading 140→160; §6 `test_misra_rules.py` 149→160; total 1452→1463 (55 modules); coverage-gate text 1452→1463; §7 SWE1-109 to SWE1-116 also cite UV-MSR-009; referenced-document versions resynced (4) |
 | 1.28 | 2026-09-29 | Claude | Issue #412: UV-MSR-007 10→18 tests (key absent, `misc` absent, shipped default, explicit enable, `TRUE == flag`, `flag != FALSE`, `true == x`, `x == false`); `test_uppercase_true_flagged` changed to `test_uppercase_true_not_flagged`; §6 `test_misra_rules.py` 141→149; total 1444→1452 (55 modules); coverage-gate text 1444→1452; referenced-document versions resynced (4) |
@@ -65,10 +66,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.15 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.25 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.21 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.18 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.16 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.26 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.22 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.19 |
 
 ---
 
@@ -95,7 +96,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1481 tests (2026-09-29 develop baseline, after #408, #407, #413, #412, #418 and #420) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1508 tests (2026-09-29 develop baseline, after #408, #407, #413, #412, #418, #420 and #422) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -443,10 +444,22 @@ Tests for `--init` and `--preset` (issue #190). UV-WIZ-004 and UV-WIZ-005 were a
 | TC-ID | Test Name(s) | SW-REQ | Unit Verified | Pass Condition |
 |---|---|---|---|---|
 | UV-WIZ-001 | `TestRunPreset` (8 tests) | SWE1-075 | UNIT-99 | Each preset writes a file; every preset is valid YAML with the header comment; unknown preset → 1; existing file kept without `overwrite`, replaced with it |
-| UV-WIZ-002 | `TestRunWizard` (5 tests) | SWE1-075 | UNIT-98 | All-default answers write a file; `camelCase` answer is written; existing file: `n` aborts (1, file kept), `y` or `overwrite=True` replaces it |
+| UV-WIZ-002 | `TestRunWizard` (5 tests) | SWE1-075 | UNIT-98 | All-default answers write a file; the `camelCase` answer is stored as canonical `camel` (#422); existing file: `n` aborts (1, file kept), `y` or `overwrite=True` replaces it |
 | UV-WIZ-003 | `TestCLIInit` (2 tests) | SWE1-075 | UNIT-46, UNIT-99 | `--preset minimal --init-output` writes the file (exit 0); `--help` lists the three presets |
 | UV-WIZ-004 | `TestPresetOptInRules` (9 tests) | SWE1-075 | UNIT-99 | `misra` enables exactly `goto_usage`, `assignment_in_condition`, `void_pointer`, `recursive_function`, `empty_else`; `barr-c` exactly `multiple_statements_per_line`, `sizeof_type`, `empty_else`; `minimal` none; `boolean_comparison` in no preset; each enabled rule written `enabled: true` with the `src/rules.yml` severity; output byte-identical across runs; the checker (in-process and via the CLI `--config`) fires exactly the enabled opt-in rules on the trigger snippet and no others, with no traceback |
 | UV-WIZ-005 | `TestWizardOptInRules` (9 tests) | SWE1-075 | UNIT-98 | The MISRA C:2012 and Barr-C questions are asked last (prompts 9 and 10) with `[y/N]`; default, explicit `n`/`N` and end of input enable none; `y` to MISRA enables the 5 MISRA rules, `y` to Barr-C the 3 Barr-C rules, both the union (7); the 7 rules are always listed with the shipped severity and `boolean_comparison` is not; the checker fires exactly the enabled rules |
+
+### 5.19 Case-Style Names in Configs — `test_case_style_config.py` (27 tests)
+
+Added for issue #422. Presets and the wizard write canonical case-style names; aliases are normalised at config load; an unknown case style is a config error (exit 2). Before #422 `matches_case()` returned `True` for an unknown style, so configs generated by `--preset barr-c` or the wizard silently skipped naming checks.
+
+| TC-ID | Test Name(s) | SW-REQ | Unit Verified | Pass Condition |
+|---|---|---|---|---|
+| UV-CASE-001 | `TestGeneratedConfigsUseCanonicalNames` (7 tests) | SWE1-075 | UNIT-98, UNIT-99 | Every `case` / `*_case` value in the `misra`, `barr-c` and `minimal` presets and in the wizard output for each naming choice is a key of `_CASE_PATTERNS`; `barr-c` writes `lower_snake` typedef / enum type and `upper_snake` members; the wizard labels (`lower_snake`, `camelCase`, `PascalCase`) keep their order and map to `lower_snake` / `camel` / `pascal`, prefix answers included; every generated config passes `validate_case_styles()` |
+| UV-CASE-002 | `TestAliasNormalisation` (7 tests) | SWE1-001 | UNIT-05, UNIT-43, UNIT-44 | Each alias (`PascalCase`, `Pascal`, `pascal_case`, `camelCase`, `camel_case`, `UPPER_SNAKE`, `UPPER_SNAKE_CASE`, `SCREAMING_SNAKE`, `SCREAMING_SNAKE_CASE`, `snake_case`, `lower_snake_case`, `snake`) normalises, ignoring letter case; `lower` / `upper` stay distinct styles; `matches_case()` accepts aliases and raises `ValueError` for an unknown style; `validate_case_styles()` and `load_config()` rewrite aliases in place, including per-scope keys and `functions.style` |
+| UV-CASE-003 | `TestUnknownCaseStyleIsConfigError` (6 tests) | SWE1-002 | UNIT-05, UNIT-100 | An unknown value in each of the 15 case-style keys gives one error naming the key, the value and the allowed values; unknown `functions.style`, `file_prefix.case`, `misc.eof_comment.filename_case` and a non-string value are rejected; `load_config()` exits 2; the CLI exits 2 with the key in the message and no traceback, also for a per-directory `.cstylecheck.yml` |
+| UV-CASE-004 | `TestRepoConfigsValidate` (4 tests) | SWE1-001, SWE1-002 | UNIT-05 | `src/rules.yml`, `tests/rules.yml`, the `examples/embedded_project/config/*.yml` files and every parseable YAML snippet in `README.md` and `Rules-and-Configuration.md` validate with no error |
+| UV-CASE-005 | `TestGeneratedConfigReportsWrongCase` (3 tests) | SWE1-040, SWE1-041, SWE1-075 | UNIT-26, UNIT-27, UNIT-43 | End to end via the CLI: a `--preset barr-c` config reports `typedef.case`, `enum.type_case` and `enum.member_case` for wrongly-cased names (exit 1); correctly named `lower_snake_t` types and `UPPER_SNAKE` members pass; a legacy `PascalCase` / `UPPER_SNAKE` config is now enforced (`must be pascal`, `must be upper_snake`) |
 
 ---
 
@@ -481,6 +494,7 @@ Tests for `--init` and `--preset` (issue #190). UV-WIZ-004 and UV-WIZ-005 were a
 | `test_workflow_config.py` | 16 | 16 | 0 | CI workflow configuration regression |
 | `test_github_annotations.py` | 8 | 8 | 0 | GitHub Actions annotation output |
 | `test_case_patterns.py` | 6 | 6 | 0 | Case pattern matching (`_check_case_patterns`) |
+| `test_case_style_config.py` | 27 | 27 | 0 | COMP-02 (`load_config`, `validate_case_styles`), COMP-05 (`matches_case`, `normalize_case_style`), COMP-09 (`PRESETS`, `run_wizard`) |
 | `test_thread_safe_globals.py` | 4 | 4 | 0 | Thread-safe global state (`C_KEYWORDS`, `C_STDLIB_NAMES`) |
 | `test_preprocessor.py` | 76 | 76 | 0 | COMP-04 (`preprocessor.py`) — strip_comments, strip_strings, preprocess, build_line_map, brace depths, extract_comments |
 | `test_comment_ratio.py` | 24 | 24 | 0 | `_check_comment_ratio` |
@@ -509,7 +523,7 @@ Tests for `--init` and `--preset` (issue #190). UV-WIZ-004 and UV-WIZ-005 were a
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
 | `test_cli_requirements.py` | 21 | 21 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
-| **Total** | **1481** | **1481** | **0** | All 81 rule IDs covered — 55 modules |
+| **Total** | **1508** | **1508** | **0** | All 81 rule IDs covered — 56 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -524,7 +538,7 @@ Tests for `--init` and `--preset` (issue #190). UV-WIZ-004 and UV-WIZ-005 were a
 
 | SW-REQ-ID | Requirement | Unit Test(s) |
 |---|---|---|
-| SWE1-001, SWE1-002 | YAML configuration load / configuration errors | `test_config_loading.py` (13 tests: missing file, bad YAML, UTF-8/non-UTF-8); `test_cli.py` — UV-CLI-005 |
+| SWE1-001, SWE1-002 | YAML configuration load / configuration errors | `test_config_loading.py` (13 tests: missing file, bad YAML, UTF-8/non-UTF-8); `test_cli.py` — UV-CLI-005; case-style normalisation and validation: `test_case_style_config.py` — UV-CASE-002 to UV-CASE-004 (#422) |
 | SWE1-003 | `--defines` substitution | `test_cli.py` (`--defines` cases) |
 | SWE1-004 | Module alias map | `test_cli.py`, `test_improvements.py` (`--aliases` / `load_alias_file` cases) |
 | SWE1-005, SWE1-006 | Per-file / per-identifier exclusions | `test_exclusions.py` — `TestLoadExclusionsFile`, `TestDisabledRulesForFile`, end-to-end classes (28 tests) |
@@ -536,7 +550,7 @@ Tests for `--init` and `--preset` (issue #190). UV-WIZ-004 and UV-WIZ-005 were a
 | SWE1-017 to SWE1-029 | Variable rules | UV-VAR-001 to UV-VAR-015 |
 | SWE1-030 to SWE1-034 | Function rules | UV-FUN-001 to UV-FUN-007 |
 | SWE1-035 to SWE1-039, SWE1-090 | Constant/macro rules | UV-DEF-001 to UV-DEF-013 |
-| SWE1-040 to SWE1-042 | Type rules | UV-TYP-001 to UV-TYP-007 |
+| SWE1-040 to SWE1-042 | Type rules | UV-TYP-001 to UV-TYP-007; UV-CASE-005 (generated-config typedef / enum case findings, #422) |
 | SWE1-043 to SWE1-044 | Include guard rules | UV-INC-001 to UV-INC-005 |
 | SWE1-045 to SWE1-050 | Miscellaneous rules | UV-MSC-001 to UV-MSC-007 |
 | SWE1-071 | Whitespace ratio | UV-WSR-001 to UV-WSR-027 |
@@ -556,7 +570,7 @@ Tests for `--init` and `--preset` (issue #190). UV-WIZ-004 and UV-WIZ-005 were a
 | SWE1-064 | Verbose progress to stderr | `test_cli.py` — `TestVerboseFlag` |
 | SWE1-072 to SWE1-073 | Inline suppression comments (`parse_inline_suppressions`, suppression logic) | `test_inline_suppression.py` |
 | SWE1-074 | Auto-fix mode (`apply_fixes`, `unified_diff`) | `test_fix_mode.py` |
-| SWE1-075 | Config wizard and presets (`run_wizard`, `run_preset`) | `test_init_wizard.py` — UV-WIZ-001 to UV-WIZ-005 |
+| SWE1-075 | Config wizard and presets (`run_wizard`, `run_preset`) | `test_init_wizard.py` — UV-WIZ-001 to UV-WIZ-005; `test_case_style_config.py` — UV-CASE-001, UV-CASE-005 (canonical case names, #422) |
 | SWE1-076 | Per-directory config (`resolve_per_dir_config`) | `test_per_dir_config.py` |
 | SWE1-077 | HTML report output (`_violations_to_html`) | `test_html_report.py` |
 | SWE1-078 | Function length (`_check_function_length`) | `test_function_length.py` |
