@@ -137,7 +137,7 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1423 tests)
+    cstylecheck_tests.yml      # runs the test suite on every commit (1439 tests)
     cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
@@ -532,6 +532,8 @@ Matching rules:
 - **Trend-analysis C source metrics** (#388), including safety indicators.
 
 8 new rules; **81 rule IDs** total. 143 new tests (1422 total at the time).
+#408 and #407 (dedicated unit tests for the source cache, startup banner and OS path
+separator) add 17 more: **1439 tests** in total.
 
 ### New in v1.2.0 (2026-05-29)
 

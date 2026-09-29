@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.15 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.16 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.16 | 2026-09-29 | Claude | Issue #407: §7 SIT-011 and SIT-024 rows cite UV-CLI-014 to UV-CLI-016 and UV-CLI-017 to UV-CLI-019; post-v1.6.0 note records 1439 tests after #408 and #407; referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE4 1.22→1.24, SWE6 1.17→1.18, SYS4 1.12→1.13) |
 | 1.15 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SIT-027 for the 8 rules from #391/#392 (SWE1-109 to SWE1-116), with §6 and §7 rows and a post-v1.6.0 result note. AUD9-F-006: SWA-IF-09 → Counter multiset; SIT-012 step 4 → {"violations":[…]} with `file`; add steps 5–7 (moved violation, duplicate, Windows path); trace SIT-012 to SWE1-100/101 and UV-CLI-011 to 013. AUD9-F-026: CM baseline ID → v1.6.0 tag / develop 296e91b; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.14 | 2026-07-06 | Claude | ASPICE audit — add SIT-024 body (missing from doc); add SIT-025 (block-comment suppression), SIT-026 (--summary restructure); update §3.1 refs (SWE2 1.11→1.12, SWE4 1.18→1.20, SWE6 1.14→1.16); update §6 and §7 — closes #375 |
 | 1.13 | 2026-07-06 | Claude | v1.6.0 RC — update §6 overall result 1223→1279; §3.1 SWE4→1.19, SVD→1.22; add SIT-024 (startup banner/copyright output) |
@@ -51,11 +52,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.13 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.8 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.22 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.17 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.12 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.14 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.9 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.24 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.18 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.13 |
 
 ### 3.2 Test Environment
 
@@ -751,7 +752,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 **Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence)
 
-**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage.
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests, all PASS (local run, Python 3.11).
 
 > **📋 Note:** All 10 defined software architecture interfaces must be covered before integration testing is considered complete. Any uncovered interface must be resolved via a new or updated test case.
 
@@ -771,7 +772,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SIT-008 | SWE1-005, SWE1-006 | IF-01, IF-03 | UV-CLI-002 | SWQ-003 |
 | SIT-009 | SWE1-003 | IF-04 | — | SWQ-003 |
 | SIT-010 | SWE1-007, SWE1-008, SWE1-009 | IF-05 | UV-DCT-001, UV-DCT-002 | SWQ-005 |
-| SIT-011 | SWE1-015, SWE1-051, SWE1-052 | IF-07 | UV-SGN-001, UV-SGN-004 | SWQ-006 |
+| SIT-011 | SWE1-015, SWE1-051, SWE1-052 | IF-07 | UV-SGN-001, UV-SGN-004, UV-CLI-014 to UV-CLI-016 | SWQ-006 |
 | SIT-012 | SWE1-065, SWE1-066, SWE1-067, SWE1-100, SWE1-101 | IF-08, IF-09 | UV-CLI-008, UV-CLI-011 to UV-CLI-013 | SWQ-007 |
 | SIT-013 | SWE1-062 | IF-10 | — | SWQ-004 |
 | SIT-014 | SWE1-072, SWE1-073 | IF-06 | `test_inline_suppression.py` | — |
@@ -784,7 +785,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SIT-021 | SWE1-091 | IF-03, IF-06, IF-10 | `test_constant_comparison.py` | SWQ-003 |
 | SIT-022 | SWE1-092 | IF-03, IF-06, IF-10 | `test_unsigned_suffix_signed_params.py` | SWQ-003 |
 | SIT-023 | SWE1-093 | IF-06, IF-10 | `test_pointer_prefix_fix.py` | SWQ-003 |
-| SIT-024 | SWE1-094, SWE1-095 | IF-02, IF-10 | `test_cli.py` | SWQ-004 |
+| SIT-024 | SWE1-094, SWE1-095 | IF-02, IF-10 | `test_cli.py`; UV-CLI-017 to UV-CLI-019 (`test_cli_requirements.py`) | SWQ-004 |
 | SIT-025 | SWE1-072 | IF-06 | `test_inline_suppression.py` | — |
 | SIT-026 | SWE1-097 | IF-10 | `test_print_summary.py` | SWQ-004 |
 | SIT-027 | SWE1-109 to SWE1-116 | IF-03, IF-06, IF-10 | `test_misra_rules.py` — UV-MSR-001 to UV-MSR-008 | SWQ-003 |

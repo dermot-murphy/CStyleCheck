@@ -157,7 +157,7 @@ All High findings must be closed before the next release is tagged. Otherwise, S
 | Add SWE1-109..116, UNIT-128..135, SWE4 TC rows, SWE2 COMP-05f/§8.1/§10 entries for the 8 new rules | AUD9-F-001, F-002, F-003 | Claude | Closed in #405 (`6ece0e7`) |
 | Add SIT/SITC/SYS-VTC/SWQ coverage and SYS-F-011/020 updates to 81 rule IDs | AUD9-F-005 | Claude | Closed in #405 (`6ece0e7`) |
 | Align the baseline verification and design with #397 (SWQ-007, SIT-012, SWA-IF-09, SWE3 §6.3, SWE1-065) | AUD9-F-006, F-007 | Claude | Closed in #405 (`6ece0e7`) |
-| Repair SYS2↔SWE1 and SWE1→SWE4 traceability | AUD9-F-004, F-008, F-011 | Claude | Closed in #405 (`6ece0e7`, `7ca8e40`). SWE1-015, SWE1-094 and SWE1-096 are traced to integration or inspection evidence; adding dedicated unit tests is tracked as RR-003-001 |
+| Repair SYS2↔SWE1 and SWE1→SWE4 traceability | AUD9-F-004, F-008, F-011 | Claude | Closed in #405 (`6ece0e7`, `7ca8e40`). SWE1-015, SWE1-094 and SWE1-096 were traced to integration or inspection evidence, with dedicated unit tests tracked as RR-003-001. **AUD9-F-004 fully closed via #407** (2026-09-29): UV-CLI-014 to UV-CLI-022 in `tests/test_cli_requirements.py` (16 tests; suite 1423→1439), CSC-SWE4-001 v1.24 §7 cites them; RR-003-001 closed. The tests found that the SWE1-094 `--quiet` clause and one-line banner are not implemented — recorded in CSC-SWE4-001 §7 for a change request |
 | Extend the SUP8 CI list (package, dependabot.yml, docs, scripts) | AUD9-F-009 | Claude | Closed in #405 (`7ca8e40`) |
 | Specify and document the trend safety metrics | AUD9-F-010 | Claude | Closed in #405 (`6ece0e7`, `bb0324c`) |
 | Regenerate SWE3 line refs and add missing §5 unit specs | AUD9-F-012, F-013 | Claude | Closed in #405 (`6ece0e7`) |
@@ -173,7 +173,7 @@ All High findings must be closed before the next release is tagged. Otherwise, S
 After the corrections the suite passes (`python -m pytest -q`: 1422 passed) and `ruff check src tests` is clean. No code behaviour, package version or tag was changed.
 
 Items still open after closure:
-- 3 SW requirements have no dedicated unit test (RR-003-001).
+- ~~3 SW requirements have no dedicated unit test (RR-003-001).~~ Closed by #407 (UV-CLI-014 to UV-CLI-022).
 - CSC-SVD-001 is unchanged until the next release (RR-003-002).
 - ~~The runtime message text still cites Rule 15.5 (RR-003-003).~~ Closed in #408.
 - Post-v1.6.0 test results have not yet been recorded from the CI matrix (RR-003-004).
@@ -193,5 +193,5 @@ The §3 ratings (3 F / 14 L) remain the audit ratings. They are re-assessed at t
 
 ---
 
-*Document: CSC-AUD-009 · Version 1.0 · 2026-09-29 (§6.2 closure recorded 2026-09-29, #405)*
+*Document: CSC-AUD-009 · Version 1.1 · 2026-09-29 (§6.2 closure recorded 2026-09-29, #405; v1.1: AUD9-F-027 residual closed, #408; AUD9-F-004 fully closed and RR-003-001 closed, #407)*
 *Location: `docs/aspice/audits/CStyleCheck_ASPICE_Internal_Audit_2026-09-29.md`*

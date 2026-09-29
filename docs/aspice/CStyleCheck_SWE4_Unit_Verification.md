@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.23 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.24 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-09-29 | Claude | Issue #407 (RR-003-001, AUD9-F-004): add §5.17 `test_cli_requirements.py` (16 tests, UV-CLI-014 to UV-CLI-022) giving SWE1-015 (single read per file), SWE1-094 (startup banner on stderr) and SWE1-096 (OS-native path separator) dedicated unit tests; §6 row (total 1423→1439, modules 54→55); coverage-gate text 1423→1439; §7 rows for SWE1-015, SWE1-094 and SWE1-096 now cite the UV IDs (SWE1-094 `--quiet` suppression and one-line form not implemented — see §7 note); §3.1 referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE3 1.18→1.19, SWE5 1.15→1.16) |
 | 1.23 | 2026-09-29 | Claude | #408: add `test_message_cites_barr_c_only` to UV-MSR-003 (8→9 tests); `test_misra_rules.py` 140→141; total 1422→1423 |
 | 1.22 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-003: catalogue the 76 tests from #391/#392 (UV-MSR-001 to UV-MSR-008); `test_misra_rules.py` 64→140; total 1346→1422 (54 modules); coverage-gate text 1279→1422; scope text. AUD9-F-004: §7 rows for SWE1-001 to 006, 011 to 016, 057 to 064, 094 to 099 and SWE1-MISRA-001 to 003 (SWE1-015, 094 and 096 have no dedicated unit test and are recorded as gaps). AUD9-F-001/F-010: §7 rows for SWE1-109 to SWE1-117. AUD9-F-015: header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.21 | 2026-09-29 | Claude | Add §5.16 `test_collect_metrics.py` (54 tests, UV-MET-001 to UV-MET-010) for trend-analysis C source metrics; add §6 row (total 1279→1333, modules 53→54); add SWE1-102 to SWE1-108 to §7; update §3.1 refs (SWE1 2.6→2.7, SWE3 1.16→1.17); also records UV-CLI-011 to UV-CLI-013 and §5.13 and §6 test_improvements 67→80, §6 total 1333→1346 (baseline, issues #394/#395, PR #397) — issue #388 |
@@ -58,10 +59,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.8 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.18 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.15 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.13 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.9 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.19 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.16 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
 
 ---
 
@@ -88,7 +89,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1423 tests (2026-09-29 develop baseline) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1439 tests (2026-09-29 develop baseline, after #408 and #407) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -411,6 +412,24 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 
 ---
 
+### 5.17 CLI Requirement Tests — `test_cli_requirements.py` (16 tests)
+
+Added for issue #407 (closes RR-003-001 in CSC-REVIEW-003 and the remaining part of AUD9-F-004 in CSC-AUD-009). These tests run `main()` in-process so that the file-read path and the output streams can be patched. The path-separator tests replace the `os` module seen by `cli.py` with one whose `path` is `ntpath` or `posixpath`, so both the Windows (`\`) and POSIX (`/`) behaviour are asserted on any CI runner.
+
+| TC-ID | Test Name(s) | SW-REQ | Unit Verified | Pass Condition |
+|---|---|---|---|---|
+| UV-CLI-014 | `TestSingleReadPerFile.test_each_file_read_once_with_cross_file_sign_check`, `test_sign_checker_ingests_cached_text_for_every_file` | SWE1-015 | UNIT-46, UNIT-80 | 3-file run with a cross-file `sign_compatibility` violation: each file is read exactly once (`Path.read_text` and `open()` counted); `SignChecker.ingest()` receives the cached text of every file |
+| UV-CLI-015 | `test_read_once_with_declared_not_defined_and_dry_run_fix`, `test_read_once_when_sign_check_disabled` | SWE1-015 | UNIT-46 | The other cache consumers (`declared_not_defined`, `--fix --dry-run`) add no reads; with `sign_compatibility` disabled nothing is ingested and each file is still read once |
+| UV-CLI-016 | `test_unreadable_file_not_retried_or_ingested`, `test_counter_detects_a_second_read` | SWE1-015 | UNIT-46 | Negative: a missing file is attempted once, reported as `ERROR: Cannot read` and not passed to `SignChecker`; the read counter detects a second read (guards against a vacuous pass) |
+| UV-CLI-017 | `TestStartupBanner.test_banner_on_stderr_not_stdout` | SWE1-094 | UNIT-46 | Subprocess run: version string and copyright on `stderr`; neither on `stdout`, which still carries the violation report |
+| UV-CLI-018 | `test_banner_content`, `test_banner_precedes_processing` | SWE1-094 | UNIT-46 | `stderr` starts with `CStyleCheck <version>` and contains `(C) YYYY Dermot Murphy`; with `--verbose` the banner precedes `Found N file(s)` and `Scanning:` |
+| UV-CLI-019 | `test_json_stdout_not_polluted_by_banner`, `test_version_flag_writes_no_stderr_banner` | SWE1-094 | UNIT-46 | Negative: `--output-format json` stdout parses as JSON (no banner); `--version` writes to stdout and nothing to stderr |
+| UV-CLI-020 | `TestOsPathSeparator.test_windows_backslash_separator`, `test_windows_mixed_separators_normalised` | SWE1-096 | UNIT-03, UNIT-41, UNIT-42 | With `ntpath`: `src/drv/./uart.c` and `src/drv\uart.c` → `src\drv\uart.c`; `Violation.__str__()` and `github_annotation()` use `\` only |
+| UV-CLI-021 | `test_posix_forward_slash_separator` | SWE1-096 | UNIT-03, UNIT-41, UNIT-42 | With `posixpath`: `src//drv/./uart.c` → `src/drv/uart.c`; no `\` in the output |
+| UV-CLI-022 | `test_emitted_paths_use_host_os_sep`, `test_violation_str_does_not_rewrite_path` | SWE1-096 | UNIT-03, UNIT-41, UNIT-46 | End-to-end on the host OS: reported paths equal `os.path.join(...)` of the file; negative: `Violation.__str__()` renders an already-normalised path verbatim |
+
+---
+
 ## 6. Verification Results Summary
 
 | Test Module | Tests | Pass | Fail | Coverage Contribution |
@@ -469,7 +488,8 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | `test_unsigned_suffix_signed_params.py` | 15 | 15 | 0 | COMP-05f (`_check_misc` signed-param exemption) |
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
-| **Total** | **1423** | **1423** | **0** | All 81 rule IDs covered — 54 modules |
+| `test_cli_requirements.py` | 16 | 16 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
+| **Total** | **1439** | **1439** | **0** | All 81 rule IDs covered — 55 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -491,7 +511,7 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | SWE1-011, SWE1-012 | Comment and string stripping | `test_preprocessor.py` — `TestStripComments`, `TestStripStrings`, `TestPreprocess` |
 | SWE1-013 | Line map / offset → (line, col) | `test_preprocessor.py` — `TestBuildLineMap`, `TestOffsetToLineCol` |
 | SWE1-014 | Brace-depth array | `test_preprocessor.py` — `TestBuildBraceDepths` |
-| SWE1-015 | Single read per file (source cache) | No dedicated unit test. Verified at integration level by SIT-011 and by inspection of `main()` (UNIT-46) — gap recorded in CSC-AUD-009 (#405) |
+| SWE1-015 | Single read per file (source cache) | `test_cli_requirements.py` — UV-CLI-014 to UV-CLI-016 (#407); also SIT-011 |
 | SWE1-016 | Comment-only line detection | `test_preprocessor.py` — `TestCommentOnlyLines` |
 | SWE1-017 to SWE1-029 | Variable rules | UV-VAR-001 to UV-VAR-015 |
 | SWE1-030 to SWE1-034 | Function rules | UV-FUN-001 to UV-FUN-007 |
@@ -539,9 +559,9 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | SWE1-091 | misc.constant_comparison (`_check_constant_comparison`) | `test_constant_comparison.py` |
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix | `test_pointer_prefix_fix.py` |
-| SWE1-094 | Startup banner to stderr | No dedicated unit test. Verified at integration level by SIT-024 — gap recorded in CSC-AUD-009 (#405) |
+| SWE1-094 | Startup banner to stderr | `test_cli_requirements.py` — UV-CLI-017 to UV-CLI-019 (#407); also SIT-024. The `--quiet` clause and the one-line form are **not verified**: the tool has no `--quiet` option and writes the banner on two lines (version, copyright) — see note below |
 | SWE1-095 | Copyright in `--version` | `test_cli.py` — `TestVersionAndHelp` (tool name and exit code only); the copyright text is verified by SIT-024 |
-| SWE1-096 | OS-native path separator in output | No dedicated unit test. Verified by inspection of `Violation.__str__()`/`emit()` — gap recorded in CSC-AUD-009 (#405) |
+| SWE1-096 | OS-native path separator in output | `test_cli_requirements.py` — UV-CLI-020 to UV-CLI-022 (#407); both `\` (Windows) and `/` (POSIX) behaviour asserted. The separator is applied once by `discover_files()` (`os.path.normpath`, UNIT-03); `Violation.__str__()` renders the path verbatim |
 | SWE1-097 | `print_summary()` restructure | `test_print_summary.py` |
 | SWE1-098 | `fn_start` line correction | `test_functions.py`, `test_inline_suppression.py` |
 | SWE1-099 | Function-pointer typedef exemption | `test_variables.py`, `test_parameter_prefix.py` (`test_fn_ptr_typedef_*`) |
@@ -561,6 +581,8 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | SWE1-115 | misc.boolean_comparison | `test_misra_rules.py` — UV-MSR-007 |
 | SWE1-116 | misc.empty_else | `test_misra_rules.py` — UV-MSR-008 |
 | SWE1-117 | Trend metrics — safety indicators and macro metrics | `test_collect_metrics.py` — UV-MET-008 (`TestCSourceMetrics`: `goto_count`, `assert_count`, `macro_count` with include guard excluded) |
+
+> **Note — SWE1-094 (#407):** `main()` meets the stderr, content and ordering parts of SWE1-094 (UV-CLI-017 to UV-CLI-019). It does not meet two clauses: the banner is written as two lines (`CStyleCheck <version>` then `(C) 2026 Dermot Murphy`), and there is no `--quiet` option, so the banner cannot be suppressed (CHANGELOG v1.6.0: printed "regardless of other flags"). Parent SYS-F-046 also differs (date-time, file count, suppression when stdout is not a terminal). The requirement text or the code needs a change request; no source change was made under #407.
 
 ---
 

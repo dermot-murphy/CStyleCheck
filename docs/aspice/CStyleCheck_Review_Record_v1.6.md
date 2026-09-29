@@ -85,7 +85,7 @@ The per-document tables of the template are condensed into one matrix: one row p
 
 | Finding ID | Document | Criterion | Severity | Description | Disposition |
 |---|---|---|---|---|---|
-| RR-003-001 | CSC-SWE4-001 | C3 | Minor | SWE1-015 (single read), SWE1-094 (startup banner) and SWE1-096 (OS path separator) have no dedicated unit test. They are verified at integration level or by inspection only | Open — add unit tests in the v1.7.0 cycle |
+| RR-003-001 | CSC-SWE4-001 | C3 | Minor | SWE1-015 (single read), SWE1-094 (startup banner) and SWE1-096 (OS path separator) have no dedicated unit test. They are verified at integration level or by inspection only | **Closed 2026-09-29 (#407)** — 16 unit tests added in `tests/test_cli_requirements.py` (UV-CLI-014 to UV-CLI-022, CSC-SWE4-001 v1.24 §5.17 and §7). The tests showed that the SWE1-094 `--quiet` clause and one-line form are not implemented; this is recorded in CSC-SWE4-001 §7 for a change request and does not reopen this finding |
 | RR-003-002 | CSC-SVD-001 | C2 | Observation | Release-baselined at v1.6.0: cites superseded document versions and has 3 revision rows with swapped Author/Description columns. Left unchanged by decision (CSC-AUD-009) | Open — update at v1.7.0 release preparation |
 | RR-003-003 | CSC-SUP8-001 / `checker.py` | C4 | Minor | The runtime violation message of `misc.multiple_statements_per_line` still cites "MISRA C:2012 Rule 15.5". Only comments were corrected (AUD9-F-027) because the message text is observable behaviour | Closed — message corrected to cite Barr-C §3.2 only, with a unit test (#408) |
 | RR-003-004 | CSC-SWE5/SWE6/SYS4/SYS5 | C4 | Minor | Post-v1.6.0 test results (SIT-027, SITC-017, SWQ-003/007 extensions, SYS-VTC-003/007) were recorded from a local run on Python 3.11 only | Open — record the CI matrix run (3.10/3.11/3.12) at v1.7.0 |
@@ -106,7 +106,7 @@ The per-document tables of the template are condensed into one matrix: one row p
 | **— Major** | 0 |
 | **— Minor** | 3 |
 | **— Observation** | 2 |
-| **Open actions** | 5 |
+| **Open actions** | 3 (RR-003-003 closed by #408; RR-003-001 closed by #407) |
 | **Review verdict** | Conditional Pass |
 
 **Verdict rationale:**
@@ -126,6 +126,6 @@ The per-document tables of the template are condensed into one matrix: one row p
 
 ---
 
-*Document: CSC-REVIEW-003 · Version 1.0 · 2026-09-29*
+*Document: CSC-REVIEW-003 · Version 1.1 · 2026-09-29 (v1.1: RR-003-003 closed by #408; RR-003-001 closed by #407)*
 *Location: `docs/aspice/CStyleCheck_Review_Record_v1.6.md`*
 *Template: CSC-REVIEW-TEMPLATE-001 v1.0*

@@ -87,6 +87,17 @@ Versioning follows [Semantic Versioning](https://semver.org/).
   so baselines written on Windows and Linux are interchangeable. Existing baselines
   containing backslashes are still honoured. New helper `_normalise_path()`.
 
+### Tests
+
+- **Unit tests for SWE1-015, SWE1-094 and SWE1-096 (#407)** — new module
+  `tests/test_cli_requirements.py` (16 tests, UV-CLI-014 to UV-CLI-022) asserts that
+  each source file is read from disk exactly once per run and shared by `Checker` and
+  `SignChecker` (including a cross-file sign check), that the startup banner (tool name,
+  version, copyright) goes to `stderr` and never to `stdout`, and that violation paths use
+  the OS-native separator (both `\` and `/` behaviour, via `ntpath`/`posixpath`).
+  Closes RR-003-001 (CSC-REVIEW-003) and AUD9-F-004 (CSC-AUD-009). Test total 1423→1439
+  (issue [#407](https://github.com/dermot-murphy/CStyleCheck/issues/407)).
+
 ---
 
 ## [1.6.0] — 2026-07-06

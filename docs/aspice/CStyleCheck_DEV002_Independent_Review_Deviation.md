@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-DEV-002 | **Version** | 1.2 |
+| **Document ID** | CSC-DEV-002 | **Version** | 1.3 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Approved | **Classification** | Internal |
 | **Author** | Dermot Murphy | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.3 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (DEV-001 1.3→1.4, PA2 1.23→1.24, SUP10 1.3→1.4, SUP8 1.13→1.14, SUP9 1.3→1.4) |
 | 1.2 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.1 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.0 | 2026-05-28 | Dermot Murphy | Initial deviation record — closes issue #61 |
@@ -152,9 +153,9 @@ This deviation is accepted on the basis that CStyleCheck is a single-person proj
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-DEV-001 | Process Deviation — AI-Assisted Authorship | 1.3 |
-| CSC-PA2-001 | Process Capability Records | 1.23 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.13 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.3 |
-| CSC-SUP10-001 | Change Request Plan | 1.3 |
+| CSC-DEV-001 | Process Deviation — AI-Assisted Authorship | 1.4 |
+| CSC-PA2-001 | Process Capability Records | 1.24 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.14 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.4 |
+| CSC-SUP10-001 | Change Request Plan | 1.4 |
 | GitHub Issue #61 | Designate independent reviewer (not approver) for SWE1, SWE4, SWE6 work products | — |

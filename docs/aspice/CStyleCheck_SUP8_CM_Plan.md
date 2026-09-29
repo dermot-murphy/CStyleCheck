@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.13 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.14 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.14 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP10 1.3→1.4, SUP9 1.3→1.4, SWE1 2.8→2.9) |
 | 1.13 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-009: add CI-045 to CI-060 (checker package `src/cstylecheck/*.py`, `.github/dependabot.yml`, CHANGELOG, CONTRIBUTING, Rules-and-Configuration, `src/project.defines`, `scripts/build.bat`/`test.bat`, `tests/__init__.py`, LICENSE, ASPICE WPs, audit records, repository configuration, CLAUDE.md, examples, draft standards); fix the CI-027 path; clarify CI-001/CI-002/CI-044. AUD9-F-019: §7.5 Dependabot target-branch rule. AUD9-F-028: add §7.6 hotfix versioning/tagging policy and record hotfix #399. AUD9-F-015: header date. AUD9-F-024: Author and Description columns swapped back in the v1.9 row. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.12 | 2026-09-29 | Claude | Add trend-analysis metrics workflow, scripts, threshold config and unit tests to CI list (CI-038 to CI-044) — issue #388 |
 | 1.11 | 2026-07-06 | Claude | ASPICE audit — add prerelease_check.sh, check_my_project.bat, DOCKERHUB_README.md to CI list — closes #379 |
@@ -61,9 +62,9 @@ This plan applies to all configuration items produced by the CStyleCheck project
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.3 |
-| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.3 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.8 |
+| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.4 |
+| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.4 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.9 |
 
 ---
 

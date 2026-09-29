@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP1-001 | **Version** | 1.10 |
+| **Document ID** | CSC-SUP1-001 | **Version** | 1.11 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.11 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (MAN3 1.8→1.9, SUP10 1.3→1.4, SUP8 1.13→1.14, SUP9 1.3→1.4, SWE4 1.22→1.24) |
 | 1.10 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-022: §5.4 records per-release gate compliance (v1.5.x and v1.6.0 peer-review gate not met, covered retrospectively by CSC-REVIEW-003); add the internal-audit release gate; §6 lists review and audit record locations. AUD9-F-024: Author and Description columns swapped back in the v1.8 row; scope text. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.9 | 2026-07-06 | Claude | ASPICE audit — update quality objectives to v1.6.0 actuals — closes #379 |
 | 1.8 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SUP8 1.7→1.9, SWE4 1.14→1.17 |
@@ -44,11 +45,11 @@ QA activities for CStyleCheck verify that project processes are followed as plan
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.8 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.13 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.3 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.3 |
-| CSC-SWE4-001 | Unit Verification Specification | 1.22 |
+| CSC-MAN3-001 | Project Management Plan | 1.9 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.14 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.4 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.4 |
+| CSC-SWE4-001 | Unit Verification Specification | 1.24 |
 
 ---
 
