@@ -47,6 +47,11 @@ PALETTES = {
     "complexity":      ["#f85149", "#d29922", "#388bfd"],
     "density":         ["#f85149", "#bc8cff"],
     "docs":            ["#39d353", "#388bfd"],
+    "cc_buckets":      ["#3fb950", "#d29922", "#f0883e", "#f85149"],
+    "categories":      ["#388bfd", "#3fb950", "#d29922", "#f85149",
+                        "#bc8cff", "#39d353", "#f0883e", "#8b949e",
+                        "#db61a2", "#56d4dd"],
+    "coupling":        ["#388bfd", "#bc8cff", "#d29922", "#f85149"],
 }
 
 # --------------------------------------------------------------------------
@@ -97,15 +102,49 @@ def _fmt_val(v):
 # Core chart builder
 # --------------------------------------------------------------------------
 
-def _make_chart(title, timestamps, series, palette, y_label="", y_min_zero=True):
+def _stack_series(series):
+    """
+    Convert series to cumulative (stacked) values.
+
+    An index is plotted when at least one component is present; missing
+    components at such an index count as 0.  Indices where every component
+    is missing (e.g. old data points recorded before the metric existed)
+    stay None and are skipped.
+    """
+    if not series:
+        return []
+    n = max(len(vals) for _, vals in series)
+    present = [any(i < len(vals) and vals[i] is not None for _, vals in series)
+               for i in range(n)]
+    running = [0] * n
+    stacked = []
+    for label, vals in series:
+        cum = []
+        for i in range(n):
+            if not present[i]:
+                cum.append(None)
+                continue
+            v = vals[i] if i < len(vals) and vals[i] is not None else 0
+            running[i] += v
+            cum.append(running[i])
+        stacked.append((label, cum))
+    return stacked
+
+
+def _make_chart(title, timestamps, series, palette, y_label="", y_min_zero=True,
+                stacked=False):
     """
     series: list of (label, [values])
     timestamps: list of ISO datetime strings (same length as values)
+    stacked: render as a stacked area chart (values are cumulated in order)
     Returns SVG string.
     """
     n = len(timestamps)
     if n == 0:
         return ""
+
+    if stacked:
+        series = _stack_series(series)
 
     # Flatten all values to determine Y range
     all_vals = [v for _, vals in series for v in vals if v is not None]
@@ -197,6 +236,24 @@ def _make_chart(title, timestamps, series, palette, y_label="", y_min_zero=True)
         parts.append(_text(x, PAD_T + PLOT_H + 16, dates[i],
                            **{"text-anchor": "middle", "fill": CLR_MUTE, "font-size": "10"}))
 
+    # Stacked areas (drawn before the boundary lines)
+    if stacked:
+        prev = [0] * n
+        for idx, (label, values) in enumerate(series):
+            color = palette[idx % len(palette)]
+            idxs = [i for i, v in enumerate(values) if v is not None]
+            if idxs:
+                top = [(qx(i), px(values[i])) for i in idxs]
+                bot = [(qx(i), px(prev[i])) for i in reversed(idxs)]
+                if len(idxs) == 1:          # single point → thin bar
+                    x = top[0][0]
+                    top = [(x - 3, top[0][1]), (x + 3, top[0][1])]
+                    bot = [(x + 3, bot[0][1]), (x - 3, bot[0][1])]
+                pts = " ".join(f"{x},{y}" for x, y in top + bot)
+                parts.append(_e("polygon", {"points": pts, "fill": color,
+                                            "opacity": "0.45", "stroke": "none"}))
+            prev = [v if v is not None else prev[i] for i, v in enumerate(values)]
+
     # Series
     for idx, (label, values) in enumerate(series):
         color = palette[idx % len(palette)]
@@ -237,6 +294,43 @@ def _choose_ticks(n, max_ticks=6):
 
 def _extract(points, key):
     return [p.get(key) for p in points]
+
+
+def _extract_scaled(points, key, factor):
+    """Extract *key* multiplied by *factor*; missing values stay None."""
+    return [None if p.get(key) is None else round(p.get(key) * factor, 3)
+            for p in points]
+
+
+def _category_series(points, max_categories=8):
+    """
+    Build per-category series from the ``violations_by_category`` dict of
+    each data point.  Points without the field (recorded before issue #388)
+    yield None; a category absent from a point that has the field yields 0.
+    Categories beyond *max_categories* (by total count) are merged into
+    "other".
+    """
+    totals = {}
+    for p in points:
+        for cat, cnt in (p.get("violations_by_category") or {}).items():
+            totals[cat] = totals.get(cat, 0) + (cnt or 0)
+    cats = sorted(totals, key=lambda c: (-totals[c], c))
+    keep, rest = cats[:max_categories], set(cats[max_categories:])
+    series = []
+    for cat in keep:
+        vals = []
+        for p in points:
+            d = p.get("violations_by_category")
+            vals.append(None if d is None else d.get(cat, 0))
+        series.append((cat, vals))
+    if rest:
+        vals = []
+        for p in points:
+            d = p.get("violations_by_category")
+            vals.append(None if d is None else
+                        sum(v for k, v in d.items() if k in rest))
+        series.append(("other", vals))
+    return series
 
 
 def _generate_all(points, output_dir, branch):
@@ -310,14 +404,15 @@ def _generate_all(points, output_dir, branch):
 
     charts.append(("loc_breakdown",
         _make_chart(
-            f"LOC breakdown — {branch}",
+            f"LOC composition — {branch}",
             ts,
             [("SLOC",    _extract(points, "loc_sloc")),
              ("Comment", _extract(points, "loc_comment")),
              ("Doxygen", _extract(points, "loc_doxygen")),
              ("Blank",   _extract(points, "loc_blank"))],
             PALETTES["loc"],
-            y_label="lines"
+            y_label="lines",
+            stacked=True
         )))
 
     charts.append(("cyclomatic_complexity",
@@ -336,10 +431,9 @@ def _generate_all(points, output_dir, branch):
         _make_chart(
             f"Defect density (violations/KLOC) — {branch}",
             ts,
-            [("Defect density", _extract(points, "defect_density")),
-             ("Dox coverage",   _extract(points, "dox_coverage"))],
+            [("Defect density", _extract(points, "defect_density"))],
             PALETTES["density"],
-            y_label="value",
+            y_label="violations / KLOC",
             y_min_zero=True
         )))
 
@@ -376,6 +470,65 @@ def _generate_all(points, output_dir, branch):
              ("Assert density",  _extract(points, "assert_density"))],
             PALETTES["complexity"],
             y_label="count / per-KLOC",
+            y_min_zero=True
+        )))
+
+    charts.append(("cc_distribution",
+        _make_chart(
+            f"Cyclomatic complexity distribution — {branch}",
+            ts,
+            [("V(G) 1-5",   _extract(points, "cc_bucket_1_5")),
+             ("V(G) 6-10",  _extract(points, "cc_bucket_6_10")),
+             ("V(G) 11-15", _extract(points, "cc_bucket_11_15")),
+             ("V(G) 16+",   _extract(points, "cc_bucket_16_plus"))],
+            PALETTES["cc_buckets"],
+            y_label="functions",
+            stacked=True
+        )))
+
+    charts.append(("function_size",
+        _make_chart(
+            f"Function count & average length — {branch}",
+            ts,
+            [("Func count",      _extract(points, "func_count")),
+             ("Avg func length", _extract(points, "func_length_avg"))],
+            PALETTES["docs"],
+            y_label="count / lines",
+            y_min_zero=True
+        )))
+
+    charts.append(("violations_by_category",
+        _make_chart(
+            f"Violations by rule category — {branch}",
+            ts,
+            _category_series(points),
+            PALETTES["categories"],
+            y_label="violations",
+            stacked=True
+        )))
+
+    charts.append(("documentation_coverage",
+        _make_chart(
+            f"Documentation coverage — {branch}",
+            ts,
+            [("Comment density %",  _extract_scaled(points, "loc_comment_density", 100)),
+             # dox_coverage (ratio) exists in pre-#388 points too
+             ("Doxygen coverage %", _extract_scaled(points, "dox_coverage", 100))],
+            PALETTES["docs"],
+            y_label="percent",
+            y_min_zero=True
+        )))
+
+    charts.append(("coupling",
+        _make_chart(
+            f"Coupling — {branch}",
+            ts,
+            [("Global vars",     _extract(points, "global_vars")),
+             ("Static vars",     _extract(points, "static_vars")),
+             ("Avg fan-out",     _extract(points, "fanout_avg")),
+             ("Recursive funcs", _extract(points, "recursive_func_count"))],
+            PALETTES["coupling"],
+            y_label="count",
             y_min_zero=True
         )))
 

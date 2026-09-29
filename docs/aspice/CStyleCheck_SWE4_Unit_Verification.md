@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.20 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.21 |
 | **Project** | CStyleCheck | **Date** | 2026-07-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.21 | 2026-09-29 | Claude | Add §5.16 `test_collect_metrics.py` (54 tests, UV-MET-001 to UV-MET-010) for trend-analysis C source metrics; add §6 row (total 1279→1333, modules 53→54); add SWE1-102 to SWE1-108 to §7; update §3.1 refs (SWE1 2.6→2.7, SWE3 1.16→1.17) — issue #388 |
 | 1.20 | 2026-07-06 | Claude | ASPICE audit — update §6 per-row test counts for 8 modules (+56 total): test_defines.py 22→30, test_yoda_condition.py 37→46, test_inline_suppression.py 15→24, test_constant_comparison.py 21→27, test_parameter_prefix.py 47→51, test_pointer_prefix_fix.py 10→20, test_print_summary.py 7→11, test_unsigned_suffix_signed_params.py 9→15; update §3.1 refs (SWE1 2.4→2.6, SWE3 1.15→1.16, SWE5 1.11→1.14); add SWE1-091/092/093 to §7 traceability — closes #374 |
 | 1.19 | 2026-07-06 | Claude | v1.6.0 RC — update test total 1223→1279 (+56 across 8 modules: yoda_condition 37→46, inline_suppression 15→24, constant_comparison 21→27, defines 22→30, parameter_prefix 47→51, pointer_prefix_fix 10→20, print_summary 7→11, unsigned_suffix_signed_params 9→15); update coverage comment; update §5.5 SVD→1.22 |
 | 1.18 | 2026-07-01 | Claude | v1.6.0 — add test_constant_comparison.py (21 tests), test_unsigned_suffix_signed_params.py (9 tests), test_pointer_prefix_fix.py (10 tests); update §3.1 refs (SWE1 2.4→2.5, SWE5 1.11→1.12); update test total 1183→1223, modules 50→53; update coverage comment — closes #339 #340 #341 |
@@ -55,8 +56,8 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.6 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.16 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.17 |
 | CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.14 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.9 |
 
@@ -378,6 +379,23 @@ Added in v1.13. Covers the per-file breakdown extension to `print_summary()` (SW
 | UV-IMP-007 | `constant.min_length` / `macro.min_length` | Previously undocumented; now implemented |
 | UV-IMP-008 | Baseline suppression | Known violations suppressed; new ones reported |
 
+### 5.16 Trend-Analysis C Source Metrics — `test_collect_metrics.py` (54 tests)
+
+Added for issue #388. Covers the pure-Python C source metric helpers in `scripts/collect_metrics.py` and the new charts / wiki rows in `scripts/generate_charts.py` and `scripts/update_wiki_metrics.py` (SWE1-102 to SWE1-108, UNIT-121 to UNIT-127).
+
+| TC-ID | Test Class | Tests | Verified Behaviour |
+|---|---|---|---|
+| UV-MET-001 | `TestStripCommentsAndStrings` | 7 | Comments/strings blanked, length and newlines preserved, escapes, char literals, preprocessor blanking |
+| UV-MET-002 | `TestClassifyLines` | 8 | Blank/comment/doxygen/SLOC classification incl. trailing comments, code after `*/`, comment markers in strings, `/**/` banners, `/*!`/`//!` |
+| UV-MET-003 | `TestExtractFunctions` | 7 | Prototypes vs definitions, struct/enum/initialiser exclusion, multi-line signatures, parameter counting, braces in strings/comments, `extern "C"`, macro bodies |
+| UV-MET-004 | `TestCyclomaticComplexity` | 5 | V(G) decision points (`if`, else-if, `while`, `do`-`while`, `for`, `case`, `&&`, `\|\|`, `?`); keywords in comments/strings and inside identifiers not counted |
+| UV-MET-005 | `TestNesting` | 3 | Flat body = 0, nested blocks, braces in strings ignored |
+| UV-MET-006 | `TestDoxygenCoverage` | 2 | `/**`, `/*!`, `///` detected; plain comment / none not counted; blank gap tolerated |
+| UV-MET-007 | `TestCoupling` | 5 | Fan-out excludes keywords/`sizeof` and comment text; direct recursion; global/static counting incl. extern, typedef, struct/enum, function pointers, prototypes, function-local statics |
+| UV-MET-008 | `TestCSourceMetrics` | 6 | Empty directory → zeros, header-only directory, aggregated sample project, CC histogram buckets, long-function threshold, new keys present |
+| UV-MET-009 | `TestSummariseViolations` | 4 | Violations by category, files with zero violations, top-5 rules, empty report |
+| UV-MET-010 | `TestChartsAndWiki` | 7 | Stacking with missing values, category series for old points, `other` bucket, stacked polygons, chart generation with old/new/mixed points, wiki snapshot rows and tables |
+
 ---
 
 ## 6. Verification Results Summary
@@ -437,7 +455,8 @@ Added in v1.13. Covers the per-file breakdown extension to `print_summary()` (SW
 | `test_constant_comparison.py` | 27 | 27 | 0 | COMP-05f (`_check_constant_comparison`) |
 | `test_unsigned_suffix_signed_params.py` | 15 | 15 | 0 | COMP-05f (`_check_misc` signed-param exemption) |
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
-| **Total** | **1279** | **1279** | **0** | All rules covered — 53 modules |
+| `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
+| **Total** | **1333** | **1333** | **0** | All rules covered — 54 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -488,6 +507,13 @@ Added in v1.13. Covers the per-file breakdown extension to `print_summary()` (SW
 | SWE1-091 | misc.constant_comparison (`_check_constant_comparison`) | `test_constant_comparison.py` |
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix | `test_pointer_prefix_fix.py` |
+| SWE1-102 | Trend metrics — LOC classification | `test_collect_metrics.py` — UV-MET-001, UV-MET-002, UV-MET-008 |
+| SWE1-103 | Trend metrics — cyclomatic complexity / nesting | `test_collect_metrics.py` — UV-MET-003 to UV-MET-005, UV-MET-008 |
+| SWE1-104 | Trend metrics — size | `test_collect_metrics.py` — UV-MET-003, UV-MET-008 |
+| SWE1-105 | Trend metrics — documentation coverage | `test_collect_metrics.py` — UV-MET-006, UV-MET-008 |
+| SWE1-106 | Trend metrics — coupling | `test_collect_metrics.py` — UV-MET-007, UV-MET-008 |
+| SWE1-107 | Trend metrics — violation quality | `test_collect_metrics.py` — UV-MET-009 |
+| SWE1-108 | Trend metrics — backward-compatible data points, charts, wiki | `test_collect_metrics.py` — UV-MET-008, UV-MET-010 |
 
 ---
 

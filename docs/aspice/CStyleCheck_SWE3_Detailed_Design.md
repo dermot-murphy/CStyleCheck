@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.16 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.17 |
 | **Project** | CStyleCheck | **Date** | 2026-07-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.17 | 2026-09-29 | Claude | Add UNIT-121 to UNIT-127 (trend-analysis C source metric helpers in `scripts/collect_metrics.py`, stacked charts in `scripts/generate_charts.py`); update §3.1 refs (SWE1 2.6→2.7, SWE4 1.20→1.21); update §8 RTM for SWE1-102 to SWE1-108 — issue #388 |
 | 1.16 | 2026-07-06 | Claude | ASPICE audit — update scope to v1.6.0; §3.1 refs (SWE1 2.4→2.6, SWE2 1.11→1.12, SWE4 1.17→1.20); add UNIT-116 (_check_constant_comparison), UNIT-117 (_fix_pointer_prefix), UNIT-118 (fix_pointer_prefix_in_header); update UNIT-95 for block-comment form, UNIT-22 run_all order, UNIT-86 Tee; update §8 RTM — closes #373 |
 | 1.15 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.3→2.4, SWE2 1.9→1.11, SWE4 1.16→1.17 | Dermot Murphy |
 | 1.14 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.1→2.3, SWE4 1.14→1.16 | Dermot Murphy |
@@ -47,9 +48,9 @@ This document defines the detailed design of each software unit in **CStyleCheck
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.6 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
 | CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.12 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.20 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.21 |
 
 ---
 
@@ -177,6 +178,13 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-116 | `Checker._check_constant_comparison` | `checker.py` | COMP-05f | `checker.py` |
 | UNIT-117 | `_fix_pointer_prefix` | `fixer.py` | COMP-08 | `fixer.py` |
 | UNIT-118 | `fix_pointer_prefix_in_header` | `fixer.py` | COMP-08 | `fixer.py` |
+| UNIT-121 | `strip_comments_and_strings` | `scripts/collect_metrics.py` | CI script (metrics) | `scripts/collect_metrics.py` |
+| UNIT-122 | `classify_lines` | `scripts/collect_metrics.py` | CI script (metrics) | `scripts/collect_metrics.py` |
+| UNIT-123 | `extract_functions` | `scripts/collect_metrics.py` | CI script (metrics) | `scripts/collect_metrics.py` |
+| UNIT-124 | `count_file_scope_variables` | `scripts/collect_metrics.py` | CI script (metrics) | `scripts/collect_metrics.py` |
+| UNIT-125 | `_c_source_metrics` | `scripts/collect_metrics.py` | CI script (metrics) | `scripts/collect_metrics.py` |
+| UNIT-126 | `_summarise_violations` | `scripts/collect_metrics.py` | CI script (metrics) | `scripts/collect_metrics.py` |
+| UNIT-127 | `_make_chart` (stacked) / `_stack_series` / `_category_series` | `scripts/generate_charts.py` | CI script (metrics) | `scripts/generate_charts.py` |
 
 ---
 
@@ -1086,6 +1094,94 @@ src/cstylecheck/
 
 ---
 
+### UNIT-121 — `strip_comments_and_strings(text) → str`
+
+**Purpose:** Blank out comments and string/char literal contents so that keyword, brace and call counting never matches text inside comments or strings (SWE1-102 to SWE1-106, issue #388). Located in `scripts/collect_metrics.py`.
+
+**Algorithm:**
+1. Single-pass state machine with states NORMAL, LINE_CMT, BLOCK_CMT, STRING, CHAR
+2. Replace every comment character (including delimiters) and every literal content character with a space; keep newlines and the literal delimiters
+3. A backslash inside a literal consumes the following character; an unterminated literal ends at end of line
+4. The result has the same length as the input so offsets and line numbers map 1:1
+
+The companion `blank_preprocessor_lines(code)` blanks `#` directives (including `\` continuations) so macro bodies are not mistaken for code.
+
+---
+
+### UNIT-122 — `classify_lines(text) → dict`
+
+**Purpose:** Classify each physical line as blank, comment, doxygen or SLOC (SWE1-102).
+
+**Algorithm:**
+1. Whitespace-only line → blank
+2. Otherwise scan the line, tracking block-comment state (and whether the open block is doxygen: `/**` but not `/**/` or `/***`, or `/*!`) and multi-line literal state
+3. Any non-comment, non-whitespace character (including literal text) marks the line as SLOC
+4. A comment-only line is doxygen if its comment is a doxygen block or a `///` / `//!` line, otherwise comment
+5. Invariant: `physical = blank + comment + doxygen + sloc`
+
+---
+
+### UNIT-123 — `extract_functions(text) → list[dict]`
+
+**Purpose:** Locate function definitions and compute per-function metrics (SWE1-103 to SWE1-106).
+
+**Algorithm:**
+1. Strip comments/strings (UNIT-121) and blank preprocessor lines
+2. Scan at file-scope brace depth 0; the text since the last `;` or `}` is the candidate header
+3. `extern "C" {` braces are transparent; a header is a function definition if it ends with `name(params)`, contains no `=`, the name is not a control keyword and it does not start with `typedef`/`struct`/`union`/`enum`
+4. Find the matching `}` and record: name; start line (name line); length (name line → closing brace, inclusive); `count_params()` (top-level commas, `void`/empty = 0); `cyclomatic_complexity()` (1 + `if`/`while`/`for`/`case`/`&&`/`||`/`?`); `max_brace_nesting()` (maximum depth − 1); `has_dox` (original text immediately before the header ends in a `/**`/`/*!` block or a `///`/`//!` line); `calls` (identifiers followed by `(` excluding `C_KEYWORDS`); `recursive` (own name in `calls`)
+5. Non-function brace blocks (struct/enum/initialiser) are skipped without ending the current statement
+
+---
+
+### UNIT-124 — `count_file_scope_variables(text) → (int, int)`
+
+**Purpose:** Count file-scope global and static variable definitions (SWE1-106).
+
+**Algorithm:**
+1. Strip comments/strings and preprocessor lines; iterate `;`-terminated statements at file scope, skipping function bodies
+2. Skip `typedef`, `extern`, `_Static_assert` and `asm` statements
+3. Replace an aggregate type body (`struct s {…} v`) by a placeholder type; a statement with nothing after the closing brace is a pure type definition and is skipped
+4. Split into declarators on top-level commas; a declarator containing `name(` without `(*` is a prototype and is skipped
+5. Add the remaining declarators to the `static` or global total
+
+---
+
+### UNIT-125 — `_c_source_metrics(total_violations=0, source_dir=None) → dict`
+
+**Purpose:** Aggregate all C source metrics over `examples/*.c` and `*.h` (or `source_dir`) (SWE1-102 to SWE1-108).
+
+**Algorithm:**
+1. If no `.c`/`.h` files exist, return `_empty_c_metrics()` (all zero)
+2. Per file: accumulate `classify_lines()`, the safety counters (on stripped text) and the maximum file length
+3. For `.c` files only: `extract_functions()` and `count_file_scope_variables()`
+4. Derive max/avg/over-threshold values using `FUNC_LENGTH_LIMIT` (60), `FUNC_PARAM_LIMIT` (5), `CC_LIMIT` (10) and `CC_BUCKETS`; densities are 0.0 when SLOC = 0
+
+---
+
+### UNIT-126 — `_summarise_violations(data) → dict`
+
+**Purpose:** Derive severity totals and violation-quality metrics from the CStyleCheck JSON report (SWE1-107).
+
+**Algorithm:**
+1. Read `summary` and `violations` (missing keys → empty)
+2. Count violations per rule, per category (rule-ID prefix before the first `.`) and collect the set of files with violations
+3. `files_zero_violations = max(0, files_checked − |files with violations|)`; `top_rules` = the five most common rules
+
+---
+
+### UNIT-127 — `generate_charts._make_chart(…, stacked=False)`, `_stack_series()`, `_category_series()`
+
+**Purpose:** Render the new trend charts, including stacked-area charts, while tolerating data points recorded before issue #388 (SWE1-108). Located in `scripts/generate_charts.py`.
+
+**Algorithm:**
+1. `_stack_series()` accumulates the series in order; an index where every component is missing stays `None` (not plotted), otherwise a missing component counts as 0
+2. With `stacked=True`, `_make_chart()` draws a filled polygon between consecutive cumulative series before drawing the boundary lines
+3. `_category_series()` builds one series per rule category from `violations_by_category` (top 8 by total, the rest merged into `other`); points without the field yield `None`
+4. A chart whose series contain no values is not written
+
+---
+
 ### UNIT-90 — `Checker._check_whitespace_ratio() → None`
 
 **Purpose:** Enforce a minimum ratio of blank lines to code lines (issue #143), measuring code "airiness".
@@ -1228,6 +1324,13 @@ Violation:
 | SWE1-097 | `print_summary()` restructure | UNIT-40 (extended) |
 | SWE1-098 | `fn_start` line correction | UNIT-24 (extended) |
 | SWE1-099 | Function-pointer typedef exemption | UNIT-23 (extended) |
+| SWE1-102 | Trend metrics — LOC classification | UNIT-121, UNIT-122, UNIT-125 |
+| SWE1-103 | Trend metrics — cyclomatic complexity / nesting | UNIT-121, UNIT-123, UNIT-125 |
+| SWE1-104 | Trend metrics — size | UNIT-123, UNIT-125 |
+| SWE1-105 | Trend metrics — documentation coverage | UNIT-123, UNIT-125 |
+| SWE1-106 | Trend metrics — coupling | UNIT-123, UNIT-124, UNIT-125 |
+| SWE1-107 | Trend metrics — violation quality | UNIT-126 |
+| SWE1-108 | Trend metrics — backward-compatible data points, charts, wiki | UNIT-125, UNIT-127 |
 
 > **Note (UNIT-84):** `DeclaredNotDefinedChecker` (UNIT-84) is traced via the cross-file check requirement (SWE1-051 to SWE1-053 range). SWE1-071 maps exclusively to `_check_whitespace_ratio` (UNIT-90) as shown in the `SWE1-045 to SWE1-050, SWE1-071` row above; the duplicate mapping of SWE1-071 → UNIT-84 has been removed as a CSC-AUD-005 corrective action.
 

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.6 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.7 |
 | **Project** | CStyleCheck | **Date** | 2026-07-01 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.7 | 2026-09-29 | Claude | Add §4.18 SWE1-102 to SWE1-108 (trend-analysis C source code metrics: LOC, cyclomatic complexity, size, documentation, coupling, violation quality, backward-compatible charts/wiki); update RTM — issue #388 |
 | 2.6 | 2026-07-06 | Claude | ASPICE audit — add SWE1-094 to SWE1-099 for v1.6.0 features (startup banner, copyright in --version, block-comment suppression, OS path sep, --summary restructure, fn_start correction, fn-ptr typedef exemption); update SWE1-072 for /* */ form; update SWE1-074 for pointer_prefix fix; update §3.2 cross-refs (SWE2 1.11→1.12, SUP8 1.9→1.10); update RTM — closes #371 |
 | 2.5 | 2026-07-01 | Claude | Add SWE1-091 (misc.constant_comparison), SWE1-092 (unsigned_suffix signed-param exemption), SWE1-093 (variable.pointer_prefix auto-fix); update §3.1 scope to v1.6.0; update RTM — closes #339 #340 #341 |
 | 2.4 | 2026-06-27 | Fix §3.2 cross-refs: cascade update (SWE2 1.9→1.11 + any other stale refs fixed) | Dermot Murphy |
@@ -262,6 +263,20 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SWE1-098 | The `_check_functions()` method shall correct the reported line number for a function definition when the opening brace appears on a line later than the function name line (multi-line signature); the violation shall be reported at the line containing the function return type and name, not at the opening brace | Mandatory | Test | SYS-F-015 |
 | SWE1-099 | The `_check_variables()` method shall exempt function-pointer `typedef` names from the `variable.pointer_prefix` rule; a typedef whose base type contains a function-pointer signature (e.g. `typedef void (*UART_CB_T)(void)`) shall not trigger the `variable.pointer_prefix` violation | Mandatory | Test | SYS-F-014 |
 
+### 4.18 Trend-Analysis Metrics — C Source Code Metrics (issue #388)
+
+These requirements apply to the CI trend-analysis scripts in `scripts/` (`collect_metrics.py`, `generate_charts.py`, `update_wiki_metrics.py`, `compare_metrics.py`) run by `.github/workflows/metrics.yml`, not to the `cstylecheck` package. There is no parent system requirement: the metrics support project monitoring (MAN.3, GP 2.1.4). All analysis is pure-Python and heuristic (no compiler). Thresholds are documented in `scripts/metrics_rules.yml`.
+
+| SW-REQ-ID | Requirement | Priority | Verification | Parent |
+|---|---|---|---|---|
+| SWE1-102 | The `classify_lines()` function in `scripts/collect_metrics.py` shall classify every physical line of a C source file as exactly one of blank, non-doxygen comment, doxygen comment (`/** */`, `/*! */`, `///`, `//!`) or SLOC (any line containing non-comment code, including code with a trailing comment); comment markers inside string/char literals shall not start a comment; `collect_metrics.py` shall record `loc_physical`, `loc_blank`, `loc_comment`, `loc_doxygen`, `loc_sloc`, `loc_comment_density` ((comment + doxygen) / SLOC) and `loc_blank_ratio` | Mandatory | Test | — (MAN.3 / GP 2.1.4 process monitoring) |
+| SWE1-103 | The `extract_functions()` function shall locate C function definitions (not prototypes, struct/enum bodies, initialisers or macro bodies) and compute per function the McCabe cyclomatic complexity V(G) = 1 + number of `if`, `while`, `for`, `case`, `&&`, `\|\|` and `?` tokens in comment- and string-stripped code, and the maximum brace nesting depth inside the body; `collect_metrics.py` shall record `cc_max`, `cc_avg`, `cc_over_threshold` (V(G) > 10), `nesting_max` and the histogram fields `cc_bucket_1_5`, `cc_bucket_6_10`, `cc_bucket_11_15`, `cc_bucket_16_plus` | Mandatory | Test | — (MAN.3 / GP 2.1.4 process monitoring) |
+| SWE1-104 | `collect_metrics.py` shall record the size metrics `c_file_count`, `h_file_count`, `func_count`, `func_length_max`, `func_length_avg` (lines from the function-name line to the closing brace), `func_over_length` (> 60 lines), `func_param_max`, `func_over_params` (> 5 parameters; `void` or empty list = 0) and `file_length_max` | Mandatory | Test | — (MAN.3 / GP 2.1.4 process monitoring) |
+| SWE1-105 | `collect_metrics.py` shall record `dox_coverage` (ratio) and `dox_coverage_pct` (percentage) of function definitions immediately preceded by a doxygen comment (`/** … */`, `/*! … */`, or a `///` / `//!` line) | Mandatory | Test | — (MAN.3 / GP 2.1.4 process monitoring) |
+| SWE1-106 | The `count_file_scope_variables()` function shall count file-scope variable definitions per declarator, excluding `typedef`, `extern` declarations, function prototypes and pure type definitions; `collect_metrics.py` shall record `global_vars` (non-static), `static_vars`, `fanout_avg` (mean number of unique called identifiers per function, excluding C keywords, `sizeof` and self-calls) and `recursive_func_count` (functions that call themselves directly) | Mandatory | Test | — (MAN.3 / GP 2.1.4 process monitoring) |
+| SWE1-107 | The `_summarise_violations()` function shall derive from the CStyleCheck JSON report `violations_by_category` (count per rule-ID prefix before the first `.`), `files_zero_violations` and `top_rules` (five most frequent rules); violations per KLOC SLOC shall be recorded as `defect_density` and the severity distribution as `errors` / `warnings` / `info_count` | Mandatory | Test | — (MAN.3 / GP 2.1.4 process monitoring) |
+| SWE1-108 | The trend-analysis scripts shall append the new fields to each data point without renaming or removing existing fields; when no C files are present all C metrics shall be zero; `generate_charts.py` shall treat fields missing from older data points as absent (not plotted) and shall render the charts `loc_breakdown` (stacked area), `cc_distribution` (stacked area), `function_size`, `defect_density`, `violations_by_category` (stacked area), `documentation_coverage` and `coupling`; `update_wiki_metrics.py` shall add snapshot rows for the new scalar metrics plus a violations-by-category table and a top-5 rules table | Mandatory | Test | — (MAN.3 / GP 2.1.4 process monitoring) |
+
 ### 4.15 Verification Criteria
 
 The following criteria shall be met by all software requirements above. They are used as the basis for SWE.4 unit verification.
@@ -323,6 +338,13 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-097 | `print_summary()` restructure: Files before Results, header, dynamic separator | SYS-F-032 | `output.print_summary()` | `test_print_summary.py` |
 | SWE1-098 | `fn_start` line-number correction for multi-line signatures | SYS-F-015 | `Checker._check_functions()` | `test_functions.py` |
 | SWE1-099 | Function-pointer typedef exemption from `variable.pointer_prefix` | SYS-F-014 | `Checker._check_variables()` | `test_variables.py` |
+| SWE1-102 | Trend metrics — LOC classification | — (MAN.3 / GP 2.1.4 process monitoring) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
+| SWE1-103 | Trend metrics — cyclomatic complexity / nesting | — (MAN.3 / GP 2.1.4 process monitoring) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
+| SWE1-104 | Trend metrics — size | — (MAN.3 / GP 2.1.4 process monitoring) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
+| SWE1-105 | Trend metrics — documentation coverage | — (MAN.3 / GP 2.1.4 process monitoring) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
+| SWE1-106 | Trend metrics — coupling | — (MAN.3 / GP 2.1.4 process monitoring) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
+| SWE1-107 | Trend metrics — violation quality | — (MAN.3 / GP 2.1.4 process monitoring) | `_summarise_violations()` | `test_collect_metrics.py` |
+| SWE1-108 | Trend metrics — backward-compatible data points, charts and wiki | — (MAN.3 / GP 2.1.4 process monitoring) | `generate_charts.py`, `update_wiki_metrics.py`, `collect_metrics.py` | `test_collect_metrics.py` |
 
 ---
 
