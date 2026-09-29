@@ -28,7 +28,7 @@ from .config import (
 )
 from .fixer import (apply_fixes, unified_diff, FIXABLE_RULES, SAFE_RULES,
                     get_fn_name_for_fix, fix_pointer_prefix_in_header)
-from .utils import module_name, _cfg
+from .utils import module_name, _cfg, config_error, EXIT_CONFIG_ERROR
 from .checker import Checker
 from .sign_checker import SignChecker, DeclaredNotDefinedChecker
 from .baseline import load_baseline, write_baseline, apply_baseline
@@ -365,6 +365,26 @@ def _build_parser() -> argparse.ArgumentParser:
 # ---------------------------------------------------------------------------
 
 def main() -> int:
+    """CLI entry point (console script ``cstylecheck = "cstylecheck:main"``).
+
+    Returns the exit code: 0 clean, 1 violations, 2 config/usage error.
+
+    Config/usage errors exit via :func:`config_error` (code 2).  As a safety
+    net, any ``SystemExit`` carrying a string message (``sys.exit("...")``,
+    which Python maps to exit code 1) is reported on stderr and re-raised
+    as code 2, so the installed console script and ``python
+    src/cstylecheck.py`` behave identically (issue #425).
+    """
+    try:
+        return _main()
+    except SystemExit as exc:
+        if isinstance(exc.code, str):
+            print(exc.code, file=sys.stderr)
+            raise SystemExit(EXIT_CONFIG_ERROR) from None
+        raise
+
+
+def _main() -> int:
     # Fast-path: --version and --help must work even if every other arg is
     # broken, so check for them before options-file expansion or config loading.
     raw_argv = sys.argv[1:]
@@ -478,7 +498,7 @@ def main() -> int:
         try:
             log_fh = open(args.log, "w", encoding="utf-8")
         except OSError as e:
-            sys.exit(f"Cannot open log file '{args.log}': {e}")
+            config_error(f"Cannot open log file '{args.log}': {e}")
 
     tee = Tee(log_fh)
     # Always announce version/copyright to stderr (visible in terminal but not
@@ -776,13 +796,5 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    try:
-        sys.exit(main())
-    except SystemExit as _e:
-        # sys.exit("message") uses a string code → exit 1 by default.
-        # Re-emit as exit 2 so callers can distinguish config errors (2)
-        # from naming violations (1) and clean runs (0).
-        if isinstance(_e.code, str):
-            print(_e.code, file=sys.stderr)
-            sys.exit(2)
-        raise
+    # main() itself maps config/usage errors to exit code 2 (#425).
+    sys.exit(main())

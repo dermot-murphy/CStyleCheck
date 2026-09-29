@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP1-001 | **Version** | 1.17 |
+| **Document ID** | CSC-SUP1-001 | **Version** | 1.18 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.18 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.17 | 2026-09-29 | Claude | Cross-reference resync with #424: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.16 | 2026-09-29 | Claude | Cross-reference resync with #422: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.15 | 2026-09-29 | Claude | Cross-reference resync with #420: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -51,11 +52,11 @@ QA activities for CStyleCheck verify that project processes are followed as plan
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.16 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.20 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.10 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.11 |
-| CSC-SWE4-001 | Unit Verification Specification | 1.32 |
+| CSC-MAN3-001 | Project Management Plan | 1.17 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.21 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.11 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.12 |
+| CSC-SWE4-001 | Unit Verification Specification | 1.33 |
 
 ---
 

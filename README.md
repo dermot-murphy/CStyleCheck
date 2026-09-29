@@ -139,7 +139,7 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1524 tests)
+    cstylecheck_tests.yml      # runs the test suite on every commit (1532 tests)
     cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
@@ -579,8 +579,8 @@ Matching rules:
 #408 and #407 (dedicated unit tests for the source cache, startup banner and OS path
 separator) add 17 more, #413 (startup-banner requirements aligned with the code) adds 5,
 #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8, and #418 (the other 7 new
-rules opt-in) adds 11, #420 (preset opt-in rules) adds 18, #422 (case-style names) adds 27, and #424
-(`functions.case` removed) adds 16: **1524 tests** in total.
+rules opt-in) adds 11, #420 (preset opt-in rules) adds 18, #422 (case-style names) adds 27, #424
+(`functions.case` removed) adds 16, and #425 (config-error exit code 2) adds 8: **1532 tests** in total.
 
 ### New in v1.2.0 (2026-05-29)
 

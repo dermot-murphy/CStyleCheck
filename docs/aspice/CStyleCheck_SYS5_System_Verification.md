@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.17 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.18 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.18 | 2026-09-29 | Claude | #425: VTC-003 result note test total 1524→1532 (config-error exit-code tests); referenced-document versions resynced (4) |
 | 1.17 | 2026-09-29 | Claude | #424: VTC-003 result note test total 1508→1524 (`functions.case` removal tests); referenced-document versions resynced (4) |
 | 1.16 | 2026-09-29 | Claude | #422: VTC-003 result note test total 1481→1508 (case-style config validation tests); referenced-document versions resynced (4) |
 | 1.15 | 2026-09-29 | Claude | #420: VTC-003 result note test total 1463→1481; SYS-F-043 row notes the preset / `--init` opt-in rules; referenced-document versions resynced (4) |
@@ -53,11 +54,11 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.11 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.14 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.20 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.12 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.15 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.21 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.20 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.21 |
 
 ### 3.3 System Configuration Under Test
 
@@ -176,7 +177,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | Naming (v1.4.0) | `naming.identifier_length`, `naming.no_single_char_identifiers` | `test_identifier_length.py`, `test_no_single_char_identifiers.py` | PASS |
 | Other | `reserved_name`, `spell_check`, `sign_compatibility`, `misc.declared_not_defined` | `test_reserved_name.py`, `test_spell_check.py`, `test_sign_compatibility.py`, `test_declared_not_defined.py` | PASS |
 
-**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1444 tests, all PASS, after #408, #407 and #413; 1452 tests, all PASS, after #412; 1463 tests, all PASS, after #418; 1481 tests, all PASS, after #420; 1508 tests, all PASS, after #422; 1524 tests, all PASS, after #424
+**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1444 tests, all PASS, after #408, #407 and #413; 1452 tests, all PASS, after #412; 1463 tests, all PASS, after #418; 1481 tests, all PASS, after #420; 1508 tests, all PASS, after #422; 1524 tests, all PASS, after #424; 1532 tests, all PASS, after #425
 
 ---
 

@@ -370,10 +370,10 @@ class TestVerboseFlag(unittest.TestCase):
 class TestExitCodes(unittest.TestCase):
     """Exit code contract: 0 = clean, 1 = naming violations, 2 = config error.
 
-    Exit 2 is produced when sys.exit("message") is called (config/file errors).
-    The SystemExit wrapper in __main__ converts string-message exits to code 2
-    so callers (CI, shell scripts) can distinguish config failures from naming
-    failures without parsing output text.
+    Exit 2 is produced by config_error() on config/file errors, and main()
+    maps any stray string-message SystemExit to 2 (issue #425), so callers
+    (CI, shell scripts) can distinguish config failures from naming failures
+    without parsing output text.
     """
 
     def _run_custom_config(self, config_path, *extra_args, files=None):
