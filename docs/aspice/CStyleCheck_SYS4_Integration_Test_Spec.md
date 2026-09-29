@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.17 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.18 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.18 | 2026-09-29 | Claude | #420: test total 1463→1481 (preset / `--init` opt-in rule tests); referenced-document versions resynced (3) |
 | 1.17 | 2026-09-29 | Claude | #418 (CR-418): SITC-017 step 1 enables all 8 post-v1.6.0 rules explicitly (all opt-in); with the default config none is reported; evidence cites UV-MSR-009; test total 1452→1463; referenced-document versions resynced (3) |
 | 1.16 | 2026-09-29 | Claude | #412: SITC-017 step 1 enables `misc.boolean_comparison` explicitly (opt-in); test total 1444→1452; referenced-document versions resynced (3) |
 | 1.15 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -63,9 +64,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.8 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.11 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.14 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.9 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.12 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.15 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
@@ -521,7 +522,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 **Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016), GitHub Actions (automated) / Dermot Murphy (manual review), 1279 tests all PASS on Python 3.10 / 3.11 / 3.12.
 
-**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), 1452 after #412 (8 tests) and 1463 after #418 (11 tests), all PASS.
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), 1452 after #412 (8 tests), 1463 after #418 (11 tests) and 1481 after #420 (18 tests), all PASS.
 
 > **📋 Note:** All SITC test cases must achieve PASS status before the system verification (SYS.5) activities commence. Any FAIL result must be tracked as a GitHub Issue and resolved via the change control process (SUP.10).
 

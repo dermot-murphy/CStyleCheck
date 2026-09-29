@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.23 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.24 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-09-29 | Claude | Issue #420: §6 SWE1-075 row cites UV-WIZ-001 to UV-WIZ-005 and SIT-016 (presets / `--init` enable the standard-specific opt-in rules); BP3 evidence — suite total 1463→1481; referenced-document versions resynced (4) |
 | 1.23 | 2026-09-29 | Claude | Issue #418 (CR-418): SWQ-003 post-v1.6.0 row — all 8 rules opt-in, UV-MSR-009 cited; BP3 evidence — `test_misra_rules.py` 149→160 test cases; suite total 1452→1463; referenced-document versions resynced (4) |
 | 1.22 | 2026-09-29 | Claude | Issue #412: BP3 evidence — `test_misra_rules.py` 141→149 test cases; suite total 1444→1452; referenced-document versions resynced (4) |
 | 1.21 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -59,10 +60,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.14 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.20 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.14 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.17 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.15 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.21 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.15 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.18 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -414,7 +415,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | SWE1-MISRA-001 to SWE1-MISRA-004 | MISRA C lexical rules (lowercase_l, octal, trigraph, non_ascii) | SWQ-003 | Covered |
 | SWE1-072 to SWE1-073 | Inline suppression comments | `test_inline_suppression.py` (via pytest) | Covered |
 | SWE1-074 | Auto-fix mode | `test_fix_mode.py` (via pytest) | Covered |
-| SWE1-075 | Config wizard and presets | `test_init_wizard.py` (via pytest) | Covered |
+| SWE1-075 | Config wizard and presets (incl. preset / `--init` opt-in rules, #420) | `test_init_wizard.py` (via pytest; UV-WIZ-001 to UV-WIZ-005, SIT-016) | Covered |
 | SWE1-076 | Per-directory config | `test_per_dir_config.py` (via pytest) | Covered |
 | SWE1-077 | HTML report output | `test_html_report.py` (via pytest) | Covered |
 | SWE1-078 to SWE1-088 | v1.4.0 rules (function quality, macro safety, naming) | SWQ-003 | Covered |
@@ -504,5 +505,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420).
 

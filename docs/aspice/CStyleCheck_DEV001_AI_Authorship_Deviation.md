@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-DEV-001 | **Version** | 1.7 |
+| **Document ID** | CSC-DEV-001 | **Version** | 1.8 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Approved | **Classification** | Internal |
 | **Author** | Dermot Murphy | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.8 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.7 | 2026-09-29 | Claude | Cross-reference resync with #418: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.5 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -137,7 +138,7 @@ This deviation is accepted on the basis that Dermot Murphy is the sole accountab
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-PA2-001 | Process Capability Records | 1.28 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.17 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.7 |
+| CSC-PA2-001 | Process Capability Records | 1.29 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.18 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.8 |
 | GitHub Issue #52 | AI listed as Author across all 18 ASPICE work products | — |

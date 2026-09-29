@@ -38,6 +38,12 @@ In practice (issue #418):
   also defaults to off in code.
 - A rule may be switched on in a preset or a sample profile such as
   `examples/embedded_project/config/strict.yml`.
+- A standard-specific opt-in rule (one that enforces a MISRA C or Barr-C rule) should
+  also be added to the matching preset in `src/cstylecheck/wizard.py` (`misra` or
+  `barr-c`, via `MISRA_OPT_IN_RULES` / `BARR_C_OPT_IN_RULES`) with its shipped default
+  severity, so `--preset` and the `--init` wizard question for that standard enable it
+  (issue #420). Style rules that belong to no standard (e.g. `misc.boolean_comparison`)
+  stay out of the presets.
 
 Upgrading CStyleCheck therefore never adds new findings to an existing project.
 Users opt in to each new rule.

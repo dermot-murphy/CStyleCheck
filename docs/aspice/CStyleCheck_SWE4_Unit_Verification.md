@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.29 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.30 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.30 | 2026-09-29 | Claude | Issue #420: add §5.18 catalogue for `test_init_wizard.py` (UV-WIZ-001 to UV-WIZ-005; UV-WIZ-004/005 are the 18 new preset and wizard opt-in rule tests); §6 `test_init_wizard.py` 15→33; total 1463→1481 (55 modules); coverage-gate text 1463→1481; §7 SWE1-075 cites UV-WIZ-001 to UV-WIZ-005; referenced-document versions resynced (4) |
 | 1.29 | 2026-09-29 | Claude | Issue #418 (CR-418): add UV-MSR-009 (11 opt-in policy tests: 7 key-absent tests, one per rule made opt-in; shipped-disabled check for all 8 rules; empty-`misc` no-fire test; code-default vs shipped-default check; `--update-config` adds the keys as `false`); §5.14 heading 140→160; §6 `test_misra_rules.py` 149→160; total 1452→1463 (55 modules); coverage-gate text 1452→1463; §7 SWE1-109 to SWE1-116 also cite UV-MSR-009; referenced-document versions resynced (4) |
 | 1.28 | 2026-09-29 | Claude | Issue #412: UV-MSR-007 10→18 tests (key absent, `misc` absent, shipped default, explicit enable, `TRUE == flag`, `flag != FALSE`, `true == x`, `x == false`); `test_uppercase_true_flagged` changed to `test_uppercase_true_not_flagged`; §6 `test_misra_rules.py` 141→149; total 1444→1452 (55 modules); coverage-gate text 1444→1452; referenced-document versions resynced (4) |
 | 1.27 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -64,10 +65,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.14 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.24 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.20 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.17 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.15 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.25 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.21 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.18 |
 
 ---
 
@@ -94,7 +95,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1463 tests (2026-09-29 develop baseline, after #408, #407, #413, #412 and #418) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1481 tests (2026-09-29 develop baseline, after #408, #407, #413, #412, #418 and #420) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -434,6 +435,19 @@ Added for issue #407 (closes RR-003-001 in CSC-REVIEW-003 and the remaining part
 | UV-CLI-021 | `test_posix_forward_slash_separator` | SWE1-096 | UNIT-03, UNIT-41, UNIT-42 | With `posixpath`: `src//drv/./uart.c` → `src/drv/uart.c`; no `\` in the output |
 | UV-CLI-022 | `test_emitted_paths_use_host_os_sep`, `test_violation_str_does_not_rewrite_path` | SWE1-096 | UNIT-03, UNIT-41, UNIT-46 | End-to-end on the host OS: reported paths equal `os.path.join(...)` of the file; negative: `Violation.__str__()` renders an already-normalised path verbatim |
 
+
+### 5.18 Config Wizard and Presets — `test_init_wizard.py` (33 tests)
+
+Tests for `--init` and `--preset` (issue #190). UV-WIZ-004 and UV-WIZ-005 were added for issue #420 (presets and the wizard enable the standard-specific opt-in rules). They use one C snippet that triggers all 8 opt-in rules.
+
+| TC-ID | Test Name(s) | SW-REQ | Unit Verified | Pass Condition |
+|---|---|---|---|---|
+| UV-WIZ-001 | `TestRunPreset` (8 tests) | SWE1-075 | UNIT-99 | Each preset writes a file; every preset is valid YAML with the header comment; unknown preset → 1; existing file kept without `overwrite`, replaced with it |
+| UV-WIZ-002 | `TestRunWizard` (5 tests) | SWE1-075 | UNIT-98 | All-default answers write a file; `camelCase` answer is written; existing file: `n` aborts (1, file kept), `y` or `overwrite=True` replaces it |
+| UV-WIZ-003 | `TestCLIInit` (2 tests) | SWE1-075 | UNIT-46, UNIT-99 | `--preset minimal --init-output` writes the file (exit 0); `--help` lists the three presets |
+| UV-WIZ-004 | `TestPresetOptInRules` (9 tests) | SWE1-075 | UNIT-99 | `misra` enables exactly `goto_usage`, `assignment_in_condition`, `void_pointer`, `recursive_function`, `empty_else`; `barr-c` exactly `multiple_statements_per_line`, `sizeof_type`, `empty_else`; `minimal` none; `boolean_comparison` in no preset; each enabled rule written `enabled: true` with the `src/rules.yml` severity; output byte-identical across runs; the checker (in-process and via the CLI `--config`) fires exactly the enabled opt-in rules on the trigger snippet and no others, with no traceback |
+| UV-WIZ-005 | `TestWizardOptInRules` (9 tests) | SWE1-075 | UNIT-98 | The MISRA C:2012 and Barr-C questions are asked last (prompts 9 and 10) with `[y/N]`; default, explicit `n`/`N` and end of input enable none; `y` to MISRA enables the 5 MISRA rules, `y` to Barr-C the 3 Barr-C rules, both the union (7); the 7 rules are always listed with the shipped severity and `boolean_comparison` is not; the checker fires exactly the enabled rules |
+
 ---
 
 ## 6. Verification Results Summary
@@ -475,7 +489,7 @@ Added for issue #407 (closes RR-003-001 in CSC-REVIEW-003 and the remaining part
 | `test_update_config.py` | 27 | 27 | 0 | COMP-02 (`_deep_merge`) |
 | `test_inline_suppression.py` | 24 | 24 | 0 | COMP-04 (`parse_inline_suppressions`) |
 | `test_fix_mode.py` | 11 | 11 | 0 | COMP-08 (`apply_fixes`, `unified_diff`) |
-| `test_init_wizard.py` | 15 | 15 | 0 | COMP-09 (`run_wizard`, `run_preset`) |
+| `test_init_wizard.py` | 33 | 33 | 0 | COMP-09 (`run_wizard`, `run_preset`, `PRESETS`) |
 | `test_per_dir_config.py` | 15 | 15 | 0 | COMP-10 (`resolve_per_dir_config`) |
 | `test_html_report.py` | 20 | 20 | 0 | COMP-07 (`_violations_to_html`) |
 | `test_function_length.py` | 11 | 11 | 0 | COMP-05f (`_check_function_length`) |
@@ -495,7 +509,7 @@ Added for issue #407 (closes RR-003-001 in CSC-REVIEW-003 and the remaining part
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
 | `test_cli_requirements.py` | 21 | 21 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
-| **Total** | **1463** | **1463** | **0** | All 81 rule IDs covered — 55 modules |
+| **Total** | **1481** | **1481** | **0** | All 81 rule IDs covered — 55 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -542,7 +556,7 @@ Added for issue #407 (closes RR-003-001 in CSC-REVIEW-003 and the remaining part
 | SWE1-064 | Verbose progress to stderr | `test_cli.py` — `TestVerboseFlag` |
 | SWE1-072 to SWE1-073 | Inline suppression comments (`parse_inline_suppressions`, suppression logic) | `test_inline_suppression.py` |
 | SWE1-074 | Auto-fix mode (`apply_fixes`, `unified_diff`) | `test_fix_mode.py` |
-| SWE1-075 | Config wizard and presets (`run_wizard`, `run_preset`) | `test_init_wizard.py` |
+| SWE1-075 | Config wizard and presets (`run_wizard`, `run_preset`) | `test_init_wizard.py` — UV-WIZ-001 to UV-WIZ-005 |
 | SWE1-076 | Per-directory config (`resolve_per_dir_config`) | `test_per_dir_config.py` |
 | SWE1-077 | HTML report output (`_violations_to_html`) | `test_html_report.py` |
 | SWE1-078 | Function length (`_check_function_length`) | `test_function_length.py` |

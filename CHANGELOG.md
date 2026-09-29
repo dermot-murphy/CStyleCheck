@@ -58,6 +58,19 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- **Presets enable the matching opt-in rules (#420)** — `--preset misra` now enables
+  `misc.goto_usage` (MISRA C:2012 Rule 15.1), `misc.assignment_in_condition` (13.4),
+  `misc.void_pointer` (11.5), `misc.recursive_function` (17.2) and `misc.empty_else`
+  (related to 15.7); `--preset barr-c` enables `misc.multiple_statements_per_line` (§3.2),
+  `misc.sizeof_type` (§5.7) and `misc.empty_else` (§8.3). `minimal` is unchanged and
+  `misc.boolean_comparison` is in no preset. Severities are the shipped defaults. The
+  `--init` wizard asks two new yes/no questions last (enable the MISRA C:2012 rules; enable
+  the Barr-C rules), both defaulting to No; the generated config lists all seven rules with
+  `enabled: true` only for the standard(s) answered yes. The `barr-c` preset's
+  `typedefs.suffix` and `enums.type_suffix` are now written in the nested
+  `{enabled, suffix}` form; the previous bare strings made the checker crash when the
+  generated config was used. 18 new tests in `tests/test_init_wizard.py`; total 1463→1481
+  (issue [#420](https://github.com/dermot-murphy/CStyleCheck/issues/420)).
 - **New rules are opt-in (#418)** — `misc.goto_usage`, `misc.assignment_in_condition`,
   `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`,
   `misc.sizeof_type` and `misc.empty_else` now ship `enabled: false` in `src/rules.yml` and

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.8 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.9 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.9 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.8 | 2026-09-29 | Claude | #418 / #410 residual: SYS-F-020 no longer cites MISRA 14.4 for the boolean comparison rule (style rule, opt-in); cross-reference resync with #418 (3 referenced-document versions) |
 | 2.7 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -67,9 +68,9 @@ The system is deployed in four integration modes:
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.17 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.11 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.14 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.18 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.12 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.15 |
 
 ### 3.4 Glossary
 
