@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.4 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.5 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.5 | 2026-09-29 | Claude | Issue #413: §7 register row and new §7.1 record for CR-413 (SYS-F-046 / SWE1-094 startup-banner requirements aligned with the implementation; no code impact) |
 | 1.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (MAN3 1.8→1.9, SUP8 1.13→1.14, SUP9 1.3→1.4) |
 | 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.2 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
@@ -163,6 +164,22 @@ Summary view:
 | Issue # | Type | Title | Impact | Status | Target Release |
 |---|---|---|---|---|---|
 | \<Auto-populated from GitHub Issues — see Issues board\> | | | | | |
+| #413 | `documentation` | [CR] Align startup-banner requirements SYS-F-046 and SWE1-094 with the implementation | Medium | Implemented on `claude/banner-reqs-413`; closes on PR merge | Next release after v1.6.0 |
+
+### 7.1 Change Request Records
+
+| Field | CR-413 |
+|---|---|
+| **Issue** | [#413](https://github.com/dermot-murphy/CStyleCheck/issues/413) |
+| **Date** | 2026-09-29 |
+| **Raised by / implemented by** | Dermot Murphy (option 1 selected) / Claude |
+| **Type** | `documentation` — requirement change to align with the implementation |
+| **Impact level** | Medium (modifies CSC-SYS2-001 and CSC-SWE1-001, see §5.3) |
+| **Change** | SYS-F-046 and SWE1-094 rewritten to the behaviour of `main()` in `cli.py`: two lines on stderr (`CStyleCheck <version>`, `(C) 2026 Dermot Murphy`) before checking, also written to `--log`, written even when stdout is piped, no suppression option, never on stdout. SWE1-015 records the `--fix` header re-read exception. IDs and the SYS-F-046 → SWE1-094 trace are unchanged |
+| **Rationale** | The banner was specified three different ways (SYS-F-046: date-time, file count, suppressed when stdout is not a TTY; SWE1-094: one line, suppressed by `--quiet`; code: two lines, always). The v1.6.0 behaviour is released and documented (CHANGELOG, README) and keeps stdout clean for piped JSON/SARIF output, so the requirements were changed rather than the code |
+| **Impact on code** | None — no change to `src/` |
+| **Affected documents** | CSC-SYS2-001 v2.5, CSC-SWE1-001 v2.10, CSC-SWE2-001 v1.15, CSC-SWE3-001 v1.20, CSC-SWE4-001 v1.25, CSC-SWE5-001 v1.17, CSC-SWE6-001 v1.19, README, CHANGELOG |
+| **Verification** | 5 unit tests added to `tests/test_cli_requirements.py` (UV-CLI-017 to UV-CLI-019 now verify SWE1-094 in full); 1444 tests PASS |
 
 ---
 

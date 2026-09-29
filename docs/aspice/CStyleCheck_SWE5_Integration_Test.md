@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.16 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.17 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.17 | 2026-09-29 | Claude | Issue #413 (CR-413): SIT-024 step 1 expects the two-line stderr banner with stdout piped; step 3 expects `--quiet` to be rejected (no suppression); post-v1.6.0 note 1439→1444 tests; referenced-document versions resynced (SWE2 1.14→1.15, SWE1 2.9→2.10, SWE4 1.24→1.25, SWE6 1.18→1.19) |
 | 1.16 | 2026-09-29 | Claude | Issue #407: §7 SIT-011 and SIT-024 rows cite UV-CLI-014 to UV-CLI-016 and UV-CLI-017 to UV-CLI-019; post-v1.6.0 note records 1439 tests after #408 and #407; referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE4 1.22→1.24, SWE6 1.17→1.18, SYS4 1.12→1.13) |
 | 1.15 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SIT-027 for the 8 rules from #391/#392 (SWE1-109 to SWE1-116), with §6 and §7 rows and a post-v1.6.0 result note. AUD9-F-006: SWA-IF-09 → Counter multiset; SIT-012 step 4 → {"violations":[…]} with `file`; add steps 5–7 (moved violation, duplicate, Windows path); trace SIT-012 to SWE1-100/101 and UV-CLI-011 to 013. AUD9-F-026: CM baseline ID → v1.6.0 tag / develop 296e91b; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.14 | 2026-07-06 | Claude | ASPICE audit — add SIT-024 body (missing from doc); add SIT-025 (block-comment suppression), SIT-026 (--summary restructure); update §3.1 refs (SWE2 1.11→1.12, SWE4 1.18→1.20, SWE6 1.14→1.16); update §6 and §7 — closes #375 |
@@ -52,10 +53,10 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.14 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.9 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.24 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.18 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.15 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.10 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.25 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.19 |
 | CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.13 |
 
 ### 3.2 Test Environment
@@ -632,9 +633,9 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
-| 1 | Run tool with any valid source file | Standard subprocess invocation | `stderr` contains a one-line startup banner with version and "Copyright" text |
+| 1 | Run tool with any valid source file | Standard subprocess invocation (stdout piped) | `stderr` starts with the two-line banner `CStyleCheck <version>` / `(C) 2026 Dermot Murphy` |
 | 2 | Run with `--version` | `--version` flag | stdout or stderr contains both the version string and "Copyright" on separate lines |
-| 3 | Run with `--quiet` flag (if supported) | `--quiet` | Startup banner is suppressed |
+| 3 | Run with `--quiet` | `--quiet` | Option rejected (exit 2); the banner has no suppression option (SWE1-094, #413) |
 | 4 | Verify banner does not appear in `stdout` violation output | Normal run | `stdout` violation lines are not prefixed with banner content |
 
 | Date | Tester | Python | Result | Deviation |
@@ -752,7 +753,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 **Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence)
 
-**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests, all PASS (local run, Python 3.11).
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests, all PASS (local run, Python 3.11).
 
 > **📋 Note:** All 10 defined software architecture interfaces must be covered before integration testing is considered complete. Any uncovered interface must be resolved via a new or updated test case.
 

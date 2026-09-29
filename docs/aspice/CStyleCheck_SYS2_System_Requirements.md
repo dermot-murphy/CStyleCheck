@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.4 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.5 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.5 | 2026-09-29 | Claude | Issue #413 (CR-413, CSC-SUP10-001 §7.1): SYS-F-046 rewritten to match the implementation — two-line banner (`CStyleCheck <version>`, copyright) on stderr before checking, written even when stdout is piped, not suppressible, never on stdout (date-time, file count and non-TTY suppression removed); RTM row updated; trace SYS-F-046 → SWE1-094 unchanged; referenced-document versions resynced (SWE1 2.9→2.10) |
 | 2.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SYS3 1.7→1.8) |
 | 2.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-F-011 73→81 rule IDs; SYS-F-020 lists the 8 post-v1.6.0 MISRA/Barr-C rules; scope text. AUD9-F-006: RTM SYS-F-034 to 036 → add SWE1-100/101. AUD9-F-008: SYS-F-046 → SWE1-094 (was SWE1-091); add SWE1-072/073, 074, 077, 091 to 093, 095 to 099 and 109 to 116 to the RTM; add bidirectional-trace note. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 2.2 | 2026-07-06 | Claude | ASPICE audit — SYS-F-011 73 rule IDs; scope v1.5.0→v1.6.0; add SYS-F-046 startup banner requirement — closes #379 |
@@ -65,7 +66,7 @@ The system is deployed in four integration modes:
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.8 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.9 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.10 |
 
 ### 3.4 Glossary
 
@@ -197,7 +198,7 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-043 | The system shall provide an interactive configuration wizard (`--init`) that generates `.cstylecheck.yml` through a Q&A session; `--preset barr-c\|minimal\|misra` shall write a pre-built config without wizard interaction; `--init-output FILE` shall set the output path; `--overwrite` shall allow replacing an existing config file | Mandatory | Test | STK-002 |
 | SYS-F-044 | The system shall support per-directory configuration overrides when `--per-dir-config` is specified; the system shall walk upward from each source file's directory, deep-merging any `.cstylecheck.yml` found along the path; the nearest config wins; a `root: true` entry shall stop the upward search; per-directory resolution results shall be cached | Mandatory | Test | STK-002 |
 | SYS-F-045 | The system shall produce a self-contained HTML report when `--output-format html` is specified; the report shall include inline CSS, summary cards (errors/warnings/info/total/files checked), and per-file violation tables; the HTML shall be written to `--log FILE` if provided, otherwise to stdout | Mandatory | Test | STK-007 |
-| SYS-F-046 | The system shall print a startup banner to stderr listing the tool name, version, date-time, and the number of source files to be checked; the banner shall be suppressed when stdout is not a terminal (i.e., piped or redirected) | Mandatory | Test | STK-001 |
+| SYS-F-046 | The system shall write a two-line startup banner to stderr before any source file is checked: the first line shall give the tool name and version (`CStyleCheck <version>`) and the second line the copyright notice (`(C) <year> <holder>`); the banner shall be written on every checking run, including when stdout is piped or redirected, shall not be suppressible by any option, and shall not be written to stdout | Mandatory | Test | STK-001 |
 
 ### 5.9 Non-Functional Requirements — Integration
 
@@ -229,9 +230,9 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-043 | Config wizard and presets | STK-002 | `wizard.py` Wizard module | SWE1-075 |
 | SYS-F-044 | Per-directory config | STK-002 | `config.resolve_per_dir_config()` | SWE1-076 |
 | SYS-F-045 | HTML report output | STK-007 | `output._violations_to_html()` | SWE1-077 |
-| SYS-F-046 | Startup banner | STK-001 | `cli.py` — startup banner output to stderr | SWE1-094 |
+| SYS-F-046 | Startup banner (two lines on stderr, unconditional) | STK-001 | `cli.py` `main()` — banner written to stderr (and `--log`), never stdout | SWE1-094 |
 
-> **Bidirectional-trace note (AUD9-F-008):** Each SWE1 requirement listed above cites the SYS requirement in this row as its parent (CSC-SWE1-001 v2.9 parent column). SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts) have no SYS parent; they derive from CSC-MAN3-001 §10.3 process monitoring. SYS-NF-003 to SYS-NF-006 are verified at system level (CI matrix, Docker build), and SYS-NF-010 to SYS-NF-012 are deferred or out of scope.
+> **Bidirectional-trace note (AUD9-F-008):** Each SWE1 requirement listed above cites the SYS requirement in this row as its parent (CSC-SWE1-001 v2.10 parent column). SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts) have no SYS parent; they derive from CSC-MAN3-001 §10.3 process monitoring. SYS-NF-003 to SYS-NF-006 are verified at system level (CI matrix, Docker build), and SYS-NF-010 to SYS-NF-012 are deferred or out of scope.
 
 ---
 
