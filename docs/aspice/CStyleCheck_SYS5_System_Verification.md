@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.8 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.9 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.5 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.9 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-VTC-003 → 81 rule IDs (add the non_ascii_source, constant_comparison and 8 post-v1.6.0 MISRA/Barr-C rule rows); §5/§6 counts. AUD9-F-006: SYS-VTC-007 baseline format and step 5 (line-independent matching). AUD9-F-026: CM baseline; scope text |
 | 1.8 | 2026-07-06 | Claude | ASPICE audit — SYS-VTC-003 71→73 rule IDs; update rule category table — closes #379 |
 | 1.7 | 2026-06-25 | Claude | AUD7-F-001 corrective action — update SYS-VTC-003 from 53 to 71 rule IDs; expand rule-category table with rules added since v1.0.0; update overall verdict to v1.4.1 |
 | 1.6 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
@@ -36,7 +37,7 @@
 
 ### 3.1 Purpose
 
-This System Verification Report documents the qualification test specification, execution results, and verdict for **CStyleCheck v1.2.x** — verifying that the complete, integrated system satisfies all system requirements defined in CSC-SYS2-001. It satisfies **Automotive SPICE® PAM v4.0, SYS.5 — System Verification**.
+This System Verification Report documents the qualification test specification, execution results, and verdict for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline** (base execution at v1.2.x, extended per release) — verifying that the complete, integrated system satisfies all system requirements defined in CSC-SYS2-001. It satisfies **Automotive SPICE® PAM v4.0, SYS.5 — System Verification**.
 
 System verification (SYS.5) differs from system integration testing (SYS.4) in that it tests the **complete, fully integrated system against its requirements**, rather than testing interface behaviour between subsystems.
 
@@ -63,7 +64,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | **Docker Image Digest** | See `docker_publish.yml` Actions log for commit 93178cd |
 | **Test Execution Date** | 2026-05-28 |
 | **Tester** | GitHub Actions (automated) / Dermot Murphy (manual review) |
-| **CM Baseline** | v1.2.0 release tag |
+| **CM Baseline** | v1.2.0 release tag (base execution); SYS-VTC-003 extensions at v1.4.1, v1.6.0 (`a6102d6`) and `develop` `296e91b` (2026-09-29) |
 
 ### 3.4 Verification Strategy
 
@@ -136,13 +137,13 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 ---
 
-### SYS-VTC-003 — Full Rule Coverage (73 Rule IDs)
+### SYS-VTC-003 — Full Rule Coverage (81 Rule IDs)
 
 | Field | Value |
 |---|---|
 | **Test Case ID** | SYS-VTC-003 |
 | **Requirement** | SYS-F-011 through SYS-F-024, SYS-F-020 (v1.2.x–v1.4.x additions) |
-| **Objective** | Verify that all 73 rule IDs detect violations when triggered by conforming test inputs |
+| **Objective** | Verify that all 81 rule IDs detect violations when triggered by conforming test inputs |
 | **Pass Criteria** | Each rule ID appears in at least one violation report when a known-bad input is provided |
 
 | Rule Category | Rule IDs | Evidence Source | Result |
@@ -159,13 +160,15 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | Include guards | `include_guard.missing`, `include_guard.format` | `test_include_guards.py` | PASS |
 | Misc — core | `misc.line_length`, `misc.indentation`, `misc.magic_number`, `misc.unsigned_suffix`, `misc.yoda_condition`, `misc.block_comment_spacing` | `test_misc.py`, `test_misc_improvements.py` | PASS |
 | Misc — file quality (v1.2.x) | `misc.copyright_header`, `misc.eof_comment`, `misc.comment_ratio`, `misc.whitespace_ratio` | `test_copyright_header.py`, `test_eof_comment.py`, `test_comment_ratio.py`, `test_whitespace_ratio.py` | PASS |
-| Misc — MISRA C | `misc.lowercase_l_suffix`, `misc.octal_constant`, `misc.trigraph` | `test_misra_rules.py` | PASS |
+| Misc — MISRA C | `misc.lowercase_l_suffix`, `misc.octal_constant`, `misc.trigraph`, `misc.non_ascii_source` | `test_misra_rules.py` | PASS |
+| Misc — constant comparison (v1.6.0) | `misc.constant_comparison` | `test_constant_comparison.py` | PASS |
+| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` | `test_misra_rules.py` (76 tests), SITC-017 | PASS |
 | Misc — function quality (v1.4.0) | `misc.function_length`, `misc.function_doc_header`, `misc.assert_density`, `misc.null_statement_comment`, `misc.declaration_spacing` | `test_function_length.py`, `test_function_doc_header.py`, `test_assert_density.py`, `test_null_statement_comment.py`, `test_declaration_spacing.py` | PASS |
 | Misc — file constraints (v1.4.0) | `misc.file_length`, `misc.reserved_header_name` | `test_file_length.py`, `test_reserved_header_name.py` | PASS |
 | Naming (v1.4.0) | `naming.identifier_length`, `naming.no_single_char_identifiers` | `test_identifier_length.py`, `test_no_single_char_identifiers.py` | PASS |
 | Other | `reserved_name`, `spell_check`, `sign_compatibility`, `misc.declared_not_defined` | `test_reserved_name.py`, `test_spell_check.py`, `test_sign_compatibility.py`, `test_declared_not_defined.py` | PASS |
 
-**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS)
+**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11)
 
 ---
 
@@ -252,11 +255,13 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | 1 | `--write-baseline baseline.json` with 3-violation source | Source v1 | `baseline.json` is valid JSON with 3 entries; exit 0 |
 | 2 | `--baseline-file baseline.json` with same 3-violation source | Source v1 + baseline | Zero violations reported; exit 0 |
 | 3 | `--baseline-file baseline.json` with 4-violation source (1 new) | Source v2 + baseline | 1 new violation reported; exit 1 |
-| 4 | Inspect `baseline.json` in text editor | File | Readable; diffable; no binary content |
+| 4 | Inspect `baseline.json` in text editor | File | Readable; diffable; no binary content; JSON object `{"violations": [...]}` with `/` path separators |
+| 5 | Move the baselined violations to other lines (insert lines above) and re-run | Shifted source + baseline | Baselined violations still suppressed (#394) |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
 | 2026-05-28 | GitHub Actions (automated) | 3.11 | PASS | |
+| 2026-09-29 | Local pytest run, develop `296e91b` (`TestBaselineSuppression`) | 3.11 | PASS | Step 5 added for #394 |
 
 ---
 
@@ -380,7 +385,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 |---|---|---|---|---|
 | SYS-VTC-001 | Input: multiple files and globs | SYS-F-001, F-004, F-005, F-033 | PASS | |
 | SYS-VTC-002 | Configuration and rule enablement | SYS-F-002, F-006, F-007, F-009, F-025, F-026, NF-007 | PASS | |
-| SYS-VTC-003 | Full rule coverage (73 rule IDs) | SYS-F-011 to F-024, SYS-F-020 | PASS | |
+| SYS-VTC-003 | Full rule coverage (81 rule IDs) | SYS-F-011 to F-024, SYS-F-020 | PASS | |
 | SYS-VTC-004 | Module prefix enforcement | SYS-F-012 | PASS | |
 | SYS-VTC-005 | Pointer and scope prefix rules | SYS-F-013, F-014 | PASS | |
 | SYS-VTC-006 | Output formats: text, JSON, SARIF | SYS-F-027, F-028, F-029, F-032 | PASS | |
@@ -410,7 +415,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | SYS-F-008 | `--exclusions` file | SITC-009 | Covered |
 | SYS-F-009 | Dictionary override flags | SYS-VTC-002 | Covered |
 | SYS-F-010 | Single file read per invocation | SYS-VTC-003 (via cache), SITC-008 | Covered |
-| SYS-F-011 to F-024 | All 73 rule IDs | SYS-VTC-003, VTC-004, VTC-005 | Covered |
+| SYS-F-011 to F-024 | All 81 rule IDs | SYS-VTC-003, VTC-004, VTC-005 | Covered |
 | SYS-F-025 | Rule `enabled` toggle | SYS-VTC-002 | Covered |
 | SYS-F-026 | Per-rule severity | SYS-VTC-002 | Covered |
 | SYS-F-027 | Text output format | SYS-VTC-006 | Covered |
@@ -463,9 +468,9 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-04-15 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-04-15 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-04-15 |
-| Approver | Dermot Murphy | Approved | 2026-04-15 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

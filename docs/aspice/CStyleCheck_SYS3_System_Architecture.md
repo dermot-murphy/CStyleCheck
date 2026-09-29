@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS3-001 | **Version** | 1.6 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SYS3-001 | **Version** | 1.7 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.7 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: §9 traceability 73→81 rule IDs (8 MISRA/Barr-C rules from #391/#392 in SS-05); scope text |
 | 1.6 | 2026-07-06 | Claude | ASPICE audit — scope v1.2.x→v1.6.0; traceability 53→73 rule IDs; add models.py and utils.py to subsystem table — closes #379 |
 | 1.5 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.4 | 2026-06-05 | Claude | CSC-AUD-005 corrective action — fix factual errors identified in audit |
@@ -34,7 +35,7 @@
 
 ### 3.1 Purpose
 
-This System Architecture Description defines the top-level structural and behavioural design of **CStyleCheck v1.6.0**, decomposing the system into its major functional subsystems, defining their interfaces, and establishing the basis for software-level design. It satisfies **Automotive SPICE® PAM v4.0, SYS.3 — System Architectural Design**.
+This System Architecture Description defines the top-level structural and behavioural design of **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**, decomposing the system into its major functional subsystems, defining their interfaces, and establishing the basis for software-level design. It satisfies **Automotive SPICE® PAM v4.0, SYS.3 — System Architectural Design**.
 
 ### 3.2 Referenced Documents
 
@@ -223,7 +224,7 @@ If any configuration or invocation error is detected during steps 1 or 2:
 | SYS REQ-ID | Requirement Summary | Subsystem(s) |
 |---|---|---|
 | SYS-F-001 to SYS-F-010 | Input handling | SS-01 (CLI & Options Loader) |
-| SYS-F-011 to SYS-F-026 | Rule checking (all 73 rule IDs) | SS-05 (Rule Engine), SS-03 (Dictionary Manager) |
+| SYS-F-011 to SYS-F-026 | Rule checking (all 81 rule IDs — 73 at v1.6.0 plus the 8 MISRA/Barr-C rules from #391/#392) | SS-05 (Rule Engine), SS-03 (Dictionary Manager) |
 | SYS-F-027 to SYS-F-033 | Output formats and reporting | SS-06 (Output Formatter) |
 | SYS-F-034 to SYS-F-036 | Baseline suppression | SS-01 (flags), SS-05 (filter), SS-06 (write) |
 | SYS-F-037 to SYS-F-040 | Exit codes | SS-06 (exit code return) |
@@ -247,9 +248,9 @@ If any configuration or invocation error is detected during steps 1 or 2:
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-04-15 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-04-15 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-04-15 |
-| Approver | Dermot Murphy | Approved | 2026-04-15 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

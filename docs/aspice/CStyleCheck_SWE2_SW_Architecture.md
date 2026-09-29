@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.12 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.13 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.2 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.13 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-002: add the 8 new checks (#391/#392) to COMP-05f (diagram and method table, with the previously missing v1.4.0–v1.6.0 methods), to the §8.1 run_all() sequence and to the §10 RTM (SWE1-109 to SWE1-116). AUD9-F-006: SWA-IF-09 → Counter multiset; §8.1 baseline steps. AUD9-F-011: add COMP-13 Trend-Analysis Scripts (out of package) and §10 rows for SWE1-100/101, SWE1-102 to SWE1-108 and SWE1-117. AUD9-F-015: record the #397 edits (COMP-06 functions, baseline key, SWA-IF-08) made to v1.12 without a revision; header date |
 | 1.12 | 2026-07-06 | Claude | ASPICE audit — v1.6.0: update scope to v1.6.0; §3.1 refs (SWE1 2.4→2.6, SWE3 1.15→1.16, SUP8 1.9→1.10); add models.py/utils.py as COMP-11/COMP-12; update COMP-01 (startup banner), COMP-05b (fn_start), COMP-07 (Tee.log_print), COMP-08 (pointer_prefix fix); update §10 RTM with SWE1-091–099 — closes #372 |
 | 1.11 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.3→2.4, SWE3 1.14→1.15; fix header date | Dermot Murphy |
 | 1.10 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.1→2.3, SWE3 1.12→1.14 | Dermot Murphy |
@@ -38,7 +39,7 @@
 
 ## 3. Purpose & Scope
 
-This Software Architecture Description defines the internal structure, component decomposition, interfaces, and dynamic behaviour of **CStyleCheck v1.6.0**. It refines the system architecture (CSC-SYS3-001) to the software component level, providing the design basis for detailed design (SWE.3) and integration testing (SWE.5).
+This Software Architecture Description defines the internal structure, component decomposition, interfaces, and dynamic behaviour of **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**. It refines the system architecture (CSC-SYS3-001) to the software component level, providing the design basis for detailed design (SWE.3) and integration testing (SWE.5).
 
 This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Architectural Design**.
 
@@ -82,11 +83,18 @@ src/cstylecheck/   (package — 12 sub-modules)
 │   │                                   _check_function_length, _check_function_doc_header,
 │   │                                   _check_assert_density, _check_null_statement_comment,
 │   │                                   _check_declaration_spacing, _check_file_length,
-│   │                                   _check_reserved_header_name)
+│   │                                   _check_reserved_header_name, _check_constant_comparison,
+│   │                                   _check_lowercase_l_suffix, _check_octal_constants,
+│   │                                   _check_trigraphs, _check_non_ascii_source,
+│   │                                   _check_goto_usage, _check_assignment_in_condition,
+│   │                                   _check_multiple_statements_per_line, _check_void_pointer,
+│   │                                   _check_recursive_function, _check_sizeof_type,
+│   │                                   _check_boolean_comparison, _check_empty_else)
 │   ├── [COMP-05g] Sign Checker        (class SignChecker — _check_calls)
 │   └── [COMP-05h] Naming Checker      (_check_identifier_length,
 │                                       _check_no_single_char_identifiers)
-├── [COMP-06] Baseline Manager         (load_baseline, write_baseline, apply_baseline, _baseline_key)
+├── [COMP-06] Baseline Manager         (load_baseline, write_baseline, apply_baseline,
+│                                       _baseline_key, _normalise_path)
 ├── [COMP-07] Output Formatter         (_violations_to_json, _violations_to_sarif,
 │                                       _violations_to_html, print_summary,
 │                                       class Tee, Violation.github_annotation)
@@ -95,6 +103,11 @@ src/cstylecheck/   (package — 12 sub-modules)
 │                                       --init, --preset, --init-output, --overwrite)
 └── [COMP-10] Per-directory Config     (config.resolve_per_dir_config — upward dir-walk,
                                         deep-merge, root-stop, per-dir cache)
+
+scripts/   (outside the package — CI-only, not installed)
+└── [COMP-13] Trend-Analysis Scripts   (collect_metrics.py, generate_charts.py,
+                                        update_wiki_metrics.py, compare_metrics.py;
+                                        run by .github/workflows/metrics.yml)
 ```
 
 ---
@@ -192,6 +205,23 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | `_check_copyright_header()` | `misc.copyright_header` |
 | `_check_comment_ratio()` | `misc.comment_ratio` |
 | `_check_whitespace_ratio()` | `misc.whitespace_ratio` |
+| `_check_function_length()` | `misc.function_length` |
+| `_check_function_doc_header()` | `misc.function_doc_header` |
+| `_check_assert_density()` | `misc.assert_density` |
+| `_check_null_statement_comment()` | `misc.null_statement_comment` |
+| `_check_declaration_spacing()` | `misc.declaration_spacing` |
+| `_check_file_length()` | `misc.file_length` |
+| `_check_reserved_header_name()` | `misc.reserved_header_name` |
+| `_check_constant_comparison()` | `misc.constant_comparison` |
+| `_check_lowercase_l_suffix()` / `_check_octal_constants()` / `_check_trigraphs()` / `_check_non_ascii_source()` | `misc.lowercase_l_suffix`, `misc.octal_constant`, `misc.trigraph`, `misc.non_ascii_source` |
+| `_check_goto_usage()` | `misc.goto_usage` (MISRA 15.1) |
+| `_check_assignment_in_condition()` | `misc.assignment_in_condition` (MISRA 13.4) |
+| `_check_multiple_statements_per_line()` | `misc.multiple_statements_per_line` (Barr-C §3.2) |
+| `_check_void_pointer()` | `misc.void_pointer` (MISRA 11.5) |
+| `_check_recursive_function()` | `misc.recursive_function` (MISRA 17.2, direct) |
+| `_check_sizeof_type()` | `misc.sizeof_type` (Barr-C §5.7) |
+| `_check_boolean_comparison()` | `misc.boolean_comparison` (MISRA 14.4) |
+| `_check_empty_else()` | `misc.empty_else` (Barr-C §8.3) |
 
 #### COMP-05g — Sign Checker (`class SignChecker`)
 
@@ -271,9 +301,18 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | **Responsibility** | Provide shared stateless helper functions: `matches_case()`, `matches_case_abbrev()`, `to_case()`, `module_name()`, `is_exempt()`, `_cfg()`, `_strip_module_prefix()`, `_github_annotation_category()`; used by the Rule Engine to avoid duplication across sub-checkers |
 | **Used by** | COMP-05 (all sub-checkers), COMP-07 |
 
----
+### COMP-13 — Trend-Analysis Scripts (`scripts/`, outside the package)
 
-## 6. Data Structures
+| Attribute | Value |
+|---|---|
+| **Source modules** | `scripts/collect_metrics.py`, `scripts/generate_charts.py`, `scripts/update_wiki_metrics.py`, `scripts/compare_metrics.py`; configuration `scripts/metrics_rules.yml` |
+| **Responsibility** | Compute per-commit C source metrics for `examples/` (LOC, cyclomatic complexity, size, doxygen coverage, coupling, safety indicators, violation quality), render SVG trend charts, update the Trend-Analysis wiki page and compare PR metrics |
+| **Inputs** | `examples/*.c`/`*.h`; the CStyleCheck JSON report (run as a subprocess using `metrics_rules.yml`); historic data points |
+| **Outputs** | JSON data points, SVG charts, wiki markdown, PR comparison report |
+| **Invoked by** | `.github/workflows/metrics.yml` (CI only; not part of the installed `cstylecheck` package) |
+| **Requirements** | SWE1-102 to SWE1-108, SWE1-117 (process monitoring, CSC-MAN3-001 §10.3) |
+| **Units** | UNIT-121 to UNIT-127 (CSC-SWE3-001) |
+
 
 | Structure | Type | Fields | Used By |
 |---|---|---|---|
@@ -297,7 +336,7 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | SWA-IF-06 | COMP-04 | COMP-05 | `clean` source, `_line_map`, `_brace_depths`, `_comment_only` | Constructor args via `Checker.__init__` |
 | SWA-IF-07 | COMP-04 | COMP-05g | Raw source (cached) | Cross-file sign check reuses cached content |
 | SWA-IF-08 | COMP-05 | COMP-06 | `List[Violation]` | Passed to `write_baseline()` or filtered by `apply_baseline()` against `load_baseline()` |
-| SWA-IF-09 | COMP-06 | COMP-05 | `frozenset` of baseline keys | Used in `main()` to filter violations |
+| SWA-IF-09 | COMP-06 | COMP-05 | `collections.Counter` multiset of `file:rule:message` baseline keys (line number excluded; paths normalised to `/`) | Consumed by `apply_baseline()` in `main()`; each entry suppresses at most one violation (issues #394, #395) |
 | SWA-IF-10 | COMP-05 | COMP-07 | `List[Violation]`, `files_checked: int` | Rendered to stdout / file / JSON / SARIF |
 
 ---
@@ -312,7 +351,7 @@ main()
 ├─ COMP-01: resolve file list [f1.c, f2.h, ...]
 ├─ COMP-02: load_config() → cfg
 ├─ COMP-03: load dictionaries → keyword_set, stdlib_set, spell_set
-├─ COMP-06: load_baseline() → baseline_keys (if --baseline-file)
+├─ COMP-06: load_baseline() → Counter multiset of baseline keys (if --baseline-file)
 │
 ├─ for each file in file_list:
 │   ├─ read file once → raw_source (cached in source_cache dict)
@@ -339,11 +378,19 @@ main()
 │   │   ├─ _check_declaration_spacing()     [COMP-05f, v1.4.0]
 │   │   ├─ _check_file_length()             [COMP-05f, v1.4.0]
 │   │   ├─ _check_reserved_header_name()    [COMP-05f, v1.4.0]
-│   │   └─ _check_non_ascii_source()        [COMP-05f, v1.5.0]
+│   │   ├─ _check_non_ascii_source()        [COMP-05f, v1.5.0]
+│   │   ├─ _check_goto_usage()              [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_assignment_in_condition() [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_multiple_statements_per_line() [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_void_pointer()            [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_recursive_function()      [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_sizeof_type()             [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_boolean_comparison()      [COMP-05f, post-v1.6.0]
+│   │   └─ _check_empty_else()              [COMP-05f, post-v1.6.0]
 │   └─ accumulate violations
 │
 ├─ COMP-05g: SignChecker(source_cache, cfg).check() → sign violations
-├─ filter violations against baseline_keys
+├─ COMP-06: apply_baseline(violations, load_baseline()) — multiset match on file:rule:message
 ├─ COMP-07: render output (text / JSON / SARIF)
 └─ return exit code (0 / 1 / 2)
 ```
@@ -386,7 +433,7 @@ main()
 | SWE1-051 to SWE1-053 | Cross-file sign compatibility | COMP-05g |
 | SWE1-054 to SWE1-056 | Reserved names and spell check | COMP-05f |
 | SWE1-057 to SWE1-064 | Output formatting | COMP-07 |
-| SWE1-065 to SWE1-067 | Baseline suppression | COMP-06 |
+| SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline suppression | COMP-06 |
 | SWE1-068 to SWE1-070 | CLI and entry point | COMP-01 |
 | SWE1-071 | Whitespace ratio check | COMP-05f |
 | SWE1-MISRA-001 to SWE1-MISRA-003 | MISRA C lexical rules (lowercase l, octal, trigraphs) | COMP-05f |
@@ -418,6 +465,15 @@ main()
 | SWE1-097 | `print_summary()` restructure | COMP-07 |
 | SWE1-098 | `fn_start` line correction | COMP-05b |
 | SWE1-099 | Function-pointer typedef exemption from `variable.pointer_prefix` | COMP-05a |
+| SWE1-102 to SWE1-108, SWE1-117 | Trend-analysis C source metrics (CI scripts) | COMP-13 |
+| SWE1-109 | `misc.goto_usage` | COMP-05f |
+| SWE1-110 | `misc.assignment_in_condition` | COMP-05f |
+| SWE1-111 | `misc.multiple_statements_per_line` | COMP-05f |
+| SWE1-112 | `misc.void_pointer` | COMP-05f |
+| SWE1-113 | `misc.recursive_function` | COMP-05f |
+| SWE1-114 | `misc.sizeof_type` | COMP-05f |
+| SWE1-115 | `misc.boolean_comparison` | COMP-05f |
+| SWE1-116 | `misc.empty_else` | COMP-05f |
 
 ---
 
@@ -425,9 +481,9 @@ main()
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

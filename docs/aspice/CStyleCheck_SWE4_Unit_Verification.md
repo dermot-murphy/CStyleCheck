@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.21 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.22 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.4 |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-003: catalogue the 76 tests from #391/#392 (UV-MSR-001 to UV-MSR-008); `test_misra_rules.py` 64→140; total 1346→1422 (54 modules); coverage-gate text 1279→1422; scope text. AUD9-F-004: §7 rows for SWE1-001 to 006, 011 to 016, 057 to 064, 094 to 099 and SWE1-MISRA-001 to 003 (SWE1-015, 094 and 096 have no dedicated unit test and are recorded as gaps). AUD9-F-001/F-010: §7 rows for SWE1-109 to SWE1-117. AUD9-F-015: header date |
 | 1.21 | 2026-09-29 | Claude | Add §5.16 `test_collect_metrics.py` (54 tests, UV-MET-001 to UV-MET-010) for trend-analysis C source metrics; add §6 row (total 1279→1333, modules 53→54); add SWE1-102 to SWE1-108 to §7; update §3.1 refs (SWE1 2.6→2.7, SWE3 1.16→1.17); also records UV-CLI-011 to UV-CLI-013 and §5.13 and §6 test_improvements 67→80, §6 total 1333→1346 (baseline, issues #394/#395, PR #397) — issue #388 |
 | 1.20 | 2026-07-06 | Claude | ASPICE audit — update §6 per-row test counts for 8 modules (+56 total): test_defines.py 22→30, test_yoda_condition.py 37→46, test_inline_suppression.py 15→24, test_constant_comparison.py 21→27, test_parameter_prefix.py 47→51, test_pointer_prefix_fix.py 10→20, test_print_summary.py 7→11, test_unsigned_suffix_signed_params.py 9→15; update §3.1 refs (SWE1 2.4→2.6, SWE3 1.15→1.16, SWE5 1.11→1.14); add SWE1-091/092/093 to §7 traceability — closes #374 |
 | 1.19 | 2026-07-06 | Claude | v1.6.0 RC — update test total 1223→1279 (+56 across 8 modules: yoda_condition 37→46, inline_suppression 15→24, constant_comparison 21→27, defines 22→30, parameter_prefix 47→51, pointer_prefix_fix 10→20, print_summary 7→11, unsigned_suffix_signed_params 9→15); update coverage comment; update §5.5 SVD→1.22 |
@@ -48,7 +49,7 @@
 
 ## 3. Purpose & Scope
 
-This specification defines the unit verification strategy, coverage criteria, and test case catalogue for **CStyleCheck v1.5.0**. It satisfies **Automotive SPICE® PAM v4.0, SWE.4 — Software Unit Verification**.
+This specification defines the unit verification strategy, coverage criteria, and test case catalogue for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**. It satisfies **Automotive SPICE® PAM v4.0, SWE.4 — Software Unit Verification**.
 
 Unit verification covers both dynamic testing (pytest test suite) and static verification (naming convention self-check via `rules.yml` CI workflow).
 
@@ -86,7 +87,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1279 tests including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1422 tests (2026-09-29 develop baseline) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -350,10 +351,10 @@ These test modules provide regression coverage for previously fixed bugs and new
 
 ---
 
-### 5.14 MISRA C Rule Tests — `test_misra_rules.py` (64 tests)
+### 5.14 MISRA C and Barr-C Rule Tests — `test_misra_rules.py` (140 tests)
 
-Covers four MISRA C:2012/2023 Required rules and one BUG-004 regression.
-ASPICE traceability: SWE1-MISRA-001 (Rule 7.3), SWE1-MISRA-002 (Rule 7.1), SWE1-MISRA-003 (Rule 4.2), SWE1-MISRA-004 (Rule 4.1).
+Covers four MISRA C:2012/2023 lexical rules, one BUG-004 regression, and the 8 MISRA/Barr-C rules added after v1.6.0 by PRs #391 and #392 (76 tests).
+ASPICE traceability: SWE1-MISRA-001 (Rule 7.3), SWE1-MISRA-002 (Rule 7.1), SWE1-MISRA-003 (Rule 4.2), SWE1-MISRA-004 (Rule 4.1), SWE1-109 to SWE1-116 (UNIT-128 to UNIT-135).
 
 | TC-ID | MISRA Rule | SWE4 Test ID range | Verified Behaviour |
 |---|---|---|---|
@@ -362,6 +363,14 @@ ASPICE traceability: SWE1-MISRA-001 (Rule 7.3), SWE1-MISRA-002 (Rule 7.1), SWE1-
 | SWE4-TC-4.2-001 to 4.2-017 | Rule 4.2 (trigraphs) | 17 tests | Flags all 9 trigraph sequences; passes `??` alone, `?` alone |
 | BUG-004-001 to 004-004 | Yoda negative literal | 4 tests | `x == -1` message shows `-1`, not `1` |
 | SWE4-TC-4.1-001 to 4.1-012 | Rule 4.1 (non-ASCII source) | 12 tests | Flags non-ASCII bytes, BOM, control chars; passes tab/LF/CR/printable ASCII; exempt_string_literals option works |
+| UV-MSR-001 | Rule 15.1 — `TestGotoUsage` | 10 tests | `goto` flagged (start of line, inside `if`, one violation per `goto`); not flagged in comments, strings or identifiers containing `goto`; disabled; severity configurable; message cites the rule (SWE1-109) |
+| UV-MSR-002 | Rule 13.4 — `TestAssignmentInCondition` | 16 tests | `=` flagged in `if`, `while`, nested `if` and the `for` condition; `==`, `!=`, `<=`, `>=`, compound assignment, `for` init/increment and strings not flagged; disabled; severity; message (SWE1-110) |
+| UV-MSR-003 | Barr-C §3.2 — `TestMultipleStatementsPerLine` | 8 tests | Two statements (and same-line struct members) flagged; single statement, `for` header and comments not flagged; disabled; severity; message (SWE1-111) |
+| UV-MSR-004 | Rule 11.5 — `TestVoidPointer` | 8 tests | `void *` flagged in declarations; typed pointer, `void` return type and comments not flagged; disabled; severity; message (SWE1-112) |
+| UV-MSR-005 | Rule 17.2 — `TestRecursiveFunction` | 8 tests | Direct recursion flagged with the function name and rule 17.2 in the message; non-recursive code, `if (` keyword and comments not flagged; disabled; severity (SWE1-113) |
+| UV-MSR-006 | Barr-C §5.7 — `TestSizeofType` | 7 tests | `sizeof(primitive)` and `sizeof(*_t)` flagged; `sizeof(var)` and `sizeof(*ptr)` not flagged; disabled; severity; message (SWE1-114) |
+| UV-MSR-007 | Rule 14.4 — `TestBooleanComparison` | 10 tests | `== true`, `== false`, `!= true` and `TRUE` flagged; direct use, negation and comments not flagged; disabled; severity; message (SWE1-115) |
+| UV-MSR-008 | Barr-C §8.3 — `TestEmptyElse` | 9 tests | `else {}` flagged; `else` with a comment, non-empty `else`, `else if`, no `else` and comments not flagged; disabled; severity; message (SWE1-116) |
 
 Each test class verifies: positive detection, negative non-detection, disabled-rule suppression, configurable severity, and violation message content.
 
@@ -395,7 +404,7 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | UV-MET-005 | `TestNesting` | 3 | Flat body = 0, nested blocks, braces in strings ignored |
 | UV-MET-006 | `TestDoxygenCoverage` | 2 | `/**`, `/*!`, `///` detected; plain comment / none not counted; blank gap tolerated |
 | UV-MET-007 | `TestCoupling` | 5 | Fan-out excludes keywords/`sizeof` and comment text; direct recursion; global/static counting incl. extern, typedef, struct/enum, function pointers, prototypes, function-local statics |
-| UV-MET-008 | `TestCSourceMetrics` | 6 | Empty directory → zeros, header-only directory, aggregated sample project, CC histogram buckets, long-function threshold, new keys present |
+| UV-MET-008 | `TestCSourceMetrics` | 6 | Empty directory → zeros, header-only directory, aggregated sample project, CC histogram buckets, long-function threshold, new keys present, safety counters (`goto_count`, `assert_count`, `macro_count` excluding the include guard — SWE1-117) |
 | UV-MET-009 | `TestSummariseViolations` | 4 | Violations by category, files with zero violations, top-5 rules, empty report |
 | UV-MET-010 | `TestChartsAndWiki` | 7 | Stacking with missing values, category series for old points, `other` bucket, stacked polygons, chart generation with old/new/mixed points, wiki snapshot rows and tables |
 
@@ -427,7 +436,7 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | `test_eof_comment.py` | 33 | 33 | 0 | `_check_eof_comment` |
 | `test_copyright_header.py` | 55 | 55 | 0 | `_check_copyright_header` |
 | `test_parameter_prefix.py` | 51 | 51 | 0 | `_check_variables` |
-| `test_misra_rules.py` | 64 | 64 | 0 | `_check_lowercase_l_suffix`, `_check_octal_constants`, `_check_trigraphs`, `_check_non_ascii_source`, `_check_yoda` |
+| `test_misra_rules.py` | 140 | 140 | 0 | `_check_lowercase_l_suffix`, `_check_octal_constants`, `_check_trigraphs`, `_check_non_ascii_source`, `_check_yoda`, `_check_goto_usage`, `_check_assignment_in_condition`, `_check_multiple_statements_per_line`, `_check_void_pointer`, `_check_recursive_function`, `_check_sizeof_type`, `_check_boolean_comparison`, `_check_empty_else` |
 | `test_block_comment_spacing.py` | 29 | 29 | 0 | `_check_block_comment_spacing` |
 | `test_workflow_config.py` | 16 | 16 | 0 | CI workflow configuration regression |
 | `test_github_annotations.py` | 8 | 8 | 0 | GitHub Actions annotation output |
@@ -459,7 +468,7 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | `test_unsigned_suffix_signed_params.py` | 15 | 15 | 0 | COMP-05f (`_check_misc` signed-param exemption) |
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
-| **Total** | **1346** | **1346** | **0** | All rules covered — 54 modules |
+| **Total** | **1422** | **1422** | **0** | All 81 rule IDs covered — 54 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -474,6 +483,15 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 
 | SW-REQ-ID | Requirement | Unit Test(s) |
 |---|---|---|
+| SWE1-001, SWE1-002 | YAML configuration load / configuration errors | `test_config_loading.py` (13 tests: missing file, bad YAML, UTF-8/non-UTF-8); `test_cli.py` — UV-CLI-005 |
+| SWE1-003 | `--defines` substitution | `test_cli.py` (`--defines` cases) |
+| SWE1-004 | Module alias map | `test_cli.py`, `test_improvements.py` (`--aliases` / `load_alias_file` cases) |
+| SWE1-005, SWE1-006 | Per-file / per-identifier exclusions | `test_exclusions.py` — `TestLoadExclusionsFile`, `TestDisabledRulesForFile`, end-to-end classes (28 tests) |
+| SWE1-011, SWE1-012 | Comment and string stripping | `test_preprocessor.py` — `TestStripComments`, `TestStripStrings`, `TestPreprocess` |
+| SWE1-013 | Line map / offset → (line, col) | `test_preprocessor.py` — `TestBuildLineMap`, `TestOffsetToLineCol` |
+| SWE1-014 | Brace-depth array | `test_preprocessor.py` — `TestBuildBraceDepths` |
+| SWE1-015 | Single read per file (source cache) | No dedicated unit test. Verified at integration level by SIT-011 and by inspection of `main()` (UNIT-46) — gap recorded in CSC-AUD-009 (#405) |
+| SWE1-016 | Comment-only line detection | `test_preprocessor.py` — `TestCommentOnlyLines` |
 | SWE1-017 to SWE1-029 | Variable rules | UV-VAR-001 to UV-VAR-015 |
 | SWE1-030 to SWE1-034 | Function rules | UV-FUN-001 to UV-FUN-007 |
 | SWE1-035 to SWE1-039, SWE1-090 | Constant/macro rules | UV-DEF-001 to UV-DEF-013 |
@@ -488,6 +506,13 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | SWE1-007 to SWE1-010 | Dictionary management | UV-DCT-001 to UV-DCT-004 |
 | SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline suppression | UV-CLI-008, UV-CLI-011 to UV-CLI-013 |
 | SWE1-068 to SWE1-070 | CLI / entry point | UV-CLI-001 to UV-CLI-010 |
+| SWE1-057 | Plain-text violation format | `test_cli.py` (text-output cases) |
+| SWE1-058, SWE1-059 | JSON output | UV-CLI-006; `test_improvements.py` (`test_valid_json`, baseline JSON cases) |
+| SWE1-060 | SARIF 2.1.0 output | UV-CLI-007; `test_improvements.py` (`test_version_2_1_0`) |
+| SWE1-061 | GitHub annotations | `test_github_annotations.py` (8 tests) |
+| SWE1-062 | `Tee` log mirroring (`--log`) | `test_cli.py` — `test_log_file_created`, `test_log_file_contains_output` |
+| SWE1-063 | `--summary` counts | `test_print_summary.py` |
+| SWE1-064 | Verbose progress to stderr | `test_cli.py` — `TestVerboseFlag` |
 | SWE1-072 to SWE1-073 | Inline suppression comments (`parse_inline_suppressions`, suppression logic) | `test_inline_suppression.py` |
 | SWE1-074 | Auto-fix mode (`apply_fixes`, `unified_diff`) | `test_fix_mode.py` |
 | SWE1-075 | Config wizard and presets (`run_wizard`, `run_preset`) | `test_init_wizard.py` |
@@ -504,12 +529,21 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | SWE1-086 | Macro multistatement wrapper (`_check_macro_multistatement_wrapper`) | `test_macro_multistatement_wrapper.py` |
 | SWE1-087 | Identifier length (`_check_identifier_length`) | `test_identifier_length.py` |
 | SWE1-088 | No single-char identifiers (`_check_no_single_char_identifiers`) | `test_no_single_char_identifiers.py` |
+| SWE1-MISRA-001 | Lowercase `l` suffix (`_check_lowercase_l_suffix`) | `test_misra_rules.py` — SWE4-TC-7.3-001 to 7.3-015 |
+| SWE1-MISRA-002 | Octal constants (`_check_octal_constants`) | `test_misra_rules.py` — SWE4-TC-7.1-001 to 7.1-016 |
+| SWE1-MISRA-003 | Trigraphs (`_check_trigraphs`) | `test_misra_rules.py` — SWE4-TC-4.2-001 to 4.2-017 |
 | SWE1-MISRA-004 | Non-ASCII source characters (`_check_non_ascii_source`) | `test_misra_rules.py` — SWE4-TC-4.1-001 to 4.1-012 |
 | SWE1-089 | Per-file breakdown in `print_summary` | `test_print_summary.py` — UV-SUM-001 to UV-SUM-007 |
 | SWE1-090 | Typedef-alias `constant.case` exemption in `_check_defines` | `test_defines.py` — UV-DEF-008 to UV-DEF-013 |
 | SWE1-091 | misc.constant_comparison (`_check_constant_comparison`) | `test_constant_comparison.py` |
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix | `test_pointer_prefix_fix.py` |
+| SWE1-094 | Startup banner to stderr | No dedicated unit test. Verified at integration level by SIT-024 — gap recorded in CSC-AUD-009 (#405) |
+| SWE1-095 | Copyright in `--version` | `test_cli.py` — `TestVersionAndHelp` (tool name and exit code only); the copyright text is verified by SIT-024 |
+| SWE1-096 | OS-native path separator in output | No dedicated unit test. Verified by inspection of `Violation.__str__()`/`emit()` — gap recorded in CSC-AUD-009 (#405) |
+| SWE1-097 | `print_summary()` restructure | `test_print_summary.py` |
+| SWE1-098 | `fn_start` line correction | `test_functions.py`, `test_inline_suppression.py` |
+| SWE1-099 | Function-pointer typedef exemption | `test_variables.py`, `test_parameter_prefix.py` (`test_fn_ptr_typedef_*`) |
 | SWE1-102 | Trend metrics — LOC classification | `test_collect_metrics.py` — UV-MET-001, UV-MET-002, UV-MET-008 |
 | SWE1-103 | Trend metrics — cyclomatic complexity / nesting | `test_collect_metrics.py` — UV-MET-003 to UV-MET-005, UV-MET-008 |
 | SWE1-104 | Trend metrics — size | `test_collect_metrics.py` — UV-MET-003, UV-MET-008 |
@@ -517,6 +551,15 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 | SWE1-106 | Trend metrics — coupling | `test_collect_metrics.py` — UV-MET-007, UV-MET-008 |
 | SWE1-107 | Trend metrics — violation quality | `test_collect_metrics.py` — UV-MET-009 |
 | SWE1-108 | Trend metrics — backward-compatible data points, charts, wiki | `test_collect_metrics.py` — UV-MET-008, UV-MET-010 |
+| SWE1-109 | misc.goto_usage | `test_misra_rules.py` — UV-MSR-001 |
+| SWE1-110 | misc.assignment_in_condition | `test_misra_rules.py` — UV-MSR-002 |
+| SWE1-111 | misc.multiple_statements_per_line | `test_misra_rules.py` — UV-MSR-003 |
+| SWE1-112 | misc.void_pointer | `test_misra_rules.py` — UV-MSR-004 |
+| SWE1-113 | misc.recursive_function | `test_misra_rules.py` — UV-MSR-005 |
+| SWE1-114 | misc.sizeof_type | `test_misra_rules.py` — UV-MSR-006 |
+| SWE1-115 | misc.boolean_comparison | `test_misra_rules.py` — UV-MSR-007 |
+| SWE1-116 | misc.empty_else | `test_misra_rules.py` — UV-MSR-008 |
+| SWE1-117 | Trend metrics — safety indicators and macro metrics | `test_collect_metrics.py` — UV-MET-008 (`TestCSourceMetrics`: `goto_count`, `assert_count`, `macro_count` with include guard excluded) |
 
 ---
 
@@ -524,9 +567,9 @@ Added for issue #388. Covers the pure-Python C source metric helpers in `scripts
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | — | *pending* |
+| Quality Assurance | Dermot Murphy | — | *pending* |
+| Approver | Dermot Murphy | — | *pending* |
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.
