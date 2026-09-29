@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN5-001 | **Version** | 1.14 |
+| **Document ID** | CSC-MAN5-001 | **Version** | 1.15 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.15 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-012: new RISK-009 (user-visible behaviour change on upgrade); one review frequency per risk (RISK-005 quarterly in §5, §6 note and §7; RISK-004 review recorded 2026-09-29); RR-003-005 owner confirmation of RISK-003/005 remains pending, tracked in #430. AUD10-F-021: CSC-AUD-009 residuals RR-003-004/005 tracking recorded in §6. AUD10-F-031: risk Status fields set to Active/Accepted to match §6 |
 | 1.14 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -115,7 +116,7 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Residual RPN** | 4 (Low) |
 | **Owner** | Claude |
 | **Review Date** | Per release |
-| **Status** | Released |
+| **Status** | Active |
 
 ---
 
@@ -136,7 +137,7 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Residual RPN** | 2 (Low) |
 | **Owner** | Claude |
 | **Review Date** | Per Python minor release |
-| **Status** | Released |
+| **Status** | Active |
 
 ---
 
@@ -156,8 +157,8 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Residual Impact** | 2 |
 | **Residual RPN** | 4 (Low) |
 | **Owner** | Dermot Murphy |
-| **Review Date** | 2026-12-29 (next quarterly review). Reviewed 2026-09-29 during CSC-AUD-009 (#405): no Dependabot PR or alert for PyYAML in the repository history; Dependabot active on `develop`; ratings unchanged. Owner confirmation pending |
-| **Status** | Released |
+| **Review Date** | 2026-12-29 (next quarterly review). Reviewed 2026-09-29 during CSC-AUD-009 (#405): no Dependabot PR or alert for PyYAML in the repository history; Dependabot active on `develop`; ratings unchanged. Owner confirmation pending (CSC-AUD-009 residual RR-003-005, tracked in #430) |
+| **Status** | Active |
 
 ---
 
@@ -177,8 +178,8 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Residual Impact** | 3 |
 | **Residual RPN** | 3 (Low) |
 | **Owner** | Claude |
-| **Review Date** | Quarterly |
-| **Status** | Released |
+| **Review Date** | Quarterly — next 2026-12-29. Last reviewed 2026-09-29 (CSC-AUD-010, #430): GitHub Actions CI, GHCR and Docker Hub publication operating; no GitHub pricing or API change affecting the project; ratings unchanged |
+| **Status** | Accepted |
 
 ---
 
@@ -198,8 +199,8 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Residual Impact** | 3 |
 | **Residual RPN** | 6 (Medium) |
 | **Owner** | Dermot Murphy |
-| **Review Date** | 2026-12-29 (next quarterly review). Reviewed 2026-09-29 during CSC-AUD-009 (#405): still a single human contributor; mitigations in place; ratings unchanged. Owner confirmation pending |
-| **Status** | Released |
+| **Review Date** | 2026-12-29 (next quarterly review). Reviewed 2026-09-29 during CSC-AUD-009 (#405): still a single human contributor; mitigations in place; ratings unchanged. Owner confirmation pending (CSC-AUD-009 residual RR-003-005, tracked in #430) |
+| **Status** | Active |
 
 ---
 
@@ -220,7 +221,7 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Residual RPN** | 2 (Low) |
 | **Owner** | Claude |
 | **Review Date** | Per major release |
-| **Status** | Released |
+| **Status** | Active |
 
 ---
 
@@ -241,7 +242,7 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Residual RPN** | 3 (Low) |
 | **Owner** | Claude |
 | **Review Date** | Pre-assessment |
-| **Status** | Released |
+| **Status** | Active |
 
 ---
 
@@ -262,7 +263,28 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Residual RPN** | 3 (Low) |
 | **Owner** | Claude |
 | **Review Date** | Per Docker build |
-| **Status** | Released |
+| **Status** | Active |
+
+---
+
+### RISK-009 — User-Visible Behaviour Change on Upgrade
+
+| Field | Value |
+|---|---|
+| **Risk ID** | RISK-009 |
+| **Source** | Technical / change management — changes to defaults, config validation, exit codes and generated configs |
+| **Undesirable Event** | A user upgrades and the tool behaves differently without warning: a config that loaded before is rejected (#422), new findings appear (#423 last enum member checked), a CI script's exit-code check changes (#425, 1→2), or a regenerated preset / `--init` config enables more rules (#420) |
+| **Likelihood** | 3 (Possible) |
+| **Impact** | 3 (Moderate) — CI pipelines fail or change result on upgrade; user trust erosion |
+| **RPN** | 9 (Medium) |
+| **Treatment Option** | Mitigate |
+| **Treatment Activities** | CHANGELOG ⚠️ notes and a Compatibility section for every user-visible change; SUP10 semantic-versioning policy (CSC-SUP10-001 §5.6) applied — next release classified v2.0.0 (Major), decision in CSC-SUP10-001 §7.2 and CSC-MAN3-001 §8; CR impact analysis per CSC-SUP10-001 §4.2 records backwards-incompatible changes as High impact (CR-412, CR-418, CR-420, CR-422, CR-424, CR-425); new-rule opt-in policy (CR-418) so upgrades add no findings from new rules; deprecated keys warn rather than fail (`functions.case`, CR-424) |
+| **Residual Likelihood** | 2 |
+| **Residual Impact** | 2 |
+| **Residual RPN** | 4 (Low) |
+| **Owner** | Dermot Murphy |
+| **Review Date** | Per release — before each release tag, confirm the CHANGELOG Compatibility section and the version classification |
+| **Status** | Active |
 
 ---
 
@@ -278,8 +300,11 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | RISK-006 | Barr-C interpretation divergence | 6 | 2 | Low | Active |
 | RISK-007 | ASPICE assessment non-compliance | 8 | 3 | Low | Active |
 | RISK-008 | Docker supply chain attack | 4 | 3 | Low | Active |
+| RISK-009 | User-visible behaviour change on upgrade | 9 | 4 | Low | Active |
 
-> **📋 Note:** No risks currently exceed the High threshold (RPN ≥ 10) after treatment. RISK-005 (single developer) remains Medium residual and is monitored monthly.
+> **📋 Note:** No risks currently exceed the High threshold (RPN ≥ 10) after treatment. RISK-005 (single developer) remains Medium residual and is reviewed quarterly (next 2026-12-29).
+
+> **Open residuals (CSC-AUD-009):** RR-003-004 (post-v1.6.0 CI-matrix results not recorded) and RR-003-005 (Risk Owner confirmation of the RISK-003 and RISK-005 reviews) remain open and are tracked under #430 (CSC-AUD-010 AUD10-F-021).
 
 ---
 
@@ -290,7 +315,7 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | Review open GitHub Issues for new risk indicators | Weekly | Claude |
 | Check PyYAML CVE advisories | Monthly | Claude |
 | Update risk register residual scores | Per milestone | Claude |
-| Review RISK-005 (resource) | Per milestone | Claude |
+| Review RISK-005 (resource) | Quarterly | Dermot Murphy |
 | Pre-assessment risk review | Before ASPICE assessment | Claude |
 
 ---

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP9-001 | **Version** | 1.12 |
+| **Document ID** | CSC-SUP9-001 | **Version** | 1.13 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.13 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-011: new §6.2 post-v1.6.0 problem classification record (SEV label, dates, SLA outcome, fix PR for #408, #410, #412, #413, #422, #423, #424, #425); §5.1 workflow name `rules.yml` → `cstylecheck_rules.yml` |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | Cross-reference resync with #425: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.10 | 2026-09-29 | Claude | Cross-reference resync with #424: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -84,7 +85,7 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 
 Problems may be identified by:
 
-- Automated CI failures (`cstylecheck_tests.yml`, `rules.yml`, `docker_publish.yml`)
+- Automated CI failures (`cstylecheck_tests.yml`, `cstylecheck_rules.yml`, `docker_publish.yml`)
 - Manual testing during development or qualification
 - User reports via GitHub Issues
 - ASPICE assessment findings
@@ -163,6 +164,21 @@ The following problems were identified and resolved during v1.0.0 development:
 | `_SIGNED_TYPES` global mutation | `plain_char_is_signed: false` permanently removed `char` from module-level set | Fixed with `try/finally` to restore original set | `test_sign_compatibility.py` |
 | `RE_TYPEDEF_SIMPLE` missed multi-token base types | Regex only matched single-word base types | Regex updated to require trailing whitespace on each base-type word | `test_typedefs.py` |
 | `function.min_length` undocumented but unimplemented | Rule config key parsed but check never invoked | Implemented check in `_check_functions()` | `test_improvements.py` |
+
+### 6.2 Problem Classification Record (post-v1.6.0)
+
+SEV labels were confirmed by the owner (Dermot Murphy) on 2026-09-29 and applied to the GitHub Issues retroactively (CSC-AUD-010 AUD10-F-011, #430). All eight problems were raised and closed on 2026-09-29, so each met the §4.1 target resolution time. Fixes were merged to `develop` (not hotfixed to `main`) and ship in v2.0.0 (see CSC-SUP10-001 §7.2); the state moves to **Verified** when v2.0.0 is tagged.
+
+| Issue # | Severity | Problem | Raised | Closed | SLA met | Fix PR (merge) | Resolved in |
+|---|---|---|---|---|---|---|---|
+| #408 | SEV-3 Minor | Wrong MISRA 15.5 citation in the `multiple_statements_per_line` message | 2026-09-29 | 2026-09-29 | Yes | #409 (`0d55bab`) | v2.0.0 |
+| #410 | SEV-3 Minor | Wrong MISRA 14.4 citation for `misc.boolean_comparison` | 2026-09-29 | 2026-09-29 | Yes | #414 (`b768af0`) | v2.0.0 |
+| #412 | SEV-2 Major | `misc.boolean_comparison` false positives (on by default; `TRUE`/`FALSE` macros) | 2026-09-29 | 2026-09-29 | Yes (target 1 week) | #417 (`eaa4b87`) | v2.0.0 |
+| #413 | SEV-3 Minor | Startup-banner requirements contradict the implementation (CR-413) | 2026-09-29 | 2026-09-29 | Yes | #415 (`5533d16`) | v2.0.0 |
+| #422 | SEV-1 Critical | Unknown case-style names silently accepted, so naming checks passed invalid code (CR-422) | 2026-09-29 | 2026-09-29 | Yes (target 48 h) | #426 (`e2555f0`) | v2.0.0 |
+| #423 | SEV-1 Critical | Last enum member not checked, so invalid names passed silently | 2026-09-29 | 2026-09-29 | Yes (target 48 h) | #429 (`2444036`) | v2.0.0 |
+| #424 | SEV-3 Minor | Unused `functions.case` key accepted without effect (CR-424) | 2026-09-29 | 2026-09-29 | Yes | #427 (`31acd91`) | v2.0.0 |
+| #425 | SEV-2 Major | Config and usage errors exit 1 instead of 2 from the installed `cstylecheck` command (CR-425) | 2026-09-29 | 2026-09-29 | Yes (target 1 week) | #428 (`7ddf732`) | v2.0.0 |
 
 ---
 

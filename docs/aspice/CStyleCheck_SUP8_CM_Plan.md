@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.22 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.23 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.23 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-015: §7.1–7.3 aligned with §7.6 (CI-only hotfixes merge to `main` untagged) and allow `claude/<topic>-<id>` branches for feature and bug-fix work into `develop`; §9 approval step matches CSC-DEV-002 §5.2 (owner's merge is the approval record). AUD10-F-029: `logo/cstylecheck.jpg` added to CI-026 and `docs/templates/ASPICE_CL2_Test_Case_Template_1.md` to CI-055 (CI count unchanged at 60). AUD10-F-032: §9 note — cross-reference resyncs batched into one revision per document per change set |
 | 1.22 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.21 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.20 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -155,7 +156,7 @@ All items in the following table are placed under configuration control.
 | CI-023 | CI — test workflow | `.github/workflows/cstylecheck_tests.yml` | CI/CD |
 | CI-024 | CI — naming convention workflow | `.github/workflows/cstylecheck_rules.yml` | CI/CD |
 | CI-025 | CI — Docker publish workflow | `.github/workflows/docker_publish.yml` | CI/CD |
-| CI-026 | Project README | `README.md` | Documentation |
+| CI-026 | Project README (with the logo image it embeds) | `README.md`, `logo/cstylecheck.jpg` | Documentation |
 | CI-027 | This CM Plan | `docs/aspice/CStyleCheck_SUP8_CM_Plan.md` | Documentation |
 | CI-028 | AI Authorship Deviation Record | `docs/aspice/CStyleCheck_DEV001_AI_Authorship_Deviation.md` | Documentation |
 | CI-029 | CI trend-record append script | `scripts/ci/append_trend_record.py` | CI script |
@@ -184,7 +185,7 @@ All items in the following table are placed under configuration control.
 | CI-052 | Windows test helper script | `scripts/test.bat` | Build script |
 | CI-053 | Test package marker | `tests/__init__.py` | Test |
 | CI-054 | Licence | `LICENSE` | Documentation |
-| CI-055 | ASPICE work products (each identified by its CSC document ID and version, e.g. CSC-SWE1-001; includes review records and the review template) | `docs/aspice/CStyleCheck_*.md` | Documentation |
+| CI-055 | ASPICE work products (each identified by its CSC document ID and version, e.g. CSC-SWE1-001; includes review records and the review template) | `docs/aspice/CStyleCheck_*.md`, `docs/templates/ASPICE_CL2_Test_Case_Template_1.md` | Documentation |
 | CI-056 | ASPICE internal audit records (CSC-AUD-nnn) | `docs/aspice/audits/*.md` | Documentation |
 | CI-057 | Repository configuration | `.gitignore`, `.gitattributes`, `.codespellrc` | Repository configuration |
 | CI-058 | AI assistant standing instructions (see CSC-DEV-001) | `CLAUDE.md` | Documentation |
@@ -211,8 +212,8 @@ CStyleCheck uses the **Git Flow** branching model. The following branches are de
 
 | Branch | Purpose | Protection Rules |
 |---|---|---|
-| `main` | Production-ready code only; reflects the latest release baseline | Direct push prohibited; merged from `release/*` or `hotfix/*` only; every merge creates a version tag |
-| `develop` | Integration branch for completed features; always buildable | Direct push restricted; merged from `feature/*` and `bugfix/*` via pull request; CI must pass |
+| `main` | Production-ready code only; reflects the latest release baseline | Direct push prohibited; merged from `release/*` or `hotfix/*` only; every release merge and every hotfix that changes the delivered software creates a version tag; CI/repository-configuration-only hotfixes are not tagged (§7.6) |
+| `develop` | Integration branch for completed features; always buildable | Direct push restricted; merged from `feature/*`, `bugfix/*` and `claude/<topic>-<id>` (AI-authored feature or bug-fix work, see CLAUDE.md) via pull request; CI must pass |
 
 ### 7.2 Supporting Branches
 
@@ -220,8 +221,9 @@ CStyleCheck uses the **Git Flow** branching model. The following branches are de
 |---|---|---|---|
 | `feature/<issue-id>-<short-description>` | `develop` | `develop` | New feature or enhancement; one branch per GitHub Issue |
 | `bugfix/<issue-id>-<short-description>` | `develop` | `develop` | Non-critical bug fix targeting the next release |
+| `claude/<topic>-<id>` | `develop` | `develop` | AI-authored feature or bug-fix work (equivalent to `feature/*` / `bugfix/*`); the PR references the GitHub Issue. May also be used for a hotfix targeting `main` under §7.6 |
 | `release/<version>` | `develop` | `main` and `develop` | Release preparation; version bump, final testing, and docs only — no new features |
-| `hotfix/<issue-id>-<short-description>` | `main` | `main` and `develop` | Critical production defect requiring immediate patch release |
+| `hotfix/<issue-id>-<short-description>` | `main` | `main` and `develop` | Critical production defect requiring immediate patch release, or a CI/repository-configuration-only fix (no version bump or tag, §7.6) |
 
 ### 7.3 Branch Naming Convention
 
@@ -231,6 +233,7 @@ Supporting branches shall be named using the following scheme:
 - `bugfix/67-fix-typedef-false-positive` — bug fix for GitHub Issue #67
 - `release/1.1.0` — release preparation for version 1.1.0
 - `hotfix/89-null-pointer-crash` — hotfix for critical Issue #89
+- `claude/boolean-optin-412` — AI-authored work for Issue #412 (`claude/<topic>-<id>`, where `<id>` is the Issue number or a session suffix)
 
 ### 7.4 Git Flow Lifecycle
 
@@ -304,10 +307,12 @@ Changes to controlled configuration items shall follow the change control proces
 
 1. A change request (CR) or problem resolution record is raised as a **GitHub Issue**, labelled appropriately (`bug`, `enhancement`, `change-request`)
 2. The Issue is linked in all related branch names and commit messages (e.g., `Closes #42`)
-3. The change is implemented on the appropriate Git Flow branch (`feature/*`, `bugfix/*`, or `hotfix/*`) per §7
-4. A pull request is opened targeting `develop` (or `main` for hotfixes); CI must pass and at least one review approval is required before merge
+3. The change is implemented on the appropriate Git Flow branch (`feature/*`, `bugfix/*`, `claude/<topic>-<id>` or `hotfix/*`) per §7
+4. A pull request is opened targeting `develop` (or `main` for hotfixes); CI must pass before merge. The owner's merge of the PR is the approval record (solo-developer project; CSC-DEV-002 §5.2)
 5. The merged commit SHA is recorded in the GitHub Issue closure comment
 6. If the change affects a release, a `release/*` branch is created and a new version tag applied per §8.2
+
+> **Revision-history practice (AUD10-F-032):** When a change set only resyncs cross-referenced document versions in a work product, the resync is recorded as one revision of that document per change set (one PR, or one release preparation), not as one revision per upstream change.
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.
 

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-ACQ4-001 | **Version** | 1.13 |
+| **Document ID** | CSC-ACQ4-001 | **Version** | 1.14 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-030: SUP-09 (Python development and CI tool maintainers: pytest, pytest-cov, ruff, mypy with types-PyYAML, codespell) added to §4 with monitoring approach in new §5.8 and interface ACQ-IF-07 in §6 |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | Cross-reference resync with #424: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -75,6 +76,7 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 | SUP-06 | Anthropic, PBC | Claude AI assistant (code generation, document authoring, test generation, ASPICE compliance analysis) | AI/SaaS tool | N/A (SaaS; prompt-based; see CSC-DEV-001) | RISK-005 |
 | SUP-07 | Docker, Inc. (GitHub Actions publisher) | `docker/login-action`, `docker/setup-qemu-action`, `docker/setup-buildx-action`, `docker/metadata-action`, `docker/build-push-action` (used in `docker_publish.yml`) | CI/CD action | Major-version tags (`@v4.6.0`, `@v4`, `@v4`, `@v6`, `@v7`); updated by Dependabot | RISK-004, RISK-008 |
 | SUP-08 | Third-party GitHub Action publishers (`tj-actions`, `peter-evans`) | `tj-actions/changed-files` (`cstylecheck_rules.yml`), `peter-evans/dockerhub-description` (`docker_publish.yml`) | CI/CD action | `tj-actions/changed-files` pinned to full commit SHA `9426d40962ed5378910ee2e21d5f8c6fcbf2dd96` (v47.0.6); `peter-evans/dockerhub-description@v5` | RISK-008 |
+| SUP-09 | Open-source maintainers via PyPI (pytest, pytest-cov, ruff, mypy, types-PyYAML, codespell) | Development and CI tools: test runner and coverage gate, lint, static type check, spell check (`cstylecheck_tests.yml`) | Development / CI tool (not shipped to users) | `requirements.txt`: `pytest>=7.4,<9.0`, `pytest-cov>=4.1,<6.0`, `mypy>=1.0`, `types-PyYAML>=6.0`, `ruff>=0.1`, `codespell>=2.2` (the Spell check step also installs `codespell` unpinned) | RISK-001, RISK-002 |
 
 ---
 
@@ -177,6 +179,17 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 
 **Acceptance criteria:** every action in `.github/workflows/*.yml` appears in the §5.2 list with its current version, and third-party actions are SHA-pinned or on a Dependabot-tracked tag.
 
+### 5.8 Development and CI Tools (SUP-09)
+
+| Activity | Method | Frequency | Owner | Evidence |
+|---|---|---|---|---|
+| Version updates | Dependabot `pip` ecosystem (`.github/dependabot.yml`, directory `/`, weekly, `target-branch: develop`) raises update PRs for `requirements.txt`; each PR must pass CI before merge | Weekly | Dependabot / Dermot Murphy | Dependabot PRs |
+| Tool availability and behaviour | `pip install -r requirements.txt` and the pytest (coverage gate `--cov-fail-under=85`), mypy, ruff and codespell steps must succeed in `cstylecheck_tests.yml`; a failure caused by a new tool release (new lint rule, new spelling, changed coverage measurement) is raised as a SUP.9 Issue | Per CI run | GitHub Actions / Claude | `cstylecheck_tests.yml` run log |
+| Configuration review | Keep `[tool.pytest.ini_options]` and `[tool.ruff.lint]` in `pyproject.toml` and `.codespellrc` consistent with the installed tool versions | Per tool major release | Claude | PR that changes the configuration |
+| Security advisories | Check the GitHub advisory database for the tools; they run only in CI and developer environments and are not part of the delivered package or Docker image | Quarterly | Claude | Advisory review note in the GitHub Issue (if action needed) |
+
+**Acceptance criteria:** all tool steps in `cstylecheck_tests.yml` pass on `develop` and `main`; version constraints in `requirements.txt` are current or a Dependabot PR is open for them.
+
 ---
 
 ## 6. Supplier Interface Summary
@@ -189,6 +202,7 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 | ACQ-IF-04 | `docker_publish.yml` | Docker Hub (SUP-03) | Docker image layers | Docker push; Docker Registry API |
 | ACQ-IF-05 | Dockerfile | `python:3.12-slim` (SUP-05) | Base OS + Python runtime | Docker `FROM` directive |
 | ACQ-IF-06 | Development workflow | Anthropic/Claude (SUP-06) | Prompts; generated code; document content | Claude Code CLI / Anthropic API |
+| ACQ-IF-07 | `cstylecheck_tests.yml`, developer environment | pytest, pytest-cov, ruff, mypy, codespell (SUP-09) | Source code, tests and docs in; test, coverage, lint, type and spelling results out | `pip install -r requirements.txt`; command-line invocation |
 
 ---
 
