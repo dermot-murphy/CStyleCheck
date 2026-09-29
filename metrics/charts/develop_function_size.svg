@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="280" viewBox="0 0 640 280">
+<rect width="640" height="280" fill="#0d1117" rx="6" />
+<text x="68" y="22" font-size="13" font-weight="600" fill="#e6edf3" font-family="ui-monospace, 'Cascadia Code', monospace">Function count & average length — develop</text>
+<line x1="68" y1="224.0" x2="620" y2="224.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="228.0" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">0</text>
+<line x1="68" y1="202.6184210526316" x2="620" y2="202.6184210526316" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="206.6184210526316" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">2</text>
+<line x1="68" y1="181.23684210526315" x2="620" y2="181.23684210526315" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="185.23684210526315" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">4</text>
+<line x1="68" y1="159.85526315789474" x2="620" y2="159.85526315789474" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="163.85526315789474" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">6</text>
+<line x1="68" y1="138.4736842105263" x2="620" y2="138.4736842105263" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="142.4736842105263" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">8</text>
+<line x1="68" y1="117.0921052631579" x2="620" y2="117.0921052631579" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="121.0921052631579" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">10</text>
+<line x1="68" y1="95.71052631578948" x2="620" y2="95.71052631578948" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="99.71052631578948" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">12</text>
+<line x1="68" y1="74.32894736842107" x2="620" y2="74.32894736842107" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="78.32894736842107" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">14</text>
+<line x1="68" y1="52.94736842105263" x2="620" y2="52.94736842105263" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="56.94736842105263" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">16</text>
+<line x1="68" y1="42" x2="68" y2="224" stroke="#484f58" stroke-width="1" />
+<line x1="68" y1="224" x2="620" y2="224" stroke="#484f58" stroke-width="1" />
+<text x="14" y="133" fill="#8b949e" font-family="ui-monospace, 'Cascadia Code', monospace" font-size="10" text-anchor="middle" transform="rotate(-90 14 133)">count / lines</text>
+<line x1="344.0" y1="224" x2="344.0" y2="228" stroke="#484f58" stroke-width="1" />
+<text x="344.0" y="240" text-anchor="middle" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Sep 29</text>
+<circle cx="344.0" cy="138.4736842105263" r="3" fill="#39d353" />
+<circle cx="344.0" cy="61.5" r="3" fill="#388bfd" />
+<rect x="68" y="255" width="14" height="3" fill="#39d353" rx="1" />
+<text x="86" y="264" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Func count</text>
+<rect x="166" y="255" width="14" height="3" fill="#388bfd" rx="1" />
+<text x="184" y="264" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Avg func length</text>
+</svg>

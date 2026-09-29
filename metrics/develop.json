@@ -2,16 +2,16 @@
   "branch": "develop",
   "data_points": [
     {
-      "timestamp": "2026-09-29T09:24:47+00:00",
-      "commit": "ffdb0d5",
-      "full_sha": "ffdb0d5f48189621c11b4a20b979e5c4fd89eb89",
-      "total_files": 177,
+      "timestamp": "2026-09-29T09:34:08+00:00",
+      "commit": "a7bd630",
+      "full_sha": "a7bd63048c0339d615a54bb01a0010007621ff16",
+      "total_files": 178,
       "c_h_files": 10,
-      "py_files": 75,
+      "py_files": 76,
       "new_files": 4,
       "deleted_files": 0,
-      "lines_added": 243,
-      "lines_deleted": 34,
+      "lines_added": 1609,
+      "lines_deleted": 253,
       "errors": 0,
       "warnings": 1,
       "info_count": 3,
@@ -31,12 +31,31 @@
           "count": 1
         }
       ],
+      "violations_by_category": {
+        "enum": 1,
+        "misc": 3
+      },
+      "files_zero_violations": 0,
+      "top_rules": [
+        {
+          "rule": "misc.comment_ratio",
+          "count": 2
+        },
+        {
+          "rule": "misc.void_pointer",
+          "count": 1
+        },
+        {
+          "rule": "enum.type_case",
+          "count": 1
+        }
+      ],
       "comment_ratio": 0.08,
       "whitespace_ratio": 0.1422,
       "total_lines": 204,
       "comment_lines": 14,
       "code_lines": 164,
-      "test_count": 1368,
+      "test_count": 1422,
       "rule_count": 79,
       "loc_physical": 270,
       "loc_blank": 42,
@@ -46,8 +65,8 @@
       "loc_comment_density": 0.399,
       "loc_blank_ratio": 0.156,
       "func_count": 8,
-      "func_length_max": 36,
-      "func_length_avg": 14.2,
+      "func_length_max": 37,
+      "func_length_avg": 15.2,
       "func_over_length": 0,
       "func_param_max": 3,
       "func_over_params": 0,
@@ -64,7 +83,17 @@
       "goto_count": 0,
       "void_ptr_count": 1,
       "cast_count": 7,
-      "macro_count": 9
+      "macro_count": 9,
+      "c_file_count": 2,
+      "h_file_count": 2,
+      "cc_bucket_1_5": 6,
+      "cc_bucket_6_10": 2,
+      "cc_bucket_11_15": 0,
+      "cc_bucket_16_plus": 0,
+      "dox_coverage_pct": 62.5,
+      "global_vars": 0,
+      "fanout_avg": 0.75,
+      "recursive_func_count": 0
     }
   ]
 }
