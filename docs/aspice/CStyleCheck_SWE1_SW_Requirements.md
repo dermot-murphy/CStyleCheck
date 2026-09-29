@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.13 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.14 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.14 | 2026-09-29 | Claude | Issue #418 (CR-418, CSC-SUP10-001 §7.1): SWE1-109 to SWE1-114 and SWE1-116 — `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type` and `misc.empty_else` disabled by default, including when the configuration key is absent (opt-in policy: new rules ship `enabled: false`); RTM rows marked opt-in; referenced-document versions resynced (4) |
 | 2.13 | 2026-09-29 | Claude | Issue #412: SWE1-115 — `misc.boolean_comparison` disabled by default (also when the key is absent) and restricted to lowercase `true`/`false`; `TRUE`/`FALSE` macros not flagged; RTM row marked opt-in; referenced-document versions resynced (4) |
 | 2.12 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.11 | 2026-09-29 | Claude | Issue #413 (CR-413, CSC-SUP10-001 §7.1): SWE1-094 rewritten to match `main()` — exactly two lines (`CStyleCheck <version>`, `(C) 2026 Dermot Murphy`) on stderr (and the `--log` file) before discovery, written even when output is piped, no suppression option (`--quiet` clause removed), never on stdout; parent SYS-F-046 unchanged; RTM row now full verification. SWE1-015: record the known `--fix` exception (pointer-prefix header rename re-reads the `.h` file). No source change. Referenced-document versions resynced (SYS2 2.4→2.5, SWE2 1.14→1.15) |
@@ -61,10 +62,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.7 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.10 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.18 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.16 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.8 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.11 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.19 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.17 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
@@ -185,14 +186,14 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SWE1-MISRA-003 | The `_check_trigraphs()` method shall flag any occurrence of the nine ISO C trigraph sequences (`??=`, `??(`, `??/`, `??)`, `??'`, `??<`, `??!`, `??>`, `??-`) in source or comment text (MISRA C:2012 Rule 4.2 Advisory; MISRA C:2023 Rule 4.2 Required) when `misc.trigraph.enabled: true` | Mandatory | Test | SYS-F-020 |
 | SWE1-MISRA-004 | The `_check_non_ascii_source()` method shall flag any character whose Unicode code point falls outside the set {0x09 TAB, 0x0A LF, 0x0D CR, 0x20–0x7E printable ASCII} (MISRA C:2012/2023 Rule 4.1) when `misc.non_ascii_source.enabled: true`; when `exempt_string_literals: true` characters inside double-quoted string literals shall be exempt | Mandatory | Test | SYS-F-020 |
 | SWE1-071 | The `_check_whitespace_ratio()` method shall enforce a minimum ratio of blank lines to code lines when `misc.whitespace_ratio.enabled: true`; the file header region and comment-only lines shall be excluded from both counts | Mandatory | Test | SYS-F-020 |
-| SWE1-109 | The `_check_goto_usage()` method shall flag every `goto` keyword in comment- and string-stripped source as `misc.goto_usage` (default severity `error`) when `misc.goto_usage.enabled: true` (MISRA C:2012 Rule 15.1, Advisory) | Mandatory | Test | SYS-F-020 |
-| SWE1-110 | The `_check_assignment_in_condition()` method shall flag a simple assignment operator `=` (not `==`, `!=`, `<=`, `>=` or a compound assignment) inside the controlling expression of an `if` or `while`, or inside the condition clause of a `for` statement (between its first and second top-level `;`), as `misc.assignment_in_condition` (default severity `warning`) (MISRA C:2012 Rule 13.4) | Mandatory | Test | SYS-F-020 |
-| SWE1-111 | The `_check_multiple_statements_per_line()` method shall flag a `;` followed on the same line by the start of another statement as `misc.multiple_statements_per_line` (default severity `warning`); lines containing a `for (` header shall be exempt (Barr-C:2018 §3.2) | Mandatory | Test | SYS-F-020 |
-| SWE1-112 | The `_check_void_pointer()` method shall flag every `void *` type in comment- and string-stripped source as `misc.void_pointer` (default severity `warning`) (MISRA C:2012 Rule 11.5, Advisory) | Mandatory | Test | SYS-F-020 |
-| SWE1-113 | The `_check_recursive_function()` method shall flag a function definition whose body contains a call to the function's own name (direct recursion) as `misc.recursive_function` (default severity `error`); indirect recursion is not detected (MISRA C:2012 Rule 17.2, Required — partial) | Mandatory | Test | SYS-F-020 |
-| SWE1-114 | The `_check_sizeof_type()` method shall flag `sizeof` applied to a type name (primitive type, `*_t` typedef or capitalised type name, optionally followed by `*`) as `misc.sizeof_type` (default severity `info`); `sizeof(var)` and `sizeof(*var)` shall not be flagged (Barr-C:2018 §5.7) | Mandatory | Test | SYS-F-020 |
+| SWE1-109 | The `_check_goto_usage()` method shall flag every `goto` keyword in comment- and string-stripped source as `misc.goto_usage` (default severity `error`) when `misc.goto_usage.enabled: true` (MISRA C:2012 Rule 15.1, Advisory). The rule shall be disabled by default, including when the configuration key is absent (opt-in, #418). | Mandatory | Test | SYS-F-020 |
+| SWE1-110 | The `_check_assignment_in_condition()` method shall flag a simple assignment operator `=` (not `==`, `!=`, `<=`, `>=` or a compound assignment) inside the controlling expression of an `if` or `while`, or inside the condition clause of a `for` statement (between its first and second top-level `;`), as `misc.assignment_in_condition` (default severity `warning`) (MISRA C:2012 Rule 13.4). The rule shall be disabled by default, including when the configuration key is absent (opt-in, #418). | Mandatory | Test | SYS-F-020 |
+| SWE1-111 | The `_check_multiple_statements_per_line()` method shall flag a `;` followed on the same line by the start of another statement as `misc.multiple_statements_per_line` (default severity `warning`); lines containing a `for (` header shall be exempt (Barr-C:2018 §3.2). The rule shall be disabled by default, including when the configuration key is absent (opt-in, #418). | Mandatory | Test | SYS-F-020 |
+| SWE1-112 | The `_check_void_pointer()` method shall flag every `void *` type in comment- and string-stripped source as `misc.void_pointer` (default severity `warning`) (MISRA C:2012 Rule 11.5, Advisory). The rule shall be disabled by default, including when the configuration key is absent (opt-in, #418). | Mandatory | Test | SYS-F-020 |
+| SWE1-113 | The `_check_recursive_function()` method shall flag a function definition whose body contains a call to the function's own name (direct recursion) as `misc.recursive_function` (default severity `error`); indirect recursion is not detected (MISRA C:2012 Rule 17.2, Required — partial). The rule shall be disabled by default, including when the configuration key is absent (opt-in, #418). | Mandatory | Test | SYS-F-020 |
+| SWE1-114 | The `_check_sizeof_type()` method shall flag `sizeof` applied to a type name (primitive type, `*_t` typedef or capitalised type name, optionally followed by `*`) as `misc.sizeof_type` (default severity `info`); `sizeof(var)` and `sizeof(*var)` shall not be flagged (Barr-C:2018 §5.7). The rule shall be disabled by default, including when the configuration key is absent (opt-in, #418). | Mandatory | Test | SYS-F-020 |
 | SWE1-115 | The `_check_boolean_comparison()` method shall flag an `==` or `!=` comparison with the lowercase `<stdbool.h>` literals `true` or `false` on either side as `misc.boolean_comparison` (default severity `warning`); `TRUE`/`FALSE` macros shall not be flagged. The rule shall be disabled by default, including when the configuration key is absent (opt-in, #412) (style rule; MISRA C:2012 Rule 14.4 is not enforced — `if (flag == true)` is compliant with it) | Mandatory | Test | SYS-F-020 |
-| SWE1-116 | The `_check_empty_else()` method shall flag an `else { }` block whose body is empty in the original source as `misc.empty_else` (default severity `warning`); a block containing a comment shall not be flagged (Barr-C:2018 §8.3; MISRA C:2012 Rule 15.7 intent) | Mandatory | Test | SYS-F-020 |
+| SWE1-116 | The `_check_empty_else()` method shall flag an `else { }` block whose body is empty in the original source as `misc.empty_else` (default severity `warning`); a block containing a comment shall not be flagged (Barr-C:2018 §8.3; MISRA C:2012 Rule 15.7 intent). The rule shall be disabled by default, including when the configuration key is absent (opt-in, #418). | Mandatory | Test | SYS-F-020 |
 
 ### 4.10 Rule Engine — Cross-File Sign Compatibility (SS-04/SS-05)
 
@@ -357,14 +358,14 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-097 | `print_summary()` restructure: Files before Results, header, dynamic separator | SYS-F-032 | `output.print_summary()` | `test_print_summary.py` |
 | SWE1-098 | `fn_start` line-number correction for multi-line signatures | SYS-F-015 | `Checker._check_functions()` | `test_functions.py` |
 | SWE1-099 | Function-pointer typedef exemption from `variable.pointer_prefix` | SYS-F-014 | `Checker._check_variables()` | `test_variables.py` |
-| SWE1-109 | misc.goto_usage (MISRA 15.1) | SYS-F-020 | `Checker._check_goto_usage()` | `test_misra_rules.py` |
-| SWE1-110 | misc.assignment_in_condition (MISRA 13.4) | SYS-F-020 | `Checker._check_assignment_in_condition()` | `test_misra_rules.py` |
-| SWE1-111 | misc.multiple_statements_per_line (Barr-C §3.2) | SYS-F-020 | `Checker._check_multiple_statements_per_line()` | `test_misra_rules.py` |
-| SWE1-112 | misc.void_pointer (MISRA 11.5) | SYS-F-020 | `Checker._check_void_pointer()` | `test_misra_rules.py` |
-| SWE1-113 | misc.recursive_function (MISRA 17.2, direct only) | SYS-F-020 | `Checker._check_recursive_function()` | `test_misra_rules.py` |
-| SWE1-114 | misc.sizeof_type (Barr-C §5.7) | SYS-F-020 | `Checker._check_sizeof_type()` | `test_misra_rules.py` |
+| SWE1-109 | misc.goto_usage (MISRA 15.1, opt-in) | SYS-F-020 | `Checker._check_goto_usage()` | `test_misra_rules.py` |
+| SWE1-110 | misc.assignment_in_condition (MISRA 13.4, opt-in) | SYS-F-020 | `Checker._check_assignment_in_condition()` | `test_misra_rules.py` |
+| SWE1-111 | misc.multiple_statements_per_line (Barr-C §3.2, opt-in) | SYS-F-020 | `Checker._check_multiple_statements_per_line()` | `test_misra_rules.py` |
+| SWE1-112 | misc.void_pointer (MISRA 11.5, opt-in) | SYS-F-020 | `Checker._check_void_pointer()` | `test_misra_rules.py` |
+| SWE1-113 | misc.recursive_function (MISRA 17.2, direct only, opt-in) | SYS-F-020 | `Checker._check_recursive_function()` | `test_misra_rules.py` |
+| SWE1-114 | misc.sizeof_type (Barr-C §5.7, opt-in) | SYS-F-020 | `Checker._check_sizeof_type()` | `test_misra_rules.py` |
 | SWE1-115 | misc.boolean_comparison (style, opt-in) | SYS-F-020 | `Checker._check_boolean_comparison()` | `test_misra_rules.py` |
-| SWE1-116 | misc.empty_else (Barr-C §8.3) | SYS-F-020 | `Checker._check_empty_else()` | `test_misra_rules.py` |
+| SWE1-116 | misc.empty_else (Barr-C §8.3, opt-in) | SYS-F-020 | `Checker._check_empty_else()` | `test_misra_rules.py` |
 | SWE1-102 | Trend metrics — LOC classification | — (no SYS parent; CSC-MAN3-001 §10.3 trend monitoring, GP 2.1.4) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
 | SWE1-103 | Trend metrics — cyclomatic complexity / nesting | — (no SYS parent; CSC-MAN3-001 §10.3 trend monitoring, GP 2.1.4) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
 | SWE1-104 | Trend metrics — size | — (no SYS parent; CSC-MAN3-001 §10.3 trend monitoring, GP 2.1.4) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |

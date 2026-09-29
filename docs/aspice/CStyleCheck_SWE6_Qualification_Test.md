@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.22 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.23 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.23 | 2026-09-29 | Claude | Issue #418 (CR-418): SWQ-003 post-v1.6.0 row — all 8 rules opt-in, UV-MSR-009 cited; BP3 evidence — `test_misra_rules.py` 149→160 test cases; suite total 1452→1463; referenced-document versions resynced (4) |
 | 1.22 | 2026-09-29 | Claude | Issue #412: BP3 evidence — `test_misra_rules.py` 141→149 test cases; suite total 1444→1452; referenced-document versions resynced (4) |
 | 1.21 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.20 | 2026-09-29 | Claude | Issue #413 (CR-413): SWE1-094 requirement aligned with the code; §6 SWE1-094/095 row Covered in full (partial `--quiet` note removed); BP3 note total 1444; referenced-document versions resynced (SWE1 2.9→2.10, SWE5 1.16→1.17) |
@@ -58,10 +59,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.13 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.19 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.13 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.16 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.14 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.20 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.14 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.17 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -172,7 +173,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Misc — unsigned_suffix signed-param exemption (v1.6.0) | `misc.unsigned_suffix` false-positive fix for signed-typed parameters | `test_unsigned_suffix_signed_params.py` | PASS |
 | Variable — pointer_prefix auto-fix (v1.6.0) | `variable.pointer_prefix` auto-fix via `--fix` | `test_pointer_prefix_fix.py` | PASS |
 | Output — v1.6.0 output behaviour (startup banner, --summary restructure, OS path sep) | `print_summary` restructure; stderr startup banner; OS-native path in output | `test_cli.py`, `test_cli_requirements.py`, `test_print_summary.py` | PASS |
-| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-008, 76 tests) | PASS (2026-09-29, develop `296e91b`, Python 3.11 local run) |
+| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` (all opt-in, #412, #418) | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-008, 76 tests; UV-MSR-009 opt-in policy, 11 tests) | PASS (2026-09-29, develop `296e91b`, Python 3.11 local run) |
 
 **SWQ-003 Overall Result:** PASS
 
@@ -503,5 +504,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (149 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418).
 

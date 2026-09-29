@@ -1648,12 +1648,15 @@ if (retries == MAX_RETRIES)    /* ✓ one side is a variable   */
 
 ### 9.21 `goto` usage (MISRA C Rule 15.1)
 
-**Rule ID:** `misc.goto_usage`
+**Rule ID:** `misc.goto_usage` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. To enable it:
 
 ```yaml
 misc:
   goto_usage:
-    enabled: true
+    enabled: true        # default: false
     severity: error
 ```
 
@@ -1670,12 +1673,15 @@ identifiers that merely contain `goto`, are ignored.
 
 ### 9.22 Assignment in condition (MISRA C Rule 13.4)
 
-**Rule ID:** `misc.assignment_in_condition`
+**Rule ID:** `misc.assignment_in_condition` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. To enable it:
 
 ```yaml
 misc:
   assignment_in_condition:
-    enabled: true
+    enabled: true        # default: false
     severity: warning
 ```
 
@@ -1695,12 +1701,15 @@ if (status != 0) { … }
 
 ### 9.23 Multiple statements per line (Barr-C §3.2)
 
-**Rule ID:** `misc.multiple_statements_per_line`
+**Rule ID:** `misc.multiple_statements_per_line` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. To enable it:
 
 ```yaml
 misc:
   multiple_statements_per_line:
-    enabled: true
+    enabled: true        # default: false
     severity: warning
 ```
 
@@ -1717,12 +1726,15 @@ for (i = 0U; i < n; i++)        /* ✓ for-header semicolons are separators */
 
 ### 9.24 `void` pointer (MISRA C Rule 11.5)
 
-**Rule ID:** `misc.void_pointer`
+**Rule ID:** `misc.void_pointer` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. To enable it:
 
 ```yaml
 misc:
   void_pointer:
-    enabled: true
+    enabled: true        # default: false
     severity: warning
 ```
 
@@ -1739,12 +1751,15 @@ uint8_t *p_buf = pool_Get();    /* ✓ */
 
 ### 9.25 Recursive function (MISRA C Rule 17.2)
 
-**Rule ID:** `misc.recursive_function`
+**Rule ID:** `misc.recursive_function` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. To enable it:
 
 ```yaml
 misc:
   recursive_function:
-    enabled: true
+    enabled: true        # default: false
     severity: error
 ```
 
@@ -1763,12 +1778,15 @@ uint32_t math_Factorial(uint32_t n)
 
 ### 9.26 `sizeof` with a type operand (Barr-C §5.7)
 
-**Rule ID:** `misc.sizeof_type`
+**Rule ID:** `misc.sizeof_type` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. To enable it:
 
 ```yaml
 misc:
   sizeof_type:
-    enabled: true
+    enabled: true        # default: false
     severity: info
 ```
 
@@ -1820,12 +1838,15 @@ if (TRUE == u8_flag)   /* ✓ not checked: macro, not a <stdbool.h> literal */
 
 ### 9.28 Empty `else` (Barr-C §8.3)
 
-**Rule ID:** `misc.empty_else`
+**Rule ID:** `misc.empty_else` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. To enable it:
 
 ```yaml
 misc:
   empty_else:
-    enabled: true
+    enabled: true        # default: false
     severity: warning
 ```
 
@@ -2181,14 +2202,14 @@ comma-separated lists.
 | `misc.declared_not_defined` | warning | `misc.declared_not_defined.enabled` | `false` |
 | `misc.non_ascii_source` | error | `misc.non_ascii_source.enabled` | `true` |
 | `misc.constant_comparison` | warning | `misc.constant_comparison.enabled` | `true` |
-| `misc.goto_usage` | error | `misc.goto_usage.enabled` | `true` |
-| `misc.assignment_in_condition` | warning | `misc.assignment_in_condition.enabled` | `true` |
-| `misc.multiple_statements_per_line` | warning | `misc.multiple_statements_per_line.enabled` | `true` |
-| `misc.void_pointer` | warning | `misc.void_pointer.enabled` | `true` |
-| `misc.recursive_function` | error | `misc.recursive_function.enabled` | `true` |
-| `misc.sizeof_type` | info | `misc.sizeof_type.enabled` | `true` |
+| `misc.goto_usage` | error | `misc.goto_usage.enabled` | `false` |
+| `misc.assignment_in_condition` | warning | `misc.assignment_in_condition.enabled` | `false` |
+| `misc.multiple_statements_per_line` | warning | `misc.multiple_statements_per_line.enabled` | `false` |
+| `misc.void_pointer` | warning | `misc.void_pointer.enabled` | `false` |
+| `misc.recursive_function` | error | `misc.recursive_function.enabled` | `false` |
+| `misc.sizeof_type` | info | `misc.sizeof_type.enabled` | `false` |
 | `misc.boolean_comparison` | warning | `misc.boolean_comparison.enabled` | `false` |
-| `misc.empty_else` | warning | `misc.empty_else.enabled` | `true` |
+| `misc.empty_else` | warning | `misc.empty_else.enabled` | `false` |
 
 ---
 

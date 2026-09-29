@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.7 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.8 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.8 | 2026-09-29 | Claude | #418 / #410 residual: SYS-F-020 no longer cites MISRA 14.4 for the boolean comparison rule (style rule, opt-in); cross-reference resync with #418 (3 referenced-document versions) |
 | 2.7 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.5 | 2026-09-29 | Claude | Issue #413 (CR-413, CSC-SUP10-001 §7.1): SYS-F-046 rewritten to match the implementation — two-line banner (`CStyleCheck <version>`, copyright) on stderr before checking, written even when stdout is piped, not suppressible, never on stdout (date-time, file count and non-TTY suppression removed); RTM row updated; trace SYS-F-046 → SWE1-094 unchanged; referenced-document versions resynced (SWE1 2.9→2.10) |
@@ -66,9 +67,9 @@ The system is deployed in four integration modes:
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.16 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.10 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.13 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.17 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.11 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.14 |
 
 ### 3.4 Glossary
 
@@ -130,7 +131,7 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-017 | The system shall enforce min-length and max-length constraints on variable, function, constant, and macro identifiers | Mandatory | Test | STK-001 |
 | SYS-F-018 | The system shall enforce case rules (`lower_snake`, `UPPER_SNAKE`, `UpperCamelCase`) per identifier category | Mandatory | Test | STK-001 |
 | SYS-F-019 | The system shall enforce include guard presence and format rules | Mandatory | Test | STK-001 |
-| SYS-F-020 | The system shall enforce miscellaneous and macro-safety rules: line length, indentation, magic number detection, unsigned integer suffix (`U`/`UL`), yoda conditions, block comment spacing, function length, function documentation header, assert density, null statement commenting, declaration spacing, file length, reserved header name, macro trailing semicolon, macro multistatement wrapper, and (post-v1.6.0) `goto` usage (MISRA 15.1), assignment in a condition (MISRA 13.4), multiple statements per line (Barr-C §3.2), `void *` usage (MISRA 11.5), direct recursion (MISRA 17.2), `sizeof` with a type operand (Barr-C §5.7), comparison with `true`/`false` (MISRA 14.4) and empty `else` (Barr-C §8.3) | Mandatory | Test | STK-001 |
+| SYS-F-020 | The system shall enforce miscellaneous and macro-safety rules: line length, indentation, magic number detection, unsigned integer suffix (`U`/`UL`), yoda conditions, block comment spacing, function length, function documentation header, assert density, null statement commenting, declaration spacing, file length, reserved header name, macro trailing semicolon, macro multistatement wrapper, and (post-v1.6.0) `goto` usage (MISRA 15.1), assignment in a condition (MISRA 13.4), multiple statements per line (Barr-C §3.2), `void *` usage (MISRA 11.5), direct recursion (MISRA 17.2), `sizeof` with a type operand (Barr-C §5.7), comparison with `true`/`false` (style rule; opt-in) and empty `else` (Barr-C §8.3) | Mandatory | Test | STK-001 |
 | SYS-F-021 | The system shall perform cross-file sign-compatibility checking between related `.c` and `.h` files | Mandatory | Test | STK-001 |
 | SYS-F-022 | The system shall perform spell-checking on identifier tokens against a configurable dictionary | Mandatory | Test | STK-001 |
 | SYS-F-023 | The system shall detect reserved C/C++ keyword and stdlib name usage as identifiers | Mandatory | Test | STK-001 |

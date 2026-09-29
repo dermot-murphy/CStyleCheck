@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.7 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.8 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.8 | 2026-09-29 | Claude | Issue #418: §7 register row and new §7.1 record for CR-418 (new-rule opt-in policy; the 7 remaining post-v1.6.0 MISRA/Barr-C rules disabled by default, also when the key is absent; requirements change SWE1-109 to SWE1-114 and SWE1-116; impact on behaviour); referenced-document versions resynced (3) |
 | 1.7 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.5 | 2026-09-29 | Claude | Issue #413: §7 register row and new §7.1 record for CR-413 (SYS-F-046 / SWE1-094 startup-banner requirements aligned with the implementation; no code impact) |
@@ -41,9 +42,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.16 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.6 |
-| CSC-MAN3-001 | Project Management Plan | 1.12 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.17 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.7 |
+| CSC-MAN3-001 | Project Management Plan | 1.13 |
 
 ---
 
@@ -167,6 +168,7 @@ Summary view:
 |---|---|---|---|---|---|
 | \<Auto-populated from GitHub Issues — see Issues board\> | | | | | |
 | #413 | `documentation` | [CR] Align startup-banner requirements SYS-F-046 and SWE1-094 with the implementation | Medium | Implemented on `claude/banner-reqs-413`; closes on PR merge | Next release after v1.6.0 |
+| #418 | `config-change` | [CR] New-rule opt-in policy: the 7 remaining post-v1.6.0 MISRA/Barr-C rules disabled by default | High | Implemented on `claude/optin-policy-418`; closes on PR merge | Next release after v1.6.0 |
 
 ### 7.1 Change Request Records
 
@@ -182,6 +184,22 @@ Summary view:
 | **Impact on code** | None — no change to `src/` |
 | **Affected documents** | CSC-SYS2-001 v2.5, CSC-SWE1-001 v2.10, CSC-SWE2-001 v1.15, CSC-SWE3-001 v1.20, CSC-SWE4-001 v1.25, CSC-SWE5-001 v1.17, CSC-SWE6-001 v1.19, README, CHANGELOG |
 | **Verification** | 5 unit tests added to `tests/test_cli_requirements.py` (UV-CLI-017 to UV-CLI-019 now verify SWE1-094 in full); 1444 tests PASS |
+
+| Field | CR-418 |
+|---|---|
+| **Issue** | [#418](https://github.com/dermot-murphy/CStyleCheck/issues/418) |
+| **Date** | 2026-09-29 |
+| **Raised by / implemented by** | Dermot Murphy (option 1 selected: all new rules are opt-in) / Claude |
+| **Type** | `config-change` — requirement change and default-configuration change |
+| **Impact level** | High (changes the default behaviour of 7 rules on `develop` (not yet released) and modifies CSC-SWE1-001, see §4.2 and §5.3) |
+| **Change** | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type` and `misc.empty_else` ship `enabled: false` in `src/rules.yml` and `tests/rules.yml`, and each `_check_*` method reads `cfg.get("enabled", False)`. `misc.boolean_comparison` was already opt-in (#412). `--update-config` adds the keys as `enabled: false`. The sample profile `examples/embedded_project/config/strict.yml` enables all 8 at their default severities |
+| **Policy** | New rules ship `enabled: false` and default to disabled when the key is absent; they may be enabled in presets. Recorded in `CONTRIBUTING.md` (New Rule Policy) and enforced by the UV-MSR-009 policy tests |
+| **Requirements change** | SWE1-109 to SWE1-114 and SWE1-116 each gain "The rule shall be disabled by default, including when the configuration key is absent (opt-in, #418)"; RTM rows marked opt-in. SYS-F-020 is unchanged (it states what can be enforced, not the defaults). IDs and traces are unchanged |
+| **Impact on behaviour** | With a project config that does not set `enabled: true` for these rules (including configs written by `--init` or `--preset`, which do not list them), the 7 rules no longer report violations. Upgrading therefore adds no new findings to an existing project. Projects that want the rules set `misc.<rule>.enabled: true`. Detection logic, rule IDs, severities and messages are unchanged |
+| **Rationale** | `misc.boolean_comparison`, when on by default, produced 433 new warnings on a reference project (#412). Turning on new rules by default on upgrade has the same risk for the other 7 rules. Opt-in keeps upgrades stable and lets each project adopt a rule when it is ready |
+| **Impact on code** | `src/cstylecheck/checker.py` (7 `enabled` defaults), `src/rules.yml`, `tests/rules.yml`, `examples/embedded_project/config/strict.yml` |
+| **Affected documents** | CSC-SWE1-001 v2.14, CSC-SWE3-001 v1.24, CSC-SWE4-001 v1.29, CSC-SWE5-001 v1.20, CSC-SWE6-001 v1.23, CSC-SYS4-001 v1.17, CSC-SYS5-001 v1.14, CSC-PA2-001 v1.28, CSC-MAN3-001 v1.13, CONTRIBUTING, README, Rules-and-Configuration, CHANGELOG |
+| **Verification** | 11 tests added to `tests/test_misra_rules.py` (UV-MSR-009): one key-absent test per rule, plus policy tests. The policy tests check that all 8 opt-in rules ship disabled, that none fires with an empty `misc` config, that every `misc` rule shipped `enabled: false` defaults to off in code, and that `--update-config` adds the rules as disabled. SIT-027 and SITC-017 updated; 1463 tests PASS |
 
 ---
 

@@ -93,6 +93,10 @@ Add `--exit-zero` to prevent a non-zero exit code on violations (e.g. strict/dev
 - `misc.line_length` max 80 characters
 - `functions.max_lines` max 50 lines
 - `misc.copyright_header` — copyright comment required in every file
+- The 8 opt-in MISRA C / Barr-C rules (`misc.goto_usage`, `misc.assignment_in_condition`,
+  `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`,
+  `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else`), which are disabled by
+  default (#418); the example sources raise none of them
 
 **development.yml** (info only):
 - All violations demoted to `info` severity

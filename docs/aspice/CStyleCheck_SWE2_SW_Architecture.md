@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.18 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.19 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.19 | 2026-09-29 | Claude | Cross-reference resync with #418: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.18 | 2026-09-29 | Claude | Issue #412: COMP-05f table — `misc.boolean_comparison` marked opt-in (disabled by default); referenced-document versions resynced (4) |
 | 1.17 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.16 | 2026-09-29 | Claude | Issue #413 (CR-413): COMP-01 key behaviour describes the startup banner as two lines on stderr and the log, never stdout, not suppressible (was "one-line"); referenced-document versions resynced (SWE1 2.9→2.10, SWE3 1.19→1.20) |
@@ -52,10 +53,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.13 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.10 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.23 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.16 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.14 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.11 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.24 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.17 |
 
 ---
 
