@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.28 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.29 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.29 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-018: §3.3 coverage criterion restated as all 113 in-scope requirements, listed explicitly (SWE1-001 to 101, SWE1-109 to 116, SWE1-MISRA-001 to 004; SWE1-102 to 108 and 117 out of SWQ scope). AUD10-F-028: §5 overall verdict states its v1.6.0 baseline; current `develop` run added (1545 passed, 58 modules, 2026-09-29) |
 | 1.28 | 2026-09-29 | Claude | Issue #423: BP3 evidence — suite total 1532→1545 (last enum member tests); referenced-document versions resynced (4) |
 | 1.27 | 2026-09-29 | Claude | Issue #425: SWQ-008 — three config-error scenarios (unreadable baseline, unknown case style, config error via the wrapper) with a 2026-09-29 execution note (UV-EXIT-003); §6 SWE1-068 to 070 row cites SWQ-008 and UV-EXIT; BP3 evidence — suite total 1524→1532; referenced-document versions resynced (4) |
 | 1.26 | 2026-09-29 | Claude | Issue #424: SWQ-001 step 9 (`functions.case` → one `WARNING` on stderr, exit code unchanged) with a 2026-09-29 execution row; §6 SWE1-075 row cites UV-FCASE-001; BP3 evidence — suite total 1508→1524; referenced-document versions resynced (4) |
@@ -86,7 +87,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Criterion | Target | Pass Condition |
 |---|---|---|
 | All SWQ test cases | PASS | Zero FAIL results |
-| SW Requirements coverage | 100% | All SWE1-001 to SWE1-099 and SWE1-MISRA-004 traced to ≥ 1 SWQ test |
+| SW Requirements coverage | 100% | All 113 in-scope requirements traced to ≥ 1 SWQ test: SWE1-001 to SWE1-101 (101), SWE1-109 to SWE1-116 (8) and SWE1-MISRA-001 to SWE1-MISRA-004 (4). Out of SWQ scope: SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts, not part of the delivered package; see §6) |
 | Statement coverage | ≥ 90% | Coverage report at execution |
 | Branch coverage | ≥ 85% | Coverage report at execution |
 | Static verification | PASS | `rules.yml` CI job on v1.6.0 commit |
@@ -403,7 +404,9 @@ The #425 rows were executed on 2026-09-29 by `tests/test_exit_code_entry_points.
 | SWQ-011 | Naming convention self-verification | SWE1-017 to SWE1-056 | PASS | |
 | SWQ-012 | Python portability | SWE1-069 | PASS | |
 
-**Overall Software Qualification Verdict:** PASS
+**Overall Software Qualification Verdict — v1.6.0 baseline:** PASS (applies to the v1.6.0 release baseline — 1279 tests, 0 failures, Python 3.10 / 3.11 / 3.12; see §9)
+
+**Current `develop` run (not a release verdict):** 1545 passed, 58 test modules, 2026-09-29 (`develop` after #423, local run, Python 3.11). The qualification verdict for the next release (v2.0.0) is issued at release, including the CI matrix (Python 3.10 / 3.11 / 3.12).
 
 ---
 

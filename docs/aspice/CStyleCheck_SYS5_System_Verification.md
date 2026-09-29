@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.19 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.20 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-003: §7 coverage matrix adds SYS-F-046 (startup banner, CR-413) → SIT-024; UV-CLI-017 to UV-CLI-019. AUD10-F-006: SYS-VTC-008 re-executed with the installed `cstylecheck` command at `develop` `44814d2` (all 9 scenarios PASS, invalid config → exit 2); the 93178cd "Invalid config → exit 2" PASS annotated as invalid for the console-script entry point (pre-#425 it exited 1), cross-reference CR-425 / #425; 93178cd record kept as history. AUD10-F-028: §6 overall verdict states its v1.4.1 baseline; current `develop` run added (1545 passed, 58 modules, 2026-09-29) |
 | 1.19 | 2026-09-29 | Claude | #423: VTC-003 result note test total 1532→1545 (last enum member tests); referenced-document versions resynced (4) |
 | 1.18 | 2026-09-29 | Claude | #425: VTC-003 result note test total 1524→1532 (config-error exit-code tests); referenced-document versions resynced (4) |
 | 1.17 | 2026-09-29 | Claude | #424: VTC-003 result note test total 1508→1524 (`functions.case` removal tests); referenced-document versions resynced (4) |
@@ -296,7 +297,25 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | `--exit-zero` + errors | `cstylecheck --exit-zero violating.c` | 0 | PASS |
 | `--write-baseline` + errors | `cstylecheck --write-baseline b.json violating.c` | 0 | PASS |
 
-**Overall VTC-008 Result:** PASS (commit 93178cd, 2026-05-28)
+**Overall VTC-008 Result:** PASS (commit 93178cd, 2026-05-28) — historical record, superseded by the re-execution below
+
+> **⚠️ Annotation (AUD10-F-006, CR-425 / #425):** The 93178cd result for "Invalid config → exit 2" is **invalid for the installed `cstylecheck` console-script entry point**. Before #425, `load_config()` reported a missing config file with `sys.exit("Config file not found…")`, which exits with code **1** through the console script (a string passed to `sys.exit()` gives exit status 1); only `python src/cstylecheck.py` returned 2. The PASS recorded above therefore did not verify SYS-F-039 for the installed command. #425 (CR-425) routed every configuration error through `config_error()` (exit 2 from both entry points, `test_exit_code_entry_points.py`). The other 93178cd rows are not affected. The scenario was re-executed below.
+
+**Re-execution — 2026-09-29, `develop` commit `44814d2`, installed `cstylecheck` console command** (`pip install -e .`, `/usr/local/bin/cstylecheck`, CStyleCheck 1.6.0, Python 3.11.15, Linux). Fixtures: `clean.c` (comment only), `violating.c` (function-naming errors), `warning_only.c` (a global pointer without `g_` / `p_` prefixes — warnings only); `--config rules.yml` (a copy of `src/rules.yml`) on every checking run except the invalid-config scenario.
+
+| Scenario | Invocation | Expected Exit Code | Actual Exit Code | Result |
+|---|---|---|---|---|
+| Clean source | `cstylecheck --config rules.yml clean.c` | 0 | 0 | PASS |
+| Errors present | `cstylecheck --config rules.yml violating.c` | 1 | 1 (3 ERROR findings) | PASS |
+| Warnings only, default | `cstylecheck --config rules.yml warning_only.c` | 0 | 0 (2 WARNING findings) | PASS |
+| Warnings only, `--warnings-as-errors` | `cstylecheck --config rules.yml --warnings-as-errors warning_only.c` | 1 | 1 | PASS |
+| Invalid config | `cstylecheck --config missing.yaml clean.c` (also without a source argument) | 2 | 2 (`Config file not found: missing.yaml` on stderr, no banner, no file checked) | PASS |
+| `--version` | `cstylecheck --version` | 0 | 0 (`CStyleCheck 1.6.0` / `(C) 2026 Dermot Murphy` on stdout) | PASS |
+| `--help` | `cstylecheck --help` | 0 | 0 | PASS |
+| `--exit-zero` + errors | `cstylecheck --config rules.yml --exit-zero violating.c` | 0 | 0 | PASS |
+| `--write-baseline` + errors | `cstylecheck --config rules.yml --write-baseline b.json violating.c` | 0 | 0 (`b.json` written) | PASS |
+
+**Overall VTC-008 Result (current):** PASS (installed `cstylecheck` command, `develop` `44814d2`, 2026-09-29, local run)
 
 ---
 
@@ -407,7 +426,9 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | SYS-VTC-012 | Docker multi-platform build | SYS-NF-006 | PASS | |
 | SYS-VTC-013 | Self-hosting: linter passes own rules | SYS-F-011 | PASS | |
 
-**Overall System Verification Verdict:** PASS (v1.4.1 — 2026-06-25; 1157 tests all PASS on Python 3.10 / 3.11 / 3.12; coverage 87.31% combined, 89.8% statement)
+**Overall System Verification Verdict — v1.4.1 baseline:** PASS (applies to the v1.4.1 release baseline only — 2026-06-25; 1157 tests all PASS on Python 3.10 / 3.11 / 3.12; coverage 87.31% combined, 89.8% statement)
+
+**Current `develop` run (not a release verdict):** 1545 passed, 58 test modules, 2026-09-29 (`develop` after #423, local run, Python 3.11); SYS-VTC-003 and SYS-VTC-008 re-confirmed at this baseline (see above). The system verification verdict for the next release (v2.0.0) is issued at release, including the CI matrix (Python 3.10 / 3.11 / 3.12).
 
 ---
 
@@ -459,6 +480,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | SYS-F-043 | Config wizard (`--init`) and preset generation (`--preset`), including the standard-specific opt-in rules (#420) | SIT-016 (`test_init_wizard.py`) | Covered |
 | SYS-F-044 | Per-directory config override resolution (`--per-dir-config`) | SIT-017 (`test_per_dir_config.py`) | Covered |
 | SYS-F-045 | HTML report output (`--output-format html`) | SIT-018 (`test_html_report.py`) | Covered |
+| SYS-F-046 | Startup banner (two lines on stderr before checking, unconditional; also `--log`) | SIT-024; UV-CLI-017 to UV-CLI-019 (`test_cli_requirements.py`) | Covered |
 
 > **📋 Note:** SYS-NF-010/011/012 are deferred — no dedicated system-level test case exists. These will be addressed in a future SYS5 revision when a GitHub Action integration test environment is available.
 

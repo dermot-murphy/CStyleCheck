@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-STD-001 | **Version** | 1.13 |
+| **Document ID** | CSC-STD-001 | **Version** | 1.14 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-022: §7.8 marks all eight post-v1.6.0 rules opt-in — new "Default state" column (disabled by default; enabled by the `misra` / `barr-c` presets and `--init` since #420; `misc.boolean_comparison` in no preset), severity column renamed "Severity when enabled", explanatory note added |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -301,18 +302,18 @@ Rules currently implemented in CStyleCheck that go beyond the base standards:
 
 The matrices above are a snapshot of the v1.2 survey (2026-06-06). Rules later implemented, such as function length and assert density (v1.4.0), are shown with their original survey symbol except where updated in this revision. The 8 rules added on `develop` after v1.6.0 map to the surveyed standards as follows:
 
-| CStyleCheck rule | Default severity | MISRA C:2012 | Barr-C:2018 | Power of 10 / JSF | Previous matrix status |
-|---|---|---|---|---|---|
-| `misc.goto_usage` | error | Rule 15.1 | — | P10-1 | 🔵 → 🟢 |
-| `misc.assignment_in_condition` | warning | Rule 13.4 (conditions only) | — | — | 📏 (MISRA-only) |
-| `misc.multiple_statements_per_line` | warning | — | §3.2 | — | not listed |
-| `misc.void_pointer` | warning | Rule 11.5 (all `void *` use) | — | — | 📏 (MISRA-only) |
-| `misc.recursive_function` | error | Rule 17.2 (direct only) | — | P10-1, AV 119 | 🔵 → 🟢 |
-| `misc.sizeof_type` | info | — | §5.7 | — | not listed |
-| `misc.boolean_comparison` | warning | — (style rule; Rule 14.4 not enforced) | — | — | 📏 (MISRA-only) |
-| `misc.empty_else` | warning | Rule 15.7 (intent) | §8.3 | — | not listed |
+| CStyleCheck rule | Default state | Severity when enabled | MISRA C:2012 | Barr-C:2018 | Power of 10 / JSF | Previous matrix status |
+|---|---|---|---|---|---|---|
+| `misc.goto_usage` | Opt-in: disabled by default; enabled by `--preset misra` and the `--init` MISRA question | error | Rule 15.1 | — | P10-1 | 🔵 → 🟢 |
+| `misc.assignment_in_condition` | Opt-in: disabled by default; enabled by `--preset misra` and the `--init` MISRA question | warning | Rule 13.4 (conditions only) | — | — | 📏 (MISRA-only) |
+| `misc.multiple_statements_per_line` | Opt-in: disabled by default; enabled by `--preset barr-c` and the `--init` Barr-C question | warning | — | §3.2 | — | not listed |
+| `misc.void_pointer` | Opt-in: disabled by default; enabled by `--preset misra` and the `--init` MISRA question | warning | Rule 11.5 (all `void *` use) | — | — | 📏 (MISRA-only) |
+| `misc.recursive_function` | Opt-in: disabled by default; enabled by `--preset misra` and the `--init` MISRA question | error | Rule 17.2 (direct only) | — | P10-1, AV 119 | 🔵 → 🟢 |
+| `misc.sizeof_type` | Opt-in: disabled by default; enabled by `--preset barr-c` and the `--init` Barr-C question | info | — | §5.7 | — | not listed |
+| `misc.boolean_comparison` | Opt-in: disabled by default; in no preset (enable explicitly) | warning | — (style rule; Rule 14.4 not enforced) | — | — | 📏 (MISRA-only) |
+| `misc.empty_else` | Opt-in: disabled by default; enabled by `--preset misra`, `--preset barr-c` and either `--init` question | warning | Rule 15.7 (intent) | §8.3 | — | not listed |
 
-These rules give early, style-level feedback. They do not replace a MISRA C checker; cppcheck `--misra` remains authoritative for the MISRA rules listed (CSC-SWE1-001 Appendix A).
+All eight rules are opt-in: they ship `enabled: false` in `src/rules.yml` and are disabled when the configuration key is absent (#412, #418). Since #420 the MISRA and Barr-C presets and the `--init` wizard enable the standard-specific rules at the severity shown; `misc.boolean_comparison` is a style rule and belongs to no preset. These rules give early, style-level feedback. They do not replace a MISRA C checker; cppcheck `--misra` remains authoritative for the MISRA rules listed (CSC-SWE1-001 Appendix A).
 
 ---
 

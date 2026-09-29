@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.13 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.14 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-004: §6 RTM rebuilt by script from the CSC-SWE1-001 §4 parent columns — each row lists exactly the SWE1 requirements citing a SYS ID in that row (SWE1-001, 002, 006, 013, 014, 016, 075, 076 added to their parents' rows; SWE1-002/013/014/015/016/069 removed from SYS-F-001 to 010; SWE1-089 removed from SYS-F-011 to 026; SYS-NF-003 to 006 no longer cites SWE1-069); bidirectional-trace note restated. AUD10-F-022: SYS-F-020 marks all eight post-v1.6.0 rules opt-in (disabled by default; enabled by the `misra` / `barr-c` presets and `--init` since #420) |
 | 2.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.11 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -136,7 +137,7 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-017 | The system shall enforce min-length and max-length constraints on variable, function, constant, and macro identifiers | Mandatory | Test | STK-001 |
 | SYS-F-018 | The system shall enforce case rules (`lower_snake`, `UPPER_SNAKE`, `UpperCamelCase`) per identifier category | Mandatory | Test | STK-001 |
 | SYS-F-019 | The system shall enforce include guard presence and format rules | Mandatory | Test | STK-001 |
-| SYS-F-020 | The system shall enforce miscellaneous and macro-safety rules: line length, indentation, magic number detection, unsigned integer suffix (`U`/`UL`), yoda conditions, block comment spacing, function length, function documentation header, assert density, null statement commenting, declaration spacing, file length, reserved header name, macro trailing semicolon, macro multistatement wrapper, and (post-v1.6.0) `goto` usage (MISRA 15.1), assignment in a condition (MISRA 13.4), multiple statements per line (Barr-C §3.2), `void *` usage (MISRA 11.5), direct recursion (MISRA 17.2), `sizeof` with a type operand (Barr-C §5.7), comparison with `true`/`false` (style rule; opt-in) and empty `else` (Barr-C §8.3) | Mandatory | Test | STK-001 |
+| SYS-F-020 | The system shall enforce miscellaneous and macro-safety rules: line length, indentation, magic number detection, unsigned integer suffix (`U`/`UL`), yoda conditions, block comment spacing, function length, function documentation header, assert density, null statement commenting, declaration spacing, file length, reserved header name, macro trailing semicolon, macro multistatement wrapper, and (post-v1.6.0) `goto` usage (MISRA 15.1), assignment in a condition (MISRA 13.4), multiple statements per line (Barr-C §3.2), `void *` usage (MISRA 11.5), direct recursion (MISRA 17.2), `sizeof` with a type operand (Barr-C §5.7), comparison with `true`/`false` (style rule) and empty `else` (Barr-C §8.3); all eight post-v1.6.0 rules are opt-in — disabled by default, including when the configuration key is absent (#412, #418) — and, since #420, the MISRA rules are enabled by `--preset misra`, the Barr-C rules by `--preset barr-c` and both sets by `--init` on request (`misc.boolean_comparison` is in no preset) | Mandatory | Test | STK-001 |
 | SYS-F-021 | The system shall perform cross-file sign-compatibility checking between related `.c` and `.h` files | Mandatory | Test | STK-001 |
 | SYS-F-022 | The system shall perform spell-checking on identifier tokens against a configurable dictionary | Mandatory | Test | STK-001 |
 | SYS-F-023 | The system shall detect reserved C/C++ keyword and stdlib name usage as identifiers | Mandatory | Test | STK-001 |
@@ -222,13 +223,13 @@ The following table summarises the stakeholder needs from which the system requi
 
 | REQ-ID | Category | Stakeholder Need | SYS.3 Architecture Element | SWE.1 SW Requirement |
 |---|---|---|---|---|
-| SYS-F-001 to SYS-F-010 | Input handling | STK-001, STK-002 | SS-01 (CLI), SS-02 (Config Loader), SS-04 (Source Parser) | SWE1-001 to SWE1-016, SWE1-068 to SWE1-070, SWE1-072, SWE1-073 |
-| SYS-F-011 to SYS-F-026 | Rule engine | STK-001, STK-002 | SS-05 (Rule Engine) | SWE1-017 to SWE1-056, SWE1-MISRA-001 to SWE1-MISRA-004, SWE1-071, SWE1-074, SWE1-078 to SWE1-093, SWE1-098, SWE1-099, SWE1-109 to SWE1-116 |
-| SYS-F-027 to SYS-F-033 | Output / reporting | STK-003, STK-005, STK-007 | SS-06 (Output Formatter) | SWE1-057 to SWE1-064, SWE1-077, SWE1-089, SWE1-095 to SWE1-097 |
+| SYS-F-001 to SYS-F-010 | Input handling | STK-001, STK-002 | SS-01 (CLI), SS-02 (Config Loader), SS-04 (Source Parser) | SWE1-001, SWE1-003 to SWE1-012, SWE1-068, SWE1-070, SWE1-072, SWE1-073, SWE1-075, SWE1-076 |
+| SYS-F-011 to SYS-F-026 | Rule engine | STK-001, STK-002 | SS-05 (Rule Engine) | SWE1-001, SWE1-006, SWE1-016 to SWE1-056, SWE1-071, SWE1-074, SWE1-078 to SWE1-088, SWE1-090 to SWE1-093, SWE1-098, SWE1-099, SWE1-109 to SWE1-116, SWE1-MISRA-001 to SWE1-MISRA-004 |
+| SYS-F-027 to SYS-F-033 | Output / reporting | STK-003, STK-005, STK-007 | SS-06 (Output Formatter) | SWE1-013, SWE1-057 to SWE1-064, SWE1-077, SWE1-089, SWE1-095 to SWE1-097 |
 | SYS-F-034 to SYS-F-036 | Baseline suppression | STK-004 | SS-01 (CLI), SS-05 (Rule Engine) | SWE1-065 to SWE1-067, SWE1-100, SWE1-101 |
-| SYS-F-037 to SYS-F-040 | Exit codes | STK-003 | SS-01 (CLI / Entry Point) | SWE1-069 |
-| SYS-NF-001 to SYS-NF-002 | Performance | STK-003 | SS-04 (Source Cache) | SWE1-015 |
-| SYS-NF-003 to SYS-NF-006 | Portability | STK-001, STK-006 | Build / packaging (`pyproject.toml`, `Dockerfile`) | Verified at system level by CI matrix (SWE1-069 entry point exercised on Python 3.10 / 3.11 / 3.12) |
+| SYS-F-037 to SYS-F-040 | Exit codes | STK-003 | SS-01 (CLI / Entry Point) | SWE1-002, SWE1-069 |
+| SYS-NF-001 to SYS-NF-002 | Performance | STK-003 | SS-04 (Source Cache) | SWE1-014, SWE1-015 |
+| SYS-NF-003 to SYS-NF-006 | Portability | STK-001, STK-006 | Build / packaging (`pyproject.toml`, `Dockerfile`) | None (no SWE1 requirement cites these as parent); verified at system level by the CI matrix (Python 3.10 / 3.11 / 3.12) and the Docker build |
 | SYS-NF-007 to SYS-NF-009 | Configurability | STK-002 | SS-02 (Config Loader) | SWE1-001, SWE1-005, SWE1-068 |
 | SYS-NF-010 | Integration (pre-commit) | STK-001 | `.pre-commit-hooks.yml` | Deferred v2.0 |
 | SYS-NF-011 | Integration (GitHub Marketplace) | STK-005 | `action.yml` | Out of Scope v1.x |
@@ -240,7 +241,7 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-045 | HTML report output | STK-007 | `output._violations_to_html()` | SWE1-077 |
 | SYS-F-046 | Startup banner (two lines on stderr, unconditional) | STK-001 | `cli.py` `main()` — banner written to stderr (and `--log`), never stdout | SWE1-094 |
 
-> **Bidirectional-trace note (AUD9-F-008):** Each SWE1 requirement listed above cites the SYS requirement in this row as its parent (CSC-SWE1-001 v2.10 parent column). SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts) have no SYS parent; they derive from CSC-MAN3-001 §10.3 process monitoring. SYS-NF-003 to SYS-NF-006 are verified at system level (CI matrix, Docker build), and SYS-NF-010 to SYS-NF-012 are deferred or out of scope.
+> **Bidirectional-trace note (AUD9-F-008, AUD10-F-004):** Each row lists exactly the SWE1 requirements whose CSC-SWE1-001 §4 parent column cites a SYS requirement in that row; a SWE1 requirement with several parents appears in each of its parents' rows (e.g. SWE1-001 under SYS-F-002, SYS-F-026 and SYS-NF-007). The matrix was rebuilt by script from the CSC-SWE1-001 v2.20 §4 parent columns. SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts) have no SYS parent; they derive from CSC-MAN3-001 §10.3 process monitoring. SYS-NF-003 to SYS-NF-006 are verified at system level (CI matrix, Docker build), and SYS-NF-010 to SYS-NF-012 are deferred or out of scope.
 
 ---
 
