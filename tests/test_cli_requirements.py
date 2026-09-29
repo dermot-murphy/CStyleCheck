@@ -300,6 +300,12 @@ class TestStartupBanner(unittest.TestCase):
         self.assertEqual(line1, f"{_TOOL_NAME} {_VERSION}")
         self.assertRegex(line2, r"^\(C\) \d{4} Dermot Murphy$")
         self.assertEqual(line2, _COPYRIGHT)
+        # --version (SWE1-095): the copyright line "(C) <year> <holder>" is
+        # on its own line, directly after the version line, on stdout.
+        rc, out, _ = _run_main("--version")
+        self.assertEqual(rc, 0)
+        self.assertEqual(out.splitlines(), [_VERSION_STRING, _COPYRIGHT])
+        self.assertRegex(out.splitlines()[1], r"^\(C\) \d{4} \S.*$")
 
     # UV-CLI-019 (negative: no option suppresses the banner)
     def test_no_quiet_option(self):

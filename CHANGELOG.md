@@ -9,6 +9,25 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### ⚠️ Compatibility
+
+The next release is planned as **v2.0.0** (Major), because the changes below can
+break an existing project on upgrade (SUP10 §7.2, semantic-versioning policy). See the
+linked entries under *Changed* and *Fixed* for details.
+
+- **Unknown case-style values are rejected (#422)** — a value that is not a canonical
+  name or accepted alias is a configuration error: `ERROR:` on stderr, exit 2.
+- **Config/usage errors exit 2, not 1 (#425)** — from the installed `cstylecheck`
+  command as well as `python src/cstylecheck.py`; CI scripts that tested for 1 must
+  test for 2.
+- **New enum findings possible (#423)** — the last enum member is now checked, so
+  code that passed before may report `enum.member_case` / `enum.member_prefix`.
+- **`functions.case` removed (#424)** — the key is ignored and prints a `WARNING`;
+  use `functions.style`.
+- **New rules are opt-in (#412, #418)** — the 8 new `misc.*` rules ship
+  `enabled: false`; enable them per rule, or use `--preset misra` / `--preset barr-c`
+  (#420).
+
 ### Added
 
 - **8 new MISRA C / Barr-C rules** (81 rule IDs in total), all **disabled by default** (opt-in; `enabled: false` in `src/rules.yml`, and off when the

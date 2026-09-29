@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.24 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.25 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.25 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-009: COMP-02 adds case-style validation (`validate_case_styles()`) and deprecated-key warnings (`deprecated_key_warnings()`); COMP-12 adds `normalize_case_style()` and `config_error()` and corrects "Used by" (COMP-01, COMP-02, COMP-05, COMP-06, COMP-11); COMP-09 records that presets and `--init` enable the standard opt-in rules (#420) and write canonical case names (#422); §8.2 rows for unknown case-style value (exit 2) and `functions.case` (WARNING). AUD10-F-022: all 8 post-v1.6.0 COMP-05f rules marked opt-in (#418, #412); referenced-document versions resynced (SWE3 1.29→1.30) |
 | 1.24 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.23 | 2026-09-29 | Claude | Issue #425: §8.2 error handling — config/usage errors exit 2 through `config_error()` (`utils.py`); PyYAML-missing row corrected (was `sys.exit("…")`, exit 1); rows for unreadable supplementary files and string-message `SystemExit` mapped to 2 in `main()`; both entry points return the same exit code; referenced-document versions resynced (4) |
 | 1.22 | 2026-09-29 | Claude | Cross-reference resync with #424: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -60,7 +61,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 |---|---|---|
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.19 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.16 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.29 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.30 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.22 |
 
 ---
@@ -139,8 +140,8 @@ scripts/   (outside the package — CI-only, not installed)
 
 | Attribute | Value |
 |---|---|
-| **Source functions** | `load_config()`, `load_alias_file()`, `load_exclusions_file()`, `_disabled_rules_for_file()`, `load_defines_file()`, `apply_defines()`, `update_config()`, `_find_default_rules()`, `_deep_merge()`, `_collect_paths()` |
-| **Responsibility** | Load and validate YAML config; build alias-prefix lists; resolve per-file disabled rules; apply defines substitutions to preprocessed source |
+| **Source functions** | `load_config()`, `validate_case_styles()`, `deprecated_key_warnings()`, `load_alias_file()`, `load_exclusions_file()`, `_disabled_rules_for_file()`, `load_defines_file()`, `apply_defines()`, `update_config()`, `_find_default_rules()`, `_deep_merge()`, `_collect_paths()` |
+| **Responsibility** | Load and validate YAML config; validate and normalise every case-style value (`validate_case_styles()`: aliases such as `PascalCase` → canonical names, unknown values → `ERROR:` on stderr, exit 2, #422); report deprecated keys such as `functions.case` as a WARNING on stderr and continue (`deprecated_key_warnings()`, #424); build alias-prefix lists; resolve per-file disabled rules; apply defines substitutions to preprocessed source |
 | **Inputs** | YAML config file path; alias file path; exclusions file path; defines file path |
 | **Outputs** | `cfg` dict; `alias_prefixes` list; `disabled_rules` frozenset; preprocessed source text |
 
@@ -225,14 +226,14 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | `_check_reserved_header_name()` | `misc.reserved_header_name` |
 | `_check_constant_comparison()` | `misc.constant_comparison` |
 | `_check_lowercase_l_suffix()` / `_check_octal_constants()` / `_check_trigraphs()` / `_check_non_ascii_source()` | `misc.lowercase_l_suffix`, `misc.octal_constant`, `misc.trigraph`, `misc.non_ascii_source` |
-| `_check_goto_usage()` | `misc.goto_usage` (MISRA 15.1) |
-| `_check_assignment_in_condition()` | `misc.assignment_in_condition` (MISRA 13.4) |
-| `_check_multiple_statements_per_line()` | `misc.multiple_statements_per_line` (Barr-C §3.2) |
-| `_check_void_pointer()` | `misc.void_pointer` (MISRA 11.5) |
-| `_check_recursive_function()` | `misc.recursive_function` (MISRA 17.2, direct) |
-| `_check_sizeof_type()` | `misc.sizeof_type` (Barr-C §5.7) |
+| `_check_goto_usage()` | `misc.goto_usage` (MISRA 15.1; opt-in, disabled by default, #418) |
+| `_check_assignment_in_condition()` | `misc.assignment_in_condition` (MISRA 13.4; opt-in, disabled by default, #418) |
+| `_check_multiple_statements_per_line()` | `misc.multiple_statements_per_line` (Barr-C §3.2; opt-in, disabled by default, #418) |
+| `_check_void_pointer()` | `misc.void_pointer` (MISRA 11.5; opt-in, disabled by default, #418) |
+| `_check_recursive_function()` | `misc.recursive_function` (MISRA 17.2, direct; opt-in, disabled by default, #418) |
+| `_check_sizeof_type()` | `misc.sizeof_type` (Barr-C §5.7; opt-in, disabled by default, #418) |
 | `_check_boolean_comparison()` | `misc.boolean_comparison` (style; opt-in, disabled by default, #412) |
-| `_check_empty_else()` | `misc.empty_else` (Barr-C §8.3) |
+| `_check_empty_else()` | `misc.empty_else` (Barr-C §8.3; opt-in, disabled by default, #418) |
 
 #### COMP-05g — Sign Checker (`class SignChecker`)
 
@@ -283,7 +284,7 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | Attribute | Value |
 |---|---|
 | **Source module** | `wizard.py` |
-| **Responsibility** | Interactive Q&A wizard (`--init`) writing `.cstylecheck.yml`; pre-built config generation without wizard (`--preset barr-c\|minimal\|misra`); custom output path (`--init-output`); overwrite guard (`--overwrite`) |
+| **Responsibility** | Interactive Q&A wizard (`--init`) writing `.cstylecheck.yml`; pre-built config generation without wizard (`--preset barr-c\|minimal\|misra`); custom output path (`--init-output`); overwrite guard (`--overwrite`). Presets and the `--init` wizard enable the standard opt-in rules (#420) and write canonical case-style names such as `pascal` and `upper_snake` (#422) |
 | **Inputs** | CLI flags; interactive terminal input (for `--init`) |
 | **Outputs** | `.cstylecheck.yml` (or `--init-output` path) |
 
@@ -309,8 +310,8 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | Attribute | Value |
 |---|---|
 | **Source module** | `utils.py` |
-| **Responsibility** | Provide shared stateless helper functions: `matches_case()`, `matches_case_abbrev()`, `to_case()`, `module_name()`, `is_exempt()`, `_cfg()`, `_strip_module_prefix()`, `_github_annotation_category()`; used by the Rule Engine to avoid duplication across sub-checkers |
-| **Used by** | COMP-05 (all sub-checkers), COMP-07 |
+| **Responsibility** | Provide shared stateless helper functions: `config_error()` (message to stderr, exit 2, #425), `normalize_case_style()` (case-style alias → canonical name, #422), `matches_case()`, `matches_case_abbrev()`, `to_case()`, `module_name()`, `is_exempt()`, `_cfg()`, `_strip_module_prefix()`, `_github_annotation_category()`; used by the Rule Engine to avoid duplication across sub-checkers |
+| **Used by** | COMP-01 (`cli.py`), COMP-02 (`config.py`), COMP-05 (`checker.py`, all sub-checkers), COMP-06 (`baseline.py`), COMP-11 (`models.py`; `Violation.github_annotation()` used by COMP-07) |
 
 ### COMP-13 — Trend-Analysis Scripts (`scripts/`, outside the package)
 
@@ -411,6 +412,8 @@ main()
 | Error Condition | Detection Point | Response |
 |---|---|---|
 | YAML config missing or malformed | `load_config()` (COMP-02) | `config_error()`: message to stderr, exit 2 |
+| Unknown case-style value (e.g. `variables.case: Foo`) | `validate_case_styles()` via `load_config()` / `resolve_per_dir_config()` (COMP-02) | `ERROR:` message per value to stderr, exit 2 (#422) |
+| Deprecated key `functions.case` set | `deprecated_key_warnings()` via `load_config()` / `resolve_per_dir_config()` (COMP-02) | `WARNING:` to stderr (once per run); key ignored; processing continues (#424) |
 | Source file unreadable | `main()` file read loop | Warning to stderr; file skipped |
 | Baseline file malformed | `load_baseline()` (COMP-06) | `config_error()`: message to stderr, exit 2 |
 | PyYAML not installed | Module import | `config_error("PyYAML is required: pip install pyyaml")`: exit 2 |

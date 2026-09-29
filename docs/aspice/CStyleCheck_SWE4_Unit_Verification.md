@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.34 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.35 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.35 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-007: UV-CLI-018 `test_copyright_line_format` also asserts the `--version` output (version line, then `(C) <year> <holder>` on its own line); UV-CLI-018 traces to SWE1-095 as well; §7 SWE1-095 row cites UV-CLI-018 for the copyright text (test total unchanged, 1545). AUD10-F-027: §6 `test_case_style_config.py`, `test_functions_case_removed.py` and `test_enums.py` rows name `validate_case_styles`, `deprecated_key_warnings`, `normalize_case_style` and `_enum_members` as sub-units of UNIT-05, UNIT-43 and UNIT-27 (SWE3 §4); referenced-document versions resynced (SWE3 1.29→1.30) |
 | 1.34 | 2026-09-29 | Claude | Issue #423: add UV-TYP-005a (`TestEnumLastMember`, 13 tests: last enum member checked for `enum.member_case` and `enum.member_prefix` with and without trailing comma, with initialiser, trailing comment, single-line and one-member enums; initialiser identifiers and `#if` lines not treated as members); §5.4 heading and §6 `test_enums.py` 11→24; total 1532→1545 (58 modules); coverage-gate text 1532→1545; §7 SWE1-040 to 042 row cites UV-TYP-005a; referenced-document versions resynced (4) |
 | 1.33 | 2026-09-29 | Claude | Issue #425: add §5.21 catalogue for `test_exit_code_entry_points.py` (UV-EXIT-001 to UV-EXIT-003, 8 tests: `config_error()`, string-exit mapping in `main()`, nine config/usage error paths exit 2 through the console-script target and `src/cstylecheck.py`); `test_config_loading.py` patches `config_error`; §6 new module row, total 1524→1532 (58 modules); coverage-gate text 1524→1532; §7 SWE1-001/002 and SWE1-068 to 070 rows cite UV-EXIT; referenced-document versions resynced (4) |
 | 1.32 | 2026-09-29 | Claude | Issue #424: add §5.20 catalogue for `test_functions_case_removed.py` (UV-FCASE-001 to UV-FCASE-004, 16 tests: no `functions.case` in presets, wizard or repo configs; not a case-style key; `WARNING` on `stderr` with unchanged exit code, once per root or per-directory config; function naming still set by `functions.style`); UV-CASE-003 — 15→14 case-style keys; §6 new module row, total 1508→1524 (57 modules); coverage-gate text 1508→1524; §7 SWE1-001/002, SWE1-030 to 034 and SWE1-075 rows cite UV-FCASE; referenced-document versions resynced (4) |
@@ -70,7 +71,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 | Document ID | Title | Version |
 |---|---|---|
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.19 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.29 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.30 |
 | CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.25 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.22 |
 
@@ -434,7 +435,7 @@ Added for issue #407 (closes RR-003-001 in CSC-REVIEW-003 and the remaining part
 | UV-CLI-015 | `test_read_once_with_declared_not_defined_and_dry_run_fix`, `test_read_once_when_sign_check_disabled` | SWE1-015 | UNIT-46 | The other cache consumers (`declared_not_defined`, `--fix --dry-run`) add no reads; with `sign_compatibility` disabled nothing is ingested and each file is still read once |
 | UV-CLI-016 | `test_unreadable_file_not_retried_or_ingested`, `test_counter_detects_a_second_read` | SWE1-015 | UNIT-46 | Negative: a missing file is attempted once, reported as `ERROR: Cannot read` and not passed to `SignChecker`; the read counter detects a second read (guards against a vacuous pass) |
 | UV-CLI-017 | `TestStartupBanner.test_banner_on_stderr_not_stdout`, `test_banner_emitted_when_stdout_piped`, `test_banner_written_to_log_file` | SWE1-094 | UNIT-46 | Subprocess run: version string and copyright on `stderr`, neither on `stdout`, which still carries the violation report; with stdout piped (not a TTY) the first two `stderr` lines are still the banner; with `--log` the log file starts with the same two lines |
-| UV-CLI-018 | `test_banner_content`, `test_banner_precedes_processing`, `test_banner_is_exactly_two_lines`, `test_copyright_line_format` | SWE1-094 | UNIT-46 | `stderr` starts with `CStyleCheck <version>`; on a clean run `stderr` is exactly `CStyleCheck <version>\n(C) 2026 Dermot Murphy\n`; line 2 matches `^\(C\) \d{4} Dermot Murphy$`; with `--verbose` the banner precedes `Found N file(s)` and `Scanning:` |
+| UV-CLI-018 | `test_banner_content`, `test_banner_precedes_processing`, `test_banner_is_exactly_two_lines`, `test_copyright_line_format` | SWE1-094, SWE1-095 | UNIT-46 | `stderr` starts with `CStyleCheck <version>`; on a clean run `stderr` is exactly `CStyleCheck <version>\n(C) 2026 Dermot Murphy\n`; line 2 matches `^\(C\) \d{4} Dermot Murphy$`; with `--verbose` the banner precedes `Found N file(s)` and `Scanning:`; `--version` exits 0 and stdout is exactly `CStyleCheck <version>` then `(C) <year> <holder>` (`(C) 2026 Dermot Murphy`) on its own line (SWE1-095) |
 | UV-CLI-019 | `test_json_stdout_not_polluted_by_banner`, `test_no_quiet_option`, `test_version_flag_writes_no_stderr_banner` | SWE1-094 | UNIT-46 | Negative: `--output-format json` stdout parses as JSON (no banner); `--quiet` is rejected (exit 2), so no option suppresses the banner; `--version` writes to stdout and nothing to stderr |
 | UV-CLI-020 | `TestOsPathSeparator.test_windows_backslash_separator`, `test_windows_mixed_separators_normalised` | SWE1-096 | UNIT-03, UNIT-41, UNIT-42 | With `ntpath`: `src/drv/./uart.c` and `src/drv\uart.c` → `src\drv\uart.c`; `Violation.__str__()` and `github_annotation()` use `\` only |
 | UV-CLI-021 | `test_posix_forward_slash_separator` | SWE1-096 | UNIT-03, UNIT-41, UNIT-42 | With `posixpath`: `src//drv/./uart.c` → `src/drv/uart.c`; no `\` in the output |
@@ -496,7 +497,7 @@ Added for issue #425. Config and usage errors called `sys.exit("message")`, whic
 | `test_functions.py` | 14 | 14 | 0 | `_check_functions` |
 | `test_defines.py` | 30 | 30 | 0 | `_check_defines` (incl. typedef-alias exemption) |
 | `test_typedefs.py` | 8 | 8 | 0 | `_check_typedefs` |
-| `test_enums.py` | 24 | 24 | 0 | `_check_enums` |
+| `test_enums.py` | 24 | 24 | 0 | `_check_enums` (UNIT-27, with sub-unit `_enum_members`) |
 | `test_structs.py` | 12 | 12 | 0 | `_check_structs` |
 | `test_include_guards.py` | 8 | 8 | 0 | `_check_include_guard` |
 | `test_misc.py` | 28 | 28 | 0 | `_check_misc` |
@@ -519,8 +520,8 @@ Added for issue #425. Config and usage errors called `sys.exit("message")`, whic
 | `test_workflow_config.py` | 16 | 16 | 0 | CI workflow configuration regression |
 | `test_github_annotations.py` | 8 | 8 | 0 | GitHub Actions annotation output |
 | `test_case_patterns.py` | 6 | 6 | 0 | Case pattern matching (`_check_case_patterns`) |
-| `test_case_style_config.py` | 27 | 27 | 0 | COMP-02 (`load_config`, `validate_case_styles`), COMP-05 (`matches_case`, `normalize_case_style`), COMP-09 (`PRESETS`, `run_wizard`) |
-| `test_functions_case_removed.py` | 16 | 16 | 0 | COMP-02 (`load_config`, `deprecated_key_warnings`, `validate_case_styles`, `resolve_per_dir_config`), COMP-05 (`_check_functions`), COMP-09 (`PRESETS`, `run_wizard`) |
+| `test_case_style_config.py` | 27 | 27 | 0 | COMP-02 (UNIT-05 `load_config` with sub-unit `validate_case_styles`), COMP-05 (UNIT-43 `matches_case` with sub-unit `normalize_case_style`), COMP-09 (`PRESETS`, `run_wizard`) |
+| `test_functions_case_removed.py` | 16 | 16 | 0 | COMP-02 (UNIT-05 `load_config` with sub-units `deprecated_key_warnings` and `validate_case_styles`, `resolve_per_dir_config`), COMP-05 (`_check_functions`), COMP-09 (`PRESETS`, `run_wizard`) |
 | `test_exit_code_entry_points.py` | 8 | 8 | 0 | COMP-01 (`main` string-exit mapping, console-script and wrapper entry points), `utils.config_error` |
 | `test_thread_safe_globals.py` | 4 | 4 | 0 | Thread-safe global state (`C_KEYWORDS`, `C_STDLIB_NAMES`) |
 | `test_preprocessor.py` | 76 | 76 | 0 | COMP-04 (`preprocessor.py`) — strip_comments, strip_strings, preprocess, build_line_map, brace depths, extract_comments |
@@ -621,7 +622,7 @@ Added for issue #425. Config and usage errors called `sys.exit("message")`, whic
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix | `test_pointer_prefix_fix.py` |
 | SWE1-094 | Startup banner to stderr (two lines, unconditional) | `test_cli_requirements.py` — UV-CLI-017 to UV-CLI-019 (#407, extended by #413); also SIT-024. Full: stream, two-line content and copyright format, ordering, piped stdout, `--log` copy, no suppression option |
-| SWE1-095 | Copyright in `--version` | `test_cli.py` — `TestVersionAndHelp` (tool name and exit code only); the copyright text is verified by SIT-024 |
+| SWE1-095 | Copyright in `--version` | `test_cli_requirements.py` — UV-CLI-018 (`test_copyright_line_format`: `--version` prints the version line then `(C) <year> <holder>` on its own line); `test_cli.py` — `TestVersionAndHelp` (tool name and exit code); also SIT-024 |
 | SWE1-096 | OS-native path separator in output | `test_cli_requirements.py` — UV-CLI-020 to UV-CLI-022 (#407); both `\` (Windows) and `/` (POSIX) behaviour asserted. The separator is applied once by `discover_files()` (`os.path.normpath`, UNIT-03); `Violation.__str__()` renders the path verbatim |
 | SWE1-097 | `print_summary()` restructure | `test_print_summary.py` |
 | SWE1-098 | `fn_start` line correction | `test_functions.py`, `test_inline_suppression.py` |
