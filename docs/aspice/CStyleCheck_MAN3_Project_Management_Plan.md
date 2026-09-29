@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN3-001 | **Version** | 1.11 |
+| **Document ID** | CSC-MAN3-001 | **Version** | 1.12 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.12 | 2026-09-29 | Claude | #412: test total 1444→1452; referenced-document versions resynced (5) |
 | 1.11 | 2026-09-29 | Claude | Release-prep cross-reference resync: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.10 | 2026-09-29 | Claude | #413: test total 1439→1444 |
 | 1.9 | 2026-09-29 | Claude | Issue #407: §4.1 scope, WBS-07 and WBS-10 → 1439 tests / 55 modules (CSC-SWE4-001 v1.24); referenced-document versions resynced (MAN5 1.5→1.6, SUP1 1.10→1.11, SUP8 1.13→1.14, SWE1 2.8→2.9, SYS2 2.3→2.4) |
@@ -55,11 +56,11 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | System Requirements Specification | 2.6 |
-| CSC-SWE1-001 | Software Requirements Specification | 2.12 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.15 |
-| CSC-MAN5-001 | Risk Management Plan | 1.7 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.12 |
+| CSC-SYS2-001 | System Requirements Specification | 2.7 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.13 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.16 |
+| CSC-MAN5-001 | Risk Management Plan | 1.8 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.13 |
 
 ---
 

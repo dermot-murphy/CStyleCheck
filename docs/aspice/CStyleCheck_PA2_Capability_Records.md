@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-PA2-001 | **Version** | 1.26 |
+| **Document ID** | CSC-PA2-001 | **Version** | 1.27 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.27 | 2026-09-29 | Claude | #412: SWE.4 evidence — test total 1444→1452 (`misc.boolean_comparison` opt-in, lowercase only); referenced-document versions resynced (21) |
 | 1.26 | 2026-09-29 | Claude | Release-prep cross-reference resync: 21 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.25 | 2026-09-29 | Claude | #413: SWE.4 evidence — test total 1439→1444; SWE1-094 fully verified after CR-413 |
 | 1.24 | 2026-09-29 | Claude | Issue #407: §4.1 SWE.4 criterion and CI-017 → 1439 tests; §6 SWE.4 evidence (55 modules, RR-003-001 closed, SWE1-094 `--quiet` gap); §5.4 register CSC-AUD-009 1.0→1.1 and CSC-REVIEW-003 1.0→1.1; referenced-document versions resynced (ACQ4 1.4→1.5, DEV-001 1.3→1.4, DEV-002 1.2→1.3, MAN3 1.8→1.9, MAN5 1.5→1.6, PA2 1.23→1.24, STD 1.3→1.4, SUP1 1.10→1.11, SUP10 1.3→1.4, SUP8 1.13→1.14, SUP9 1.3→1.4, SWE1 2.8→2.9, SWE2 1.13→1.14, SWE3 1.18→1.19, SWE4 1.22→1.24, SWE5 1.15→1.16, SWE6 1.17→1.18, SYS2 2.3→2.4, SYS3 1.7→1.8, SYS4 1.12→1.13, SYS5 1.9→1.10) |
@@ -199,30 +200,30 @@ All work products are reviewed before approval according to the following schedu
 
 | Document ID | Work Product | Version | Baseline Status | CM Baseline |
 |---|---|---|---|---|
-| CSC-SYS2-001 | System Requirements Spec | 2.6 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SYS3-001 | System Architecture Description | 1.9 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SYS4-001 | System Integration Test Spec | 1.15 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SYS5-001 | System Verification Report | 1.12 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SWE1-001 | SW Requirements Spec | 2.12 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SWE2-001 | SW Architecture Description | 1.17 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SWE3-001 | SW Detailed Design | 1.22 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SWE4-001 | Unit Verification Spec | 1.27 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SWE5-001 | Integration Test Spec | 1.18 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SWE6-001 | Qualification Test Spec | 1.21 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-MAN3-001 | Project Management Plan | 1.11 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-MAN5-001 | Risk Management Plan | 1.7 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.12 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.15 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SUP9-001 | Problem Resolution Plan | 1.5 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-SUP10-001 | Change Request Plan | 1.6 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-ACQ4-001 | Supplier Monitoring Plan | 1.6 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-PA2-001 | PA 2.1 / PA 2.2 Records | 1.26 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SYS2-001 | System Requirements Spec | 2.7 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SYS3-001 | System Architecture Description | 1.10 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SYS4-001 | System Integration Test Spec | 1.16 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SYS5-001 | System Verification Report | 1.13 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SWE1-001 | SW Requirements Spec | 2.13 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SWE2-001 | SW Architecture Description | 1.18 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SWE3-001 | SW Detailed Design | 1.23 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SWE4-001 | Unit Verification Spec | 1.28 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SWE5-001 | Integration Test Spec | 1.19 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SWE6-001 | Qualification Test Spec | 1.22 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-MAN3-001 | Project Management Plan | 1.12 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-MAN5-001 | Risk Management Plan | 1.8 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.13 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.16 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SUP9-001 | Problem Resolution Plan | 1.6 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-SUP10-001 | Change Request Plan | 1.7 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-ACQ4-001 | Supplier Monitoring Plan | 1.7 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-PA2-001 | PA 2.1 / PA 2.2 Records | 1.27 | Released | CSC-AUD-009 corrective actions (#405); #407 |
 | CSC-REVIEW-001 | ASPICE Peer Review Record (v1.2.1 baseline) | 1.0 | Released | issue #169 |
 | CSC-REVIEW-002 | ASPICE Peer Review Record (v1.4.1 baseline) | 1.0 | Released | PR (issue #268) |
 | CSC-REVIEW-003 | ASPICE Peer Review Record (v1.6.0 / post-v1.6.0 `develop`; retrospective for v1.5.x–v1.6.0; self-review under CSC-DEV-002) | 1.1 | Released (pending Review Owner signature) | CSC-AUD-009 corrective actions (#405); RR-003-003 closed (#408), RR-003-001 closed (#407) |
-| CSC-STD-001 | Industry Standards Comparison | 1.6 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-DEV-001 | AI Authorship Deviation Record | 1.5 | Released | CSC-AUD-009 corrective actions (#405); #407 |
-| CSC-DEV-002 | Independent Review Deviation Record | 1.4 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-STD-001 | Industry Standards Comparison | 1.7 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-DEV-001 | AI Authorship Deviation Record | 1.6 | Released | CSC-AUD-009 corrective actions (#405); #407 |
+| CSC-DEV-002 | Independent Review Deviation Record | 1.5 | Released | CSC-AUD-009 corrective actions (#405); #407 |
 | CSC-SVD-001 | Software Version Description | 1.23 | Released | ASPICE audit #379 |
 | CSC-AUD-001 | ASPICE Internal Audit Report | 1.0 | Released | v1.2.0 tag |
 | CSC-AUD-002 | ASPICE Internal Audit — CL2 Re-assessment (2026-05-29) | 1.0 | Released | v1.2.1 tag |

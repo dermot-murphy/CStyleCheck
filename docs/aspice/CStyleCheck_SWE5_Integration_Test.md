@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.18 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.19 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.19 | 2026-09-29 | Claude | Issue #412: SIT-027 step 7 — `misc.boolean_comparison` not reported with the default config (opt-in), `TRUE` macro not matched; post-v1.6.0 note 1444→1452 tests; referenced-document versions resynced (5) |
 | 1.18 | 2026-09-29 | Claude | Release-prep cross-reference resync: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.17 | 2026-09-29 | Claude | Issue #413 (CR-413): SIT-024 step 1 expects the two-line stderr banner with stdout piped; step 3 expects `--quiet` to be rejected (no suppression); post-v1.6.0 note 1439→1444 tests; referenced-document versions resynced (SWE2 1.14→1.15, SWE1 2.9→2.10, SWE4 1.24→1.25, SWE6 1.18→1.19) |
 | 1.16 | 2026-09-29 | Claude | Issue #407: §7 SIT-011 and SIT-024 rows cite UV-CLI-014 to UV-CLI-016 and UV-CLI-017 to UV-CLI-019; post-v1.6.0 note records 1439 tests after #408 and #407; referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE4 1.22→1.24, SWE6 1.17→1.18, SYS4 1.12→1.13) |
@@ -54,11 +55,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.17 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.12 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.27 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.21 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.15 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.18 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.13 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.28 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.22 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.16 |
 
 ### 3.2 Test Environment
 

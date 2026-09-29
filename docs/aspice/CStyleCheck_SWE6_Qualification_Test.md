@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.21 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.22 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-09-29 | Claude | Issue #412: BP3 evidence — `test_misra_rules.py` 141→149 test cases; suite total 1444→1452; referenced-document versions resynced (4) |
 | 1.21 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.20 | 2026-09-29 | Claude | Issue #413 (CR-413): SWE1-094 requirement aligned with the code; §6 SWE1-094/095 row Covered in full (partial `--quiet` note removed); BP3 note total 1444; referenced-document versions resynced (SWE1 2.9→2.10, SWE5 1.16→1.17) |
 | 1.19 | 2026-09-29 | Claude | #410: BP3 evidence no longer claims MISRA C:2012 Rule 14.4 coverage |
@@ -57,10 +58,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.12 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.18 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.12 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.15 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.13 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.19 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.13 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.16 |
 
 ### 3.2 Software Configuration Under Test
 

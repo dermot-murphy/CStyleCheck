@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-STD-001 | **Version** | 1.6 |
+| **Document ID** | CSC-STD-001 | **Version** | 1.7 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.7 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.5 | 2026-09-29 | Claude | Issue #410: §7.8 `misc.boolean_comparison` row — MISRA C:2012 column no longer cites Rule 14.4 (style rule; `if (flag == true)` is compliant with Rule 14.4) |
 | 1.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE3 1.18→1.19) |
@@ -45,9 +46,9 @@ The findings are presented in a unified coverage matrix and a prioritised list o
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.12 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.17 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.22 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.13 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.18 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.23 |
 
 ---
 

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.15 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.16 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.16 | 2026-09-29 | Claude | #412: SITC-017 step 1 enables `misc.boolean_comparison` explicitly (opt-in); test total 1444→1452; referenced-document versions resynced (3) |
 | 1.15 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.14 | 2026-09-29 | Claude | #413: test total 1439→1444 |
 | 1.13 | 2026-09-29 | Claude | Issue #407: post-v1.6.0 note records 1439 tests after #408 and #407; referenced-document versions resynced (SYS2 2.3→2.4, SYS3 1.7→1.8, SYS5 1.9→1.10) |
@@ -61,9 +62,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.6 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.9 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.12 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.7 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.10 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.13 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
