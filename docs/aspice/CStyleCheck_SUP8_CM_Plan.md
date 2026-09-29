@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.23 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-015: §7.1–7.3 aligned with §7.6 (CI-only hotfixes merge to `main` untagged) and allow `claude/<topic>-<id>` branches for feature and bug-fix work into `develop`; §9 approval step matches CSC-DEV-002 §5.2 (owner's merge is the approval record). AUD10-F-029: `logo/cstylecheck.jpg` added to CI-026 and `docs/templates/ASPICE_CL2_Test_Case_Template_1.md` to CI-055 (CI count unchanged at 60). AUD10-F-032: §9 note — cross-reference resyncs batched into one revision per document per change set |
+| 1.23 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-015: §7.1–7.3 aligned with §7.6 (CI-only hotfixes merge to `main` untagged) and allow `claude/<topic>-<id>` branches for feature and bug-fix work into `develop`; §9 approval step matches CSC-DEV-002 §5.2 (owner's merge is the approval record). AUD10-F-029: `logo/cstylecheck.jpg` added to CI-026 and `docs/templates/ASPICE_CL2_Test_Case_Template_1.md` to CI-055 (CI count unchanged at 60). AUD10-F-032: §9 note — cross-reference resyncs batched into one revision per document per change set; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.22 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.21 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.20 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -308,7 +308,7 @@ Changes to controlled configuration items shall follow the change control proces
 1. A change request (CR) or problem resolution record is raised as a **GitHub Issue**, labelled appropriately (`bug`, `enhancement`, `change-request`)
 2. The Issue is linked in all related branch names and commit messages (e.g., `Closes #42`)
 3. The change is implemented on the appropriate Git Flow branch (`feature/*`, `bugfix/*`, `claude/<topic>-<id>` or `hotfix/*`) per §7
-4. A pull request is opened targeting `develop` (or `main` for hotfixes); CI must pass before merge. The owner's merge of the PR is the approval record (solo-developer project; CSC-DEV-002 §5.2)
+4. A pull request is opened targeting `develop` (or `main` for hotfixes); CI must pass before merge. The owner's merge of the PR is the approval and authorisation of every work-product revision it introduces; no separate signature is required, and the merge commit is the approval record (solo-developer project; CSC-DEV-002 §5.2)
 5. The merged commit SHA is recorded in the GitHub Issue closure comment
 6. If the change affects a release, a `release/*` branch is created and a new version tag applied per §8.2
 
@@ -403,8 +403,10 @@ Performed after tagging to verify:
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

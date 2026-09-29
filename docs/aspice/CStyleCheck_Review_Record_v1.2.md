@@ -19,7 +19,7 @@
 | **Review Scope** | All 21 ASPICE work products at v1.2.1 |
 | **Reference Standard** | Automotive SPICE® PAM v4.0 · ASPICE GP 2.2.3 |
 | **Related Documents** | CSC-PA2-001 v1.6, CSC-AUD-002, CSC-DEV-001, CSC-DEV-002 |
-| **Status** | Approved (pending Review Owner signature) |
+| **Status** | Approved — Review Owner authorisation by merge (CSC-DEV-002 §5.2) |
 
 ---
 
@@ -364,12 +364,12 @@ All 21 ASPICE work products are substantially complete, consistent, and correctl
 | Role | Name | Date | Notes |
 |---|---|---|---|
 | Reviewer | Claude (AI-assisted) | 2026-05-29 | *Per CSC-DEV-001 (AI authorship deviation)* |
-| Author / Review Owner | Dermot Murphy | — | *Pending — solo developer, see CSC-DEV-002* |
+| Author / Review Owner | Dermot Murphy | Merge date of the introducing PR | *Authorised by the owner's merge of the PR that added this record (CSC-DEV-002 §5.2); no signature required* |
 
-> **Note (CSC-DEV-002):** CStyleCheck is developed by a solo engineer. The independent peer-review requirement of ASPICE GP 2.2.3 cannot be satisfied by a separate human reviewer in the conventional sense. This review was conducted by the AI tool (Claude) acting in the reviewer role, as formally documented in CSC-DEV-002. The Review Owner signature above constitutes the required management approval of this review record.
+> **Note (CSC-DEV-002):** CStyleCheck is developed by a solo engineer. The independent peer-review requirement of ASPICE GP 2.2.3 cannot be satisfied by a separate human reviewer in the conventional sense. This review was conducted by the AI tool (Claude) acting in the reviewer role, as formally documented in CSC-DEV-002. The Review Owner's merge of the PR that added this record constitutes the required management approval; the merge commit is the approval record (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2).
 
 ---
 
-*Document: CSC-REVIEW-001 · Version 1.0 · 2026-05-29*  
+*Document: CSC-REVIEW-001 · Version 1.1 · 2026-09-29 (v1.1: Approval-by-merge policy (CSC-DEV-002 §5.2), #430; v1.0: 2026-05-29)*  
 *Location: `docs/aspice/CStyleCheck_Review_Record_v1.2.md`*  
 *Template: CSC-REVIEW-TEMPLATE-001 v1.0*

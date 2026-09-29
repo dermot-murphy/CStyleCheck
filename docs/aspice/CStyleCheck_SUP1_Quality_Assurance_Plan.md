@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-013: GATE-02 names the `cstylecheck_rules.yml` workflow and its real scope (`src/**`, `source/**/*.[ch]`); WP-01 names the `src/cstylecheck/` package and `src/cstylecheck.py` wrapper. AUD10-F-014: §6 states that the owner's merge of the PR is the approval record (matches CSC-DEV-002 §5.2). AUD10-F-002: §5.4 gate record names the next release v2.0.0 |
+| 1.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-013: GATE-02 names the `cstylecheck_rules.yml` workflow and its real scope (`src/**`, `source/**/*.[ch]`); WP-01 names the `src/cstylecheck/` package and `src/cstylecheck.py` wrapper. AUD10-F-014: §6 states that the owner's merge of the PR is the approval record (matches CSC-DEV-002 §5.2). AUD10-F-002: §5.4 gate record names the next release v2.0.0; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.19 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.18 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.17 | 2026-09-29 | Claude | Cross-reference resync with #424: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -120,7 +120,7 @@ Performed by the QA role before creating the release baseline:
 - [ ] All SYS-VTC verification test cases recorded as PASS in CSC-SYS5-001
 - [ ] Version in `_version.py` == version in `pyproject.toml` == intended release tag
 - [ ] GitHub Release draft prepared with correct change log
-- [ ] All ASPICE documents reviewed and approval tables signed
+- [ ] All ASPICE documents reviewed and approved (approval = owner merge of the introducing PR; CSC-DEV-002 §5.2)
 - [ ] Zero open GitHub Issues with `bug` label targeting the release version
 - [ ] Docker image digest recorded in GitHub Actions log
 - [ ] CM baseline checklist in CSC-SUP8-001 §11 completed
@@ -149,11 +149,13 @@ All QA evidence is retained as follows:
 | Coverage reports (`coverage.xml`) | GitHub Actions artefacts | 30 days per run |
 | Docker image digests | GitHub Actions run logs + GHCR manifest | Indefinite (GHCR) |
 | Process audit records | GitHub PR review comments; this document | Indefinite (GitHub) |
-| Change approval records | The owner's (Dermot Murphy's) merge of the implementing PR is the approval record: merged-by, merge commit and date in the PR history. For this solo-developer project no separate GitHub review approval is recorded (CSC-DEV-002 §5.2) | Indefinite (GitHub) |
-| Work product review records | Reviewer/approver tables in each ASPICE document; per-release peer-review records `docs/aspice/CStyleCheck_Review_Record_v*.md` (CSC-REVIEW-nnn) | CM baseline (Git) |
-| Internal audit records | `docs/aspice/audits/` (CSC-AUD-nnn) | CM baseline (Git) |
+| Change approval records | The owner's (Dermot Murphy's) merge of the implementing PR is the approval record: merged-by, merge commit and date in the PR history. For this solo-developer project no separate GitHub review approval or signature is recorded (CSC-DEV-002 §5.2) | Indefinite (GitHub) |
+| Work product review records | Reviewer/approver tables in each ASPICE document (authorised by the owner's merge of the introducing PR, not by signature; CSC-DEV-002 §5.2); per-release peer-review records `docs/aspice/CStyleCheck_Review_Record_v*.md` (CSC-REVIEW-nnn) | CM baseline (Git) |
+| Internal audit records | `docs/aspice/audits/` (CSC-AUD-nnn); sign-off by the owner's merge of the PR that adds the record (CSC-DEV-002 §5.2) | CM baseline (Git) |
 | Problem reports | GitHub Issues | Indefinite |
 | Change requests | GitHub Issues (labelled `change-request`) | Indefinite |
+
+**Approval by merge (owner policy, 2026-09-29).** The owner's merge of the PR that introduces a work-product revision is its approval and authorisation; no signature is required. This covers approval tables, review records, audit sign-offs, CR approval / QA sign-off and Risk Owner confirmations (CSC-DEV-002 §5.2).
 
 ---
 
@@ -175,8 +177,10 @@ When a QA gate failure or non-conformance is identified:
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.25 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-009: COMP-02 adds case-style validation (`validate_case_styles()`) and deprecated-key warnings (`deprecated_key_warnings()`); COMP-12 adds `normalize_case_style()` and `config_error()` and corrects "Used by" (COMP-01, COMP-02, COMP-05, COMP-06, COMP-11); COMP-09 records that presets and `--init` enable the standard opt-in rules (#420) and write canonical case names (#422); §8.2 rows for unknown case-style value (exit 2) and `functions.case` (WARNING). AUD10-F-022: all 8 post-v1.6.0 COMP-05f rules marked opt-in (#418, #412); referenced-document versions resynced (SWE3 1.29→1.30) |
+| 1.25 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-009: COMP-02 adds case-style validation (`validate_case_styles()`) and deprecated-key warnings (`deprecated_key_warnings()`); COMP-12 adds `normalize_case_style()` and `config_error()` and corrects "Used by" (COMP-01, COMP-02, COMP-05, COMP-06, COMP-11); COMP-09 records that presets and `--init` enable the standard opt-in rules (#420) and write canonical case names (#422); §8.2 rows for unknown case-style value (exit 2) and `functions.case` (WARNING). AUD10-F-022: all 8 post-v1.6.0 COMP-05f rules marked opt-in (#418, #412); referenced-document versions resynced (SWE3 1.29→1.30); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.24 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.23 | 2026-09-29 | Claude | Issue #425: §8.2 error handling — config/usage errors exit 2 through `config_error()` (`utils.py`); PyYAML-missing row corrected (was `sys.exit("…")`, exit 1); rows for unreadable supplementary files and string-message `SystemExit` mapped to 2 in `main()`; both entry points return the same exit code; referenced-document versions resynced (4) |
 | 1.22 | 2026-09-29 | Claude | Cross-reference resync with #424: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -500,8 +500,10 @@ All config/usage errors go through `config_error()` (`utils.py`), which prints t
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

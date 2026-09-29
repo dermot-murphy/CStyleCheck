@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-003: §7 coverage matrix adds SYS-F-046 (startup banner, CR-413) → SIT-024; UV-CLI-017 to UV-CLI-019. AUD10-F-006: SYS-VTC-008 re-executed with the installed `cstylecheck` command at `develop` `44814d2` (all 9 scenarios PASS, invalid config → exit 2); the 93178cd "Invalid config → exit 2" PASS annotated as invalid for the console-script entry point (pre-#425 it exited 1), cross-reference CR-425 / #425; 93178cd record kept as history. AUD10-F-028: §6 overall verdict states its v1.4.1 baseline; current `develop` run added (1545 passed, 58 modules, 2026-09-29) |
+| 1.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-003: §7 coverage matrix adds SYS-F-046 (startup banner, CR-413) → SIT-024; UV-CLI-017 to UV-CLI-019. AUD10-F-006: SYS-VTC-008 re-executed with the installed `cstylecheck` command at `develop` `44814d2` (all 9 scenarios PASS, invalid config → exit 2); the 93178cd "Invalid config → exit 2" PASS annotated as invalid for the console-script entry point (pre-#425 it exited 1), cross-reference CR-425 / #425; 93178cd record kept as history. AUD10-F-028: §6 overall verdict states its v1.4.1 baseline; current `develop` run added (1545 passed, 58 modules, 2026-09-29); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.19 | 2026-09-29 | Claude | #423: VTC-003 result note test total 1532→1545 (last enum member tests); referenced-document versions resynced (4) |
 | 1.18 | 2026-09-29 | Claude | #425: VTC-003 result note test total 1524→1532 (config-error exit-code tests); referenced-document versions resynced (4) |
 | 1.17 | 2026-09-29 | Claude | #424: VTC-003 result note test total 1508→1524 (`functions.case` removal tests); referenced-document versions resynced (4) |
@@ -501,8 +501,10 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

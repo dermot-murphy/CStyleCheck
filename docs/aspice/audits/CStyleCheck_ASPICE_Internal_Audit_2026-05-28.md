@@ -425,6 +425,8 @@ All findings have been converted to GitHub issues for tracking:
 | Role | Name | Approval | Date |
 |---|---|---|---|
 | Auditor | Claude (AI-assisted) | Completed | 2026-05-28 |
-| Audit Owner / Approver | Dermot Murphy | Pending review | 2026-05-28 |
+| Audit Owner / Approver | Dermot Murphy | Authorised by owner merge of the PR that added this record (CSC-DEV-002 §5.2) | Merge date of the introducing PR |
 
 > This audit report is placed under configuration management as `docs/aspice/audits/CStyleCheck_ASPICE_Internal_Audit_2026-05-28.md`. It constitutes the Audit Findings Log deliverable required by issue #136 (CSC-SUP10-001 §7 deliverable).
+
+> Approval is given by the Audit Owner's merge of the PR that added this record; the merge commit is the approval record (CSC-DEV-002 §5.2). *Revision 1.1, 2026-09-29: Approval-by-merge policy (CSC-DEV-002 §5.2), #430.*

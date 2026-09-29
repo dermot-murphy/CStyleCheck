@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-030: SUP-09 (Python development and CI tool maintainers: pytest, pytest-cov, ruff, mypy with types-PyYAML, codespell) added to §4 with monitoring approach in new §5.8 and interface ACQ-IF-07 in §6 |
+| 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-030: SUP-09 (Python development and CI tool maintainers: pytest, pytest-cov, ruff, mypy with types-PyYAML, codespell) added to §4 with monitoring approach in new §5.8 and interface ACQ-IF-07 in §6; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | Cross-reference resync with #424: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -227,8 +227,10 @@ All non-conformances are recorded as GitHub Issues (label: `supplier-issue`) and
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

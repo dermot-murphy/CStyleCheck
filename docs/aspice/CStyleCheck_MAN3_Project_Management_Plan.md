@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.19 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-002: §8 release-classification decision — next release v2.0.0 (Major) replaces the planned v1.7.0, with the compatibility changes in scope listed. AUD10-F-016: §4.3 lifecycle text refreshed (package architecture, 12 modules; post-v1.6.0 development toward v2.0.0); PH-04 names the `src/cstylecheck/` package; WBS-16/WBS-17 overlap removed |
+| 1.19 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-002: §8 release-classification decision — next release v2.0.0 (Major) replaces the planned v1.7.0, with the compatibility changes in scope listed. AUD10-F-016: §4.3 lifecycle text refreshed (package architecture, 12 modules; post-v1.6.0 development toward v2.0.0); PH-04 names the `src/cstylecheck/` package; WBS-16/WBS-17 overlap removed; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.18 | 2026-09-29 | Claude | #423: test total 1532→1545 (last enum member tests); referenced-document versions resynced (5) |
 | 1.17 | 2026-09-29 | Claude | #425: test total 1524→1532, 57→58 test modules (config-error exit-code tests for both entry points); referenced-document versions resynced (5) |
 | 1.16 | 2026-09-29 | Claude | #424: test total 1508→1524, 56→57 test modules (`functions.case` removal tests); referenced-document versions resynced (5) |
@@ -250,8 +250,10 @@ These tooling requirements are specified in CSC-SWE1-001 §4.17 (SWE1-102 to SWE
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

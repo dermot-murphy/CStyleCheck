@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SVD-001 | **Version** | 1.23 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SVD-001 | **Version** | 1.24 |
+| **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.8 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-09-29 | Claude | Approval-by-merge policy (CSC-DEV-002 §5.2), #430: Review & Approval table entries set to approval by the owner's merge of the introducing PR |
 | 1.23 | 2026-07-06 | Claude | ASPICE audit — cascade version updates: SWE1→2.6, SWE2→1.12, SWE3→1.16, SWE4→1.20, SWE5→1.14, SWE6→1.16, SYS2→2.2, SYS3→1.6, SYS4→1.11, SYS5→1.8, SUP8→1.11, SUP1→1.9, MAN3→1.7, PA2→1.22 — closes #379 |
 | 1.22 | 2026-07-06 | Claude | v1.6.0 RC doc update — test count 1223→1279 (56 new tests across 8 modules); add D-012–D-016 for startup banner, copyright, path-sep fix, non-ASCII fix, fn_start fix, inline suppression fixes, yoda/constant-case fixes; update CHANGELOG.md ref to v1.6.0 |
 | 1.21 | 2026-07-01 | Claude | v1.6.0 release — update version, rule count 72→73, test count 1183→1223, add F-020/F-021/F-022; update §3.1/§5.5/§10 doc version refs |
@@ -210,7 +211,7 @@ Platforms: `linux/amd64`, `linux/arm64`.
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SVD-001 | Software Version Description (this document) | 1.23 |
+| CSC-SVD-001 | Software Version Description (this document) | 1.24 |
 | CSC-SWE1-001 | Software Requirements Specification | 2.6 |
 | CSC-SWE2-001 | Software Architecture Design | 1.12 |
 | CSC-SWE3-001 | Software Detailed Design | 1.16 |
@@ -412,9 +413,11 @@ The `src/cstylecheck.py` entry point shim is unchanged. The 72 rule IDs present 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-07-06 |
-| Technical Reviewer | Dermot Murphy | Pending | — |
-| Quality Assurance | Dermot Murphy | Pending | — |
-| Approver | Dermot Murphy | Pending | — |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.
 

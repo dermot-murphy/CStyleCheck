@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.15 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-012: new RISK-009 (user-visible behaviour change on upgrade); one review frequency per risk (RISK-005 quarterly in §5, §6 note and §7; RISK-004 review recorded 2026-09-29); RR-003-005 owner confirmation of RISK-003/005 remains pending, tracked in #430. AUD10-F-021: CSC-AUD-009 residuals RR-003-004/005 tracking recorded in §6. AUD10-F-031: risk Status fields set to Active/Accepted to match §6 |
+| 1.15 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-012: new RISK-009 (user-visible behaviour change on upgrade); one review frequency per risk (RISK-005 quarterly in §5, §6 note and §7; RISK-004 review recorded 2026-09-29); RR-003-005 owner confirmation of RISK-003/005 remains pending, tracked in #430. AUD10-F-021: CSC-AUD-009 residuals RR-003-004/005 tracking recorded in §6. AUD10-F-031: risk Status fields set to Active/Accepted to match §6; approval-by-merge policy (CSC-DEV-002 §5.2); RR-003-004/005 closed |
 | 1.14 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -157,7 +157,7 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Residual Impact** | 2 |
 | **Residual RPN** | 4 (Low) |
 | **Owner** | Dermot Murphy |
-| **Review Date** | 2026-12-29 (next quarterly review). Reviewed 2026-09-29 during CSC-AUD-009 (#405): no Dependabot PR or alert for PyYAML in the repository history; Dependabot active on `develop`; ratings unchanged. Owner confirmation pending (CSC-AUD-009 residual RR-003-005, tracked in #430) |
+| **Review Date** | 2026-12-29 (next quarterly review). Reviewed 2026-09-29 during CSC-AUD-009 (#405): no Dependabot PR or alert for PyYAML in the repository history; Dependabot active on `develop`; ratings unchanged. Owner confirmation given by the owner's merge of PR #431 (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2; CSC-AUD-009 residual RR-003-005 closed) |
 | **Status** | Active |
 
 ---
@@ -199,7 +199,7 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | **Residual Impact** | 3 |
 | **Residual RPN** | 6 (Medium) |
 | **Owner** | Dermot Murphy |
-| **Review Date** | 2026-12-29 (next quarterly review). Reviewed 2026-09-29 during CSC-AUD-009 (#405): still a single human contributor; mitigations in place; ratings unchanged. Owner confirmation pending (CSC-AUD-009 residual RR-003-005, tracked in #430) |
+| **Review Date** | 2026-12-29 (next quarterly review). Reviewed 2026-09-29 during CSC-AUD-009 (#405): still a single human contributor; mitigations in place; ratings unchanged. Owner confirmation given by the owner's merge of PR #431 (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2; CSC-AUD-009 residual RR-003-005 closed) |
 | **Status** | Active |
 
 ---
@@ -304,7 +304,7 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 
 > **📋 Note:** No risks currently exceed the High threshold (RPN ≥ 10) after treatment. RISK-005 (single developer) remains Medium residual and is reviewed quarterly (next 2026-12-29).
 
-> **Open residuals (CSC-AUD-009):** RR-003-004 (post-v1.6.0 CI-matrix results not recorded) and RR-003-005 (Risk Owner confirmation of the RISK-003 and RISK-005 reviews) remain open and are tracked under #430 (CSC-AUD-010 AUD10-F-021).
+> **Closed residuals (CSC-AUD-009, tracked under #430, CSC-AUD-010 AUD10-F-021):** RR-003-004 closed — post-v1.6.0 CI matrix recorded: GitHub Actions run 36612676061 on commit `6bdc592` (PR #431), Unit Tests Python 3.10, 3.11, 3.12 all success, 2026-09-29. RR-003-005 closed — Risk Owner confirmation of the RISK-003 and RISK-005 reviews given by the owner's merge of PR #431 (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2).
 
 ---
 
@@ -325,8 +325,10 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

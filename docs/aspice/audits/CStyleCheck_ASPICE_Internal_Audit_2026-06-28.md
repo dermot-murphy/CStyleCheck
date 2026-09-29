@@ -116,11 +116,11 @@ No corrective actions arise from this audit. All previous open findings (AUD7-F-
 | Role | Name | Date | Signature |
 |---|---|---|---|
 | Auditor | Claude (AI-assisted) | 2026-06-28 | *per CSC-DEV-001* |
-| Audit Owner / Reviewer | Dermot Murphy | — | *pending manual review* |
+| Audit Owner / Reviewer | Dermot Murphy | Merge date of the introducing PR | *Authorised by owner merge of the PR that added this record (CSC-DEV-002 §5.2)* |
 
-> **Note:** This audit was conducted by an AI tool (Claude) acting in the auditor role as documented in CSC-DEV-001. The solo-developer independent-review constraint is formally acknowledged in CSC-DEV-002. The Audit Owner signature above constitutes the required management review approval for this ASPICE-internal document.
+> **Note:** This audit was conducted by an AI tool (Claude) acting in the auditor role as documented in CSC-DEV-001. The solo-developer independent-review constraint is formally acknowledged in CSC-DEV-002. The Audit Owner's merge of the PR that added this record constitutes the required management review approval; no signature is required and the merge commit is the approval record (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2).
 
 ---
 
-*Document: CSC-AUD-008 · Version 1.0 · 2026-06-28*
+*Document: CSC-AUD-008 · Version 1.1 · 2026-09-29 (v1.1: Approval-by-merge policy (CSC-DEV-002 §5.2), #430; v1.0: 2026-06-28)*
 *Location: `docs/aspice/audits/CStyleCheck_ASPICE_Internal_Audit_2026-06-28.md`*

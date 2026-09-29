@@ -162,8 +162,8 @@ All High findings must be closed before the next release is tagged. Otherwise, S
 | Specify and document the trend safety metrics | AUD9-F-010 | Claude | Closed in #405 (`6ece0e7`, `bb0324c`) |
 | Regenerate SWE3 line refs and add missing §5 unit specs | AUD9-F-012, F-013 | Claude | Closed in #405 (`6ece0e7`) |
 | Update README, Rules-and-Configuration.md and CHANGELOG for the 8 rules and totals | AUD9-F-016, F-017 | Claude | Closed in #405 (`bb0324c`) |
-| Update ACQ4, MAN5, MAN3 and STD-001 | AUD9-F-018, F-019, F-020, F-023 | Claude / Dermot Murphy | Closed in #405 (`7ca8e40`). Risk Owner confirmation of the RISK-003/005 reviews is pending (RR-003-005) |
-| Update PA2 to v1.23 with CSC-AUD-009 ratings, and add CSC-REVIEW-003 | AUD9-F-021, F-022 | Claude / Dermot Murphy | Closed in #405 (`7ca8e40`). CSC-REVIEW-003 is a self-review under CSC-DEV-002 and is pending the Review Owner's signature |
+| Update ACQ4, MAN5, MAN3 and STD-001 | AUD9-F-018, F-019, F-020, F-023 | Claude / Dermot Murphy | Closed in #405 (`7ca8e40`). Risk Owner confirmation of the RISK-003/005 reviews (RR-003-005) given by the owner's merge of PR #431 (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2) |
+| Update PA2 to v1.23 with CSC-AUD-009 ratings, and add CSC-REVIEW-003 | AUD9-F-021, F-022 | Claude / Dermot Murphy | Closed in #405 (`7ca8e40`). CSC-REVIEW-003 is a self-review under CSC-DEV-002; Review Owner authorisation is given by merge (CSC-DEV-002 §5.2) |
 | Final cross-reference resync, header dates and revision-table fixes (after all other corrections) | AUD9-F-014, F-015, F-024, F-025, F-026 | Claude | Closed in #405 (`6ece0e7`, `7ca8e40`, `3240651`). CSC-SVD-001 intentionally unchanged (release-baselined); its stale citations and swapped revision rows are updated at the next release (RR-003-002) |
 | Correct the MISRA 15.5 citation; record the hotfix policy | AUD9-F-027, F-028 | Claude | Closed in #405 (`9d15f96`, `7ca8e40`). The runtime message of `misc.multiple_statements_per_line` still cites Rule 15.5; changing it changes output and is left for a code PR (RR-003-003). No tag or version change. **Residual closed in #408:** message now cites Barr-C §3.2 only; unit test added |
 
@@ -176,8 +176,8 @@ Items still open after closure:
 - ~~3 SW requirements have no dedicated unit test (RR-003-001).~~ Closed by #407 (UV-CLI-014 to UV-CLI-022).
 - CSC-SVD-001 is unchanged until the next release (RR-003-002).
 - ~~The runtime message text still cites Rule 15.5 (RR-003-003).~~ Closed in #408.
-- Post-v1.6.0 test results have not yet been recorded from the CI matrix (RR-003-004).
-- The Risk Owner and Review Owner have not yet confirmed or signed (RR-003-005, §7).
+- ~~Post-v1.6.0 test results have not yet been recorded from the CI matrix (RR-003-004).~~ Closed 2026-09-29 (#430): post-v1.6.0 CI matrix recorded — GitHub Actions run 36612676061 on commit `6bdc592` (PR #431): Unit Tests Python 3.10, 3.11, 3.12 all success, 2026-09-29.
+- ~~The Risk Owner and Review Owner have not yet confirmed or signed (RR-003-005, §7).~~ Closed 2026-09-29 (#430): Risk Owner confirmation and Review/Audit Owner authorisation given by the owner's merge of PR #431 (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2).
 
 The §3 ratings (3 F / 14 L) remain the audit ratings. They are re-assessed at the next release audit, which must confirm the corrections.
 ---
@@ -187,11 +187,11 @@ The §3 ratings (3 F / 14 L) remain the audit ratings. They are re-assessed at t
 | Role | Name | Date | Signature |
 |---|---|---|---|
 | Auditor | Claude (AI-assisted) | 2026-09-29 | *per CSC-DEV-001* |
-| Audit Owner / Reviewer | Dermot Murphy | — | *pending manual review* |
+| Audit Owner / Reviewer | Dermot Murphy | Merge date of the introducing PR | *Authorised by owner merge of the PR that added this record (CSC-DEV-002 §5.2)* |
 
-> **Note:** This audit was conducted by an AI tool (Claude) acting in the auditor role as documented in CSC-DEV-001. The solo-developer independent-review constraint is formally acknowledged in CSC-DEV-002. The Audit Owner signature above constitutes the required management review approval for this ASPICE-internal document.
+> **Note:** This audit was conducted by an AI tool (Claude) acting in the auditor role as documented in CSC-DEV-001. The solo-developer independent-review constraint is formally acknowledged in CSC-DEV-002. The Audit Owner's merge of the PR that added this record constitutes the required management review approval; no signature is required and the merge commit is the approval record (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2).
 
 ---
 
-*Document: CSC-AUD-009 · Version 1.1 · 2026-09-29 (§6.2 closure recorded 2026-09-29, #405; v1.1: AUD9-F-027 residual closed, #408; AUD9-F-004 fully closed and RR-003-001 closed, #407)*
+*Document: CSC-AUD-009 · Version 1.2 · 2026-09-29 (§6.2 closure recorded 2026-09-29, #405; v1.2: Approval-by-merge policy (CSC-DEV-002 §5.2), #430, RR-003-004 and RR-003-005 closed; v1.1: AUD9-F-027 residual closed, #408; AUD9-F-004 fully closed and RR-003-001 closed, #407)*
 *Location: `docs/aspice/audits/CStyleCheck_ASPICE_Internal_Audit_2026-09-29.md`*

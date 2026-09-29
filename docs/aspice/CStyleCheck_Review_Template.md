@@ -1,6 +1,6 @@
 # CStyleCheck — ASPICE Peer Review Template
 
-*Template ID: CSC-REVIEW-TEMPLATE-001 · Version 1.0*
+*Template ID: CSC-REVIEW-TEMPLATE-001 · Version 1.1*
 
 > **Instructions for use:**
 > 1. Copy this file to a new document named `CStyleCheck_Review_Record_<version>.md`
@@ -130,10 +130,10 @@ Record every deviation from the review criteria.
 | Role | Name | Date | Notes |
 |---|---|---|---|
 | Reviewer | `<name>` | YYYY-MM-DD | |
-| Author / Review Owner | Dermot Murphy | YYYY-MM-DD | *Solo developer — see CSC-DEV-002 for peer-review constraint* |
+| Author / Review Owner | Dermot Murphy | Merge date of the introducing PR | Authorised by owner merge of the PR that adds this record (CSC-DEV-002 §5.2) |
 
-> **Note (CSC-DEV-002):** CStyleCheck is developed by a solo engineer. The independent peer-review requirement of ASPICE GP 2.2.3 cannot be satisfied by a separate human reviewer in the conventional sense. This review is conducted by the AI tool (Claude) acting in the reviewer role, as formally documented in CSC-DEV-002. The Review Owner signature above constitutes the required management approval of this review record.
+> **Note (CSC-DEV-002):** CStyleCheck is developed by a solo engineer. The independent peer-review requirement of ASPICE GP 2.2.3 cannot be satisfied by a separate human reviewer in the conventional sense. This review is conducted by the AI tool (Claude) acting in the reviewer role, as formally documented in CSC-DEV-002. The Review Owner's merge of the pull request that adds this record constitutes the required management approval; no signature is required, and the merge commit is the approval record (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2). Set §1 Status to "Approved — Review Owner authorisation by merge (CSC-DEV-002 §5.2)".
 
 ---
 
-*Template: CSC-REVIEW-TEMPLATE-001 · Version 1.0 · 2026-05-29*
+*Template: CSC-REVIEW-TEMPLATE-001 · Version 1.1 · 2026-09-29 (1.1: Approval-by-merge policy (CSC-DEV-002 §5.2), #430; 1.0: 2026-05-29)*
