@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.27 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.28 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.28 | 2026-09-29 | Claude | Issue #412: UV-MSR-007 10→18 tests (key absent, `misc` absent, shipped default, explicit enable, `TRUE == flag`, `flag != FALSE`, `true == x`, `x == false`); `test_uppercase_true_flagged` changed to `test_uppercase_true_not_flagged`; §6 `test_misra_rules.py` 141→149; total 1444→1452 (55 modules); coverage-gate text 1444→1452; referenced-document versions resynced (4) |
 | 1.27 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.26 | 2026-09-29 | Claude | Issue #413 (CR-413): SWE1-094 now matches the code, so UV-CLI-017 to UV-CLI-019 verify it in full; 5 tests added (piped stdout, `--log` copy, exactly two lines, copyright line format, no `--quiet` option); §5.17 and §6 `test_cli_requirements.py` 16→21; total 1439→1444; coverage-gate text 1439→1444; §7 SWE1-094 row full and the partial-verification note removed; referenced-document versions resynced (SWE1 2.9→2.10, SWE3 1.19→1.20, SWE5 1.16→1.17) |
 | 1.25 | 2026-09-29 | Claude | #410: UV-MSR-007 no longer cites MISRA C:2012 Rule 14.4 (`misc.boolean_comparison` is a style rule) |
@@ -62,10 +63,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.12 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.22 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.18 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.15 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.13 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.23 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.19 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.16 |
 
 ---
 
@@ -92,7 +93,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1444 tests (2026-09-29 develop baseline, after #408, #407 and #413) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1452 tests (2026-09-29 develop baseline, after #408, #407, #413 and #412) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -374,7 +375,7 @@ ASPICE traceability: SWE1-MISRA-001 (Rule 7.3), SWE1-MISRA-002 (Rule 7.1), SWE1-
 | UV-MSR-004 | Rule 11.5 — `TestVoidPointer` | 8 tests | `void *` flagged in declarations; typed pointer, `void` return type and comments not flagged; disabled; severity; message (SWE1-112) |
 | UV-MSR-005 | Rule 17.2 — `TestRecursiveFunction` | 8 tests | Direct recursion flagged with the function name and rule 17.2 in the message; non-recursive code, `if (` keyword and comments not flagged; disabled; severity (SWE1-113) |
 | UV-MSR-006 | Barr-C §5.7 — `TestSizeofType` | 7 tests | `sizeof(primitive)` and `sizeof(*_t)` flagged; `sizeof(var)` and `sizeof(*ptr)` not flagged; disabled; severity; message (SWE1-114) |
-| UV-MSR-007 | Style rule (no MISRA citation, #410) — `TestBooleanComparison` | 10 tests | `== true`, `== false`, `!= true` and `TRUE` flagged; direct use, negation and comments not flagged; disabled; severity; message (SWE1-115) |
+| UV-MSR-007 | Style rule (no MISRA citation, #410; opt-in, lowercase only, #412) — `TestBooleanComparison` | 18 tests | `== true`, `== false`, `!= true`, `true == x` and `x == false` flagged when enabled; `flag == TRUE`, `TRUE == flag` and `flag != FALSE` not flagged; not reported when the key or `misc` is absent or with the shipped `src/rules.yml`; reported when enabled explicitly; direct use, negation and comments not flagged; disabled; severity; message (SWE1-115) |
 | UV-MSR-008 | Barr-C §8.3 — `TestEmptyElse` | 9 tests | `else {}` flagged; `else` with a comment, non-empty `else`, `else if`, no `else` and comments not flagged; disabled; severity; message (SWE1-116) |
 
 Each test class verifies: positive detection, negative non-detection, disabled-rule suppression, configurable severity, and violation message content.
@@ -459,7 +460,7 @@ Added for issue #407 (closes RR-003-001 in CSC-REVIEW-003 and the remaining part
 | `test_eof_comment.py` | 33 | 33 | 0 | `_check_eof_comment` |
 | `test_copyright_header.py` | 55 | 55 | 0 | `_check_copyright_header` |
 | `test_parameter_prefix.py` | 51 | 51 | 0 | `_check_variables` |
-| `test_misra_rules.py` | 141 | 141 | 0 | `_check_lowercase_l_suffix`, `_check_octal_constants`, `_check_trigraphs`, `_check_non_ascii_source`, `_check_yoda`, `_check_goto_usage`, `_check_assignment_in_condition`, `_check_multiple_statements_per_line`, `_check_void_pointer`, `_check_recursive_function`, `_check_sizeof_type`, `_check_boolean_comparison`, `_check_empty_else` |
+| `test_misra_rules.py` | 149 | 149 | 0 | `_check_lowercase_l_suffix`, `_check_octal_constants`, `_check_trigraphs`, `_check_non_ascii_source`, `_check_yoda`, `_check_goto_usage`, `_check_assignment_in_condition`, `_check_multiple_statements_per_line`, `_check_void_pointer`, `_check_recursive_function`, `_check_sizeof_type`, `_check_boolean_comparison`, `_check_empty_else` |
 | `test_block_comment_spacing.py` | 29 | 29 | 0 | `_check_block_comment_spacing` |
 | `test_workflow_config.py` | 16 | 16 | 0 | CI workflow configuration regression |
 | `test_github_annotations.py` | 8 | 8 | 0 | GitHub Actions annotation output |
@@ -492,7 +493,7 @@ Added for issue #407 (closes RR-003-001 in CSC-REVIEW-003 and the remaining part
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
 | `test_cli_requirements.py` | 21 | 21 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
-| **Total** | **1444** | **1444** | **0** | All 81 rule IDs covered — 55 modules |
+| **Total** | **1452** | **1452** | **0** | All 81 rule IDs covered — 55 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)

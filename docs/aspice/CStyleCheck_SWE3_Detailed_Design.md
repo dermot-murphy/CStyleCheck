@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.22 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.23 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.23 | 2026-09-29 | Claude | Issue #412: UNIT-134 algorithm — disabled by default (also when the key is absent), lowercase `true`/`false` only; §6.1 `misc.boolean_comparison.enabled` default `true`→`false`; referenced-document versions resynced (3) |
 | 1.22 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.21 | 2026-09-29 | Claude | Issue #413 (CR-413): UNIT-46 step 3 specifies the two-line, unconditional stderr/log banner (SWE1-094); step 5 records the `--fix` header re-read (SWE1-015 exception); §8 SWE1-094 row; referenced-document versions resynced (SWE1 2.9→2.10, SWE2 1.14→1.15, SWE4 1.24→1.25) |
 | 1.20 | 2026-09-29 | Claude | Issue #410: UNIT-134 purpose and §6.1 `misc.boolean_comparison` row — style rule; MISRA C:2012 Rule 14.4 citation removed; message suffix "(redundant comparison with a Boolean literal)" |
@@ -53,9 +54,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.12 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.17 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.27 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.13 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.18 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.28 |
 
 ---
 
@@ -1631,7 +1632,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Enforce `misc.boolean_comparison` (SWE1-115), a style rule against redundant comparison with a Boolean literal. It does not enforce MISRA C:2012 Rule 14.4 (`if (flag == true)` is compliant with it).
 
-**Algorithm:** Return if disabled. Flag each `==` or `!=` with `true`, `false`, `TRUE` or `FALSE` on either side in `self.clean`; default severity `warning`. The message ends with "(redundant comparison with a Boolean literal)".
+**Algorithm:** Return if disabled; `enabled` defaults to `false` when the key is absent (opt-in, #412). Flag each `==` or `!=` with the lowercase literal `true` or `false` on either side in `self.clean`; `TRUE`/`FALSE` macros are not matched (comparing an integer flag against `TRUE` is not redundant). Default severity `warning`. The message ends with "(redundant comparison with a Boolean literal)".
 
 ---
 
@@ -1681,7 +1682,7 @@ The top-level configuration keys and their types:
 | `misc.void_pointer.enabled` / `.severity` | `bool` / `str` | `true` / `warning` | Flag `void *` (MISRA 11.5) |
 | `misc.recursive_function.enabled` / `.severity` | `bool` / `str` | `true` / `error` | Flag direct recursion (MISRA 17.2) |
 | `misc.sizeof_type.enabled` / `.severity` | `bool` / `str` | `true` / `info` | Flag `sizeof(type)` (Barr-C §5.7) |
-| `misc.boolean_comparison.enabled` / `.severity` | `bool` / `str` | `true` / `warning` | Flag `== true/false` (style rule) |
+| `misc.boolean_comparison.enabled` / `.severity` | `bool` / `str` | `false` / `warning` | Flag `== true/false`, lowercase literals only (style rule, opt-in, #412) |
 | `misc.empty_else.enabled` / `.severity` | `bool` / `str` | `true` / `warning` | Flag empty `else {}` (Barr-C §8.3) |
 | `sign_compatibility.enabled` | `bool` | `true` | Cross-file sign-compatibility check |
 | `sign_compatibility.plain_char_is_signed` | `bool` | `true` | Treat plain `char` as signed |

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.12 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.13 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.13 | 2026-09-29 | Claude | Issue #412: SWE1-115 — `misc.boolean_comparison` disabled by default (also when the key is absent) and restricted to lowercase `true`/`false`; `TRUE`/`FALSE` macros not flagged; RTM row marked opt-in; referenced-document versions resynced (4) |
 | 2.12 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.11 | 2026-09-29 | Claude | Issue #413 (CR-413, CSC-SUP10-001 §7.1): SWE1-094 rewritten to match `main()` — exactly two lines (`CStyleCheck <version>`, `(C) 2026 Dermot Murphy`) on stderr (and the `--log` file) before discovery, written even when output is piped, no suppression option (`--quiet` clause removed), never on stdout; parent SYS-F-046 unchanged; RTM row now full verification. SWE1-015: record the known `--fix` exception (pointer-prefix header rename re-reads the `.h` file). No source change. Referenced-document versions resynced (SYS2 2.4→2.5, SWE2 1.14→1.15) |
 | 2.10 | 2026-09-29 | Claude | Issue #410: SWE1-115 is a style rule; the MISRA C:2012 Rule 14.4 citation is removed from SWE1-115, its RTM row and Appendix A.1 (`if (flag == true)` is compliant with Rule 14.4). The `misc.yoda_condition` "Rule 14.4 (informative)" citation is also removed (operand order has no bearing on Rule 14.4). Appendix A.2, A.3 and the conclusion show Rule 14.4 as delegated to cppcheck (MISRA addon), not covered by CStyleCheck |
@@ -60,10 +61,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.6 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.9 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.17 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.15 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.7 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.10 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.18 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.16 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
@@ -190,7 +191,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SWE1-112 | The `_check_void_pointer()` method shall flag every `void *` type in comment- and string-stripped source as `misc.void_pointer` (default severity `warning`) (MISRA C:2012 Rule 11.5, Advisory) | Mandatory | Test | SYS-F-020 |
 | SWE1-113 | The `_check_recursive_function()` method shall flag a function definition whose body contains a call to the function's own name (direct recursion) as `misc.recursive_function` (default severity `error`); indirect recursion is not detected (MISRA C:2012 Rule 17.2, Required — partial) | Mandatory | Test | SYS-F-020 |
 | SWE1-114 | The `_check_sizeof_type()` method shall flag `sizeof` applied to a type name (primitive type, `*_t` typedef or capitalised type name, optionally followed by `*`) as `misc.sizeof_type` (default severity `info`); `sizeof(var)` and `sizeof(*var)` shall not be flagged (Barr-C:2018 §5.7) | Mandatory | Test | SYS-F-020 |
-| SWE1-115 | The `_check_boolean_comparison()` method shall flag an `==` or `!=` comparison with `true`, `false`, `TRUE` or `FALSE` on either side as `misc.boolean_comparison` (default severity `warning`) (style rule; MISRA C:2012 Rule 14.4 is not enforced — `if (flag == true)` is compliant with it) | Mandatory | Test | SYS-F-020 |
+| SWE1-115 | The `_check_boolean_comparison()` method shall flag an `==` or `!=` comparison with the lowercase `<stdbool.h>` literals `true` or `false` on either side as `misc.boolean_comparison` (default severity `warning`); `TRUE`/`FALSE` macros shall not be flagged. The rule shall be disabled by default, including when the configuration key is absent (opt-in, #412) (style rule; MISRA C:2012 Rule 14.4 is not enforced — `if (flag == true)` is compliant with it) | Mandatory | Test | SYS-F-020 |
 | SWE1-116 | The `_check_empty_else()` method shall flag an `else { }` block whose body is empty in the original source as `misc.empty_else` (default severity `warning`); a block containing a comment shall not be flagged (Barr-C:2018 §8.3; MISRA C:2012 Rule 15.7 intent) | Mandatory | Test | SYS-F-020 |
 
 ### 4.10 Rule Engine — Cross-File Sign Compatibility (SS-04/SS-05)
@@ -362,7 +363,7 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-112 | misc.void_pointer (MISRA 11.5) | SYS-F-020 | `Checker._check_void_pointer()` | `test_misra_rules.py` |
 | SWE1-113 | misc.recursive_function (MISRA 17.2, direct only) | SYS-F-020 | `Checker._check_recursive_function()` | `test_misra_rules.py` |
 | SWE1-114 | misc.sizeof_type (Barr-C §5.7) | SYS-F-020 | `Checker._check_sizeof_type()` | `test_misra_rules.py` |
-| SWE1-115 | misc.boolean_comparison (style) | SYS-F-020 | `Checker._check_boolean_comparison()` | `test_misra_rules.py` |
+| SWE1-115 | misc.boolean_comparison (style, opt-in) | SYS-F-020 | `Checker._check_boolean_comparison()` | `test_misra_rules.py` |
 | SWE1-116 | misc.empty_else (Barr-C §8.3) | SYS-F-020 | `Checker._check_empty_else()` | `test_misra_rules.py` |
 | SWE1-102 | Trend metrics — LOC classification | — (no SYS parent; CSC-MAN3-001 §10.3 trend monitoring, GP 2.1.4) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
 | SWE1-103 | Trend metrics — cyclomatic complexity / nesting | — (no SYS parent; CSC-MAN3-001 §10.3 trend monitoring, GP 2.1.4) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |

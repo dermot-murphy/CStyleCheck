@@ -978,9 +978,59 @@ class TestBooleanComparison(unittest.TestCase):
         src = "void f(void){ /* if (flag == true) */ return; }\n"
         self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
 
-    def test_uppercase_true_flagged(self):
+    def test_uppercase_true_not_flagged(self):
+        # #412: expectation changed (was test_uppercase_true_flagged).  TRUE /
+        # FALSE are project macros, not <stdbool.h> literals; comparing an
+        # integer flag against TRUE is not redundant ('if (flag)' differs from
+        # 'if (flag == TRUE)' when flag == 2), so it must not be reported.
         src = "void f(int flag){ if (flag == TRUE) { (void)flag; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_yoda_uppercase_true_not_flagged(self):
+        # #412: 'TRUE == flag' is not a redundant comparison.
+        src = "void f(int flag){ if (TRUE == flag) { (void)flag; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_ne_uppercase_false_not_flagged(self):
+        # #412: 'flag != FALSE' is not a redundant comparison.
+        src = "void f(int flag){ if (flag != FALSE) { (void)flag; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_yoda_lowercase_true_flagged(self):
+        # #412: lowercase <stdbool.h> literal on the left is still reported.
+        src = "void f(bool x){ if (true == x) { (void)x; } }\n"
         self.assertIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_eq_lowercase_false_flagged(self):
+        src = "void f(bool x){ if (x == false) { (void)x; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_not_reported_when_key_absent(self):
+        # #412: opt-in -- a config without misc.boolean_comparison must not
+        # enable the rule.
+        cfg = cfg_only()
+        cfg["misc"].pop("boolean_comparison", None)
+        src = "void f(bool x){ if (x == true) { (void)x; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, cfg))
+
+    def test_not_reported_when_misc_absent(self):
+        cfg = cfg_only()
+        cfg.pop("misc", None)
+        src = "void f(bool x){ if (x == true) { (void)x; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, cfg))
+
+    def test_shipped_default_disabled(self):
+        # #412: the bundled src/rules.yml ships the rule disabled.
+        from cstylecheck.config import _find_default_rules, load_config
+        cfg = load_config(str(_find_default_rules()))
+        self.assertFalse(cfg["misc"]["boolean_comparison"]["enabled"])
+        src = "void f(bool x){ if (x == true) { (void)x; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, cfg))
+
+    def test_reported_when_enabled_explicitly(self):
+        cfg = cfg_only(misc={"boolean_comparison": {"enabled": True}})
+        src = "void f(bool x){ if (x == true) { (void)x; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, cfg))
 
 
 class TestEmptyElse(unittest.TestCase):
