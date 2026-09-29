@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.16 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.17 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.17 | 2026-09-29 | Claude | Issue #412: COMP-05f table — `misc.boolean_comparison` marked opt-in (disabled by default); referenced-document versions resynced (4 row(s) updated to current) |
 | 1.16 | 2026-09-29 | Claude | Issue #413 (CR-413): COMP-01 key behaviour describes the startup banner as two lines on stderr and the log, never stdout, not suppressible (was "one-line"); referenced-document versions resynced (SWE1 2.9→2.10, SWE3 1.19→1.20) |
 | 1.15 | 2026-09-29 | Claude | Issue #410: COMP-05f table — `misc.boolean_comparison` is a style rule; MISRA 14.4 citation removed |
 | 1.14 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE3 1.18→1.19, SYS3 1.7→1.8) |
@@ -50,10 +51,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.11 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.8 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.21 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.14 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.12 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.9 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.22 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.15 |
 
 ---
 
@@ -223,7 +224,7 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | `_check_void_pointer()` | `misc.void_pointer` (MISRA 11.5) |
 | `_check_recursive_function()` | `misc.recursive_function` (MISRA 17.2, direct) |
 | `_check_sizeof_type()` | `misc.sizeof_type` (Barr-C §5.7) |
-| `_check_boolean_comparison()` | `misc.boolean_comparison` (style) |
+| `_check_boolean_comparison()` | `misc.boolean_comparison` (style; opt-in, disabled by default, #412) |
 | `_check_empty_else()` | `misc.empty_else` (Barr-C §8.3) |
 
 #### COMP-05g — Sign Checker (`class SignChecker`)

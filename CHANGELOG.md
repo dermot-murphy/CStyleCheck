@@ -23,8 +23,8 @@ Versioning follows [Semantic Versioning](https://semver.org/).
   - `misc.recursive_function` (error) — direct recursion (MISRA C:2012 Rule 17.2).
   - `misc.sizeof_type` (info) — `sizeof` applied to a type name instead of an object
     (Barr-C §5.7).
-  - `misc.boolean_comparison` (warning) — `==`/`!=` against `true`/`false`
-    (style rule).
+  - `misc.boolean_comparison` (warning, disabled by default) — `==`/`!=` against the
+    lowercase `true`/`false` literals (style rule).
   - `misc.empty_else` (warning) — empty `else { }` block; a block containing a comment
     is accepted (Barr-C §8.3).
 
@@ -57,6 +57,16 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- **`misc.boolean_comparison` is opt-in and matches lowercase `true`/`false` only (#412)** —
+  the rule is now disabled by default, including when the key is missing from a project
+  config (`enabled: false` in `src/rules.yml`; the checker defaults to disabled). Enabled by
+  default it produced 433 new warnings on a reference project. It also no longer matches
+  `TRUE`/`FALSE` macros: comparing an integer flag against `TRUE` is not redundant
+  (`if (flag)` and `if (TRUE == flag)` differ when `flag == 2`), so the suggested rewrite
+  changed behaviour. Only the `<stdbool.h>` literals `true`/`false` are flagged. To keep the
+  rule, set `misc.boolean_comparison.enabled: true`. 8 new tests in
+  `tests/test_misra_rules.py` and one changed (`TRUE` no longer flagged); total 1444→1452
+  (issue [#412](https://github.com/dermot-murphy/CStyleCheck/issues/412)).
 - **Dependabot targets `develop`** — `.github/dependabot.yml` sets `target-branch: develop`
   for the `pip` and `github-actions` ecosystems (hotfix
   [#399](https://github.com/dermot-murphy/CStyleCheck/pull/399), back-merged in

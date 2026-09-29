@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.5 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.6 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.6 | 2026-09-29 | Claude | Cross-reference resync with #412: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.5 | 2026-09-29 | Claude | Issue #413: §7 register row and new §7.1 record for CR-413 (SYS-F-046 / SWE1-094 startup-banner requirements aligned with the implementation; no code impact) |
 | 1.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (MAN3 1.8→1.9, SUP8 1.13→1.14, SUP9 1.3→1.4) |
 | 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-014: referenced-document versions resynced to current revisions |
@@ -39,9 +40,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.14 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.4 |
-| CSC-MAN3-001 | Project Management Plan | 1.9 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.15 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.5 |
+| CSC-MAN3-001 | Project Management Plan | 1.11 |
 
 ---
 

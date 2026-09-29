@@ -850,13 +850,17 @@ misc:
   # redundant and may hide type-coercion bugs; use the expression directly
   # or negate it.  Style rule only: it does not enforce MISRA C:2012
   # Rule 14.4, with which 'if (flag == true)' is compliant.
+  # Only the lowercase <stdbool.h> literals 'true' / 'false' are matched;
+  # TRUE / FALSE macros are not (comparing an integer flag against TRUE is
+  # not redundant -- 'if (flag)' differs when flag == 2).  See #412.
   #
   #   Violation:  if (flag == true)   { … }
   #   Violation:  while (done == false) { … }
   #   Correct:    if (flag)            { … }
   #   Correct:    while (!done)        { … }
+  #   Not flagged: if (TRUE == flag)   (macro, not a <stdbool.h> literal)
   boolean_comparison:
-    enabled: true
+    enabled: false          # opt-in; disabled by default (#412)
     severity: warning
 
   # -----------------------------------------------------------------------

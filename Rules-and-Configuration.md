@@ -1785,17 +1785,25 @@ memset(p_buf, 0, sizeof(*p_buf) * N);     /* ✓ */
 
 ### 9.27 Boolean comparison
 
-**Rule ID:** `misc.boolean_comparison`
+**Rule ID:** `misc.boolean_comparison` — **disabled by default (opt-in, #412)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. To enable it:
 
 ```yaml
 misc:
   boolean_comparison:
-    enabled: true
+    enabled: true        # default: false
     severity: warning
 ```
 
-Comparing with `true`/`false` (or `TRUE`/`FALSE`) using `==` or `!=` is
+Comparing with the `<stdbool.h>` literals `true`/`false` using `==` or `!=` is
 redundant and can hide type-coercion bugs.
+
+Only the lowercase `true`/`false` are matched. Project `TRUE`/`FALSE` macros
+are not: comparing an integer flag against `TRUE` is not redundant
+(`if (flag)` and `if (TRUE == flag)` differ when `flag == 2`), so rewriting it
+would change behaviour.
 
 This is a style rule. It does not enforce MISRA C:2012 Rule 14.4 (the
 controlling expression shall be essentially Boolean): `if (b_ready == true)`
@@ -1805,6 +1813,7 @@ is compliant with Rule 14.4. Use cppcheck with the MISRA addon for Rule 14.4.
 if (b_ready == true)   /* ✗ misc.boolean_comparison */
 if (b_ready)           /* ✓ */
 if (!b_done)           /* ✓ */
+if (TRUE == u8_flag)   /* ✓ not checked: macro, not a <stdbool.h> literal */
 ```
 
 ---
@@ -2178,7 +2187,7 @@ comma-separated lists.
 | `misc.void_pointer` | warning | `misc.void_pointer.enabled` | `true` |
 | `misc.recursive_function` | error | `misc.recursive_function.enabled` | `true` |
 | `misc.sizeof_type` | info | `misc.sizeof_type.enabled` | `true` |
-| `misc.boolean_comparison` | warning | `misc.boolean_comparison.enabled` | `true` |
+| `misc.boolean_comparison` | warning | `misc.boolean_comparison.enabled` | `false` |
 | `misc.empty_else` | warning | `misc.empty_else.enabled` | `true` |
 
 ---

@@ -2668,6 +2668,13 @@ class Checker:
     # Rule 14.4 (essentially Boolean controlling expressions) is NOT enforced
     # here -- 'if (flag == true)' is compliant with it (see #410).
     #
+    # Opt-in (#412): disabled by default, including when the key is absent
+    # from the project config.  Only the lowercase <stdbool.h> literals
+    # 'true' / 'false' are matched.  Project TRUE / FALSE macros are NOT
+    # matched: comparing an integer flag against TRUE is not redundant
+    # ('if (flag)' differs from 'if (TRUE == flag)' when flag == 2), so the
+    # suggested rewrite would change behaviour.
+    #
     #   Violation:  if (flag == true)   { … }
     #   Violation:  while (done == false) { … }
     #   Correct:    if (flag)            { … }
@@ -2676,14 +2683,14 @@ class Checker:
 
     _RE_BOOL_CMP = re.compile(
         r'(?:'
-        r'[!=]=\s*\b(?:true|false|TRUE|FALSE)\b'
-        r'|\b(?:true|false|TRUE|FALSE)\b\s*[!=]='
+        r'[!=]=\s*\b(?:true|false)\b'
+        r'|\b(?:true|false)\b\s*[!=]='
         r')'
     )
 
     def _check_boolean_comparison(self) -> None:
         cfg = self.cfg.get("misc", {}).get("boolean_comparison", {})
-        if not cfg.get("enabled", True):
+        if not cfg.get("enabled", False):   # opt-in (#412)
             return
         sev = cfg.get("severity", "warning")
         for m in self._RE_BOOL_CMP.finditer(self.clean):

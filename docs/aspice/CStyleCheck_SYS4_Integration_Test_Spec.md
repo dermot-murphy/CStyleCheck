@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.14 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.15 |
 | **Project** | CStyleCheck | **Date** | 2026-09-29 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.15 | 2026-09-29 | Claude | #412: SITC-017 step 1 enables `misc.boolean_comparison` explicitly (opt-in); test total 1444→1452; referenced-document versions resynced (3 row(s) updated to current) |
 | 1.14 | 2026-09-29 | Claude | #413: test total 1439→1444 |
 | 1.13 | 2026-09-29 | Claude | Issue #407: post-v1.6.0 note records 1439 tests after #408 and #407; referenced-document versions resynced (SYS2 2.3→2.4, SYS3 1.7→1.8, SYS5 1.9→1.10) |
 | 1.12 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SITC-017 for the 8 post-v1.6.0 MISRA/Barr-C rules (all 81 rule IDs covered), with §5 and §6 rows. AUD9-F-006: SITC-007 step 2 baseline format; add step 6 (line-independent matching). AUD9-F-026: CM baseline ID per test-case group; scope text v1.5.0→v1.6.0/develop. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
@@ -60,9 +61,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.4 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.8 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.10 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.6 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.9 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.12 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
@@ -480,7 +481,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Step | Action | Expected Result |
 |---|---|---|
-| 1 | Run cstylecheck on a C file containing one instance of each of the 8 constructs | One violation per rule ID with the default severity (`goto_usage` and `recursive_function` error; `sizeof_type` info; others warning) |
+| 1 | Run cstylecheck on a C file containing one instance of each of the 8 constructs, with `misc.boolean_comparison.enabled: true` (the rule is opt-in, #412) | One violation per rule ID with the default severity (`goto_usage` and `recursive_function` error; `sizeof_type` info; others warning); with the default config, no `misc.boolean_comparison` |
 | 2 | Re-run with each rule's `enabled: false` | No violation for the disabled rule |
 | 3 | Re-run with an overridden `severity` | Reported severity matches the configuration |
 | 4 | Place the constructs inside comments or string literals | No violation |
@@ -518,7 +519,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 **Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016), GitHub Actions (automated) / Dermot Murphy (manual review), 1279 tests all PASS on Python 3.10 / 3.11 / 3.12.
 
-**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test) and #407 (16 unit tests for SWE1-015/094/096), all PASS.
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), and 1452 after #412 (8 tests), all PASS.
 
 > **📋 Note:** All SITC test cases must achieve PASS status before the system verification (SYS.5) activities commence. Any FAIL result must be tracked as a GitHub Issue and resolved via the change control process (SUP.10).
 
