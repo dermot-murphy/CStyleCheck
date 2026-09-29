@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 2.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-004: §6 RTM rebuilt by script from the CSC-SWE1-001 §4 parent columns — each row lists exactly the SWE1 requirements citing a SYS ID in that row (SWE1-001, 002, 006, 013, 014, 016, 075, 076 added to their parents' rows; SWE1-002/013/014/015/016/069 removed from SYS-F-001 to 010; SWE1-089 removed from SYS-F-011 to 026; SYS-NF-003 to 006 no longer cites SWE1-069); bidirectional-trace note restated. AUD10-F-022: SYS-F-020 marks all eight post-v1.6.0 rules opt-in (disabled by default; enabled by the `misra` / `barr-c` presets and `--init` since #420) |
+| 2.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-004: §6 RTM rebuilt by script from the CSC-SWE1-001 §4 parent columns — each row lists exactly the SWE1 requirements citing a SYS ID in that row (SWE1-001, 002, 006, 013, 014, 016, 075, 076 added to their parents' rows; SWE1-002/013/014/015/016/069 removed from SYS-F-001 to 010; SWE1-089 removed from SYS-F-011 to 026; SYS-NF-003 to 006 no longer cites SWE1-069); bidirectional-trace note restated. AUD10-F-022: SYS-F-020 marks all eight post-v1.6.0 rules opt-in (disabled by default; enabled by the `misra` / `barr-c` presets and `--init` since #420); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 2.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.11 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -250,8 +250,10 @@ The following table summarises the stakeholder needs from which the system requi
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

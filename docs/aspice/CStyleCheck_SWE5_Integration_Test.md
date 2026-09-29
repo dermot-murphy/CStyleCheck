@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.26 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-007: SIT-024 step 2 expects the copyright line in the code's format `(C) <year> <holder>` (no word "Copyright"; SWE1-095, UV-CLI-018). AUD10-F-019: post-v1.6.0 test-count note extended through #422 (1508), #424 (1524), #425 (1532) and #423 (1545) |
+| 1.26 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-007: SIT-024 step 2 expects the copyright line in the code's format `(C) <year> <holder>` (no word "Copyright"; SWE1-095, UV-CLI-018). AUD10-F-019: post-v1.6.0 test-count note extended through #422 (1508), #424 (1524), #425 (1532) and #423 (1545); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.25 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.24 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.23 | 2026-09-29 | Claude | Cross-reference resync with #424: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -811,8 +811,10 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

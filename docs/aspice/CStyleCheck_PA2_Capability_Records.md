@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.34 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-017: §6 SWE.3 135→136 units; §5.4 CM-baseline column cites the post-v1.6.0 changes (#408–#425) per work product and #430, with a note; CI-017 and CI-045 baseline → `develop` `2444036`. AUD10-F-021: §5.4 records that CSC-AUD-009 residuals RR-003-004/005 are tracked under #430. AUD10-F-002: §6 MAN.3 next release v2.0.0. AUD10-F-012: §6 MAN.5 9 risks. AUD10-F-030: §6 ACQ.4 9 suppliers. AUD10-F-014: §5.3 approval record = owner's PR merge |
+| 1.34 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-017: §6 SWE.3 135→136 units; §5.4 CM-baseline column cites the post-v1.6.0 changes (#408–#425) per work product and #430, with a note; CI-017 and CI-045 baseline → `develop` `2444036`. AUD10-F-021: §5.4 records that CSC-AUD-009 residuals RR-003-004/005 are tracked under #430. AUD10-F-002: §6 MAN.3 next release v2.0.0. AUD10-F-012: §6 MAN.5 9 risks. AUD10-F-030: §6 ACQ.4 9 suppliers. AUD10-F-014: §5.3 approval record = owner's PR merge; approval-by-merge policy (CSC-DEV-002 §5.2); RR-003-004/005 closed |
 | 1.33 | 2026-09-29 | Claude | #423: SWE.4 evidence — test total 1532→1545 (last enum member checked with and without trailing comma, `tests/test_enums.py`); referenced-document versions resynced (21) |
 | 1.32 | 2026-09-29 | Claude | #425: SWE.4 evidence — test total 1524→1532, 57→58 modules (config/usage errors exit 2 from the console script and the wrapper, `tests/test_exit_code_entry_points.py`); SWE.3 objective 136 units (UNIT-136 `config_error`); referenced-document versions resynced (21) |
 | 1.31 | 2026-09-29 | Claude | #424: SWE.4 evidence — test total 1508→1524, 56→57 modules (`functions.case` removed: not generated, deprecated with a warning, `tests/test_functions_case_removed.py`); referenced-document versions resynced (21) |
@@ -138,7 +138,7 @@ For each assessed process, performance objectives are defined in the table below
 |---|---|---|---|
 | CI → Developer | GitHub Actions ↔ Claude | CI must pass before merge to `develop`/`main` | GitHub Actions status checks; email notification |
 | Developer → Reviewer | Claude ↔ Reviewer | PR requires at least 1 approval for Medium/High impact | GitHub PR review mechanism |
-| Developer → QA | Claude ↔ QA role | Pre-release checklist must be signed before release | CSC-SUP1-001 §5.4 checklist |
+| Developer → QA | Claude ↔ QA role | Pre-release checklist must be completed and authorised (owner merge of the release PR, CSC-DEV-002 §5.2) before release | CSC-SUP1-001 §5.4 checklist |
 | Project → Suppliers | CStyleCheck ↔ SUP-01 to SUP-06 | Acceptance criteria per CSC-ACQ4-001 §5 | CI jobs; advisory monitoring; PR review gate |
 | Project → Assessor | CStyleCheck ↔ ASPICE Assessor | Full documentation set; CI evidence; GitHub repository access | Document delivery; GitHub access grant |
 
@@ -189,15 +189,17 @@ All work products are defined with content requirements in their respective docu
 
 > **Note — Single-Person Reviewer Deviation (CSC-DEV-002):** CStyleCheck has one human team member (Dermot Murphy). All ASPICE work products carry `Reviewer: Dermot Murphy` and `Approver: Dermot Murphy` — the same individual. This deviates from the GP 2.2.3 expectation of an independent reviewer. The deviation is formally accepted under **CSC-DEV-002** (`docs/aspice/CStyleCheck_DEV002_Independent_Review_Deviation.md`), which documents the justification, compensating controls (AI-assisted review, CI quality gates, PR audit trail), and residual risk. Assessors may rate this practice as Largely Achieved rather than Fully Achieved on the independence criterion.
 
+> **Approval by merge (owner policy, 2026-09-29):** the owner's merge of the PR that introduces a work-product revision is its approval and authorisation; no separate signature is required. This applies to approval tables, review records, audit sign-offs, CR approval / QA sign-off and Risk Owner confirmations; the merge commit is the approval record (CSC-DEV-002 §5.2).
+
 All work products are reviewed before approval according to the following schedule:
 
 | Work Product | Review Type | Reviewer | Review Evidence |
 |---|---|---|---|
 | Source code changes | Pull request review | Dermot Murphy (see CSC-DEV-002) | Owner's PR merge (approval record, CSC-DEV-002 §5.2) |
-| ASPICE documents | Formal document review | Dermot Murphy (see CSC-DEV-002) | Reviewer/Approver table in each document |
+| ASPICE documents | Formal document review | Dermot Murphy (see CSC-DEV-002) | Reviewer/Approver table in each document; authorised by the owner's merge of the introducing PR (CSC-DEV-002 §5.2) |
 | Test suite additions | Pull request review | Dermot Murphy (see CSC-DEV-002) | Owner's PR merge (approval record, CSC-DEV-002 §5.2) |
 | CI workflow changes | Pull request review | Dermot Murphy (see CSC-DEV-002) | Owner's PR merge (approval record, CSC-DEV-002 §5.2) |
-| Release baseline | Pre-release checklist | Dermot Murphy / QA role | CSC-SUP1-001 §5.4 signed checklist |
+| Release baseline | Pre-release checklist | Dermot Murphy / QA role | CSC-SUP1-001 §5.4 checklist; authorised by the owner's merge of the release PR (CSC-DEV-002 §5.2) |
 
 **Adjustment mechanism:** Any non-conformance found during review is raised as a GitHub Issue (SUP.9) or change request (SUP.10) and tracked to resolution before the work product is approved.
 
@@ -205,7 +207,7 @@ All work products are reviewed before approval according to the following schedu
 
 *Updated 2026-09-29. Document versions reflect the CSC-AUD-009 corrective-action baseline (#405) on `claude/aspice-audit-2026-09-29` → `develop`, as bumped by #407 (unit tests for SWE1-015/094/096 and the resulting cross-reference resync). CSC-SVD-001 stays at the v1.6.0 release baseline until the next release.*
 
-*Change notes (CSC-AUD-010 AUD10-F-017, #430): the CM Baseline column lists, per work product, the post-v1.6.0 issues that changed its content (#408 to #425) and the issues for which only cross-references were resynced ("resync"). "CSC-AUD-010 (#430)" marks the documents revised by the CSC-AUD-010 corrective actions; the Version column is not yet resynced for #430 and is updated in the next batched cross-reference resync (CSC-SUP8-001 §9). The CSC-AUD-009 residuals RR-003-004 (post-v1.6.0 CI-matrix results not recorded) and RR-003-005 (Risk Owner confirmation of the RISK-003/005 reviews) remain open and are tracked under #430 (AUD10-F-021).*
+*Change notes (CSC-AUD-010 AUD10-F-017, #430): the CM Baseline column lists, per work product, the post-v1.6.0 issues that changed its content (#408 to #425) and the issues for which only cross-references were resynced ("resync"). "CSC-AUD-010 (#430)" marks the documents revised by the CSC-AUD-010 corrective actions; the Version column is not yet resynced for #430 and is updated in the next batched cross-reference resync (CSC-SUP8-001 §9). The CSC-AUD-009 residuals tracked under #430 (AUD10-F-021) are closed: RR-003-004 by the post-v1.6.0 CI matrix (GitHub Actions run 36612676061 on commit 6bdc592, PR #431: Unit Tests Python 3.10, 3.11, 3.12 all success, 2026-09-29); RR-003-005 by the owner's merge of PR #431, which is the Risk Owner confirmation of the RISK-003/005 reviews (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2).*
 
 | Document ID | Work Product | Version | Baseline Status | CM Baseline |
 |---|---|---|---|---|
@@ -229,7 +231,7 @@ All work products are reviewed before approval according to the following schedu
 | CSC-PA2-001 | PA 2.1 / PA 2.2 Records | 1.33 | Released | CSC-AUD-009 corrective actions (#405); #407; #412, #413, #418, #420, #422–#425; resync #418–#425; CSC-AUD-010 (#430) |
 | CSC-REVIEW-001 | ASPICE Peer Review Record (v1.2.1 baseline) | 1.0 | Released | issue #169 |
 | CSC-REVIEW-002 | ASPICE Peer Review Record (v1.4.1 baseline) | 1.0 | Released | PR (issue #268) |
-| CSC-REVIEW-003 | ASPICE Peer Review Record (v1.6.0 / post-v1.6.0 `develop`; retrospective for v1.5.x–v1.6.0; self-review under CSC-DEV-002) | 1.1 | Released (pending Review Owner signature) | CSC-AUD-009 corrective actions (#405); RR-003-003 closed (#408), RR-003-001 closed (#407) |
+| CSC-REVIEW-003 | ASPICE Peer Review Record (v1.6.0 / post-v1.6.0 `develop`; retrospective for v1.5.x–v1.6.0; self-review under CSC-DEV-002) | 1.1 | Released (Review Owner authorisation by merge, CSC-DEV-002 §5.2) | CSC-AUD-009 corrective actions (#405); RR-003-003 closed (#408), RR-003-001 closed (#407) |
 | CSC-STD-001 | Industry Standards Comparison | 1.13 | Released | CSC-AUD-009 corrective actions (#405); #407; #410; resync #418–#425 |
 | CSC-DEV-001 | AI Authorship Deviation Record | 1.12 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425 |
 | CSC-DEV-002 | Independent Review Deviation Record | 1.11 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; CSC-AUD-010 (#430) |
@@ -288,8 +290,10 @@ The table below summarises all assessed processes and their CL2 PA achievement e
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

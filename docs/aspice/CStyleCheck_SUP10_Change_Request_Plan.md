@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-001: §7 register rows and §7.1 records for CR-412, CR-420, CR-422, CR-424 and CR-425. AUD10-F-002: new §7.2 release-classification decision (next release v2.0.0, Major). AUD10-F-010: CR-418 impact superseded by CR-420; CR-413 and CR-418 set to Closed with PR and merge commit. AUD10-F-015: §5.4 branch table allows `claude/<topic>-<id>` |
+| 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-001: §7 register rows and §7.1 records for CR-412, CR-420, CR-422, CR-424 and CR-425. AUD10-F-002: new §7.2 release-classification decision (next release v2.0.0, Major). AUD10-F-010: CR-418 impact superseded by CR-420; CR-413 and CR-418 set to Closed with PR and merge commit. AUD10-F-015: §5.4 branch table allows `claude/<topic>-<id>`; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -72,7 +72,7 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 |---|---|---|
 | **Low** | Changes a single CI; no interface impact; no requirement change | Author self-review |
 | **Medium** | Changes multiple CIs; impacts one interface; minor requirement change | Peer review (1 approver) |
-| **High** | Changes architecture, adds/removes requirements, breaks backwards compatibility | Peer review + explicit QA sign-off |
+| **High** | Changes architecture, adds/removes requirements, breaks backwards compatibility | Peer review + explicit QA sign-off (given by the owner's merge of the implementing PR; CSC-DEV-002 §5.2) |
 
 ---
 
@@ -248,7 +248,7 @@ Summary view:
 | **Affected work products** | SWE1-001, SWE1-002; CSC-SWE2-001, CSC-SWE3-001 (UNIT-05), CSC-SWE4-001, CSC-SYS4-001, CSC-SYS5-001, Rules-and-Configuration, CHANGELOG (⚠️ note) |
 | **Impact analysis** | `load_config()` normalises aliases to canonical case names and reports every unknown case-style value as a configuration error. Projects with a misspelt or unsupported value must correct the config on upgrade. Presets and the wizard write canonical names. Drives the Major release classification (§7.2) |
 | **Verification** | `tests/test_case_style_config.py`; test total 1481→1508 |
-| **Approval** | Approved by owner merge of PR #426 (owner decision 2026-09-29 accepts the incompatibility for v2.0.0; QA sign-off is the owner's open action, #430) |
+| **Approval** | Approved by owner merge of PR #426 (owner decision 2026-09-29 accepts the incompatibility for v2.0.0; QA sign-off given by the owner's merge of PR #426, approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2) |
 | **Status / target release** | Closed / v2.0.0 |
 
 | Field | CR-424 |
@@ -274,7 +274,7 @@ Summary view:
 | **Affected work products** | SWE1-069; CSC-SWE3-001 (UNIT-136 `config_error`), CSC-SWE4-001, CSC-SYS4-001, CSC-SYS5-001, README, CHANGELOG (⚠️ note) |
 | **Impact analysis** | `sys.exit("message")` calls replaced by `config_error()` (exit 2) in `config.py`, `cli.py`, `baseline.py`, `utils.py` and the `src/cstylecheck.py` wrapper, so both entry points match SYS-F-039. Exit codes 0 and 1 for checking are unchanged. Drives the Major release classification (§7.2) |
 | **Verification** | `tests/test_exit_code_entry_points.py`; test total 1524→1532 |
-| **Approval** | Approved by owner merge of PR #428 (QA sign-off is the owner's open action, #430) |
+| **Approval** | Approved by owner merge of PR #428 (QA sign-off given by the owner's merge of PR #428, approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2) |
 | **Status / target release** | Closed / v2.0.0 |
 
 ### 7.2 Release Classification Decision
@@ -305,8 +305,10 @@ Summary view:
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

@@ -17,7 +17,7 @@
 | **Review Scope** | All 22 controlled ASPICE work products. Retrospective for the v1.5.0, v1.5.1 and v1.6.0 releases, which had no peer-review record (AUD9-F-022) |
 | **Reference Standard** | Automotive SPICE® PAM v4.0 · ASPICE GP 2.2.3 |
 | **Related Documents** | CSC-PA2-001 v1.23, CSC-AUD-009, CSC-SUP1-001 v1.10, CSC-DEV-001, CSC-DEV-002 |
-| **Status** | Approved by the reviewer; pending Review Owner signature |
+| **Status** | Approved — Review Owner authorisation by merge (CSC-DEV-002 §5.2) |
 
 ---
 
@@ -88,8 +88,8 @@ The per-document tables of the template are condensed into one matrix: one row p
 | RR-003-001 | CSC-SWE4-001 | C3 | Minor | SWE1-015 (single read), SWE1-094 (startup banner) and SWE1-096 (OS path separator) have no dedicated unit test. They are verified at integration level or by inspection only | **Closed 2026-09-29 (#407)** — 16 unit tests added in `tests/test_cli_requirements.py` (UV-CLI-014 to UV-CLI-022, CSC-SWE4-001 v1.24 §5.17 and §7). The tests showed that the SWE1-094 `--quiet` clause and one-line form are not implemented; this is recorded in CSC-SWE4-001 §7 for a change request and does not reopen this finding |
 | RR-003-002 | CSC-SVD-001 | C2 | Observation | Release-baselined at v1.6.0: cites superseded document versions and has 3 revision rows with swapped Author/Description columns. Left unchanged by decision (CSC-AUD-009) | Open — update at v1.7.0 release preparation |
 | RR-003-003 | CSC-SUP8-001 / `checker.py` | C4 | Minor | The runtime violation message of `misc.multiple_statements_per_line` still cites "MISRA C:2012 Rule 15.5". Only comments were corrected (AUD9-F-027) because the message text is observable behaviour | Closed — message corrected to cite Barr-C §3.2 only, with a unit test (#408) |
-| RR-003-004 | CSC-SWE5/SWE6/SYS4/SYS5 | C4 | Minor | Post-v1.6.0 test results (SIT-027, SITC-017, SWQ-003/007 extensions, SYS-VTC-003/007) were recorded from a local run on Python 3.11 only | Open — record the CI matrix run (3.10/3.11/3.12) at v1.7.0 |
-| RR-003-005 | CSC-MAN5-001 | C4 | Observation | The RISK-003/005 reviews of 2026-09-29 were performed by the AI tool during CSC-AUD-009; Risk Owner confirmation is pending | Open — Risk Owner to confirm |
+| RR-003-004 | CSC-SWE5/SWE6/SYS4/SYS5 | C4 | Minor | Post-v1.6.0 test results (SIT-027, SITC-017, SWQ-003/007 extensions, SYS-VTC-003/007) were recorded from a local run on Python 3.11 only | **Closed 2026-09-29 (#430)** — post-v1.6.0 CI matrix recorded: GitHub Actions run 36612676061 on commit `6bdc592` (PR #431), Unit Tests Python 3.10, 3.11, 3.12 all success, 2026-09-29 |
+| RR-003-005 | CSC-MAN5-001 | C4 | Observation | The RISK-003/005 reviews of 2026-09-29 were performed by the AI tool during CSC-AUD-009; Risk Owner confirmation was outstanding | **Closed 2026-09-29 (#430)** — Risk Owner confirmation given by the owner's merge of PR #431 (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2) |
 
 **Severity definitions:** as CSC-REVIEW-TEMPLATE-001 §5.
 
@@ -106,7 +106,7 @@ The per-document tables of the template are condensed into one matrix: one row p
 | **— Major** | 0 |
 | **— Minor** | 3 |
 | **— Observation** | 2 |
-| **Open actions** | 3 (RR-003-003 closed by #408; RR-003-001 closed by #407) |
+| **Open actions** | 1 (RR-003-002; RR-003-003 closed by #408; RR-003-001 closed by #407; RR-003-004 and RR-003-005 closed under #430) |
 | **Review verdict** | Conditional Pass |
 
 **Verdict rationale:**
@@ -120,12 +120,12 @@ The per-document tables of the template are condensed into one matrix: one row p
 | Role | Name | Date | Notes |
 |---|---|---|---|
 | Reviewer | Claude (AI-assisted; self-review of its own corrections) | 2026-09-29 | *per CSC-DEV-001 / CSC-DEV-002* |
-| Author / Review Owner | Dermot Murphy | — | *pending — solo developer; see CSC-DEV-002* |
+| Author / Review Owner | Dermot Murphy | Merge date of the introducing PR | *Authorised by the owner's merge of the PR that added this record (CSC-DEV-002 §5.2); no signature required* |
 
-> **Note (CSC-DEV-002 — self-review):** CStyleCheck is developed by a solo engineer, and the independent peer-review requirement of ASPICE GP 2.2.3 cannot be met by a separate human reviewer. This record is a **self-review**: the AI tool that authored the #405 corrections also performed this review. **No independent reviewer took part**, and this record makes no claim of reviewer independence. It is accepted under the independent-review deviation CSC-DEV-002. The Review Owner's signature constitutes the management approval of this record.
+> **Note (CSC-DEV-002 — self-review):** CStyleCheck is developed by a solo engineer, and the independent peer-review requirement of ASPICE GP 2.2.3 cannot be met by a separate human reviewer. This record is a **self-review**: the AI tool that authored the #405 corrections also performed this review. **No independent reviewer took part**, and this record makes no claim of reviewer independence. It is accepted under the independent-review deviation CSC-DEV-002. The Review Owner's merge of the PR that added this record constitutes the management approval; the merge commit is the approval record (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2).
 
 ---
 
-*Document: CSC-REVIEW-003 · Version 1.1 · 2026-09-29 (v1.1: RR-003-003 closed by #408; RR-003-001 closed by #407)*
+*Document: CSC-REVIEW-003 · Version 1.2 · 2026-09-29 (v1.2: Approval-by-merge policy (CSC-DEV-002 §5.2), #430; RR-003-004 and RR-003-005 closed. v1.1: RR-003-003 closed by #408; RR-003-001 closed by #407)*
 *Location: `docs/aspice/CStyleCheck_Review_Record_v1.6.md`*
 *Template: CSC-REVIEW-TEMPLATE-001 v1.0*

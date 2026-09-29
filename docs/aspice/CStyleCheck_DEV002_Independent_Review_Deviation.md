@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.12 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-014: §5.2 pull-request control states that the owner's merge of the PR is the approval record (no separate GitHub review approval, no approval timestamp) |
+| 1.12 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-014: §5.2 pull-request control states that the owner's merge of the PR is the approval record (no separate GitHub review approval, no approval timestamp); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.11 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.10 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.9 | 2026-09-29 | Claude | Cross-reference resync with #424: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -109,6 +109,16 @@ Although the Reviewer and Approver are the same person, the following compensati
 | **Pull request review** | Every change to a controlled work product is submitted as a GitHub Pull Request. The PR records the diff, the CI status and any review comments. For this solo-developer project the owner's (Dermot Murphy's) merge of the PR is the approval record; no separate GitHub review approval is given, because the author of the review and the approver would be the same person | GitHub PR history (merged-by, merge commit, merge date) |
 | **Version-controlled audit trail** | All work product changes are committed to Git with a descriptive message. The commit history is immutable and publicly auditable | GitHub repository |
 | **Systematic self-review** | Before approval, Dermot Murphy explicitly reads the document in the context of the standard clause it satisfies, comparing content against the corresponding ASPICE GP requirements | Issue-close evidence in each PR |
+
+**Approval by merge (owner policy, 2026-09-29).** Decided by the owner, Dermot Murphy: *"Rather than signing to authorise, merging by me is taken as authorisation."* The owner's merge of the pull request that introduces a work-product revision **is** the approval and authorisation of that revision; no separate signature is required. This replaces signatures for:
+
+- all Review & Approval tables in the ASPICE work products (Technical Reviewer, Quality Assurance, Approver);
+- peer review records (CSC-REVIEW-xxx) and their Review Owner sign-off;
+- internal audit record sign-offs (CSC-AUD-xxx);
+- change request approval and QA sign-off (CSC-SUP10-001);
+- Risk Owner confirmation of risk reviews (CSC-MAN5-001).
+
+An entry of "By merge (CSC-DEV-002 §5.2)" or "Authorised by owner merge" is resolved by the merge commit of the introducing PR: the merge commit, the merged-by user and the merge date in the git/GitHub history are the approval record, and the merge date is the approval date. An unmerged revision is not approved.
 
 ### 5.3 Risk Assessment
 

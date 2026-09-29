@@ -22,7 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.35 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-007: UV-CLI-018 `test_copyright_line_format` also asserts the `--version` output (version line, then `(C) <year> <holder>` on its own line); UV-CLI-018 traces to SWE1-095 as well; §7 SWE1-095 row cites UV-CLI-018 for the copyright text (test total unchanged, 1545). AUD10-F-027: §6 `test_case_style_config.py`, `test_functions_case_removed.py` and `test_enums.py` rows name `validate_case_styles`, `deprecated_key_warnings`, `normalize_case_style` and `_enum_members` as sub-units of UNIT-05, UNIT-43 and UNIT-27 (SWE3 §4); referenced-document versions resynced (SWE3 1.29→1.30) |
+| 1.35 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-007: UV-CLI-018 `test_copyright_line_format` also asserts the `--version` output (version line, then `(C) <year> <holder>` on its own line); UV-CLI-018 traces to SWE1-095 as well; §7 SWE1-095 row cites UV-CLI-018 for the copyright text (test total unchanged, 1545). AUD10-F-027: §6 `test_case_style_config.py`, `test_functions_case_removed.py` and `test_enums.py` rows name `validate_case_styles`, `deprecated_key_warnings`, `normalize_case_style` and `_enum_members` as sub-units of UNIT-05, UNIT-43 and UNIT-27 (SWE3 §4); referenced-document versions resynced (SWE3 1.29→1.30); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.34 | 2026-09-29 | Claude | Issue #423: add UV-TYP-005a (`TestEnumLastMember`, 13 tests: last enum member checked for `enum.member_case` and `enum.member_prefix` with and without trailing comma, with initialiser, trailing comment, single-line and one-member enums; initialiser identifiers and `#if` lines not treated as members); §5.4 heading and §6 `test_enums.py` 11→24; total 1532→1545 (58 modules); coverage-gate text 1532→1545; §7 SWE1-040 to 042 row cites UV-TYP-005a; referenced-document versions resynced (4) |
 | 1.33 | 2026-09-29 | Claude | Issue #425: add §5.21 catalogue for `test_exit_code_entry_points.py` (UV-EXIT-001 to UV-EXIT-003, 8 tests: `config_error()`, string-exit mapping in `main()`, nine config/usage error paths exit 2 through the console-script target and `src/cstylecheck.py`); `test_config_loading.py` patches `config_error`; §6 new module row, total 1524→1532 (58 modules); coverage-gate text 1524→1532; §7 SWE1-001/002 and SWE1-068 to 070 rows cite UV-EXIT; referenced-document versions resynced (4) |
 | 1.32 | 2026-09-29 | Claude | Issue #424: add §5.20 catalogue for `test_functions_case_removed.py` (UV-FCASE-001 to UV-FCASE-004, 16 tests: no `functions.case` in presets, wizard or repo configs; not a case-style key; `WARNING` on `stderr` with unchanged exit code, once per root or per-directory config; function naming still set by `functions.style`); UV-CASE-003 — 15→14 case-style keys; §6 new module row, total 1508→1524 (57 modules); coverage-gate text 1508→1524; §7 SWE1-001/002, SWE1-030 to 034 and SWE1-075 rows cite UV-FCASE; referenced-document versions resynced (4) |
@@ -651,8 +651,10 @@ Added for issue #425. Config and usage errors called `sys.exit("message")`, whic
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

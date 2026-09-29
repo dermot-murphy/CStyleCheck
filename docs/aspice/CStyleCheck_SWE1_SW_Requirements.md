@@ -22,7 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 2.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-005: §5 RTM parent column completed from the §4 parent columns (script-verified for every row) — SWE1-001 to 006 add SYS-F-039; SWE1-011 to 016 add SYS-F-020, F-027; SWE1-017 to 029 add SYS-F-011, F-012, F-024; SWE1-030 to 034 add SYS-F-012; SWE1-035 to 039 add SYS-F-024. AUD10-F-007: SWE1-095 copyright format aligned with the code, `(C) <year> <holder>`; RTM row cites UV-CLI-018. AUD10-F-025: RTM row SWE1-040 to 042 cites `test_case_style_config.py` (UV-CASE-005) |
+| 2.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-005: §5 RTM parent column completed from the §4 parent columns (script-verified for every row) — SWE1-001 to 006 add SYS-F-039; SWE1-011 to 016 add SYS-F-020, F-027; SWE1-017 to 029 add SYS-F-011, F-012, F-024; SWE1-030 to 034 add SYS-F-012; SWE1-035 to 039 add SYS-F-024. AUD10-F-007: SWE1-095 copyright format aligned with the code, `(C) <year> <holder>`; RTM row cites UV-CLI-018. AUD10-F-025: RTM row SWE1-040 to 042 cites `test_case_style_config.py` (UV-CASE-005); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 2.19 | 2026-09-29 | Claude | Issue #423: SWE1-041 — every enumerator is checked by `enum.member_case` and `enum.member_prefix`, including the last one with or without a trailing comma, an initialiser or a trailing comment; initialiser identifiers are not members; referenced-document versions resynced (4) |
 | 2.18 | 2026-09-29 | Claude | Issue #425: SWE1-069 — every configuration or usage error prints its message to stderr and exits 2, with the same exit code and message from the installed `cstylecheck` console script and `python src/cstylecheck.py`; RTM row cites `test_exit_code_entry_points.py`; referenced-document versions resynced (4) |
 | 2.17 | 2026-09-29 | Claude | Issue #424: SWE1-001 — `functions.case` is not a case-style key; a config containing it loads normally (exit code unchanged) with one `WARNING` on `stderr` per config file (root or per-directory) saying it is not used and to use `functions.style`; SWE1-032 — function-name casing set by `functions.style` only; SWE1-075 — presets and `--init` do not write `functions.case`; RTM rows cite `test_functions_case_removed.py`; referenced-document versions resynced (4) |
@@ -390,9 +390,11 @@ The following criteria shall be met by all software requirements above. They are
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
 | Author | Claude | Approved | 2026-09-29 |
-| Technical Reviewer | Dermot Murphy | — | *pending* |
-| Quality Assurance | Dermot Murphy | — | *pending* |
-| Approver | Dermot Murphy | — | *pending* |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.
 
