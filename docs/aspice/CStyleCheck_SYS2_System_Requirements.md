@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 2.6 | 2026-09-29 | Claude | Cross-reference resync with #412: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 2.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.5 | 2026-09-29 | Claude | Issue #413 (CR-413, CSC-SUP10-001 §7.1): SYS-F-046 rewritten to match the implementation — two-line banner (`CStyleCheck <version>`, copyright) on stderr before checking, written even when stdout is piped, not suppressible, never on stdout (date-time, file count and non-TTY suppression removed); RTM row updated; trace SYS-F-046 → SWE1-094 unchanged; referenced-document versions resynced (SWE1 2.9→2.10) |
 | 2.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SYS3 1.7→1.8) |
 | 2.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-F-011 73→81 rule IDs; SYS-F-020 lists the 8 post-v1.6.0 MISRA/Barr-C rules; scope text. AUD9-F-006: RTM SYS-F-034 to 036 → add SWE1-100/101. AUD9-F-008: SYS-F-046 → SWE1-094 (was SWE1-091); add SWE1-072/073, 074, 077, 091 to 093, 095 to 099 and 109 to 116 to the RTM; add bidirectional-trace note. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |

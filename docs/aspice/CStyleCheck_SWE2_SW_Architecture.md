@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.17 | 2026-09-29 | Claude | Issue #412: COMP-05f table — `misc.boolean_comparison` marked opt-in (disabled by default); referenced-document versions resynced (4 row(s) updated to current) |
+| 1.17 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.16 | 2026-09-29 | Claude | Issue #413 (CR-413): COMP-01 key behaviour describes the startup banner as two lines on stderr and the log, never stdout, not suppressible (was "one-line"); referenced-document versions resynced (SWE1 2.9→2.10, SWE3 1.19→1.20) |
 | 1.15 | 2026-09-29 | Claude | Issue #410: COMP-05f table — `misc.boolean_comparison` is a style rule; MISRA 14.4 citation removed |
 | 1.14 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE3 1.18→1.19, SYS3 1.7→1.8) |

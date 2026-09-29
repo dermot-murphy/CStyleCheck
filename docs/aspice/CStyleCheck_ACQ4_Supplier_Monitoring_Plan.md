@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.6 | 2026-09-29 | Claude | Cross-reference resync with #412: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.5 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (MAN3 1.8→1.9, MAN5 1.5→1.6, SUP8 1.13→1.14, SUP9 1.3→1.4) |
 | 1.4 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-018: §5.2 Actions versions @v6→@v7 with the Docker and third-party actions; workflow list 3→5 (`rules.yml` → `cstylecheck_rules.yml`, add `wiki_publish.yml`, `metrics.yml`); Dependabot (`target-branch: develop`) monitoring row; add SUP-07 (Docker, Inc. actions) and SUP-08 (tj-actions, peter-evans) and §5.7 monitoring; SHA-pinning policy. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.3 | 2026-06-26 | Claude | Add SUP-06 Anthropic/Claude AI tool supplier entry (§3, §4, §5.6, §6); update CSC-MAN5-001 ref to 1.4; advance ACQ.4 to Full — closes issue #269 |

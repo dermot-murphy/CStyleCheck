@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.26 | 2026-09-29 | Claude | #412: SWE.4 evidence — test total 1444→1452 (`misc.boolean_comparison` opt-in, lowercase only); referenced-document versions resynced (21 row(s) updated to current) |
+| 1.26 | 2026-09-29 | Claude | Release-prep cross-reference resync: 21 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.25 | 2026-09-29 | Claude | #413: SWE.4 evidence — test total 1439→1444; SWE1-094 fully verified after CR-413 |
 | 1.24 | 2026-09-29 | Claude | Issue #407: §4.1 SWE.4 criterion and CI-017 → 1439 tests; §6 SWE.4 evidence (55 modules, RR-003-001 closed, SWE1-094 `--quiet` gap); §5.4 register CSC-AUD-009 1.0→1.1 and CSC-REVIEW-003 1.0→1.1; referenced-document versions resynced (ACQ4 1.4→1.5, DEV-001 1.3→1.4, DEV-002 1.2→1.3, MAN3 1.8→1.9, MAN5 1.5→1.6, PA2 1.23→1.24, STD 1.3→1.4, SUP1 1.10→1.11, SUP10 1.3→1.4, SUP8 1.13→1.14, SUP9 1.3→1.4, SWE1 2.8→2.9, SWE2 1.13→1.14, SWE3 1.18→1.19, SWE4 1.22→1.24, SWE5 1.15→1.16, SWE6 1.17→1.18, SYS2 2.3→2.4, SYS3 1.7→1.8, SYS4 1.12→1.13, SYS5 1.9→1.10) |
 | 1.23 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-021: §6 ratings per CSC-AUD-009 (3 F / 14 L), verdict and history note (no standalone v1.6.0 audit record); §4.1 counts (121 SW req, 135 units, 1422 tests, 27 SIT, 17 SITC, 60 CIs); §5.4 versions for all corrected WPs plus CSC-REVIEW-003, CSC-STD-001 and CSC-AUD-009; CI-045 package row. AUD9-F-013: SWE.3 wording (135 units, all specified). AUD9-F-009: §5.3 WP storage CI-027 → CI-055 |

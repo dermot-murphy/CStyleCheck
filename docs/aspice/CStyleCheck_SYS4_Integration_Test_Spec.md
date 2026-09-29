@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.15 | 2026-09-29 | Claude | #412: SITC-017 step 1 enables `misc.boolean_comparison` explicitly (opt-in); test total 1444→1452; referenced-document versions resynced (3 row(s) updated to current) |
+| 1.15 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.14 | 2026-09-29 | Claude | #413: test total 1439→1444 |
 | 1.13 | 2026-09-29 | Claude | Issue #407: post-v1.6.0 note records 1439 tests after #408 and #407; referenced-document versions resynced (SYS2 2.3→2.4, SYS3 1.7→1.8, SYS5 1.9→1.10) |
 | 1.12 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SITC-017 for the 8 post-v1.6.0 MISRA/Barr-C rules (all 81 rule IDs covered), with §5 and §6 rows. AUD9-F-006: SITC-007 step 2 baseline format; add step 6 (line-independent matching). AUD9-F-026: CM baseline ID per test-case group; scope text v1.5.0→v1.6.0/develop. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |

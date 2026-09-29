@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.12 | 2026-09-29 | Claude | Cross-reference resync with #412: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.12 | 2026-09-29 | Claude | Release-prep cross-reference resync: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (MAN3 1.8→1.9, SUP10 1.3→1.4, SUP8 1.13→1.14, SUP9 1.3→1.4, SWE4 1.22→1.24) |
 | 1.10 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-022: §5.4 records per-release gate compliance (v1.5.x and v1.6.0 peer-review gate not met, covered retrospectively by CSC-REVIEW-003); add the internal-audit release gate; §6 lists review and audit record locations. AUD9-F-024: Author and Description columns swapped back in the v1.8 row; scope text. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.9 | 2026-07-06 | Claude | ASPICE audit — update quality objectives to v1.6.0 actuals — closes #379 |

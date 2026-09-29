@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.9 | 2026-09-29 | Claude | Cross-reference resync with #412: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.9 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.8 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP8 1.13→1.14, SYS2 2.3→2.4, SYS4 1.12→1.13) |
 | 1.7 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: §9 traceability 73→81 rule IDs (8 MISRA/Barr-C rules from #391/#392 in SS-05); scope text. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.6 | 2026-07-06 | Claude | ASPICE audit — scope v1.2.x→v1.6.0; traceability 53→73 rule IDs; add models.py and utils.py to subsystem table — closes #379 |

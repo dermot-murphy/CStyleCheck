@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.12 | 2026-09-29 | Claude | #412: VTC-003 result note — test total 1444→1452; referenced-document versions resynced (4 row(s) updated to current) |
+| 1.12 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | #413: test total 1439→1444 |
 | 1.10 | 2026-09-29 | Claude | Issue #407: VTC-003 result note records 1439 tests after #408 and #407; referenced-document versions resynced (SUP8 1.13→1.14, SYS2 2.3→2.4, SYS3 1.7→1.8, SYS4 1.12→1.13) |
 | 1.9 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-VTC-003 → 81 rule IDs (add the non_ascii_source, constant_comparison and 8 post-v1.6.0 MISRA/Barr-C rule rows); §5/§6 counts. AUD9-F-006: SYS-VTC-007 baseline format and step 5 (line-independent matching). AUD9-F-026: CM baseline; scope text. AUD9-F-014: referenced-document versions resynced to current revisions |
