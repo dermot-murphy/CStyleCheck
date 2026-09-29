@@ -397,7 +397,9 @@ class TestCSourceMetrics(unittest.TestCase):
         self.assertEqual(m["file_length_max"], len(_SAMPLE_C.splitlines()))
 
     def test_cc_histogram_buckets(self):
-        ifs = lambda k: "".join(f"    if (a == {i}) {{ }}\n" for i in range(k))
+        def ifs(k):
+            return "".join(f"    if (a == {i}) {{ }}\n" for i in range(k))
+
         src = "".join(f"void f{k}(int a)\n{{\n{ifs(k)}}}\n" for k in (0, 6, 12, 20))
         (self.dir / "cc.c").write_text(src)
         m = cm._c_source_metrics(source_dir=self.dir)
