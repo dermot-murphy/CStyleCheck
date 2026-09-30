@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP9-001 | **Version** | 1.13 |
-| **Project** | CStyleCheck | **Date** | 2026-09-29 |
+| **Document ID** | CSC-SUP9-001 | **Version** | 1.14 |
+| **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.9 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.14 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.13 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-011: new §6.2 post-v1.6.0 problem classification record (SEV label, dates, SLA outcome, fix PR for #408, #410, #412, #413, #422, #423, #424, #425); §5.1 workflow name `rules.yml` → `cstylecheck_rules.yml`; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.11 | 2026-09-29 | Claude | Cross-reference resync with #425: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -47,10 +48,10 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.18 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.22 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.13 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.19 |
+| CSC-MAN3-001 | Project Management Plan | 1.20 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.24 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.15 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.21 |
 
 ---
 

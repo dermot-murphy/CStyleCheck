@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.23 |
-| **Project** | CStyleCheck | **Date** | 2026-09-29 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.24 |
+| **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.4 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.23 | 2026-09-29 | Claude | Approval-by-merge policy (CSC-DEV-002 §5.2), #430: Review & Approval table entries set to approval by the owner's merge of the introducing PR |
 | 1.22 | 2026-09-29 | Claude | #423: test total 1532→1545 (last enum member tests); referenced-document versions resynced (3) |
 | 1.21 | 2026-09-29 | Claude | #425: test total 1524→1532 (config-error exit-code tests for both entry points); referenced-document versions resynced (3) |
@@ -69,9 +70,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.13 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.16 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.19 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.15 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.18 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.21 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment

@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.29 |
-| **Project** | CStyleCheck | **Date** | 2026-09-29 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.30 |
+| **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.6 |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.30 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.29 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-018: §3.3 coverage criterion restated as all 113 in-scope requirements, listed explicitly (SWE1-001 to 101, SWE1-109 to 116, SWE1-MISRA-001 to 004; SWE1-102 to 108 and 117 out of SWQ scope). AUD10-F-028: §5 overall verdict states its v1.6.0 baseline; current `develop` run added (1545 passed, 58 modules, 2026-09-29); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.28 | 2026-09-29 | Claude | Issue #423: BP3 evidence — suite total 1532→1545 (last enum member tests); referenced-document versions resynced (4) |
 | 1.27 | 2026-09-29 | Claude | Issue #425: SWQ-008 — three config-error scenarios (unreadable baseline, unknown case style, config error via the wrapper) with a 2026-09-29 execution note (UV-EXIT-003); §6 SWE1-068 to 070 row cites SWQ-008 and UV-EXIT; BP3 evidence — suite total 1524→1532; referenced-document versions resynced (4) |
@@ -65,10 +66,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.19 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.25 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.19 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.22 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.21 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.27 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.21 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.24 |
 
 ### 3.2 Software Configuration Under Test
 

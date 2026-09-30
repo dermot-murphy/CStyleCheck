@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-ACQ4-001 | **Version** | 1.14 |
-| **Project** | CStyleCheck | **Date** | 2026-09-29 |
+| **Document ID** | CSC-ACQ4-001 | **Version** | 1.15 |
+| **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | ACQ.4 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-030: SUP-09 (Python development and CI tool maintainers: pytest, pytest-cov, ruff, mypy with types-PyYAML, codespell) added to §4 with monitoring approach in new §5.8 and interface ACQ-IF-07 in §6; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -57,10 +58,10 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.18 |
-| CSC-MAN5-001 | Risk Management Plan | 1.14 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.22 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.12 |
+| CSC-MAN3-001 | Project Management Plan | 1.20 |
+| CSC-MAN5-001 | Risk Management Plan | 1.16 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.24 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.14 |
 
 ---
 
