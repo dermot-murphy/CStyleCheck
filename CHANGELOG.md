@@ -74,6 +74,14 @@ linked entries under *Changed* and *Fixed* for details.
   `scripts/compare_metrics.py` compares the new scalar metrics. Thresholds are documented
   in `scripts/metrics_rules.yml`
   (issue [#388](https://github.com/dermot-murphy/CStyleCheck/issues/388)).
+- **Merge-time ASPICE process controls** — `scripts/aspice_check.py` checks that the ASPICE
+  work products are consistent (document-version citations, SYS2/SWE1 traceability, SWE4
+  test counts, README rule IDs, SWE3 line references, CM coverage of every tracked file);
+  `--fix-citations` resyncs stale citations. The new `aspice_consistency.yml` workflow runs
+  it on every pull request. A pull request template with an ASPICE checklist and bug /
+  change-request issue forms are added. No change to the checker, its rules, output or
+  exit codes (compatible)
+  (issue [#437](https://github.com/dermot-murphy/CStyleCheck/issues/437)).
 
 ### Changed
 

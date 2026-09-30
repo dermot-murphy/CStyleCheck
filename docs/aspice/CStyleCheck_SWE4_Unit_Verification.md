@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.36 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.37 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.37 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.36 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.35 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-007: UV-CLI-018 `test_copyright_line_format` also asserts the `--version` output (version line, then `(C) <year> <holder>` on its own line); UV-CLI-018 traces to SWE1-095 as well; §7 SWE1-095 row cites UV-CLI-018 for the copyright text (test total unchanged, 1545). AUD10-F-027: §6 `test_case_style_config.py`, `test_functions_case_removed.py` and `test_enums.py` rows name `validate_case_styles`, `deprecated_key_warnings`, `normalize_case_style` and `_enum_members` as sub-units of UNIT-05, UNIT-43 and UNIT-27 (SWE3 §4); referenced-document versions resynced (SWE3 1.29→1.30); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.34 | 2026-09-29 | Claude | Issue #423: add UV-TYP-005a (`TestEnumLastMember`, 13 tests: last enum member checked for `enum.member_case` and `enum.member_prefix` with and without trailing comma, with initialiser, trailing comment, single-line and one-member enums; initialiser identifiers and `#if` lines not treated as members); §5.4 heading and §6 `test_enums.py` 11→24; total 1532→1545 (58 modules); coverage-gate text 1532→1545; §7 SWE1-040 to 042 row cites UV-TYP-005a; referenced-document versions resynced (4) |
@@ -71,10 +72,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.21 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.31 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.27 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.24 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.22 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.32 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.28 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
 
 ---
 

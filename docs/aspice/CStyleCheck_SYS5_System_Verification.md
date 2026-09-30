@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.21 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.22 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.21 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-003: §7 coverage matrix adds SYS-F-046 (startup banner, CR-413) → SIT-024; UV-CLI-017 to UV-CLI-019. AUD10-F-006: SYS-VTC-008 re-executed with the installed `cstylecheck` command at `develop` `44814d2` (all 9 scenarios PASS, invalid config → exit 2); the 93178cd "Invalid config → exit 2" PASS annotated as invalid for the console-script entry point (pre-#425 it exited 1), cross-reference CR-425 / #425; 93178cd record kept as history. AUD10-F-028: §6 overall verdict states its v1.4.1 baseline; current `develop` run added (1545 passed, 58 modules, 2026-09-29); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.19 | 2026-09-29 | Claude | #423: VTC-003 result note test total 1532→1545 (last enum member tests); referenced-document versions resynced (4) |
@@ -57,11 +58,11 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.15 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.18 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.24 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.16 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.19 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.25 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.24 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
 
 ### 3.3 System Configuration Under Test
 

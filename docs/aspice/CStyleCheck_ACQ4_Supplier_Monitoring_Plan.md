@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-ACQ4-001 | **Version** | 1.15 |
+| **Document ID** | CSC-ACQ4-001 | **Version** | 1.16 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.16 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.2 CI workflow availability monitors `aspice_consistency.yml`; acceptance criterion counts six CI workflows; referenced-document versions resynced |
 | 1.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-030: SUP-09 (Python development and CI tool maintainers: pytest, pytest-cov, ruff, mypy with types-PyYAML, codespell) added to §4 with monitoring approach in new §5.8 and interface ACQ-IF-07 in §6; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -58,10 +59,10 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.20 |
-| CSC-MAN5-001 | Risk Management Plan | 1.16 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.24 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.14 |
+| CSC-MAN3-001 | Project Management Plan | 1.21 |
+| CSC-MAN5-001 | Risk Management Plan | 1.17 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.15 |
 
 ---
 
@@ -100,7 +101,7 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 
 | Activity | Method | Frequency | Owner | Evidence |
 |---|---|---|---|---|
-| CI workflow availability | Monitor `cstylecheck_tests.yml`, `cstylecheck_rules.yml`, `docker_publish.yml`, `wiki_publish.yml` and `metrics.yml` job completion | Per commit | GitHub Actions status | CI badge on README; Actions run log |
+| CI workflow availability | Monitor `cstylecheck_tests.yml`, `cstylecheck_rules.yml`, `docker_publish.yml`, `wiki_publish.yml`, `metrics.yml` and `aspice_consistency.yml` job completion | Per commit | GitHub Actions status | CI badge on README; Actions run log |
 | Action version updates | Dependabot `github-actions` ecosystem (`.github/dependabot.yml`, weekly, `target-branch: develop`) raises update PRs; each PR is reviewed and must pass CI before merge | Weekly | Dependabot / Dermot Murphy | Dependabot PRs (e.g. #400–#402, #404) |
 | GHCR availability | Verify Docker images pullable after each push | Per `docker_publish.yml` run | GitHub Actions | `docker manifest inspect` in publish job |
 | Actions runner version changes | Monitor GitHub changelog for breaking changes to `ubuntu-latest` runner | Monthly | Claude | GitHub blog / changelog review |
@@ -116,7 +117,7 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 **Pinning policy:** first-party (`actions/*`) and Docker, Inc. actions are pinned to major-version tags and updated by Dependabot. Third-party actions whose publisher has had a supply-chain compromise (`tj-actions/changed-files`, March 2025) are pinned to a full commit SHA, with the version in a trailing comment.
 
 **Acceptance criteria for GitHub:**
-- All five CI workflows complete successfully when triggered on `develop`/`main`
+- All six CI workflows complete successfully when triggered on `develop`/`main`
 - GHCR image available and pullable within 30 minutes of `docker_publish.yml` completion
 
 ### 5.3 Docker Hub (SUP-03)

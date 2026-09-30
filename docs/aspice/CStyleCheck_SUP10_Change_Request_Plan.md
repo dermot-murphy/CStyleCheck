@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.15 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.16 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.16 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.1 CRs raised with the CR issue form (`.github/ISSUE_TEMPLATE/change_request.yml`); §5.2 impact analysis recorded on the issue before the implementing PR is merged; §5.4 CI list names `cstylecheck_rules.yml` and `aspice_consistency.yml`; referenced-document versions resynced; §6 CI-impact table rewritten against the current CSC-SUP8-001 §6.1 list (implementation is CI-045, not the CI-001 shim; all six workflows, Dependabot, CI scripts, process templates and CI-055 for ASPICE documents) |
 | 1.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-001: §7 register rows and §7.1 records for CR-412, CR-420, CR-422, CR-424 and CR-425. AUD10-F-002: new §7.2 release-classification decision (next release v2.0.0, Major). AUD10-F-010: CR-418 impact superseded by CR-420; CR-413 and CR-418 set to Closed with PR and merge commit. AUD10-F-015: §5.4 branch table allows `claude/<topic>-<id>`; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -49,9 +50,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.24 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.14 |
-| CSC-MAN3-001 | Project Management Plan | 1.20 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.15 |
+| CSC-MAN3-001 | Project Management Plan | 1.21 |
 
 ---
 
@@ -81,7 +82,7 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 ### 5.1 Raising a Change Request
 
-All change requests are raised as **GitHub Issues** with the `enhancement`, `improvement`, `documentation`, `config-change`, or `process-change` label.
+All change requests are raised as **GitHub Issues** with the `enhancement`, `improvement`, `documentation`, `config-change`, or `process-change` label. Change requests are raised with the CR issue form `.github/ISSUE_TEMPLATE/change_request.yml` (CSC-SUP8-001 CI-064, #437), which applies the `[CR] ` title prefix and the `enhancement` label and makes the description and rationale, impact level (§4.2), affected requirements / work products, backwards compatibility (No ⇒ Major release, §5.6) and target release mandatory; the maintainer adjusts the type label (§4.1) at evaluation.
 
 Minimum required fields when raising a CR Issue:
 
@@ -101,7 +102,7 @@ Minimum required fields when raising a CR Issue:
 2. Assess: technical feasibility, effort estimate, impact on existing requirements, impact on test suite, version number implications (patch/minor/major)
 3. Check for conflicts with open Issues or other planned changes
 4. Evaluate impact on ASPICE documents — identify which WPs need revision
-5. Record evaluation outcome in the Issue comment thread
+5. Record evaluation outcome in the Issue comment thread. The impact analysis is recorded on the issue before the implementing PR is merged; the PR template checklist (CSC-SUP1-001 §5.3) confirms that the CR is registered in §7 for configuration or behaviour changes
 
 ### 5.3 Change Approval
 
@@ -126,7 +127,7 @@ Accepted changes are implemented following the Git Flow process defined in CSC-S
 Commit messages must reference the Issue: `Implements #<issue-id>: <description>`
 
 All implementing PRs must:
-- Pass CI (`cstylecheck_tests.yml`, `rules.yml`)
+- Pass CI (`cstylecheck_tests.yml`, `cstylecheck_rules.yml`, `aspice_consistency.yml`)
 - Include or update affected ASPICE documents in the same branch or a linked follow-up Issue
 - Update traceability tables if requirements are added or modified
 
@@ -152,14 +153,15 @@ All implementing PRs must:
 
 When a CR is approved, the following CIs may require update:
 
-| CR Type | Likely Affected CIs |
+| CR Type | Likely Affected CIs (per CSC-SUP8-001 §6.1) |
 |---|---|
-| New rule | CI-001 (`cstylecheck.py`), CI-003 (`rules.yml`), CI-017 (test suite), CI-026 (README) |
-| New CLI flag | CI-001, CI-013 (`pyproject.toml`), CI-016 (`action.yml`), CI-026 (README) |
-| New output format | CI-001, CI-016 (`action.yml`), CI-026 (README) |
-| Config file change | CI-003 or CI-005 to CI-010 |
-| CI workflow change | CI-023 to CI-025 |
-| ASPICE document update | Affected document CI (e.g., CI-027) + new version entry in §2 |
+| New rule | CI-045 (checker package `src/cstylecheck/`), CI-003 (`src/rules.yml`), CI-018 (`tests/rules.yml`), CI-017 (test suite), CI-026 (README), CI-049 (`Rules-and-Configuration.md`), CI-047 (CHANGELOG), CI-055 (ASPICE work products: SWE1–SWE6, SYS2–SYS5) |
+| New CLI flag | CI-045, CI-001 (`src/cstylecheck.py` entry-point shim, if the entry point changes), CI-004 (`src/options.txt`), CI-013 (`pyproject.toml`), CI-016 (`action.yml`), CI-015 (`.pre-commit-hooks.yml`), CI-026, CI-047, CI-055 |
+| New output format | CI-045, CI-016 (`action.yml`), CI-026, CI-047, CI-055 |
+| Config file change | CI-003 to CI-010, CI-050 (`src/project.defines`), CI-018; CI-045 when the loader or validation changes |
+| CI workflow change | CI-023, CI-024, CI-025, CI-034, CI-038 and CI-062 (`.github/workflows/*.yml`); CI-046 (`.github/dependabot.yml`); scripts CI-029 to CI-031, CI-035, CI-036, CI-039 to CI-043, CI-061; CSC-ACQ4-001 when a third-party action changes |
+| Process template change | CI-063 (PR template), CI-064 (issue forms), with the plan that defines them (CSC-SUP1-001, CSC-SUP9-001, this plan) |
+| ASPICE document update | CI-055 (the affected work product, identified by its CSC document ID and version) + a new revision entry in its §2; cross-references resynced with `python scripts/aspice_check.py --fix-citations` (CI-061) |
 
 All affected CIs must be updated within the same Git Flow branch as the implementing change (or in an explicitly linked follow-up Issue tracked to the same release).
 

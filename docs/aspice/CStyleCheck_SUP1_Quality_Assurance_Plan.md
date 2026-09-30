@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP1-001 | **Version** | 1.21 |
+| **Document ID** | CSC-SUP1-001 | **Version** | 1.22 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.3 new GATE-04 ASPICE consistency check (`aspice_consistency.yml`, `scripts/aspice_check.py`); the completed PR-template ASPICE checklist together with the owner merge is the per-PR review record (CSC-DEV-002 §5.2); §5.4 checklist covers GATE-01 to GATE-04; §6 process audit records include the PR checklists; referenced-document versions resynced |
 | 1.21 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-013: GATE-02 names the `cstylecheck_rules.yml` workflow and its real scope (`src/**`, `source/**/*.[ch]`); WP-01 names the `src/cstylecheck/` package and `src/cstylecheck.py` wrapper. AUD10-F-014: §6 states that the owner's merge of the PR is the approval record (matches CSC-DEV-002 §5.2). AUD10-F-002: §5.4 gate record names the next release v2.0.0; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.19 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -55,11 +56,11 @@ QA activities for CStyleCheck verify that project processes are followed as plan
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.20 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.24 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.14 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.15 |
-| CSC-SWE4-001 | Unit Verification Specification | 1.36 |
+| CSC-MAN3-001 | Project Management Plan | 1.21 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.15 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.16 |
+| CSC-SWE4-001 | Unit Verification Specification | 1.37 |
 
 ---
 
@@ -110,12 +111,15 @@ The following CI checks act as automated quality gates. Merging to `develop` or 
 | GATE-01 | `cstylecheck_tests.yml` | All pytest tests pass (Python 3.10, 3.11, 3.12) | `develop`, `main` |
 | GATE-02 | `cstylecheck_rules.yml` | CStyleCheck (`src/cstylecheck.py` wrapper with `src/rules.yml`) checks the C sources `source/**/*.[ch]` (excluding `source/cots/`) with zero errors | Push / PR touching `src/**` or `source/**/*.[ch]` |
 | GATE-03 | `docker_publish.yml` | Docker image builds successfully | `main`, `v*.*.*` tags |
+| GATE-04 | `aspice_consistency.yml` | ASPICE consistency check `python scripts/aspice_check.py` passes: document-version citations current, SYS2 §6 RTM matches SWE1 §4 parents, SWE4 §6 test counts match `pytest --collect-only`, README rule IDs match the checker, SWE3 §4 line references current, every tracked file under a SUP8 §6.1 CI (#437) | Every PR; push to `develop`, `main` |
+
+**Per-PR review record (#437).** Every pull request is opened with `.github/pull_request_template.md`. The completed ASPICE checklist in the PR description (requirements, design, tests and SWE4 counts, SIT/SWQ/SYS-VTC impact, CHANGELOG, CR/SEV registration, `aspice_check.py`), together with the owner's merge of the PR (CSC-DEV-002 §5.2), is the review record for every work product the PR changes.
 
 ### 5.4 Pre-Release Quality Review Checklist
 
 Performed by the QA role before creating the release baseline:
 
-- [ ] All CI gates (GATE-01, GATE-02, GATE-03) pass on release commit
+- [ ] All CI gates (GATE-01 to GATE-04) pass on release commit
 - [ ] Coverage gate met: combined ≥ 85% (`--cov-fail-under=85 --cov-branch`) per CI result
 - [ ] All SWQ qualification test cases recorded as PASS in CSC-SWE6-001
 - [ ] All SYS-VTC verification test cases recorded as PASS in CSC-SYS5-001
@@ -149,7 +153,7 @@ All QA evidence is retained as follows:
 | CI test results (pytest) | GitHub Actions run logs | GitHub platform; 90-day default (configurable) |
 | Coverage reports (`coverage.xml`) | GitHub Actions artefacts | 30 days per run |
 | Docker image digests | GitHub Actions run logs + GHCR manifest | Indefinite (GHCR) |
-| Process audit records | GitHub PR review comments; this document | Indefinite (GitHub) |
+| Process audit records | GitHub PR review comments; completed PR-template ASPICE checklists (per-PR review record, §5.3); this document | Indefinite (GitHub) |
 | Change approval records | The owner's (Dermot Murphy's) merge of the implementing PR is the approval record: merged-by, merge commit and date in the PR history. For this solo-developer project no separate GitHub review approval or signature is recorded (CSC-DEV-002 §5.2) | Indefinite (GitHub) |
 | Work product review records | Reviewer/approver tables in each ASPICE document (authorised by the owner's merge of the introducing PR, not by signature; CSC-DEV-002 §5.2); per-release peer-review records `docs/aspice/CStyleCheck_Review_Record_v*.md` (CSC-REVIEW-nnn) | CM baseline (Git) |
 | Internal audit records | `docs/aspice/audits/` (CSC-AUD-nnn); sign-off by the owner's merge of the PR that adds the record (CSC-DEV-002 §5.2) | CM baseline (Git) |

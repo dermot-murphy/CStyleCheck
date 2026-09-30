@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN3-001 | **Version** | 1.20 |
+| **Document ID** | CSC-MAN3-001 | **Version** | 1.21 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.21 | 2026-09-30 | Claude | Merge-time process controls (#437): §4.1 scope lists 6 CI workflows (adds `aspice_consistency.yml`); §10.1 work-product consistency monitoring row; §10.2 corrective action for a consistency-check failure; referenced-document versions resynced |
 | 1.20 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.19 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-002: §8 release-classification decision — next release v2.0.0 (Major) replaces the planned v1.7.0, with the compatibility changes in scope listed. AUD10-F-016: §4.3 lifecycle text refreshed (package architecture, 12 modules; post-v1.6.0 development toward v2.0.0); PH-04 names the `src/cstylecheck/` package; WBS-16/WBS-17 overlap removed; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.18 | 2026-09-29 | Claude | #423: test total 1532→1545 (last enum member tests); referenced-document versions resynced (5) |
@@ -64,11 +65,11 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | System Requirements Specification | 2.15 |
-| CSC-SWE1-001 | Software Requirements Specification | 2.21 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.24 |
-| CSC-MAN5-001 | Risk Management Plan | 1.16 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.21 |
+| CSC-SYS2-001 | System Requirements Specification | 2.16 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.22 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
+| CSC-MAN5-001 | Risk Management Plan | 1.17 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.22 |
 
 ---
 
@@ -83,7 +84,7 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 - pre-commit hook integration (`.pre-commit-hooks.yml`)
 - pip/pipx packaging (`pyproject.toml`)
 - Full ASPICE CL2 documentation set (SYS.2–SYS.5, SWE.1–SWE.6, MAN.3, MAN.5, SUP.1, SUP.8–SUP.10, ACQ.4, PA 2.1, PA 2.2)
-- CI/CD automation via GitHub Actions (5 workflows: `cstylecheck_tests.yml`, `cstylecheck_rules.yml`, `docker_publish.yml`, `wiki_publish.yml`, `metrics.yml`) and Dependabot dependency updates (`target-branch: develop`)
+- CI/CD automation via GitHub Actions (6 workflows: `cstylecheck_tests.yml`, `cstylecheck_rules.yml`, `docker_publish.yml`, `wiki_publish.yml`, `metrics.yml`, `aspice_consistency.yml`) and Dependabot dependency updates (`target-branch: develop`)
 - Trend-analysis metrics for process monitoring (`scripts/collect_metrics.py` et al., see §10.3)
 
 ### 4.2 Out of Scope
@@ -221,6 +222,7 @@ Requirements  →  Architecture  →  Detailed Design  →  Implementation
 | WBS progress | Manual update to this document | Per milestone |
 | Risk status | Risk register (CSC-MAN5-001) | Monthly or on new risk identified |
 | Code-quality trends | Trend-analysis metrics (§10.3) | Per PR merge to `main` / `develop` |
+| Work-product consistency | `aspice_consistency.yml` — `python scripts/aspice_check.py` (CSC-SUP1-001 GATE-04, #437) | Every PR; push to `develop` / `main` |
 
 ### 10.2 Corrective Action Triggers
 
@@ -229,6 +231,7 @@ Requirements  →  Architecture  →  Detailed Design  →  Implementation
 | CI test failure on `develop` or `main` | Raise GitHub Issue; fix on `bugfix/` branch before next merge |
 | Coverage drop below target threshold | Raise Issue; add missing tests before next release |
 | Naming convention CI failure on own source | Raise Issue; fix in same commit; never merge failing source |
+| ASPICE consistency check failure on a PR | Fix the work products in the same PR (`python scripts/aspice_check.py --fix-citations` for citations) before merge |
 | Milestone slipped by >1 week | Update schedule; assess risk impact; update CSC-MAN5-001 |
 | New risk identified | Add to risk register (CSC-MAN5-001); assign treatment |
 

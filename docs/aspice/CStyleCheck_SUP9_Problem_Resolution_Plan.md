@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP9-001 | **Version** | 1.14 |
+| **Document ID** | CSC-SUP9-001 | **Version** | 1.15 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.15 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.1 problems raised with the bug issue form (`.github/ISSUE_TEMPLATE/bug.yml`), SEV-4 added to the severity field, SEV label applied at triage; §5.2 step 2 applies the SEV label; referenced-document versions resynced |
 | 1.14 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.13 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-011: new §6.2 post-v1.6.0 problem classification record (SEV label, dates, SLA outcome, fix PR for #408, #410, #412, #413, #422, #423, #424, #425); §5.1 workflow name `rules.yml` → `cstylecheck_rules.yml`; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -48,10 +49,10 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.20 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.24 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.15 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.21 |
+| CSC-MAN3-001 | Project Management Plan | 1.21 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.16 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.22 |
 
 ---
 
@@ -92,14 +93,14 @@ Problems may be identified by:
 - ASPICE assessment findings
 - Internal code review observations
 
-**All problems are recorded as GitHub Issues** with the `bug` label.
+**All problems are recorded as GitHub Issues** with the `bug` label, raised with the bug issue form `.github/ISSUE_TEMPLATE/bug.yml` (CSC-SUP8-001 CI-064, #437). The form applies the `[BUG] ` title prefix and the `bug` label and makes the fields below mandatory, except *Affected work products*, which the maintainer completes at triage when the reporter cannot. Issue forms cannot set a label from a dropdown, so the reporter's severity choice is recorded in the issue body and the maintainer applies the matching `SEV-n` label at triage (§5.2).
 
 Minimum required fields when raising an Issue:
 
 | Field | Required Content |
 |---|---|
 | **Title** | Short description: `[BUG] <what is wrong>` |
-| **Severity** | One of: `SEV-1 Critical`, `SEV-2 Major`, `SEV-3 Minor` (label applied) |
+| **Severity** | One of: `SEV-1 Critical`, `SEV-2 Major`, `SEV-3 Minor`, `SEV-4 Enhancement` (§4.1; chosen in the form, label applied at triage) |
 | **Affected version** | Version tag or commit SHA where problem was observed |
 | **Environment** | Python version, OS, invocation command |
 | **Steps to reproduce** | Minimal source file or command that triggers the problem |
@@ -110,7 +111,7 @@ Minimum required fields when raising an Issue:
 ### 5.2 Triage and Investigation
 
 1. Issue is assigned to Claude (sole maintainer for v1.0.0)
-2. Severity label is confirmed or revised
+2. Severity is confirmed or revised and the `SEV-n` label is applied
 3. Root cause is investigated:
    - For code defects: identify affected unit(s) from CSC-SWE3-001
    - For test defects: identify affected test case from CSC-SWE4-001
