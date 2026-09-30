@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP1-001 | **Version** | 1.20 |
-| **Project** | CStyleCheck | **Date** | 2026-09-29 |
+| **Document ID** | CSC-SUP1-001 | **Version** | 1.21 |
+| **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.1 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.21 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-013: GATE-02 names the `cstylecheck_rules.yml` workflow and its real scope (`src/**`, `source/**/*.[ch]`); WP-01 names the `src/cstylecheck/` package and `src/cstylecheck.py` wrapper. AUD10-F-014: §6 states that the owner's merge of the PR is the approval record (matches CSC-DEV-002 §5.2). AUD10-F-002: §5.4 gate record names the next release v2.0.0; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.19 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.18 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -54,11 +55,11 @@ QA activities for CStyleCheck verify that project processes are followed as plan
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.18 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.22 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.12 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.13 |
-| CSC-SWE4-001 | Unit Verification Specification | 1.34 |
+| CSC-MAN3-001 | Project Management Plan | 1.20 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.24 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.14 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.15 |
+| CSC-SWE4-001 | Unit Verification Specification | 1.36 |
 
 ---
 

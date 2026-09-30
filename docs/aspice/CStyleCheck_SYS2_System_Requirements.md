@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.14 |
-| **Project** | CStyleCheck | **Date** | 2026-09-29 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.15 |
+| **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.2 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 2.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-004: §6 RTM rebuilt by script from the CSC-SWE1-001 §4 parent columns — each row lists exactly the SWE1 requirements citing a SYS ID in that row (SWE1-001, 002, 006, 013, 014, 016, 075, 076 added to their parents' rows; SWE1-002/013/014/015/016/069 removed from SYS-F-001 to 010; SWE1-089 removed from SYS-F-011 to 026; SYS-NF-003 to 006 no longer cites SWE1-069); bidirectional-trace note restated. AUD10-F-022: SYS-F-020 marks all eight post-v1.6.0 rules opt-in (disabled by default; enabled by the `misra` / `barr-c` presets and `--init` since #420); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 2.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 2.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -73,9 +74,9 @@ The system is deployed in four integration modes:
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.22 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.16 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.19 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.24 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.18 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.21 |
 
 ### 3.4 Glossary
 

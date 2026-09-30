@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-STD-001 | **Version** | 1.14 |
-| **Project** | CStyleCheck | **Date** | 2026-09-29 |
+| **Document ID** | CSC-STD-001 | **Version** | 1.15 |
+| **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.1 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-022: §7.8 marks all eight post-v1.6.0 rules opt-in — new "Default state" column (disabled by default; enabled by the `misra` / `barr-c` presets and `--init` since #420; `misc.boolean_comparison` in no preset), severity column renamed "Severity when enabled", explanatory note added; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -53,9 +54,9 @@ The findings are presented in a unified coverage matrix and a prioritised list o
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.19 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.24 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.29 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.21 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.26 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.31 |
 
 ---
 
@@ -474,4 +475,4 @@ These rules are best handled by a dedicated formatting tool. CStyleCheck should 
 
 ---
 
-*End of Industry Standards Comparison Report — CSC-STD-001 v1.5*
+*End of Industry Standards Comparison Report — CSC-STD-001 v1.15*

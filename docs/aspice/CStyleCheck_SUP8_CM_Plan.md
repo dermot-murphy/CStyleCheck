@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.23 |
-| **Project** | CStyleCheck | **Date** | 2026-09-29 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.24 |
+| **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.8 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.23 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-015: §7.1–7.3 aligned with §7.6 (CI-only hotfixes merge to `main` untagged) and allow `claude/<topic>-<id>` branches for feature and bug-fix work into `develop`; §9 approval step matches CSC-DEV-002 §5.2 (owner's merge is the approval record). AUD10-F-029: `logo/cstylecheck.jpg` added to CI-026 and `docs/templates/ASPICE_CL2_Test_Case_Template_1.md` to CI-055 (CI count unchanged at 60). AUD10-F-032: §9 note — cross-reference resyncs batched into one revision per document per change set; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.22 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
 | 1.21 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -71,9 +72,9 @@ This plan applies to all configuration items produced by the CStyleCheck project
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.12 |
-| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.13 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.19 |
+| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.14 |
+| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.15 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.21 |
 
 ---
 

@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.30 |
-| **Project** | CStyleCheck | **Date** | 2026-09-29 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.31 |
+| **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.31 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.30 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-008: UNIT-05 step 2 corrected — a `None` or non-dict YAML result is returned unchanged (no exit; `validate_case_styles()` returns `[]` for a non-dict). AUD10-F-024: UNIT-98 step 4 corrected — an existing file with `overwrite=False` asks "Overwrite?" first and returns 1 only on "no". AUD10-F-026: §4 intro — `src/cstylecheck.py` is a thin entry-point wrapper, not removed; §4.1 heading level `###`. AUD10-F-027: §4 note naming `validate_case_styles()`, `deprecated_key_warnings()`, `normalize_case_style()` and `_enum_members()` as sub-units of UNIT-05, UNIT-43 and UNIT-27; referenced-document versions resynced (SWE2 1.24→1.25, SWE4 1.34→1.35); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.29 | 2026-09-29 | Claude | Issue #423: UNIT-27 algorithm — members extracted by `_enum_members()` (top-level comma split, leading identifier per item, preprocessor lines blanked), so the last member is checked with or without a trailing comma, initialiser or trailing comment, and initialiser identifiers are no longer taken as members; `RE_ENUM_MEMBER` redefined; §4 catalogue `checker.py` line numbers updated (UNIT-21 onwards); referenced-document versions resynced (3) |
 | 1.28 | 2026-09-29 | Claude | Issue #425: new UNIT-136 `config_error()` (message to stderr, exit 2) in §4 catalogue, §4.1 package structure and §5; UNIT-46 — `main()` wraps `_main()` and maps a string-message `SystemExit` to exit 2 so the console script and the wrapper behave the same; UNIT-01, UNIT-02, UNIT-05, UNIT-06, UNIT-07, UNIT-09, UNIT-35, UNIT-36, UNIT-50 to UNIT-52 error handling call `config_error()` (UNIT-01 corrected: a missing options file is an error, not an empty list); `baseline.py` now imports `utils`; §4 `utils.py` line numbers; §1 scope UNIT-01 to UNIT-136; §8 SWE1-001/002 and SWE1-068 to 070 rows cite UNIT-136; referenced-document versions resynced (3) |
@@ -61,9 +62,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.19 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.25 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.35 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.21 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.26 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.36 |
 
 ---
 
