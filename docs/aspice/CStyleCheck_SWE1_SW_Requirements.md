@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.21 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.22 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.22 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 2.21 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 2.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-005: §5 RTM parent column completed from the §4 parent columns (script-verified for every row) — SWE1-001 to 006 add SYS-F-039; SWE1-011 to 016 add SYS-F-020, F-027; SWE1-017 to 029 add SYS-F-011, F-012, F-024; SWE1-030 to 034 add SYS-F-012; SWE1-035 to 039 add SYS-F-024. AUD10-F-007: SWE1-095 copyright format aligned with the code, `(C) <year> <holder>`; RTM row cites UV-CLI-018. AUD10-F-025: RTM row SWE1-040 to 042 cites `test_case_style_config.py` (UV-CASE-005); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 2.19 | 2026-09-29 | Claude | Issue #423: SWE1-041 — every enumerator is checked by `enum.member_case` and `enum.member_prefix`, including the last one with or without a trailing comma, an initialiser or a trailing comment; initialiser identifiers are not members; referenced-document versions resynced (4) |
@@ -69,10 +70,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.15 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.18 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.26 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.24 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.16 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.19 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.27 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 

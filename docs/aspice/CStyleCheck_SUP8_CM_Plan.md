@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.24 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.25 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.25 | 2026-09-30 | Claude | Merge-time process controls (#437): §6.1 CI-061 (`scripts/aspice_check.py`), CI-062 (`aspice_consistency.yml`), CI-063 (PR template) and CI-064 (issue forms) added (64 CIs); §7.5 consistency workflow; §9 issue forms and PR template in the change-control steps, `python scripts/aspice_check.py --fix-citations` performs the cross-reference resync; referenced-document versions resynced |
 | 1.24 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.23 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-015: §7.1–7.3 aligned with §7.6 (CI-only hotfixes merge to `main` untagged) and allow `claude/<topic>-<id>` branches for feature and bug-fix work into `develop`; §9 approval step matches CSC-DEV-002 §5.2 (owner's merge is the approval record). AUD10-F-029: `logo/cstylecheck.jpg` added to CI-026 and `docs/templates/ASPICE_CL2_Test_Case_Template_1.md` to CI-055 (CI count unchanged at 60). AUD10-F-032: §9 note — cross-reference resyncs batched into one revision per document per change set; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.22 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -72,9 +73,9 @@ This plan applies to all configuration items produced by the CStyleCheck project
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.14 |
-| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.15 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.21 |
+| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.15 |
+| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.16 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.22 |
 
 ---
 
@@ -192,6 +193,10 @@ All items in the following table are placed under configuration control.
 | CI-058 | AI assistant standing instructions (see CSC-DEV-001) | `CLAUDE.md` | Documentation |
 | CI-059 | Example C sources (trend-metrics input, CI-038 to CI-043) and example project | `examples/**` | Example / test data |
 | CI-060 | Draft companion standards documents | `embedded_c_style_guide.md`, `embedded_c_coding_standard.md`, `external_standards_analysis.md` | Documentation (draft) |
+| CI-061 | ASPICE work-product consistency check script (citations, SYS2/SWE1 RTM, SWE4 counts, README rule IDs, SWE3 line references, CI coverage; `--fix-citations` performs the §9 resync) | `scripts/aspice_check.py` | CI script |
+| CI-062 | CI — ASPICE consistency workflow (CSC-SUP1-001 GATE-04) | `.github/workflows/aspice_consistency.yml` | CI/CD |
+| CI-063 | Pull request template (ASPICE checklist; per-PR review record, CSC-SUP1-001 §5.3) | `.github/pull_request_template.md` | Process template |
+| CI-064 | Issue forms: bug report (CSC-SUP9-001 §5.1), change request (CSC-SUP10-001 §5.1) and chooser configuration | `.github/ISSUE_TEMPLATE/*` | Process template |
 
 ### 6.2 Identification Scheme
 
@@ -254,6 +259,7 @@ main ──► hotfix/* ──► main ──► tag v1.0.1
 
 - All merges to `develop` and `main` require CI (`cstylecheck_tests.yml`) to pass
 - The `cstylecheck_rules.yml` workflow runs the linter against the project's own source on every commit touching C files, enforcing self-hosting of the tool's own rules
+- The `aspice_consistency.yml` workflow (CI-062) runs `python scripts/aspice_check.py` on every pull request and on pushes to `develop` and `main`, without a path filter, so no merge can leave a work product inconsistent with the code, the tests or another work product (#437)
 - Supporting branches are deleted after merge
 - Dependabot (CI-046) opens dependency-update pull requests against `develop` (`target-branch: develop`, #399/#403). Dependabot PRs follow the normal feature-PR rules and reach `main` only through a release
 
@@ -306,14 +312,16 @@ Every hotfix is back-merged into `develop` immediately. Hotfix branches may use 
 
 Changes to controlled configuration items shall follow the change control process defined in **CSC-SUP10-001 (Change Request Management Plan)**. In summary:
 
-1. A change request (CR) or problem resolution record is raised as a **GitHub Issue**, labelled appropriately (`bug`, `enhancement`, `change-request`)
+1. A change request (CR) or problem resolution record is raised as a **GitHub Issue** with the change request or bug issue form (CI-064), labelled appropriately (`bug`, `enhancement`, `change-request`)
 2. The Issue is linked in all related branch names and commit messages (e.g., `Closes #42`)
 3. The change is implemented on the appropriate Git Flow branch (`feature/*`, `bugfix/*`, `claude/<topic>-<id>` or `hotfix/*`) per §7
-4. A pull request is opened targeting `develop` (or `main` for hotfixes); CI must pass before merge. The owner's merge of the PR is the approval and authorisation of every work-product revision it introduces; no separate signature is required, and the merge commit is the approval record (solo-developer project; CSC-DEV-002 §5.2)
+4. A pull request is opened targeting `develop` (or `main` for hotfixes) using the pull request template (CI-063), whose completed ASPICE checklist is the per-PR review record (CSC-SUP1-001 §5.3); CI must pass before merge. The owner's merge of the PR is the approval and authorisation of every work-product revision it introduces; no separate signature is required, and the merge commit is the approval record (solo-developer project; CSC-DEV-002 §5.2)
 5. The merged commit SHA is recorded in the GitHub Issue closure comment
 6. If the change affects a release, a `release/*` branch is created and a new version tag applied per §8.2
 
 > **Revision-history practice (AUD10-F-032):** When a change set only resyncs cross-referenced document versions in a work product, the resync is recorded as one revision of that document per change set (one PR, or one release preparation), not as one revision per upstream change.
+>
+> **Resync tool (#437):** `python scripts/aspice_check.py --fix-citations` (CI-061) performs the resync: it rewrites every current-state document-version citation in `docs/aspice/CStyleCheck_*.md` to the version in the cited document's header (revision-history rows, review records, the review template, the analysis report and audit records are left unchanged). Run it after the version bumps of a change set, add the batched revision rows, and repeat until it reports no change. The same script runs without `--fix-citations` as CI gate GATE-04 (`aspice_consistency.yml`, CI-062) on every pull request, together with the other consistency checks, including that every tracked file is covered by a §6.1 CI.
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.
 

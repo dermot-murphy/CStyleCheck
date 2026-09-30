@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.26 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.27 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.27 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.26 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.25 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-009: COMP-02 adds case-style validation (`validate_case_styles()`) and deprecated-key warnings (`deprecated_key_warnings()`); COMP-12 adds `normalize_case_style()` and `config_error()` and corrects "Used by" (COMP-01, COMP-02, COMP-05, COMP-06, COMP-11); COMP-09 records that presets and `--init` enable the standard opt-in rules (#420) and write canonical case names (#422); §8.2 rows for unknown case-style value (exit 2) and `functions.case` (WARNING). AUD10-F-022: all 8 post-v1.6.0 COMP-05f rules marked opt-in (#418, #412); referenced-document versions resynced (SWE3 1.29→1.30); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.24 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -60,10 +61,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.21 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.18 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.31 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.24 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.22 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.19 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.32 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
 
 ---
 

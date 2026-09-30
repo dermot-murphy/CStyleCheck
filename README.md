@@ -146,6 +146,7 @@ Dockerfile/
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
     metrics.yml              # trend-analysis metrics, SVG charts and wiki page
+    aspice_consistency.yml   # ASPICE work-product consistency check on every PR
 requirements.txt             # pip dependencies
 ```
 
@@ -1147,6 +1148,11 @@ page and, on PRs, uploads a metrics comparison report.
 
 ### Wiki workflow (`wiki_publish.yml`)
 Publishes the GitHub Wiki from the README and the ASPICE documents.
+
+### ASPICE consistency workflow (`aspice_consistency.yml`)
+Runs `python scripts/aspice_check.py` on every PR and on pushes to `main`/`develop`:
+document-version citations, SYS2/SWE1 traceability, SWE4 test counts, README rule IDs,
+SWE3 line references and CM coverage of every tracked file (#437).
 
 Dependabot (`.github/dependabot.yml`) opens weekly update PRs for pip and GitHub
 Actions dependencies against `develop`.

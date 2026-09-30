@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.15 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.16 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.16 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.1 CRs raised with the CR issue form (`.github/ISSUE_TEMPLATE/change_request.yml`); §5.2 impact analysis recorded on the issue before the implementing PR is merged; §5.4 CI list names `cstylecheck_rules.yml` and `aspice_consistency.yml`; referenced-document versions resynced |
 | 1.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-001: §7 register rows and §7.1 records for CR-412, CR-420, CR-422, CR-424 and CR-425. AUD10-F-002: new §7.2 release-classification decision (next release v2.0.0, Major). AUD10-F-010: CR-418 impact superseded by CR-420; CR-413 and CR-418 set to Closed with PR and merge commit. AUD10-F-015: §5.4 branch table allows `claude/<topic>-<id>`; approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -49,9 +50,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.24 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.14 |
-| CSC-MAN3-001 | Project Management Plan | 1.20 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.15 |
+| CSC-MAN3-001 | Project Management Plan | 1.21 |
 
 ---
 
@@ -81,7 +82,7 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 ### 5.1 Raising a Change Request
 
-All change requests are raised as **GitHub Issues** with the `enhancement`, `improvement`, `documentation`, `config-change`, or `process-change` label.
+All change requests are raised as **GitHub Issues** with the `enhancement`, `improvement`, `documentation`, `config-change`, or `process-change` label. Change requests are raised with the CR issue form `.github/ISSUE_TEMPLATE/change_request.yml` (CSC-SUP8-001 CI-064, #437), which applies the `[CR] ` title prefix and the `enhancement` label and makes the description and rationale, impact level (§4.2), affected requirements / work products, backwards compatibility (No ⇒ Major release, §5.6) and target release mandatory; the maintainer adjusts the type label (§4.1) at evaluation.
 
 Minimum required fields when raising a CR Issue:
 
@@ -101,7 +102,7 @@ Minimum required fields when raising a CR Issue:
 2. Assess: technical feasibility, effort estimate, impact on existing requirements, impact on test suite, version number implications (patch/minor/major)
 3. Check for conflicts with open Issues or other planned changes
 4. Evaluate impact on ASPICE documents — identify which WPs need revision
-5. Record evaluation outcome in the Issue comment thread
+5. Record evaluation outcome in the Issue comment thread. The impact analysis is recorded on the issue before the implementing PR is merged; the PR template checklist (CSC-SUP1-001 §5.3) confirms that the CR is registered in §7 for configuration or behaviour changes
 
 ### 5.3 Change Approval
 
@@ -126,7 +127,7 @@ Accepted changes are implemented following the Git Flow process defined in CSC-S
 Commit messages must reference the Issue: `Implements #<issue-id>: <description>`
 
 All implementing PRs must:
-- Pass CI (`cstylecheck_tests.yml`, `rules.yml`)
+- Pass CI (`cstylecheck_tests.yml`, `cstylecheck_rules.yml`, `aspice_consistency.yml`)
 - Include or update affected ASPICE documents in the same branch or a linked follow-up Issue
 - Update traceability tables if requirements are added or modified
 

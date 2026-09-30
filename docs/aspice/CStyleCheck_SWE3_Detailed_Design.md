@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.31 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.32 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.32 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.31 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.30 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-008: UNIT-05 step 2 corrected — a `None` or non-dict YAML result is returned unchanged (no exit; `validate_case_styles()` returns `[]` for a non-dict). AUD10-F-024: UNIT-98 step 4 corrected — an existing file with `overwrite=False` asks "Overwrite?" first and returns 1 only on "no". AUD10-F-026: §4 intro — `src/cstylecheck.py` is a thin entry-point wrapper, not removed; §4.1 heading level `###`. AUD10-F-027: §4 note naming `validate_case_styles()`, `deprecated_key_warnings()`, `normalize_case_style()` and `_enum_members()` as sub-units of UNIT-05, UNIT-43 and UNIT-27; referenced-document versions resynced (SWE2 1.24→1.25, SWE4 1.34→1.35); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.29 | 2026-09-29 | Claude | Issue #423: UNIT-27 algorithm — members extracted by `_enum_members()` (top-level comma split, leading identifier per item, preprocessor lines blanked), so the last member is checked with or without a trailing comma, initialiser or trailing comment, and initialiser identifiers are no longer taken as members; `RE_ENUM_MEMBER` redefined; §4 catalogue `checker.py` line numbers updated (UNIT-21 onwards); referenced-document versions resynced (3) |
@@ -62,9 +63,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.21 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.26 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.36 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.22 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.27 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.37 |
 
 ---
 

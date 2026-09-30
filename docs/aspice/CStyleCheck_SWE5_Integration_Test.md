@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.27 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.28 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.28 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.27 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.26 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-007: SIT-024 step 2 expects the copyright line in the code's format `(C) <year> <holder>` (no word "Copyright"; SWE1-095, UV-CLI-018). AUD10-F-019: post-v1.6.0 test-count note extended through #422 (1508), #424 (1524), #425 (1532) and #423 (1545); approval-by-merge policy (CSC-DEV-002 §5.2) |
 | 1.25 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
@@ -63,11 +64,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.26 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.21 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.36 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.30 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.24 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.27 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.22 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.37 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.31 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.25 |
 
 ### 3.2 Test Environment
 

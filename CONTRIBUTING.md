@@ -6,8 +6,8 @@ Thank you for your interest in contributing to CStyleCheck.
 
 Use the [GitHub Issues](https://github.com/dermot-murphy/CStyleCheck/issues) tracker:
 
-- **Bug reports**: label `bug` — include a minimal reproducing C file, your `.cstylecheck.yml`, and the version (`cstylecheck --version`).
-- **Feature requests**: label `enhancement` — describe the Barr-C:2018 or MISRA-C rule being targeted and the expected behaviour.
+- **Bug reports**: use the *Bug report* form (label `bug`) — include a minimal reproducing C file, your `.cstylecheck.yml`, and the version (`cstylecheck --version`).
+- **Feature requests**: use the *Change request* form (label `enhancement`) — describe the Barr-C:2018 or MISRA-C rule being targeted and the expected behaviour.
 - **Documentation issues**: label `documentation`.
 
 ## Pull Requests
@@ -18,6 +18,24 @@ Use the [GitHub Issues](https://github.com/dermot-murphy/CStyleCheck/issues) tra
 3. Add or update unit tests in `tests/` covering the changed behaviour.
 4. Ensure CI passes: `pytest tests/ --tb=short`.
 5. Open the PR against `develop`; include a reference to the relevant GitHub Issue.
+
+### PR checklist and ASPICE consistency check
+
+Issues are raised with the **bug** or **change request** issue form, and every PR uses the
+pull request template. Complete its *ASPICE checklist* (tick each item or mark it N/A): the
+completed checklist together with the owner's merge is the review record for the PR
+(CSC-SUP1-001 §5.3, CSC-DEV-002 §5.2).
+
+Before pushing, run the consistency check that CI runs on every PR (`aspice_consistency.yml`):
+
+```bash
+python scripts/aspice_check.py                  # all checks; exit 1 on any FAIL
+python scripts/aspice_check.py --skip-tests     # skip the SWE4 test-count check
+python scripts/aspice_check.py --fix-citations  # resync stale document-version citations
+```
+
+After bumping a work-product version, run `--fix-citations` and add one batched revision
+row to each document it changed (CSC-SUP8-001 §9).
 
 ## Code Style
 
