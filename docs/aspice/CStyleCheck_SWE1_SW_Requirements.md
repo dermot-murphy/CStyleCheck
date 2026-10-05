@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.22 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.23 |
+| **Project** | CStyleCheck | **Date** | 2026-10-05 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.1 |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.23 | 2026-10-05 | Claude | Issue #439: SWE1-094 — the startup banner is written to the `--log` file only when `--output-format` is `text`; for `json`, `sarif` and `html` the log file holds only the machine-readable document (it is still written to `stderr` for every format). RTM row updated |
 | 2.22 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 2.21 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 2.20 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-005: §5 RTM parent column completed from the §4 parent columns (script-verified for every row) — SWE1-001 to 006 add SYS-F-039; SWE1-011 to 016 add SYS-F-020, F-027; SWE1-017 to 029 add SYS-F-011, F-012, F-024; SWE1-030 to 034 add SYS-F-012; SWE1-035 to 039 add SYS-F-024. AUD10-F-007: SWE1-095 copyright format aligned with the code, `(C) <year> <holder>`; RTM row cites UV-CLI-018. AUD10-F-025: RTM row SWE1-040 to 042 cites `test_case_style_config.py` (UV-CASE-005); approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -281,7 +282,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | SW-REQ-ID | Requirement | Priority | Verification | Parent |
 |---|---|---|---|---|
-| SWE1-094 | The `main()` entry point shall write a startup banner to `stderr` after the configuration is loaded and before file discovery and checking begin. The banner shall consist of exactly two lines: the tool name and version string (`_VERSION_STRING`, `CStyleCheck <version>`) followed by the copyright notice (`_COPYRIGHT`, `(C) 2026 Dermot Murphy`). It shall be written on every checking run, whether or not stdout or stderr is a terminal (including when output is piped or redirected) and for every `--output-format`; no option shall suppress it. The banner shall not be written to stdout; when `--log FILE` is given it shall also be written to the log file. The early-exit paths (`--version`, `--help`, `--init`, `--preset`, `--update-config`) do not write the banner | Mandatory | Test | SYS-F-046 |
+| SWE1-094 | The `main()` entry point shall write a startup banner to `stderr` after the configuration is loaded and before file discovery and checking begin. The banner shall consist of exactly two lines: the tool name and version string (`_VERSION_STRING`, `CStyleCheck <version>`) followed by the copyright notice (`_COPYRIGHT`, `(C) 2026 Dermot Murphy`). It shall be written on every checking run, whether or not stdout or stderr is a terminal (including when output is piped or redirected) and for every `--output-format`; no option shall suppress it. The banner shall not be written to stdout. When `--log FILE` is given and `--output-format` is `text`, it shall also be written to the log file; for `json`, `sarif` and `html` it shall not be written to the log file, so the log file holds only the machine-readable document. The early-exit paths (`--version`, `--help`, `--init`, `--preset`, `--update-config`) do not write the banner | Mandatory | Test | SYS-F-046 |
 | SWE1-095 | The `--version` flag output shall include both the version string and the copyright notice on separate lines; the copyright notice shall conform to the format `(C) <year> <holder>` (`_COPYRIGHT`, currently `(C) 2026 Dermot Murphy`; the word "Copyright" is not printed), the same line as the second startup-banner line (SWE1-094) | Mandatory | Test | SYS-F-032 |
 | SWE1-096 | The output formatter shall render file paths in violation messages using the OS-native path separator (`os.sep`) so that paths on Windows use backslash and paths on POSIX systems use forward-slash | Mandatory | Test | SYS-F-027 |
 | SWE1-097 | The `print_summary()` function shall print a "Files" section (listing per-file violation counts) **before** the "Results" section (listing per-rule counts); the summary header shall include the tool name, version, and a UTC timestamp; the horizontal separator line shall be dynamically sized to match the longest output line | Mandatory | Test | SYS-F-032 |
@@ -360,7 +361,7 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-091 | misc.constant_comparison — flag constant-to-constant == / != | SYS-F-020 | `Checker._check_constant_comparison()` | `test_constant_comparison.py` |
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | SYS-F-020 | `Checker._check_misc()` | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix: rename in signature, body, doxygen, header | SYS-F-020 | `fixer._fix_pointer_prefix()`, `fixer.fix_pointer_prefix_in_header()` | `test_pointer_prefix_fix.py` |
-| SWE1-094 | Two-line startup banner to stderr at tool entry (unconditional; also `--log`) | SYS-F-046 | `main()` in `cli.py` | `test_cli_requirements.py` (UV-CLI-017 to 019) — full |
+| SWE1-094 | Two-line startup banner to stderr at tool entry (unconditional; also `--log` for text output only) | SYS-F-046 | `main()` in `cli.py` | `test_cli_requirements.py` (UV-CLI-017 to 019) — full |
 | SWE1-095 | Copyright notice in `--version` output (`(C) <year> <holder>`) | SYS-F-032 | `main()`, `_build_parser()` | `test_cli.py`; `--version` copyright line format: `test_cli_requirements.py` (UV-CLI-018) |
 | SWE1-096 | OS-native path separator in violation output | SYS-F-027 | `discover_files()` `emit()` (`os.path.normpath`); `Violation.__str__()` renders verbatim | `test_cli_requirements.py` (UV-CLI-020 to 022) |
 | SWE1-097 | `print_summary()` restructure: Files before Results, header, dynamic separator | SYS-F-032 | `output.print_summary()` | `test_print_summary.py` |

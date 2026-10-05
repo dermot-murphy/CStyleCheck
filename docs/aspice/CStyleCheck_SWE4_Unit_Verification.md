@@ -1,4 +1,4 @@
-﻿# Software Unit Verification Specification
+﻿﻿﻿﻿﻿﻿﻿﻿# Software Unit Verification Specification
 
 *Automotive SPICE® PAM v4.0 | SWE.4 Software Unit Verification*
 
@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.37 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.38 |
 | **Project** | CStyleCheck | **Date** | 2026-09-30 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.38 | 2026-10-05 | Claude | Issue #439: UV-CLI-019 adds `test_structured_log_file_has_no_banner` — with `--output-format json`, `sarif` or `html` and `--log FILE`, the log file equals the stdout document and has no banner (JSON and SARIF parse with `json.loads`); §6 `test_cli_requirements.py` 21→22; total 1545→1546; coverage-gate text 1545→1546; §7 SWE1-094 row notes the text-only `--log` copy |
 | 1.37 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.36 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.35 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-007: UV-CLI-018 `test_copyright_line_format` also asserts the `--version` output (version line, then `(C) <year> <holder>` on its own line); UV-CLI-018 traces to SWE1-095 as well; §7 SWE1-095 row cites UV-CLI-018 for the copyright text (test total unchanged, 1545). AUD10-F-027: §6 `test_case_style_config.py`, `test_functions_case_removed.py` and `test_enums.py` rows name `validate_case_styles`, `deprecated_key_warnings`, `normalize_case_style` and `_enum_members` as sub-units of UNIT-05, UNIT-43 and UNIT-27 (SWE3 §4); referenced-document versions resynced (SWE3 1.29→1.30); approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -72,7 +73,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.22 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.23 |
 | CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.32 |
 | CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.28 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
@@ -102,7 +103,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1545 tests (2026-09-29 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425 and #423) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1546 tests (2026-10-05 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425 and #423) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -438,7 +439,7 @@ Added for issue #407 (closes RR-003-001 in CSC-REVIEW-003 and the remaining part
 | UV-CLI-016 | `test_unreadable_file_not_retried_or_ingested`, `test_counter_detects_a_second_read` | SWE1-015 | UNIT-46 | Negative: a missing file is attempted once, reported as `ERROR: Cannot read` and not passed to `SignChecker`; the read counter detects a second read (guards against a vacuous pass) |
 | UV-CLI-017 | `TestStartupBanner.test_banner_on_stderr_not_stdout`, `test_banner_emitted_when_stdout_piped`, `test_banner_written_to_log_file` | SWE1-094 | UNIT-46 | Subprocess run: version string and copyright on `stderr`, neither on `stdout`, which still carries the violation report; with stdout piped (not a TTY) the first two `stderr` lines are still the banner; with `--log` the log file starts with the same two lines |
 | UV-CLI-018 | `test_banner_content`, `test_banner_precedes_processing`, `test_banner_is_exactly_two_lines`, `test_copyright_line_format` | SWE1-094, SWE1-095 | UNIT-46 | `stderr` starts with `CStyleCheck <version>`; on a clean run `stderr` is exactly `CStyleCheck <version>\n(C) 2026 Dermot Murphy\n`; line 2 matches `^\(C\) \d{4} Dermot Murphy$`; with `--verbose` the banner precedes `Found N file(s)` and `Scanning:`; `--version` exits 0 and stdout is exactly `CStyleCheck <version>` then `(C) <year> <holder>` (`(C) 2026 Dermot Murphy`) on its own line (SWE1-095) |
-| UV-CLI-019 | `test_json_stdout_not_polluted_by_banner`, `test_no_quiet_option`, `test_version_flag_writes_no_stderr_banner` | SWE1-094 | UNIT-46 | Negative: `--output-format json` stdout parses as JSON (no banner); `--quiet` is rejected (exit 2), so no option suppresses the banner; `--version` writes to stdout and nothing to stderr |
+| UV-CLI-019 | `test_json_stdout_not_polluted_by_banner`, `test_structured_log_file_has_no_banner`, `test_no_quiet_option`, `test_version_flag_writes_no_stderr_banner` | SWE1-094 | UNIT-46 | Negative: `--output-format json` stdout parses as JSON (no banner); with `json` / `sarif` / `html` and `--log`, the log file is the stdout document with no banner (#439); `--quiet` is rejected (exit 2), so no option suppresses the banner; `--version` writes to stdout and nothing to stderr |
 | UV-CLI-020 | `TestOsPathSeparator.test_windows_backslash_separator`, `test_windows_mixed_separators_normalised` | SWE1-096 | UNIT-03, UNIT-41, UNIT-42 | With `ntpath`: `src/drv/./uart.c` and `src/drv\uart.c` → `src\drv\uart.c`; `Violation.__str__()` and `github_annotation()` use `\` only |
 | UV-CLI-021 | `test_posix_forward_slash_separator` | SWE1-096 | UNIT-03, UNIT-41, UNIT-42 | With `posixpath`: `src//drv/./uart.c` → `src/drv/uart.c`; no `\` in the output |
 | UV-CLI-022 | `test_emitted_paths_use_host_os_sep`, `test_violation_str_does_not_rewrite_path` | SWE1-096 | UNIT-03, UNIT-41, UNIT-46 | End-to-end on the host OS: reported paths equal `os.path.join(...)` of the file; negative: `Violation.__str__()` renders an already-normalised path verbatim |
@@ -552,8 +553,8 @@ Added for issue #425. Config and usage errors called `sys.exit("message")`, whic
 | `test_unsigned_suffix_signed_params.py` | 15 | 15 | 0 | COMP-05f (`_check_misc` signed-param exemption) |
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
-| `test_cli_requirements.py` | 21 | 21 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
-| **Total** | **1545** | **1545** | **0** | All 81 rule IDs covered — 58 modules |
+| `test_cli_requirements.py` | 22 | 22 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
+| **Total** | **1546** | **1546** | **0** | All 81 rule IDs covered — 58 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -623,7 +624,7 @@ Added for issue #425. Config and usage errors called `sys.exit("message")`, whic
 | SWE1-091 | misc.constant_comparison (`_check_constant_comparison`) | `test_constant_comparison.py` |
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix | `test_pointer_prefix_fix.py` |
-| SWE1-094 | Startup banner to stderr (two lines, unconditional) | `test_cli_requirements.py` — UV-CLI-017 to UV-CLI-019 (#407, extended by #413); also SIT-024. Full: stream, two-line content and copyright format, ordering, piped stdout, `--log` copy, no suppression option |
+| SWE1-094 | Startup banner to stderr (two lines, unconditional) | `test_cli_requirements.py` — UV-CLI-017 to UV-CLI-019 (#407, extended by #413); also SIT-024. Full: stream, two-line content and copyright format, ordering, piped stdout, `--log` copy (text output only; none for json/sarif/html, #439), no suppression option |
 | SWE1-095 | Copyright in `--version` | `test_cli_requirements.py` — UV-CLI-018 (`test_copyright_line_format`: `--version` prints the version line then `(C) <year> <holder>` on its own line); `test_cli.py` — `TestVersionAndHelp` (tool name and exit code); also SIT-024 |
 | SWE1-096 | OS-native path separator in output | `test_cli_requirements.py` — UV-CLI-020 to UV-CLI-022 (#407); both `\` (Windows) and `/` (POSIX) behaviour asserted. The separator is applied once by `discover_files()` (`os.path.normpath`, UNIT-03); `Violation.__str__()` renders the path verbatim |
 | SWE1-097 | `print_summary()` restructure | `test_print_summary.py` |
