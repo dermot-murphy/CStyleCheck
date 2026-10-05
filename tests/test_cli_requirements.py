@@ -6,10 +6,10 @@ Covers:
             the cached text is shared by Checker and SignChecker
             (UV-CLI-014 to UV-CLI-016).
   SWE1-094  main() writes the two-line startup banner ("<tool> <version>",
-            then the copyright line) to stderr (and the --log file), never
-            to stdout, before processing begins; it is emitted even when
-            stdout is piped and cannot be suppressed (UV-CLI-017 to
-            UV-CLI-019).
+            then the copyright line) to stderr (and, for text output only,
+            the --log file), never to stdout, before processing begins; it
+            is emitted even when stdout is piped and cannot be suppressed
+            (UV-CLI-017 to UV-CLI-019).
   SWE1-096  violation paths use the OS-native separator (os.sep) in
             Violation.__str__() and the other emitted output
             (UV-CLI-020 to UV-CLI-022).
@@ -283,6 +283,30 @@ class TestStartupBanner(unittest.TestCase):
                          [_VERSION_STRING, _COPYRIGHT])
         self.assertTrue(err.startswith(f"{_VERSION_STRING}\n{_COPYRIGHT}\n"))
         self.assertNotIn(_VERSION_STRING, out)
+
+    # UV-CLI-019 (negative: machine-readable --log file holds no banner, #439)
+    def test_structured_log_file_has_no_banner(self):
+        for fmt in ("json", "sarif", "html"):
+            with self.subTest(fmt=fmt), \
+                    tempfile.TemporaryDirectory() as td:
+                src = _write(td, "main.c", "\tvoid f(void){}\n")
+                log = Path(td) / f"results.{fmt}"
+                _, out, err = _run_main("--config", _YAML,
+                                        "--output-format", fmt,
+                                        "--log", str(log), str(src))
+                log_text = log.read_text(encoding="utf-8")
+                # the log is exactly the document written to stdout
+                self.assertEqual(log_text.strip(), out.strip())
+                self.assertFalse(log_text.startswith(_VERSION_STRING),
+                                 log_text[:80])
+                if fmt == "html":
+                    self.assertTrue(log_text.startswith("<!DOCTYPE html>"),
+                                    log_text[:80])
+                else:
+                    json.loads(log_text)  # raises if anything precedes it
+                # the banner still goes to stderr
+                self.assertTrue(
+                    err.startswith(f"{_VERSION_STRING}\n{_COPYRIGHT}\n"))
 
     # UV-CLI-018 (exactly two banner lines, nothing else on stderr)
     def test_banner_is_exactly_two_lines(self):

@@ -61,10 +61,10 @@ This document satisfies the release-identification and configuration-status-acco
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.22 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.27 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.32 |
-| CSC-SWE4-001 | CStyleCheck Software Unit Verification Specification | 1.37 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.23 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.28 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.33 |
+| CSC-SWE4-001 | CStyleCheck Software Unit Verification Specification | 1.38 |
 | CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.28 |
 | CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.31 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
@@ -218,13 +218,13 @@ Platforms: `linux/amd64`, `linux/arm64`.
 | Document ID | Title | Version |
 |---|---|---|
 | CSC-SVD-001 | Software Version Description (this document) | 1.26 |
-| CSC-SWE1-001 | Software Requirements Specification | 2.22 |
-| CSC-SWE2-001 | Software Architecture Design | 1.27 |
-| CSC-SWE3-001 | Software Detailed Design | 1.32 |
-| CSC-SWE4-001 | Software Unit Verification Specification | 1.37 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.23 |
+| CSC-SWE2-001 | Software Architecture Design | 1.28 |
+| CSC-SWE3-001 | Software Detailed Design | 1.33 |
+| CSC-SWE4-001 | Software Unit Verification Specification | 1.38 |
 | CSC-SWE5-001 | Software Integration Test Specification | 1.28 |
 | CSC-SWE6-001 | Software Qualification Test Specification | 1.31 |
-| CSC-SYS2-001 | System Requirements Specification | 2.16 |
+| CSC-SYS2-001 | System Requirements Specification | 2.17 |
 | CSC-SYS3-001 | System Architecture Design | 1.19 |
 | CSC-SYS4-001 | System Integration Test Specification | 1.25 |
 | CSC-SYS5-001 | System Verification Specification | 1.22 |
@@ -398,14 +398,14 @@ The `src/cstylecheck.py` entry point shim is unchanged. The 72 rule IDs present 
 
 | Work Product | Document | Version | Status |
 |---|---|---|---|
-| System Requirements | CSC-SYS2-001 | 2.16 | Released |
+| System Requirements | CSC-SYS2-001 | 2.17 | Released |
 | System Architecture | CSC-SYS3-001 | 1.19 | Released |
 | System Integration Tests | CSC-SYS4-001 | 1.25 | Released |
 | System Verification | CSC-SYS5-001 | 1.22 | Released |
-| Software Requirements | CSC-SWE1-001 | 2.22 | Released |
-| Software Architecture | CSC-SWE2-001 | 1.27 | Released |
-| Detailed Design | CSC-SWE3-001 | 1.32 | Released |
-| Unit Verification | CSC-SWE4-001 | 1.37 | Released |
+| Software Requirements | CSC-SWE1-001 | 2.23 | Released |
+| Software Architecture | CSC-SWE2-001 | 1.28 | Released |
+| Detailed Design | CSC-SWE3-001 | 1.33 | Released |
+| Unit Verification | CSC-SWE4-001 | 1.38 | Released |
 | Integration Tests | CSC-SWE5-001 | 1.28 | Released |
 | Qualification Tests | CSC-SWE6-001 | 1.31 | Released |
 | Source Code | `src/cstylecheck/` (package) | 1.6.0 | Released |

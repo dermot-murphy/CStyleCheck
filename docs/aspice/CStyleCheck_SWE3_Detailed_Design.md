@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.32 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.33 |
+| **Project** | CStyleCheck | **Date** | 2026-10-05 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.33 | 2026-10-05 | Claude | Issue #439: UNIT-46 step 3 — the startup banner goes to the log via `Tee.log_print()` only when `--output-format` is `text`, so a json / sarif / html `--log` file holds only the report document; §8 SWE1-094 row updated |
 | 1.32 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.31 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.30 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-008: UNIT-05 step 2 corrected — a `None` or non-dict YAML result is returned unchanged (no exit; `validate_case_styles()` returns `[]` for a non-dict). AUD10-F-024: UNIT-98 step 4 corrected — an existing file with `overwrite=False` asks "Overwrite?" first and returns 1 only on "no". AUD10-F-026: §4 intro — `src/cstylecheck.py` is a thin entry-point wrapper, not removed; §4.1 heading level `###`. AUD10-F-027: §4 note naming `validate_case_styles()`, `deprecated_key_warnings()`, `normalize_case_style()` and `_enum_members()` as sub-units of UNIT-05, UNIT-43 and UNIT-27; referenced-document versions resynced (SWE2 1.24→1.25, SWE4 1.34→1.35); approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -63,9 +64,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.22 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.27 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.37 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.23 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.28 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.38 |
 
 ---
 
@@ -1540,7 +1541,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 **Algorithm:** `main()` is the console-script target (`cstylecheck = "cstylecheck:main"`) and is also called by the `src/cstylecheck.py` wrapper; it runs the steps below in `_main()`. A `SystemExit` whose code is a string (a `sys.exit("message")`, which Python maps to exit code 1) is caught, the message printed to stderr and re-raised as `SystemExit(2)`; integer exit codes and normal returns pass through unchanged. Both entry points therefore give the same exit code (#425).
 1. Fast path for `--version` / `--help`; expand `--options-file` (UNIT-02) and parse arguments
 2. Handle `--update-config` (UNIT-94), `--preset` and `--init` (UNIT-98/99), then exit
-3. Load the configuration, dictionaries, defines, banned names, copyright template, aliases and exclusions; open `--log`; write the two-line startup banner (`_VERSION_STRING`, then `_COPYRIGHT`) to stderr and to the log via `Tee.log_print()`, never to stdout; the write is unconditional (no TTY check, no suppression option) (SWE1-094)
+3. Load the configuration, dictionaries, defines, banned names, copyright template, aliases and exclusions; open `--log`; write the two-line startup banner (`_VERSION_STRING`, then `_COPYRIGHT`) to stderr, and to the log via `Tee.log_print()` only when `output_format` is `text` (a json / sarif / html log holds only the report document, #439), never to stdout; the write is unconditional (no TTY check, no suppression option) (SWE1-094)
 4. Discover files (UNIT-03); for each file, resolve the per-directory config (UNIT-100), run `Checker.run_all()` (UNIT-22) and emit violations (with verbose progress when requested)
 5. Run the cross-file checks (`SignChecker`, `DeclaredNotDefinedChecker`); apply `--fix` / `--dry-run` (UNIT-96). Without `--dry-run`, the `variable.pointer_prefix` header rename (UNIT-118) re-reads each companion `.h` file from disk, because it may already have been rewritten in this fix pass — the documented exception to SWE1-015
 6. `--write-baseline`: write (UNIT-36) and return 0. `--baseline-file`: filter with UNIT-35 and UNIT-119
@@ -1827,7 +1828,7 @@ Written by `write_baseline()` (UNIT-36) and read by `load_baseline()` (UNIT-35).
 | SWE1-091 | `misc.constant_comparison` | UNIT-116 |
 | SWE1-092 | `misc.unsigned_suffix` signed-param exemption | UNIT-30 (extended) |
 | SWE1-093 | `variable.pointer_prefix` auto-fix | UNIT-117, UNIT-118 |
-| SWE1-094 | Two-line startup banner to stderr (and `--log`), unconditional | UNIT-46 (extended) |
+| SWE1-094 | Two-line startup banner to stderr (and `--log` for text output), unconditional | UNIT-46 (extended) |
 | SWE1-095 | Copyright in `--version` output | UNIT-88 (extended) |
 | SWE1-096 | OS-native path separator | UNIT-03 (`os.path.normpath` in `discover_files`), UNIT-41 (extended) |
 | SWE1-097 | `print_summary()` restructure | UNIT-40 (extended) |

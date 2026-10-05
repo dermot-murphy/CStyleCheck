@@ -65,8 +65,8 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | System Requirements Specification | 2.16 |
-| CSC-SWE1-001 | Software Requirements Specification | 2.22 |
+| CSC-SYS2-001 | System Requirements Specification | 2.17 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.23 |
 | CSC-SUP8-001 | Configuration Management Plan | 1.25 |
 | CSC-MAN5-001 | Risk Management Plan | 1.17 |
 | CSC-SUP1-001 | Quality Assurance Plan | 1.22 |

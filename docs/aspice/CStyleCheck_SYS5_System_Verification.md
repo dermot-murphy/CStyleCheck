@@ -58,7 +58,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.16 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.17 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.19 |
 | CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.25 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
