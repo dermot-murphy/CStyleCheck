@@ -13,7 +13,7 @@ from collections import Counter
 from pathlib import Path
 
 from .models import Violation
-from .utils import config_error
+from .utils import config_error, ensure_parent_dir
 
 
 # ---------------------------------------------------------------------------
@@ -100,6 +100,7 @@ def write_baseline(violations: list, path: str) -> None:
         ]
     }
     try:
+        ensure_parent_dir(path)
         Path(path).write_text(json.dumps(data, indent=2), encoding="utf-8")
     except OSError as e:
         config_error(f"Cannot write baseline file '{path}': {e}")

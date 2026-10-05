@@ -141,7 +141,7 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1545 tests)
+    cstylecheck_tests.yml      # runs the test suite on every commit (1556 tests)
     cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
@@ -203,18 +203,18 @@ pytest tests/ --cov=src --cov-report=term-missing
 | `--exclude GLOB` | Path/directory to exclude (repeatable) |
 | `--output-format FORMAT` | Output format: `text` (default), `json`, `sarif`, or `html` |
 | `--baseline-file FILE` | Suppress violations present in a saved baseline |
-| `--write-baseline FILE` | Write all current violations to FILE as a baseline, exit 0 |
+| `--write-baseline FILE` | Write all current violations to FILE as a baseline, exit 0 (missing folders in the path are created) |
 | `--github-actions` | Emit `::error`/`::warning` GitHub Actions annotations |
 | `--warnings-as-errors` | Promote all warnings and info to errors |
 | `--summary` | Print violation summary table (text mode only) |
-| `--log FILE` | Write output to file as well as stdout |
+| `--log FILE` | Write output to file as well as stdout (missing folders in the path are created) |
 | `--verbose` | Print the file being scanned — prevents apparent hangs on large filesets |
 | `--fix` | Auto-fix safe mechanical violations in-place |
 | `--dry-run` | With `--fix`: show a unified diff without writing to disk |
 | `--safe-only` | With `--fix`: apply only zero-risk fixes (currently all fixes qualify) |
 | `--init` | Launch the interactive config wizard; writes `.cstylecheck.yml` |
 | `--preset PRESET` | Write a pre-built config without the wizard (`barr-c`, `minimal`, or `misra`) |
-| `--init-output FILE` | Output path for `--init` / `--preset` (default: `.cstylecheck.yml`) |
+| `--init-output FILE` | Output path for `--init` / `--preset` (default: `.cstylecheck.yml`; missing folders in the path are created) |
 | `--overwrite` | Overwrite an existing config file when using `--init` or `--preset` |
 | `--per-dir-config` | Walk upward from each source file looking for `.cstylecheck.yml` overrides |
 | `--exit-zero` | Always exit 0 (useful for warning-only CI steps) |
@@ -473,7 +473,7 @@ their shipped default severities:
 
 | Flag | Description |
 |---|---|
-| `--init-output FILE` | Write the config to `FILE` instead of `.cstylecheck.yml` |
+| `--init-output FILE` | Write the config to `FILE` instead of `.cstylecheck.yml` (missing folders in the path are created) |
 | `--overwrite` | Overwrite an existing config file; without this flag the command aborts if the file already exists |
 
 ---
@@ -583,8 +583,8 @@ Matching rules:
 separator) add 17 more, #413 (startup-banner requirements aligned with the code) adds 5,
 #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8, and #418 (the other 7 new
 rules opt-in) adds 11, #420 (preset opt-in rules) adds 18, #422 (case-style names) adds 27, #424
-(`functions.case` removed) adds 16, #425 (config-error exit code 2) adds 8, and #423 (last enum member
-checked) adds 13: **1545 tests** in total.
+(`functions.case` removed) adds 16, #425 (config-error exit code 2) adds 8, #423 (last enum member
+checked) adds 13, and #441 (missing output folders created) adds 11: **1556 tests** in total.
 
 ### New in v1.2.0 (2026-05-29)
 
