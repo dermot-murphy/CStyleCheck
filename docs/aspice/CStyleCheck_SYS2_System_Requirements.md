@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.16 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.17 |
+| **Project** | CStyleCheck | **Date** | 2026-10-05 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.2 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.17 | 2026-10-05 | Claude | Issue #439: SYS-F-046 design reference — banner written to the `--log` file for text output only |
 | 2.16 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 2.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 2.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-004: §6 RTM rebuilt by script from the CSC-SWE1-001 §4 parent columns — each row lists exactly the SWE1 requirements citing a SYS ID in that row (SWE1-001, 002, 006, 013, 014, 016, 075, 076 added to their parents' rows; SWE1-002/013/014/015/016/069 removed from SYS-F-001 to 010; SWE1-089 removed from SYS-F-011 to 026; SYS-NF-003 to 006 no longer cites SWE1-069); bidirectional-trace note restated. AUD10-F-022: SYS-F-020 marks all eight post-v1.6.0 rules opt-in (disabled by default; enabled by the `misra` / `barr-c` presets and `--init` since #420); approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -77,7 +78,7 @@ The system is deployed in four integration modes:
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.19 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.23 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.24 |
 
 ### 3.4 Glossary
 
@@ -241,7 +242,7 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-043 | Config wizard and presets | STK-002 | `wizard.py` Wizard module | SWE1-075 |
 | SYS-F-044 | Per-directory config | STK-002 | `config.resolve_per_dir_config()` | SWE1-076 |
 | SYS-F-045 | HTML report output | STK-007 | `output._violations_to_html()` | SWE1-077 |
-| SYS-F-046 | Startup banner (two lines on stderr, unconditional) | STK-001 | `cli.py` `main()` — banner written to stderr (and `--log`), never stdout | SWE1-094 |
+| SYS-F-046 | Startup banner (two lines on stderr, unconditional) | STK-001 | `cli.py` `main()` — banner written to stderr (and `--log` for text output only), never stdout | SWE1-094 |
 
 > **Bidirectional-trace note (AUD9-F-008, AUD10-F-004):** Each row lists exactly the SWE1 requirements whose CSC-SWE1-001 §4 parent column cites a SYS requirement in that row; a SWE1 requirement with several parents appears in each of its parents' rows (e.g. SWE1-001 under SYS-F-002, SYS-F-026 and SYS-NF-007). The matrix was rebuilt by script from the CSC-SWE1-001 v2.20 §4 parent columns. SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts) have no SYS parent; they derive from CSC-MAN3-001 §10.3 process monitoring. SYS-NF-003 to SYS-NF-006 are verified at system level (CI matrix, Docker build), and SYS-NF-010 to SYS-NF-012 are deferred or out of scope.
 

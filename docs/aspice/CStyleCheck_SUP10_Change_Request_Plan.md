@@ -184,7 +184,7 @@ Summary view:
 | #422 | `bug`, `config-change` | Normalise case-style aliases and reject unknown case-style names | High | Closed — PR #426, merge `e2555f0` | v2.0.0 |
 | #424 | `bug`, `config-change` | Remove unused `functions.case`; warn when a config still sets it | Medium | Closed — PR #427, merge `31acd91` | v2.0.0 |
 | #425 | `bug` | Config and usage errors exit 2 from the installed `cstylecheck` command | High | Closed — PR #428, merge `7ddf732` | v2.0.0 |
-| #441 | `enhancement` | [CR] Create the parent folder of output files (`--log`, `--write-baseline`, `--init-output`) if it does not exist | Medium | Open — PR pending | v2.0.0 |
+| #441 | `enhancement` | [CR] Create the parent folder of output files (`--log`, `--write-baseline`, `--init-output`) if it does not exist | Medium | Open — PR #442 | v2.0.0 |
 
 ### 7.1 Change Request Records
 
@@ -284,14 +284,14 @@ Summary view:
 
 | Field | CR-441 |
 |---|---|
-| **Issue / PR** | [#441](https://github.com/dermot-murphy/CStyleCheck/issues/441) / PR pending |
+| **Issue / PR** | [#441](https://github.com/dermot-murphy/CStyleCheck/issues/441) / PR #442 |
 | **Date** | 2026-10-05 |
 | **Raised by / implemented by** | Dermot Murphy / Claude |
 | **Type** | `enhancement` |
 | **Impact level** | Medium — changes three CIs' units (`cli.py` `main()`, `baseline.py` `write_baseline()`, `wizard.py` `run_wizard()` / `run_preset()`) plus a shared helper in `utils.py`, with a minor requirement change (SWE1-062, SWE1-065, SWE1-075). Not High: no requirement added or removed, and no backwards-compatibility break |
 | **Affected work products** | SWE1-062, SWE1-065, SWE1-075; CSC-SWE1-001, CSC-SWE3-001 (new UNIT-137, UNIT-138), CSC-SWE4-001 (§5.22, UV-OUT-001 to UV-OUT-004), README, CHANGELOG |
 | **Impact analysis** | `--log`, `--write-baseline` and `--init-output` now create missing parent folders of the output file, so callers no longer need `mkdir -p` first. A run that succeeds today behaves the same; only runs that failed with a missing-folder configuration error now succeed. A folder that cannot be created is still a configuration error (exit 2). `--init` / `--preset` with an unwritable output path now exit 2 with a message instead of a traceback (exit 1). No impact on SIT, SWQ or SYS-VTC procedures, which write into existing folders |
-| **Verification** | 11 tests in `tests/test_output_dirs.py`; test total 1545→1556 |
+| **Verification** | 11 tests in `tests/test_output_dirs.py`; test total 1546→1557 |
 | **Approval** | Approved by owner merge of the implementing PR |
 | **Status / target release** | Open / v2.0.0 |
 

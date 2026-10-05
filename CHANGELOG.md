@@ -94,7 +94,7 @@ linked entries under *Changed* and *Fixed* for details.
   error, exit 2. `--init` / `--preset` with an unwritable output path now exit 2 with a
   `Cannot write config file` message instead of a Python traceback. Backwards
   compatible. SWE1-062, SWE1-065, SWE1-075 updated; new module
-  `tests/test_output_dirs.py` (11 tests); total 1545→1556.
+  `tests/test_output_dirs.py` (11 tests); total 1546→1557.
 
 - **Presets enable the matching opt-in rules (#420)** — `--preset misra` now enables
   `misc.goto_usage` (MISRA C:2012 Rule 15.1), `misc.assignment_in_condition` (13.4),
@@ -170,6 +170,15 @@ linked entries under *Changed* and *Fixed* for details.
 
 ### Fixed
 
+- **Startup banner no longer written into a machine-readable `--log` file (#439)** — in
+  v1.6.0 the two-line startup banner was written to the `--log` file for every output
+  format, so with `--output-format json` or `sarif` the file did not parse. The GitHub
+  Action reads its results from that file, so it failed on every run with
+  `could not read results JSON`, whatever the checked code contained. The banner is now
+  written to the `--log` file only for `--output-format text`; for `json`, `sarif` and
+  `html` the log file holds only the report document. The banner is still written to
+  `stderr` for every format. SWE1-094 updated. 1 new test in
+  `tests/test_cli_requirements.py`; total 1545→1546.
 - **Last enum member is now checked (#423)** — `enum.member_case` and
   `enum.member_prefix` skipped the last member of a `typedef enum` when it had no
   trailing comma (e.g. `typedef enum { COLOUR_RED, badLast } colour_t;`), because the

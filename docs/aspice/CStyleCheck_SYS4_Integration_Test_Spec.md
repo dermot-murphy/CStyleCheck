@@ -71,7 +71,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.16 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.17 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.19 |
 | CSC-SYS5-001 | CStyleCheck System Verification Report | 1.22 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |

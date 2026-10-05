@@ -507,10 +507,13 @@ def _main() -> int:
 
     tee = Tee(log_fh)
     # Always announce version/copyright to stderr (visible in terminal but not
-    # in stdout output) and to the log file only (not stdout).
+    # in stdout output).  The log file gets it only for text output: for
+    # json / sarif / html the log holds just the machine-readable document,
+    # so consumers such as action.yml can parse it (#439).
     _banner = f"{_VERSION_STRING}\n{_COPYRIGHT}"
     print(_banner, file=sys.stderr)
-    tee.log_print(_banner)
+    if getattr(args, "output_format", "text") == "text":
+        tee.log_print(_banner)
     try:
         # Discover files lazily — emit progress immediately rather than
         # blocking until the entire glob tree is walked.
