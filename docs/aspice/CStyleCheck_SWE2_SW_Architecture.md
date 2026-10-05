@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.27 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.28 |
+| **Project** | CStyleCheck | **Date** | 2026-10-05 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.2 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.28 | 2026-10-05 | Claude | Issue #439: COMP-01 key behaviour — the startup banner is written to the `--log` file only for text output; a json / sarif / html log file holds only the report document |
 | 1.27 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.26 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.25 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-009: COMP-02 adds case-style validation (`validate_case_styles()`) and deprecated-key warnings (`deprecated_key_warnings()`); COMP-12 adds `normalize_case_style()` and `config_error()` and corrects "Used by" (COMP-01, COMP-02, COMP-05, COMP-06, COMP-11); COMP-09 records that presets and `--init` enable the standard opt-in rules (#420) and write canonical case names (#422); §8.2 rows for unknown case-style value (exit 2) and `functions.case` (WARNING). AUD10-F-022: all 8 post-v1.6.0 COMP-05f rules marked opt-in (#418, #412); referenced-document versions resynced (SWE3 1.29→1.30); approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -63,7 +64,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 |---|---|---|
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.23 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.19 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.32 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.33 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
 
 ---
@@ -136,7 +137,7 @@ scripts/   (outside the package — CI-only, not installed)
 | **Responsibility** | Parse command-line arguments; expand `--options-file` tokens before direct CLI args; resolve source file lists from globs; validate invocation |
 | **Inputs** | `sys.argv`; options file on disk |
 | **Outputs** | `argparse.Namespace` object; resolved `[filepath]` list |
-| **Key behaviour** | Options-file tokens are injected before direct argv tokens so direct args always take precedence; `main()` writes a two-line startup banner (`CStyleCheck <version>`, then the copyright line) to `stderr` and the `--log` file before processing; it is never written to stdout and cannot be suppressed (SWE1-094) |
+| **Key behaviour** | Options-file tokens are injected before direct argv tokens so direct args always take precedence; `main()` writes a two-line startup banner (`CStyleCheck <version>`, then the copyright line) to `stderr` before processing, and to the `--log` file for text output only (a json / sarif / html log file holds only the report document); it is never written to stdout and cannot be suppressed (SWE1-094) |
 
 ### COMP-02 — Configuration Loader
 

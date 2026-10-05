@@ -74,7 +74,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 | Document ID | Title | Version |
 |---|---|---|
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.23 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.32 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.33 |
 | CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.28 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
 

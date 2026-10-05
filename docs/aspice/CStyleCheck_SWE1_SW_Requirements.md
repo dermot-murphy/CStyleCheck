@@ -71,9 +71,9 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.16 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.17 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.19 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.27 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.28 |
 | CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
