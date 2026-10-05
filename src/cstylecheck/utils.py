@@ -35,6 +35,16 @@ def config_error(message: str) -> NoReturn:
     sys.exit(EXIT_CONFIG_ERROR)
 
 
+def ensure_parent_dir(path) -> None:
+    """Create the parent folder of output file *path*, and any missing
+    folders above it, if it does not exist (issue #441).
+
+    Raises ``OSError`` if a folder cannot be created; callers report it with
+    :func:`config_error`.
+    """
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+
+
 # ---------------------------------------------------------------------------
 # GitHub annotation category helper
 # ---------------------------------------------------------------------------

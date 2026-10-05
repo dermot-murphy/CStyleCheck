@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.33 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.34 |
 | **Project** | CStyleCheck | **Date** | 2026-10-05 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.34 | 2026-10-05 | Claude | Issue #441 (CR-441): new UNIT-137 `ensure_parent_dir()` (`utils.py`) and UNIT-138 `_write_config()` (`wizard.py`) in the §4 catalogue, §4.1 package structure and §5; UNIT-46 step 3 and UNIT-36 create missing parent folders of the `--log` / `--write-baseline` file; UNIT-98/UNIT-99 write through UNIT-138 (an unwritable path is now `config_error()`, exit 2, instead of a traceback); §1 scope UNIT-01 to UNIT-138; §4 `utils.py`, `wizard.py` and `cli.py` (UNIT-46) line numbers; §8 SWE1-062, SWE1-065 and SWE1-075 rows |
 | 1.33 | 2026-10-05 | Claude | Issue #439: UNIT-46 step 3 — the startup banner goes to the log via `Tee.log_print()` only when `--output-format` is `text`, so a json / sarif / html `--log` file holds only the report document; §8 SWE1-094 row updated |
 | 1.32 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.31 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
@@ -58,15 +59,15 @@
 
 ## 3. Purpose & Scope
 
-This document defines the detailed design of each software unit (UNIT-01 to UNIT-136) in **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**, providing the algorithmic specification, interface contracts, and data design required for unit construction and verification. It satisfies **Automotive SPICE® PAM v4.0, SWE.3 — Software Detailed Design and Unit Construction**.
+This document defines the detailed design of each software unit (UNIT-01 to UNIT-138) in **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**, providing the algorithmic specification, interface contracts, and data design required for unit construction and verification. It satisfies **Automotive SPICE® PAM v4.0, SWE.3 — Software Detailed Design and Unit Construction**.
 
 ### 3.1 Referenced Documents
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.23 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.24 |
 | CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.28 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.38 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.39 |
 
 ---
 
@@ -118,19 +119,19 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-40 | `print_summary` | `output.py:269` | COMP-07 | `output.py` |
 | UNIT-41 | `Violation.__str__` | `models.py:59` | COMP-07 | `models.py` |
 | UNIT-42 | `Violation.github_annotation` | `models.py:45` | COMP-07 | `models.py` |
-| UNIT-43 | `matches_case` | `utils.py:104` | COMP-05 (shared) | `utils.py` |
-| UNIT-44 | `matches_case_abbrev` | `utils.py:120` | COMP-05 (shared) | `utils.py` |
-| UNIT-45 | `module_name` | `utils.py:153` | COMP-05 (shared) | `utils.py` |
-| UNIT-46 | `main` | `cli.py:367` | Entry point | `cli.py` |
+| UNIT-43 | `matches_case` | `utils.py:114` | COMP-05 (shared) | `utils.py` |
+| UNIT-44 | `matches_case_abbrev` | `utils.py:130` | COMP-05 (shared) | `utils.py` |
+| UNIT-45 | `module_name` | `utils.py:163` | COMP-05 (shared) | `utils.py` |
+| UNIT-46 | `main` | `cli.py:371` | Entry point | `cli.py` |
 | UNIT-47 | `append_trend_record` (script) | `scripts/ci/append_trend_record.py` | CI script | (unchanged) |
 | UNIT-48 | `generate_trend` (script) | `scripts/ci/generate_trend.py` | CI script | (unchanged) |
 | UNIT-49 | `update_readme_badge` (script) | `scripts/ci/update_readme_badge.py` | CI script | (unchanged) |
 | UNIT-50 | `load_spell_words` | `config.py:426` | COMP-02 | `config.py` |
 | UNIT-51 | `load_banned_names_file` | `config.py:689` | COMP-02 | `config.py` |
 | UNIT-52 | `load_copyright_file` | `config.py:724` | COMP-02 | `config.py` |
-| UNIT-53 | `to_case` | `utils.py:143` | COMP-05 (shared) | `utils.py` |
-| UNIT-54 | `is_exempt` | `utils.py:157` | COMP-05 (shared) | `utils.py` |
-| UNIT-55 | `_cfg` | `utils.py:167` | COMP-05 (shared) | `utils.py` |
+| UNIT-53 | `to_case` | `utils.py:153` | COMP-05 (shared) | `utils.py` |
+| UNIT-54 | `is_exempt` | `utils.py:167` | COMP-05 (shared) | `utils.py` |
+| UNIT-55 | `_cfg` | `utils.py:177` | COMP-05 (shared) | `utils.py` |
 | UNIT-56 | `extract_comments` | `preprocessor.py:158` | COMP-04 | `preprocessor.py` |
 | UNIT-57 | `Checker._violation` | `checker.py:282` | COMP-05 | `checker.py` |
 | UNIT-58 | `Checker._v` | `checker.py:286` | COMP-05 | `checker.py` |
@@ -160,11 +161,11 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-82 | `SignChecker._build_typedef_map` | `sign_checker.py:192` | COMP-05g | `sign_checker.py` |
 | UNIT-83 | `SignChecker._build_signatures` | `sign_checker.py:231` | COMP-05g | `sign_checker.py` |
 | UNIT-84 | `DeclaredNotDefinedChecker` (class) | `sign_checker.py:319` | COMP-05g | `sign_checker.py` |
-| UNIT-85 | `_strip_module_prefix` | `utils.py:182` | COMP-05 (shared) | `utils.py` |
+| UNIT-85 | `_strip_module_prefix` | `utils.py:192` | COMP-05 (shared) | `utils.py` |
 | UNIT-86 | `Tee` | `output.py:18` | COMP-07 | `output.py` |
 | UNIT-87 | `parse_args` | `cli.py:190` | COMP-01 | `cli.py` |
 | UNIT-88 | `_build_parser` | `cli.py:195` | COMP-01 | `cli.py` |
-| UNIT-89 | `_github_annotation_category` | `utils.py:42` | COMP-07 | `utils.py` |
+| UNIT-89 | `_github_annotation_category` | `utils.py:52` | COMP-07 | `utils.py` |
 | UNIT-90 | `Checker._check_whitespace_ratio` | `checker.py:1923` | COMP-05f | `checker.py` |
 | UNIT-91 | `_find_default_rules` | `config.py:95` | COMP-02 | `config.py` |
 | UNIT-92 | `_deep_merge` | `config.py:116` | COMP-02 | `config.py` |
@@ -173,8 +174,8 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-95 | `parse_inline_suppressions` | `preprocessor.py:77` | COMP-04 | `preprocessor.py` |
 | UNIT-96 | `apply_fixes` | `fixer.py:337` | COMP-08 | `fixer.py` |
 | UNIT-97 | `unified_diff` | `fixer.py:386` | COMP-08 | `fixer.py` |
-| UNIT-98 | `run_wizard` | `wizard.py:205` | COMP-09 | `wizard.py` |
-| UNIT-99 | `run_preset` | `wizard.py:324` | COMP-09 | `wizard.py` |
+| UNIT-98 | `run_wizard` | `wizard.py:217` | COMP-09 | `wizard.py` |
+| UNIT-99 | `run_preset` | `wizard.py:336` | COMP-09 | `wizard.py` |
 | UNIT-100 | `resolve_per_dir_config` | `config.py:838` | COMP-10 | `config.py` |
 | UNIT-101 | `_violations_to_html` | `output.py:182` | COMP-07 | `output.py` |
 | UNIT-102 | `_check_function_length` | `checker.py:2999` | COMP-05f | `checker.py` |
@@ -212,6 +213,8 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-134 | `Checker._check_boolean_comparison` | `checker.py:2729` | COMP-05f | `checker.py` |
 | UNIT-135 | `Checker._check_empty_else` | `checker.py:2756` | COMP-05f | `checker.py` |
 | UNIT-136 | `config_error` | `utils.py:28` | COMP-05 (shared) | `utils.py` |
+| UNIT-137 | `ensure_parent_dir` | `utils.py:38` | COMP-05 (shared) | `utils.py` |
+| UNIT-138 | `_write_config` | `wizard.py:207` | COMP-09 | `wizard.py` |
 
 **Sub-units (helpers not catalogued separately).** The following helper functions are designed and verified as part of the unit named, not as units of their own:
 
@@ -240,7 +243,7 @@ src/cstylecheck/
                      matches_case, matches_case_abbrev, to_case,
                      module_name, is_exempt, _cfg,
                      _strip_module_prefix, _github_annotation_category,
-                     config_error, EXIT_CONFIG_ERROR
+                     config_error, EXIT_CONFIG_ERROR, ensure_parent_dir
   config.py        — _read_options_file, _expand_options_file,
                      _find_default_rules, _deep_merge, _collect_paths,
                      update_config, deprecated_key_warnings,
@@ -262,7 +265,7 @@ src/cstylecheck/
   output.py        — Tee, _violations_to_json, _violations_to_sarif,
                      _violations_to_html, print_summary
   fixer.py         — apply_fixes, unified_diff
-  wizard.py        — run_wizard, run_preset
+  wizard.py        — run_wizard, run_preset, _write_config
   cli.py           — discover_files, _path_matches_exclude, parse_args,
                      _build_parser, main
 ```
@@ -911,7 +914,7 @@ src/cstylecheck/
 1. Present a short series of prompts (project name, preferred naming style, which rule categories to enable) via `_ask` / `_ask_bool` / `_ask_choice`; an empty answer or `EOFError` returns the default. The naming-style prompt shows the labels of `WIZARD_CASE_CHOICES` in order (`lower_snake`, `camelCase`, `PascalCase`; prefix answers accepted) and stores the mapped canonical name (`lower_snake`, `camel`, `pascal`) in `variables.case` (#422); `functions` gets no `case` key (#424) — function-name casing is set by `functions.style`
 2. Ask last, with `_ask_bool` (default No), "Enable MISRA C:2012 rules (…)?" and "Enable Barr-C rules (…)?" (#420); asking them last keeps the order of the earlier questions unchanged
 3. Build a YAML-serialisable config dict based on user answers; `misc` always lists the 7 rules of `MISRA_OPT_IN_RULES` ∪ `BARR_C_OPT_IN_RULES` (MISRA order first, `misc.empty_else` once) with the shipped severity from `_OPT_IN_SEVERITY`, and `enabled: true` only when the matching question was answered yes (`misc.empty_else` when either was); `misc.boolean_comparison` is not listed
-4. Before any other prompt, if `output_path` (default `.cstylecheck.yml`) exists and `overwrite` is False, ask `'<path>' already exists. Overwrite?` with `_ask_bool` (default No); on "no" print `Aborted - existing config preserved.` and return 1, on "yes" continue. After the questions, write the config to `output_path`
+4. Before any other prompt, if `output_path` (default `.cstylecheck.yml`) exists and `overwrite` is False, ask `'<path>' already exists. Overwrite?` with `_ask_bool` (default No); on "no" print `Aborted - existing config preserved.` and return 1, on "yes" continue. After the questions, write the config to `output_path` through `_write_config()` (UNIT-138), which creates missing parent folders (#441)
 5. Return 0 on success
 
 ---
@@ -923,7 +926,7 @@ src/cstylecheck/
 **Algorithm:**
 1. Look up `preset_name` (`barr-c`, `minimal`, or `misra`) from the built-in `PRESETS` dict; an unknown name → emit the list of presets via `print_fn`; return 1
 2. If `output_path` exists and `overwrite` is false → emit error via `print_fn`; return 1
-3. Write YAML to `output_path` (default `.cstylecheck.yml`) with `yaml.dump(sort_keys=False)`, so keys keep the preset's insertion order and output is deterministic; return 0
+3. Write YAML to `output_path` (default `.cstylecheck.yml`) with `yaml.dump(sort_keys=False)`, so keys keep the preset's insertion order and output is deterministic, through `_write_config()` (UNIT-138), which creates missing parent folders (#441); return 0
 
 **`PRESETS` contents for the opt-in rules (#420):** `_opt_in()` builds ordered `misc` entries `{enabled: true, severity: <shipped default>}` from `MISRA_OPT_IN_RULES` (`goto_usage`, `assignment_in_condition`, `void_pointer`, `recursive_function`, `empty_else`) for `misra` and from `BARR_C_OPT_IN_RULES` (`multiple_statements_per_line`, `sizeof_type`, `empty_else`) for `barr-c`; `minimal` lists none of them and no preset lists `boolean_comparison`. The `barr-c` preset writes `typedefs.suffix` and `enums.type_suffix` in the nested `{enabled, suffix}` form read by UNIT-26/UNIT-27 (a bare string raised `AttributeError` in the checker).
 
@@ -1478,7 +1481,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Serialise the current violations as a baseline (SWE1-065, SWE1-101).
 
-**Algorithm:** Build `{"violations": [{"file": _normalise_path(v.filepath), "line": v.line, "rule": v.rule, "message": v.message}, …]}` and write it with `json.dumps(indent=2)` as UTF-8. On `OSError` call `config_error()` (UNIT-136, exit 2). The format is shown in §6.3.
+**Algorithm:** Build `{"violations": [{"file": _normalise_path(v.filepath), "line": v.line, "rule": v.rule, "message": v.message}, …]}`, create any missing parent folders of `path` with `ensure_parent_dir()` (UNIT-137, #441), and write it with `json.dumps(indent=2)` as UTF-8. On `OSError` (including a parent folder that cannot be created) call `config_error()` (UNIT-136, exit 2). The format is shown in §6.3.
 
 ---
 
@@ -1541,12 +1544,12 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 **Algorithm:** `main()` is the console-script target (`cstylecheck = "cstylecheck:main"`) and is also called by the `src/cstylecheck.py` wrapper; it runs the steps below in `_main()`. A `SystemExit` whose code is a string (a `sys.exit("message")`, which Python maps to exit code 1) is caught, the message printed to stderr and re-raised as `SystemExit(2)`; integer exit codes and normal returns pass through unchanged. Both entry points therefore give the same exit code (#425).
 1. Fast path for `--version` / `--help`; expand `--options-file` (UNIT-02) and parse arguments
 2. Handle `--update-config` (UNIT-94), `--preset` and `--init` (UNIT-98/99), then exit
-3. Load the configuration, dictionaries, defines, banned names, copyright template, aliases and exclusions; open `--log`; write the two-line startup banner (`_VERSION_STRING`, then `_COPYRIGHT`) to stderr, and to the log via `Tee.log_print()` only when `output_format` is `text` (a json / sarif / html log holds only the report document, #439), never to stdout; the write is unconditional (no TTY check, no suppression option) (SWE1-094)
+3. Load the configuration, dictionaries, defines, banned names, copyright template, aliases and exclusions; create any missing parent folders of the `--log` file (`ensure_parent_dir()`, UNIT-137, #441) and open it; write the two-line startup banner (`_VERSION_STRING`, then `_COPYRIGHT`) to stderr, and to the log via `Tee.log_print()` only when `output_format` is `text` (a json / sarif / html log holds only the report document, #439), never to stdout; the write is unconditional (no TTY check, no suppression option) (SWE1-094)
 4. Discover files (UNIT-03); for each file, resolve the per-directory config (UNIT-100), run `Checker.run_all()` (UNIT-22) and emit violations (with verbose progress when requested)
 5. Run the cross-file checks (`SignChecker`, `DeclaredNotDefinedChecker`); apply `--fix` / `--dry-run` (UNIT-96). Without `--dry-run`, the `variable.pointer_prefix` header rename (UNIT-118) re-reads each companion `.h` file from disk, because it may already have been rewritten in this fix pass — the documented exception to SWE1-015
 6. `--write-baseline`: write (UNIT-36) and return 0. `--baseline-file`: filter with UNIT-35 and UNIT-119
 7. Apply `--warnings-as-errors`; emit JSON, SARIF or HTML output; print the summary (UNIT-40)
-8. Return 1 if any error-severity violation remains, otherwise 0; configuration errors exit with 2 through `config_error()` (UNIT-136), e.g. an unopenable `--log` file (#425)
+8. Return 1 if any error-severity violation remains, otherwise 0; configuration errors exit with 2 through `config_error()` (UNIT-136), e.g. an unopenable `--log` file or one whose parent folder cannot be created (#425, #441)
 
 ---
 
@@ -1686,8 +1689,26 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Algorithm:** Print *message* unchanged to `stderr`, then call `sys.exit(EXIT_CONFIG_ERROR)` (`EXIT_CONFIG_ERROR = 2`).
 
-**Callers:** every config/usage error path — UNIT-01, UNIT-02, UNIT-05, UNIT-06, UNIT-07, UNIT-09, UNIT-35, UNIT-36, UNIT-50, UNIT-51, UNIT-52, the other supplementary-file loaders in `config.py`, the PyYAML import check, and the `--log` open in UNIT-46. It replaces `sys.exit("message")`, which exits with code 1 and so could not be told apart from a run that found violations when the installed console script called `main()` directly.
+**Callers:** every config/usage error path — UNIT-01, UNIT-02, UNIT-05, UNIT-06, UNIT-07, UNIT-09, UNIT-35, UNIT-36, UNIT-50, UNIT-51, UNIT-52, the other supplementary-file loaders in `config.py`, the PyYAML import check, the `--log` open in UNIT-46, and UNIT-138. It replaces `sys.exit("message")`, which exits with code 1 and so could not be told apart from a run that found violations when the installed console script called `main()` directly.
 
+
+---
+
+### UNIT-137 — `ensure_parent_dir(path) → None`
+
+**Purpose:** Create the parent folder of an output file before it is written (SWE1-062, SWE1-065, SWE1-075, #441).
+
+**Algorithm:** `Path(path).parent.mkdir(parents=True, exist_ok=True)`. An existing folder, or a bare file name whose parent is the current folder, is a no-op. A folder that cannot be created (permission denied, or a path component that is an existing file) raises `OSError`, which the caller reports with `config_error()` (UNIT-136, exit 2).
+
+**Callers:** UNIT-46 (`--log`), UNIT-36 (`--write-baseline`), UNIT-138 (`--init` / `--preset` output).
+
+---
+
+### UNIT-138 — `_write_config(output_file: Path, yaml_text: str) → None`
+
+**Purpose:** Write a generated config file for UNIT-98 and UNIT-99 (SWE1-075, #441).
+
+**Algorithm:** Call `ensure_parent_dir(output_file)` (UNIT-137), then write `yaml_text` to `output_file` as UTF-8. On `OSError` call `config_error()` (UNIT-136) with `Cannot write config file '<path>': <error>`, exit 2. Before #441 an unwritable path raised an unhandled `OSError` (traceback, exit 1).
 ---
 
 ## 6. Data Design
@@ -1800,14 +1821,14 @@ Written by `write_baseline()` (UNIT-36) and read by `load_baseline()` (UNIT-35).
 | SWE1-058 to SWE1-059 | JSON output | UNIT-38 |
 | SWE1-060 | SARIF output | UNIT-39 |
 | SWE1-061 | GitHub annotations | UNIT-42, UNIT-89 |
-| SWE1-062 | Log file mirroring (`Tee`) | UNIT-86 |
+| SWE1-062 | Log file mirroring (`Tee`; parent folders created, #441) | UNIT-86, UNIT-46, UNIT-137 |
 | SWE1-063 | Summary | UNIT-40 |
 | SWE1-064 | Copyright header check | UNIT-52, UNIT-63 |
-| SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline | UNIT-35, UNIT-36, UNIT-37, UNIT-119, UNIT-120 |
+| SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline (`--write-baseline` parent folders created, #441) | UNIT-35, UNIT-36, UNIT-37, UNIT-119, UNIT-120, UNIT-137 |
 | SWE1-068 to SWE1-070 | CLI / entry point (both entry points exit 2 on config errors, #425) | UNIT-01, UNIT-02, UNIT-03, UNIT-04, UNIT-46, UNIT-87, UNIT-88, UNIT-136 |
 | SWE1-072 to SWE1-073 | Inline suppression comments | UNIT-95 |
 | SWE1-074 | Auto-fix mode | UNIT-96, UNIT-97 |
-| SWE1-075 | Config wizard and presets | UNIT-98, UNIT-99 |
+| SWE1-075 | Config wizard and presets (output parent folders created, #441) | UNIT-98, UNIT-99, UNIT-137, UNIT-138 |
 | SWE1-076 | Per-directory config | UNIT-100 |
 | SWE1-077 | HTML report output | UNIT-101 |
 | SWE1-078 | Function length | UNIT-102 |

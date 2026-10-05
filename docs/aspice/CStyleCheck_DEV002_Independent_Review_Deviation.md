@@ -178,5 +178,5 @@ This deviation is accepted on the basis that CStyleCheck is a single-person proj
 | CSC-PA2-001 | Process Capability Records | 1.36 |
 | CSC-SUP8-001 | Configuration Management Plan | 1.25 |
 | CSC-SUP9-001 | Problem Resolution Management Plan | 1.15 |
-| CSC-SUP10-001 | Change Request Plan | 1.16 |
+| CSC-SUP10-001 | Change Request Plan | 1.17 |
 | GitHub Issue #61 | Designate independent reviewer (not approver) for SWE1, SWE4, SWE6 work products | — |

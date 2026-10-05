@@ -28,7 +28,8 @@ from .config import (
 )
 from .fixer import (apply_fixes, unified_diff, FIXABLE_RULES, SAFE_RULES,
                     get_fn_name_for_fix, fix_pointer_prefix_in_header)
-from .utils import module_name, _cfg, config_error, EXIT_CONFIG_ERROR
+from .utils import (module_name, _cfg, config_error, EXIT_CONFIG_ERROR,
+                    ensure_parent_dir)
 from .checker import Checker
 from .sign_checker import SignChecker, DeclaredNotDefinedChecker
 from .baseline import load_baseline, write_baseline, apply_baseline
@@ -246,7 +247,8 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--write-baseline", metavar="FILE",
                    help="Write all current violations to FILE as a JSON "
                         "baseline and exit 0. Use once on an existing "
-                        "codebase to silence legacy noise.")
+                        "codebase to silence legacy noise. Missing "
+                        "folders in the path are created.")
     p.add_argument("--exit-zero", action="store_true",
                    help="Always exit 0 (useful for warning-only CI steps)")
     p.add_argument("--include", action="append", default=[],
@@ -256,7 +258,8 @@ def _build_parser() -> argparse.ArgumentParser:
                    metavar="GLOB",
                    help="Glob pattern(s) to exclude (repeatable)")
     p.add_argument("--log", metavar="FILE",
-                   help="Write all output to FILE in addition to stdout")
+                   help="Write all output to FILE in addition to stdout. "
+                        "Missing folders in the path are created.")
     p.add_argument("--spell-words", metavar="FILE",
                    help="Plain-text file of project-specific words exempt from "
                         "spell-checking (one word per line, # = comment)")
@@ -345,7 +348,8 @@ def _build_parser() -> argparse.ArgumentParser:
              "Writes .cstylecheck.yml in the current directory.")
     init_group.add_argument(
         "--init-output", metavar="FILE", default=None,
-        help="Output path for --init / --preset (default: .cstylecheck.yml).")
+        help="Output path for --init / --preset (default: .cstylecheck.yml). "
+             "Missing folders in the path are created.")
     init_group.add_argument(
         "--overwrite", action="store_true",
         help="Overwrite existing config file when using --init or --preset.")
@@ -496,6 +500,7 @@ def _main() -> int:
     log_fh = None
     if args.log:
         try:
+            ensure_parent_dir(args.log)
             log_fh = open(args.log, "w", encoding="utf-8")
         except OSError as e:
             config_error(f"Cannot open log file '{args.log}': {e}")

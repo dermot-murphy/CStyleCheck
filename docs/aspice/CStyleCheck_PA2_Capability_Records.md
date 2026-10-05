@@ -217,10 +217,10 @@ All work products are reviewed before approval according to the following schedu
 | CSC-SYS3-001 | System Architecture Description | 1.19 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; resync #435 |
 | CSC-SYS4-001 | System Integration Test Spec | 1.25 | Released | CSC-AUD-009 corrective actions (#405); #407; #408, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435 |
 | CSC-SYS5-001 | System Verification Report | 1.22 | Released | CSC-AUD-009 corrective actions (#405); #407; #408, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435 |
-| CSC-SWE1-001 | SW Requirements Spec | 2.23 | Released | CSC-AUD-009 corrective actions (#405); #407; #410, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435 |
+| CSC-SWE1-001 | SW Requirements Spec | 2.24 | Released | CSC-AUD-009 corrective actions (#405); #407; #410, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435 |
 | CSC-SWE2-001 | SW Architecture Description | 1.28 | Released | CSC-AUD-009 corrective actions (#405); #407; #410, #412, #413, #418, #420, #422, #425; resync #418–#425; resync #435 |
-| CSC-SWE3-001 | SW Detailed Design | 1.33 | Released | CSC-AUD-009 corrective actions (#405); #407; #410, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435 |
-| CSC-SWE4-001 | Unit Verification Spec | 1.38 | Released | CSC-AUD-009 corrective actions (#405); #407; #408, #410, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435 |
+| CSC-SWE3-001 | SW Detailed Design | 1.34 | Released | CSC-AUD-009 corrective actions (#405); #407; #410, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435 |
+| CSC-SWE4-001 | Unit Verification Spec | 1.39 | Released | CSC-AUD-009 corrective actions (#405); #407; #408, #410, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435 |
 | CSC-SWE5-001 | Integration Test Spec | 1.28 | Released | CSC-AUD-009 corrective actions (#405); #407; #408, #412, #413, #418, #420; resync #418–#425; resync #435 |
 | CSC-SWE6-001 | Qualification Test Spec | 1.31 | Released | CSC-AUD-009 corrective actions (#405); #407; #408, #410, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435 |
 | CSC-MAN3-001 | Project Management Plan | 1.21 | Released | CSC-AUD-009 corrective actions (#405); #407; #412, #413, #418, #420, #422–#425; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
@@ -228,7 +228,7 @@ All work products are reviewed before approval according to the following schedu
 | CSC-SUP1-001 | Quality Assurance Plan | 1.22 | Released | CSC-AUD-009 corrective actions (#405); #407; #413, #418; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
 | CSC-SUP8-001 | Configuration Management Plan | 1.25 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
 | CSC-SUP9-001 | Problem Resolution Plan | 1.15 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
-| CSC-SUP10-001 | Change Request Plan | 1.16 | Released | CSC-AUD-009 corrective actions (#405); #407; #413, #418; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
+| CSC-SUP10-001 | Change Request Plan | 1.17 | Released | CSC-AUD-009 corrective actions (#405); #407; #413, #418; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
 | CSC-ACQ4-001 | Supplier Monitoring Plan | 1.16 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
 | CSC-PA2-001 | PA 2.1 / PA 2.2 Records | 1.36 | Released | CSC-AUD-009 corrective actions (#405); #407; #412, #413, #418, #420, #422–#425; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
 | CSC-REVIEW-001 | ASPICE Peer Review Record (v1.2.1 baseline) | 1.1 | Released | issue #169 |
@@ -265,10 +265,10 @@ The table below summarises all assessed processes and their CL2 PA achievement e
 | SYS.3 | Architecture with subsystems and interfaces; §9 covers 81 rule IDs | Objectives: §4.1; monitoring: §4.3 | CSC-SYS3-001 v1.19; in CM | **L** | #430 (closed) |
 | SYS.4 | 17 SITC test cases (SITC-017 adds the 8 post-v1.6.0 rules); all 81 rules covered | Objectives: §4.1 | CSC-SYS4-001 v1.25; in CM | **F** | #430 (closed) |
 | SYS.5 | SYS-VTC-003 covers all 81 rule IDs; SYS-VTC-007 updated for #394 | Objectives: §4.1 | CSC-SYS5-001 v1.22; in CM | **L** | #430 (closed) |
-| SWE.1 | 121 SW requirements (SWE1-109 to SWE1-117 added); SWE1-102 to 108/117 parent = CSC-MAN3-001 §10.3 | Objectives: §4.1; strategy: §4.2 | CSC-SWE1-001 v2.23; in CM | **L** | #430 (closed) |
+| SWE.1 | 121 SW requirements (SWE1-109 to SWE1-117 added); SWE1-102 to 108/117 parent = CSC-MAN3-001 §10.3 | Objectives: §4.1; strategy: §4.2 | CSC-SWE1-001 v2.24; in CM | **L** | #430 (closed) |
 | SWE.2 | 13 components (COMP-13 trend scripts added), 10 interfaces; COMP-05f and run_all() include the 8 new checks | Objectives: §4.1 | CSC-SWE2-001 v1.28; in CM | **L** | #430 (closed) |
-| SWE.3 | 136 units, all with §5 specs; line references regenerated; §6.3 baseline format corrected | Objectives: §4.1 | CSC-SWE3-001 v1.33; in CM | **L** | #430 (closed) |
-| SWE.4 | 1545 unit tests (58 modules); §7 traces all SW requirements; SWE1-015/094/096 unit tests added by #407 (RR-003-001 closed; SWE1-094 aligned with the implementation by CR-413 (#413), fully verified) | Objectives: §4.1; coverage targets | CSC-SWE4-001 v1.38; CI evidence | **F** | #430 (closed) |
+| SWE.3 | 136 units, all with §5 specs; line references regenerated; §6.3 baseline format corrected | Objectives: §4.1 | CSC-SWE3-001 v1.34; in CM | **L** | #430 (closed) |
+| SWE.4 | 1545 unit tests (58 modules); §7 traces all SW requirements; SWE1-015/094/096 unit tests added by #407 (RR-003-001 closed; SWE1-094 aligned with the implementation by CR-413 (#413), fully verified) | Objectives: §4.1; coverage targets | CSC-SWE4-001 v1.39; CI evidence | **F** | #430 (closed) |
 | SWE.5 | 27 SIT tests (SIT-027 for the 8 new rules); SIT-012 updated for #394/#395 | Objectives: §4.1 | CSC-SWE5-001 v1.28; in CM | **L** | #430 (closed) |
 | SWE.6 | 12 SWQ tests; SWQ-003 covers 81 rule IDs; SWQ-007 aligned with SWE1-100; 113/113 in-scope requirements | Objectives: §4.1; release gate | CSC-SWE6-001 v1.31; CI evidence | **F** | #430 (closed) |
 | MAN.3 | WBS, schedule (actuals to v1.6.0; next release v2.0.0 (Major) planned, classification decision §8) and trend-metrics monitoring (§10.3) | Objectives: §4.1; §4.3 monitoring | CSC-MAN3-001 v1.21; in CM | **L** | #430 (closed) |
@@ -276,7 +276,7 @@ The table below summarises all assessed processes and their CL2 PA achievement e
 | SUP.1 | QA gates and checklist; gate compliance record added; CSC-REVIEW-003 produced retrospectively for v1.5.x–v1.6.0; GATE-04 ASPICE consistency check (`aspice_consistency.yml`) and PR-template checklist as per-PR review record (#437) | Objectives: §4.1; CI evidence | CSC-SUP1-001 v1.22; in CM | **L** | #430 (closed) |
 | SUP.8 | 64 CIs (package, dependabot.yml, docs added; consistency check, workflow and PR/issue templates added by #437); hotfix versioning/tagging policy §7.6; citation resync automated (`aspice_check.py --fix-citations`, §9) | Objectives: §4.1; CM monitoring | CSC-SUP8-001 v1.25; in CM | **L** | #430 (closed) |
 | SUP.9 | Problem process with SLAs and register; bug issue form enforces the §5.1 fields (#437) | Objectives: §4.1; Issue metrics | CSC-SUP9-001 v1.15; in CM | **L** | #430 (closed) |
-| SUP.10 | CR process with impact levels and approval; CR issue form enforces the §5.1 fields (#437) | Objectives: §4.1; CR metrics | CSC-SUP10-001 v1.16; in CM | **L** | #430 (closed) |
+| SUP.10 | CR process with impact levels and approval; CR issue form enforces the §5.1 fields (#437) | Objectives: §4.1; CR metrics | CSC-SUP10-001 v1.17; in CM | **L** | #430 (closed) |
 | ACQ.4 | 9 suppliers (SUP-07 Docker actions, SUP-08 third-party actions added; SUP-09 development/CI tools added by #430); Actions versions current; SHA-pinning policy | Objectives: §4.1; monitoring schedule | CSC-ACQ4-001 v1.16; in CM | **F** | #430 (closed) |
 
 > **📋 Rating scale:** N = Not achieved (0–15%), P = Partially achieved (15–50%), L = Largely achieved (50–85%), F = Fully achieved (85–100%). All processes must achieve **L or F** at PA 2.1 and PA 2.2 for CL2 to be awarded.

@@ -65,8 +65,8 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 | Document ID | Title | Version |
 |---|---|---|
 | CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.28 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.23 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.38 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.24 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.39 |
 | CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.31 |
 | CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.25 |
 

@@ -11,6 +11,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from .utils import config_error, ensure_parent_dir
+
 
 # ---------------------------------------------------------------------------
 # Preset configurations
@@ -202,6 +204,16 @@ def _ask_choice(prompt: str, choices: list, default: str, prompt_fn=input) -> st
     return default
 
 
+def _write_config(output_file: Path, yaml_text: str) -> None:
+    """Write *yaml_text* to *output_file*, creating missing parent folders
+    (issue #441).  An unwritable path is a configuration error (exit 2)."""
+    try:
+        ensure_parent_dir(output_file)
+        output_file.write_text(yaml_text, encoding="utf-8")
+    except OSError as e:
+        config_error(f"Cannot write config file '{output_file}': {e}")
+
+
 def run_wizard(
     output_path: str | None = None,
     prompt_fn=input,
@@ -315,7 +327,7 @@ def run_wizard(
 
     yaml_text = _render_yaml(cfg)
 
-    output_file.write_text(yaml_text, encoding="utf-8")
+    _write_config(output_file, yaml_text)
     print_fn(f"\nWriting {output_file} ... done.")
     print_fn("Run `cstylecheck src/` to check your first files.")
     return 0
@@ -335,7 +347,7 @@ def run_preset(preset_name: str, output_path: str | None = None,
         return 1
 
     yaml_text = _render_yaml(PRESETS[preset_name], preset_name=preset_name)
-    output_file.write_text(yaml_text, encoding="utf-8")
+    _write_config(output_file, yaml_text)
     print_fn(f"Wrote {preset_name} preset to {output_file}")
     print_fn("Run `cstylecheck src/` to check your first files.")
     return 0

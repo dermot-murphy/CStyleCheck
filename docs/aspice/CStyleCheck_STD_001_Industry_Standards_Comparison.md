@@ -55,9 +55,9 @@ The findings are presented in a unified coverage matrix and a prioritised list o
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.23 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.24 |
 | CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.28 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.33 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.34 |
 
 ---
 

@@ -74,8 +74,8 @@ This plan applies to all configuration items produced by the CStyleCheck project
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.15 |
-| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.16 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.23 |
+| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.17 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.24 |
 
 ---
 

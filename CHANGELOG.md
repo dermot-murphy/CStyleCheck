@@ -85,6 +85,17 @@ linked entries under *Changed* and *Fixed* for details.
 
 ### Changed
 
+- **Missing output folders are created (#441)** — `--log FILE`, `--write-baseline FILE`
+  and `--init-output FILE` (with `--init` / `--preset`) now create the parent folder of
+  FILE, and any missing folders above it, before writing. Previously a missing folder
+  was a configuration error (`Cannot open log file ... No such file or directory`,
+  exit 2), so CI scripts had to run `mkdir -p` first. A folder that cannot be created
+  (for example, a path component that is an existing file) is still a configuration
+  error, exit 2. `--init` / `--preset` with an unwritable output path now exit 2 with a
+  `Cannot write config file` message instead of a Python traceback. Backwards
+  compatible. SWE1-062, SWE1-065, SWE1-075 updated; new module
+  `tests/test_output_dirs.py` (11 tests); total 1546→1557.
+
 - **Presets enable the matching opt-in rules (#420)** — `--preset misra` now enables
   `misc.goto_usage` (MISRA C:2012 Rule 15.1), `misc.assignment_in_condition` (13.4),
   `misc.void_pointer` (11.5), `misc.recursive_function` (17.2) and `misc.empty_else`
