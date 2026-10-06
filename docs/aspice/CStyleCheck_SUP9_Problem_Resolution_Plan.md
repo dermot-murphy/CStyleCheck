@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP9-001 | **Version** | 1.16 |
+| **Document ID** | CSC-SUP9-001 | **Version** | 1.17 |
 | **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.17 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
 | 1.16 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.15 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.1 problems raised with the bug issue form (`.github/ISSUE_TEMPLATE/bug.yml`), SEV-4 added to the severity field, SEV label applied at triage; §5.2 step 2 applies the SEV label; referenced-document versions resynced |
 | 1.14 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
@@ -50,10 +51,10 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.22 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.26 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.18 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.23 |
+| CSC-MAN3-001 | Project Management Plan | 1.23 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.27 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.19 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.24 |
 
 ---
 

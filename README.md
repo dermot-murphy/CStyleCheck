@@ -133,7 +133,7 @@ tests/
     test_config_loading.py  #  13 tests: rules.yml / config loading edge cases
     test_preprocessor.py    #  76 tests: comment/string stripping, token extraction
     test_update_config.py   #  27 tests: per-directory and config merge updates
-    test_constant_comparison.py # 27 tests: misc.constant_comparison
+    test_constant_comparison.py # 37 tests: misc.constant_comparison
     test_unsigned_suffix_signed_params.py # 15 tests: misc.unsigned_suffix signed-param exemption
     test_pointer_prefix_fix.py # 20 tests: variable.pointer_prefix auto-fix
     test_collect_metrics.py # 54 tests: trend-analysis C source metrics (scripts/)
@@ -141,7 +141,7 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1559 tests)
+    cstylecheck_tests.yml      # runs the test suite on every commit (1569 tests)
     cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
@@ -585,8 +585,9 @@ separator) add 17 more, #413 (startup-banner requirements aligned with the code)
 rules opt-in) adds 11, #420 (preset opt-in rules) adds 18, #422 (case-style names) adds 27, #424
 (`functions.case` removed) adds 16, #425 (config-error exit code 2) adds 8, #423 (last enum member
 checked) adds 13, #439 (no startup banner in a json / sarif / html `--log` file) adds 1, and #441
-(missing output folders created) adds 11, and the v1.6.1 back-merge (#439 tests from `main`,
-`TestStartupBannerLogFile`) adds 2: **1559 tests** in total.
+(missing output folders created) adds 11, the v1.6.1 back-merge (#439 tests from `main`,
+`TestStartupBannerLogFile`) adds 2, and #447 (`misc.constant_comparison` skips `#if` / `#elif`)
+adds 10: **1569 tests** in total.
 
 ### New in v1.2.0 (2026-05-29)
 
