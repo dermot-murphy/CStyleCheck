@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.16 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.17 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.6 |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.17 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: §3.2 configuration under test v1.6.1; §3.3 static-verification and open-bug criteria for v1.6.1; SWQ-003 output row covers the startup banner in the `--log` file for text output only (`test_cli.py` `TestStartupBannerLogFile`); §9 release-readiness gate for the v1.6.1 baseline (1281 tests; #439 resolved); §3.1 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.16 | 2026-07-06 | Claude | ASPICE audit — remove non-existent rule IDs `variable.local.prefix` and `variable.parameter.prefix` from SWQ-003 table; update §3.1 refs (SWE1 2.5→2.6, SWE5 1.12→1.14, SUP8 1.9→1.10); fix coverage gate note; add SWE1-094 to SWE1-099 to §3.3 criteria — closes #376 |
 | 1.15 | 2026-07-06 | Claude | v1.6.0 RC — update test count 1223→1279; §3.1 SWE5→1.13, SVD→1.22; add SWQ-003 row for constant_comparison/output behaviour improvements; update §8 execution results |
 | 1.14 | 2026-07-01 | Claude | Add misc.constant_comparison, unsigned_suffix signed-param, pointer_prefix fix to SWQ-003; update rule count 72→73; req coverage 91→94; §3.1 SWE1→2.5, SWE5→1.12; version under test 1.5.0→1.6.0 |
@@ -52,21 +53,21 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.6 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.14 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.6 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.10 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.15 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.8 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.11 |
 
 ### 3.2 Software Configuration Under Test
 
 | Attribute | Value |
 |---|---|
-| **Software Version** | 1.6.0 |
-| **Git Tag** | v1.6.0 |
-| **Commit SHA** | (pending merge of claude/embedded-c-style-standards-pgqhdc) |
+| **Software Version** | 1.6.1 |
+| **Git Tag** | v1.6.1 |
+| **Commit SHA** | Merge commit of `hotfix/1.6.1` into `main` (tagged `v1.6.1`) |
 | **Python Version** | 3.11 (primary); 3.10 and 3.12 (regression) |
 | **OS** | Ubuntu 24.04 |
-| **Test Execution Date** | 2026-06-26 |
+| **Test Execution Date** | 2026-10-06 |
 | **Tester** | Claude (automated CI) / Dermot Murphy (review) |
 
 ### 3.3 Qualification Criteria
@@ -77,8 +78,8 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | SW Requirements coverage | 100% | All SWE1-001 to SWE1-099 and SWE1-MISRA-004 traced to ≥ 1 SWQ test |
 | Statement coverage | ≥ 90% | Coverage report at execution |
 | Branch coverage | ≥ 85% | Coverage report at execution |
-| Static verification | PASS | `rules.yml` CI job on v1.6.0 commit |
-| Open bug Issues targeting v1.6.0 | 0 | No unresolved bug-labelled Issues |
+| Static verification | PASS | `rules.yml` CI job on v1.6.1 commit |
+| Open bug Issues targeting v1.6.1 | 0 | No unresolved bug-labelled Issues |
 
 ---
 
@@ -165,7 +166,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Misc — constant comparison (v1.6.0) | `misc.constant_comparison` | `test_constant_comparison.py` | PASS |
 | Misc — unsigned_suffix signed-param exemption (v1.6.0) | `misc.unsigned_suffix` false-positive fix for signed-typed parameters | `test_unsigned_suffix_signed_params.py` | PASS |
 | Variable — pointer_prefix auto-fix (v1.6.0) | `variable.pointer_prefix` auto-fix via `--fix` | `test_pointer_prefix_fix.py` | PASS |
-| Output — v1.6.0 output behaviour (startup banner, --summary restructure, OS path sep) | `print_summary` restructure; stderr startup banner; OS-native path in output | `test_cli.py`, `test_print_summary.py` | PASS |
+| Output — v1.6.0 output behaviour (startup banner, --summary restructure, OS path sep) | `print_summary` restructure; stderr startup banner; OS-native path in output; startup banner in the `--log` file for text output only, none in a json / sarif / html log file (v1.6.1, #439) | `test_cli.py`, `test_print_summary.py` | PASS |
 
 **SWQ-003 Overall Result:** PASS
 
@@ -441,15 +442,15 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 ## 9. Release Readiness Gate
 
-The following conditions were assessed for the **v1.6.0** release baseline (2026-07-01):
+The following conditions were assessed for the **v1.6.1** release baseline (2026-10-06; v1.6.0 baseline 2026-07-01 plus the #439 hotfix):
 
-- [x] All SWQ test cases: PASS — 1279 tests, 0 failures (Python 3.10 / 3.11 / 3.12)
+- [x] All SWQ test cases: PASS — 1281 tests, 0 failures (Python 3.10 / 3.11 / 3.12)
 - [x] Statement coverage ≥ 85% combined CI gate: PASS — 89.8% statement (v1.2.0 historical baseline; v1.6.0 CI measurement pending), 87.31% combined (`--cov-fail-under=85 --cov-branch`)
 - [x] Branch coverage ≥ 85% combined: PASS — 87.31% combined stmt+branch ≥ 85% gate ✅
-- [x] `rules.yml` CI job: PASS on v1.6.0 commit
+- [x] `rules.yml` CI job: PASS on v1.6.1 commit
 - [x] `cstylecheck_tests.yml` CI: PASS on Python 3.10, 3.11, 3.12
-- [x] `docker_publish.yml` CI: PASS; image available on GHCR and Docker Hub (`cstylecheck:1.6.0`, `:latest`)
-- [x] Zero open functional bug Issues: PASS — issues #339, #340, #341 resolved and merged in v1.6.0
+- [x] `docker_publish.yml` CI: PASS; image available on GHCR and Docker Hub (`cstylecheck:1.6.1`, `:latest`)
+- [x] Zero open functional bug Issues: PASS — issues #339, #340, #341 resolved and merged in v1.6.0; #439 (startup banner in a json / sarif / html `--log` file) resolved in v1.6.1
 - [x] This document approved and placed under CM baseline (SUP.8)
 - [x] All TBD items in SYS.5 requirements coverage resolved or formally accepted — 6 of 9 resolved; SYS-NF-010/011/012 formally deferred (see CSC-SYS5-001 §7)
 
@@ -459,12 +460,14 @@ The following conditions were assessed for the **v1.6.0** release baseline (2026
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-07-01 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-07-01 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-07-01 |
-| Approver | Dermot Murphy | Approved | 2026-07-01 |
+| Author | Claude | Approved | 2026-10-06 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 
-> **Note:** Software qualification is the final gate before release. This document must be approved and all release readiness conditions in §9 satisfied before the v1.6.0 release baseline is created and the product is released via SPL.2.
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
+
+> **Note:** Software qualification is the final gate before release. This document must be approved and all release readiness conditions in §9 satisfied before the v1.6.1 release baseline is created and the product is released via SPL.2.
 
 ---
 

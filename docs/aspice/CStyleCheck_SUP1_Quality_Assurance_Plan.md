@@ -43,11 +43,11 @@ QA activities for CStyleCheck verify that project processes are followed as plan
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.6 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.9 |
+| CSC-MAN3-001 | Project Management Plan | 1.8 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.11 |
 | CSC-SUP9-001 | Problem Resolution Management Plan | 1.2 |
 | CSC-SUP10-001 | Change Request Management Plan | 1.2 |
-| CSC-SWE4-001 | Unit Verification Specification | 1.17 |
+| CSC-SWE4-001 | Unit Verification Specification | 1.21 |
 
 ---
 

@@ -41,9 +41,9 @@ The findings are presented in a unified coverage matrix and a prioritised list o
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 1.9 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.8 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.10 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.13 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.17 |
 
 ---
 
@@ -443,4 +443,4 @@ These rules are best handled by a dedicated formatting tool. CStyleCheck should 
 
 ---
 
-*End of Industry Standards Comparison Report — CSC-STD-001 v1.1*
+*End of Industry Standards Comparison Report — CSC-STD-001 v1.2*

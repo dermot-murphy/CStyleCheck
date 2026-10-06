@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.12 |
-| **Project** | CStyleCheck | **Date** | 2026-06-27 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.13 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.2 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.13 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: COMP-01 key behaviour — the startup banner (two lines) is written to `stderr`, and to the `--log` file for text output only (a json / sarif / html log file holds only the report document); §10 SWE1-094 row updated; §3.1 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.12 | 2026-07-06 | Claude | ASPICE audit — v1.6.0: update scope to v1.6.0; §3.1 refs (SWE1 2.4→2.6, SWE3 1.15→1.16, SUP8 1.9→1.10); add models.py/utils.py as COMP-11/COMP-12; update COMP-01 (startup banner), COMP-05b (fn_start), COMP-07 (Tee.log_print), COMP-08 (pointer_prefix fix); update §10 RTM with SWE1-091–099 — closes #372 |
 | 1.11 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.3→2.4, SWE3 1.14→1.15; fix header date | Dermot Murphy |
 | 1.10 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.1→2.3, SWE3 1.12→1.14 | Dermot Murphy |
@@ -46,10 +47,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.6 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.5 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.16 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.10 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.6 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.17 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.11 |
 
 ---
 
@@ -109,7 +110,7 @@ src/cstylecheck/   (package — 12 sub-modules)
 | **Responsibility** | Parse command-line arguments; expand `--options-file` tokens before direct CLI args; resolve source file lists from globs; validate invocation |
 | **Inputs** | `sys.argv`; options file on disk |
 | **Outputs** | `argparse.Namespace` object; resolved `[filepath]` list |
-| **Key behaviour** | Options-file tokens are injected before direct argv tokens so direct args always take precedence; `main()` writes a one-line startup banner (tool name, version, copyright) to `stderr` before processing |
+| **Key behaviour** | Options-file tokens are injected before direct argv tokens so direct args always take precedence; `main()` writes a two-line startup banner (tool name and version, then the copyright line) to `stderr` before processing, and to the `--log` file for text output only (a json / sarif / html log file holds only the report document); it is never written to stdout (SWE1-094) |
 
 ### COMP-02 — Configuration Loader
 
@@ -412,7 +413,7 @@ main()
 | SWE1-091 | `misc.constant_comparison` rule | COMP-05f |
 | SWE1-092 | `misc.unsigned_suffix` signed-param exemption | COMP-05f |
 | SWE1-093 | `variable.pointer_prefix` auto-fix | COMP-08 |
-| SWE1-094 | Startup banner to stderr | COMP-01 |
+| SWE1-094 | Startup banner to stderr (and `--log` for text output only) | COMP-01 |
 | SWE1-095 | Copyright in `--version` output | COMP-01 |
 | SWE1-096 | OS-native path separator | COMP-11 (COMP-07) |
 | SWE1-097 | `print_summary()` restructure | COMP-07 |
@@ -425,9 +426,11 @@ main()
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-10-06 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

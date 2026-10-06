@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.16 |
-| **Project** | CStyleCheck | **Date** | 2026-06-27 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.17 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.17 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: UNIT-86 `log_print()` note — `main()` (UNIT-46) writes the startup banner to the log via `Tee.log_print()` only when `--output-format` is `text`, so a json / sarif / html `--log` file holds only the report document; traceability row SWE1-094 updated; §3.1 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.16 | 2026-07-06 | Claude | ASPICE audit — update scope to v1.6.0; §3.1 refs (SWE1 2.4→2.6, SWE2 1.11→1.12, SWE4 1.17→1.20); add UNIT-116 (_check_constant_comparison), UNIT-117 (_fix_pointer_prefix), UNIT-118 (fix_pointer_prefix_in_header); update UNIT-95 for block-comment form, UNIT-22 run_all order, UNIT-86 Tee; update §8 RTM — closes #373 |
 | 1.15 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.3→2.4, SWE2 1.9→1.11, SWE4 1.16→1.17 | Dermot Murphy |
 | 1.14 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.1→2.3, SWE4 1.14→1.16 | Dermot Murphy |
@@ -47,9 +48,9 @@ This document defines the detailed design of each software unit in **CStyleCheck
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.6 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.12 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.20 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.13 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.21 |
 
 ---
 
@@ -766,7 +767,7 @@ src/cstylecheck/
 **Methods:**
 - `__init__(log_fh=None)` — store optional file handle
 - `print(*args, **kwargs)` — call built-in `print` to stdout, and to `log_fh` if set
-- `log_print(*args, **kwargs)` — write only to `log_fh` (not stdout); used for content that must appear in the log file but not on the terminal
+- `log_print(*args, **kwargs)` — write only to `log_fh` (not stdout); used for content that must appear in the log file but not on the terminal. `main()` (UNIT-46) uses it for the startup banner only when `--output-format` is `text`; for json / sarif / html the log file holds only the report document (SWE1-094, #439)
 - `close()` — close and release `log_fh`
 
 ---
@@ -1222,7 +1223,7 @@ Violation:
 | SWE1-091 | `misc.constant_comparison` | UNIT-116 |
 | SWE1-092 | `misc.unsigned_suffix` signed-param exemption | UNIT-30 (extended) |
 | SWE1-093 | `variable.pointer_prefix` auto-fix | UNIT-117, UNIT-118 |
-| SWE1-094 | Startup banner to stderr | UNIT-46 (extended) |
+| SWE1-094 | Startup banner to stderr (and `--log` for text output only) | UNIT-46 (extended), UNIT-86 |
 | SWE1-095 | Copyright in `--version` output | UNIT-88 (extended) |
 | SWE1-096 | OS-native path separator | UNIT-41 (extended) |
 | SWE1-097 | `print_summary()` restructure | UNIT-40 (extended) |
@@ -1237,9 +1238,11 @@ Violation:
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-10-06 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.
