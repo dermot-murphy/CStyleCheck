@@ -19,7 +19,8 @@
 
 ## Git / tagging
 
-- Tag pushes (`git push origin <tag>`) return HTTP 403 from this environment's proxy. Tell the user to push tags manually from their local machine.
+- In the **cloud** environment (`/home/user/CStyleCheck`), tag pushes (`git push origin <tag>`) return HTTP 403 from the git proxy. There, tell the user to push tags manually from their local machine.
+- In a **local** session (`U:\GitHub\CStyleCheck`, the user's own git credentials, no proxy), tag pushes work. Push the tag after the user confirms.
 
 ## Repository scope
 
