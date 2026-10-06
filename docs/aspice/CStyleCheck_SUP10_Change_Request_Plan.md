@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.17 |
-| **Project** | CStyleCheck | **Date** | 2026-10-05 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.18 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.10 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.18 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.17 | 2026-10-05 | Claude | Issue #441: §7 register row and §7.1 record CR-441 (create missing parent folders of `--log`, `--write-baseline` and `--init-output` files; Medium; backwards compatible) |
 | 1.16 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.1 CRs raised with the CR issue form (`.github/ISSUE_TEMPLATE/change_request.yml`); §5.2 impact analysis recorded on the issue before the implementing PR is merged; §5.4 CI list names `cstylecheck_rules.yml` and `aspice_consistency.yml`; referenced-document versions resynced; §6 CI-impact table rewritten against the current CSC-SUP8-001 §6.1 list (implementation is CI-045, not the CI-001 shim; all six workflows, Dependabot, CI scripts, process templates and CI-055 for ASPICE documents) |
 | 1.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
@@ -51,9 +52,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.15 |
-| CSC-MAN3-001 | Project Management Plan | 1.21 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.26 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.16 |
+| CSC-MAN3-001 | Project Management Plan | 1.22 |
 
 ---
 

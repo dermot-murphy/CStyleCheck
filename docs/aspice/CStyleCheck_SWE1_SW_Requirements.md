@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.24 |
-| **Project** | CStyleCheck | **Date** | 2026-10-05 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.25 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.1 |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.25 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 2.24 | 2026-10-05 | Claude | Issue #441 (CR-441): SWE1-062 (`--log`), SWE1-065 (`--write-baseline`) and SWE1-075 (`--init-output` for `--init` / `--preset`) — missing parent folders of the output file are created; a folder that cannot be created is a configuration error (exit 2) naming the path. RTM rows cite `test_output_dirs.py` (UV-OUT-001 to UV-OUT-004) |
 | 2.23 | 2026-10-05 | Claude | Issue #439: SWE1-094 — the startup banner is written to the `--log` file only when `--output-format` is `text`; for `json`, `sarif` and `html` the log file holds only the machine-readable document (it is still written to `stderr` for every format). RTM row updated |
 | 2.22 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
@@ -72,10 +73,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.17 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.19 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.28 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.18 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.20 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.29 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.26 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 

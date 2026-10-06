@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SVD-001 | **Version** | 1.26 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-SVD-001 | **Version** | 1.27 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.8 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.27 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): the v1.6.1 release identification, §4.2 classification, §5.4 test table (`test_cli.py` 45), §6.6 change summary (B-012, D-013), §8 and §9 brought into `develop` from the v1.6.1 release; no change to post-v1.6.0 `develop` content |
 | 1.26 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.25 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change; SVD synchronised to the current `develop` baseline, CSC-DEV-001/002 IDs corrected, next release planned as v2.0.0 |
 | 1.24 | 2026-09-29 | Claude | Approval-by-merge policy (CSC-DEV-002 §5.2), #430: Review & Approval table entries set to approval by the owner's merge of the introducing PR |
@@ -51,7 +52,7 @@
 
 ## 3. Purpose & Scope
 
-This **Software Version Description (SVD)** formally describes the **CStyleCheck v1.6.0** software release. It identifies the software items delivered, the baseline against which changes are recorded, and the configuration status of all controlled work products.
+This **Software Version Description (SVD)** formally describes the **CStyleCheck v1.6.1** software release. It identifies the software items delivered, the baseline against which changes are recorded, and the configuration status of all controlled work products.
 
 This document satisfies the release-identification and configuration-status-accounting requirements of **Automotive SPICE® PAM v4.0, SUP.8 — Configuration Management**.
 
@@ -61,15 +62,15 @@ This document satisfies the release-identification and configuration-status-acco
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.24 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.28 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.34 |
-| CSC-SWE4-001 | CStyleCheck Software Unit Verification Specification | 1.39 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.28 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.31 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
-| CSC-SUP1-001 | CStyleCheck Quality Assurance Plan | 1.22 |
-| CSC-MAN3-001 | CStyleCheck Project Management Plan | 1.21 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.25 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.29 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.35 |
+| CSC-SWE4-001 | CStyleCheck Software Unit Verification Specification | 1.40 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.29 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.32 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.26 |
+| CSC-SUP1-001 | CStyleCheck Quality Assurance Plan | 1.23 |
+| CSC-MAN3-001 | CStyleCheck Project Management Plan | 1.22 |
 
 ---
 
@@ -80,26 +81,33 @@ This document satisfies the release-identification and configuration-status-acco
 | Field | Value |
 |---|---|
 | **Product Name** | CStyleCheck |
-| **Version** | 1.6.0 |
-| **Release Date** | 2026-07-06 |
-| **Release Type** | Minor Release |
-| **Git Tag** | `v1.6.0` |
-| **Branch** | `main` |
-| **Previous Release** | v1.5.0 (2026-06-26) |
+| **Version** | 1.6.1 |
+| **Release Date** | 2026-10-06 |
+| **Release Type** | Patch Release (hotfix) |
+| **Git Tag** | `v1.6.1` |
+| **Branch** | `main` (from `hotfix/1.6.1`) |
+| **Previous Release** | v1.6.0 (2026-07-06) |
 | **Repository** | https://github.com/dermot-murphy/CStyleCheck |
 
 ### 4.2 Release Classification
 
-This is a **minor release** under Semantic Versioning. It is **backward-compatible**
-with v1.5.x: all existing rule IDs, CLI flags, and `rules.yml` schema entries are
-unchanged. It adds one new rule, one bug fix, and one new fix-mode capability — see §6.
+This is a **patch release** under Semantic Versioning (see the last paragraph of this
+section). It is **backward-compatible** with v1.6.0 and v1.5.x: all existing rule IDs,
+CLI flags, and `rules.yml` schema entries are unchanged. v1.6.0, the minor release it
+patches, added one new rule, one bug fix, and one new fix-mode capability — see §6.
 
-v1.5.0 (the previous release) added `misc.non_ascii_source`, per-file `--summary`
+v1.5.0 (the release before v1.6.0) added `misc.non_ascii_source`, per-file `--summary`
 breakdown, and `constant.case` typedef-alias exemption. v1.6.0 adds
 `misc.constant_comparison` (constant==constant detection), fixes a `misc.unsigned_suffix`
 false positive for signed-typed function parameters, and adds `--fix` auto-fix support
 for `variable.pointer_prefix` violations, reaching **73 rule IDs** total. The CLI
 entry point and all existing output formats remain backward-compatible with v1.5.x.
+
+v1.6.1 is a **patch (hotfix) release** of v1.6.0. It fixes one defect (#439, §6.6): v1.6.0
+wrote the startup banner into the `--log` file for every output format, so a `json` or
+`sarif` log file did not parse and the GitHub Action failed on every run. The banner is
+now written to the `--log` file only for `--output-format text`. No rule, CLI flag or
+`rules.yml` schema entry changed; the rule count is unchanged at **73 rule IDs**.
 
 ---
 
@@ -123,7 +131,7 @@ entry point and all existing output formats remain backward-compatible with v1.5
 | `src/cstylecheck/fixer.py` | Auto-fix engine: apply_fixes, unified_diff (`--fix`, `--dry-run`, `--safe-only`) | `src/cstylecheck/fixer.py` |
 | `src/cstylecheck/wizard.py` | Config wizard and preset writer (`--init`, `--preset`) | `src/cstylecheck/wizard.py` |
 | `src/rules.yml` | Rule configuration for the CStyleCheck project | `src/rules.yml` |
-| `src/_version.py` | Version string: `1.6.0` (generated by CI: `git describe --tags`) | `src/_version.py` |
+| `src/_version.py` | Version string: `1.6.1` (generated by CI: `git describe --tags`) | `src/_version.py` |
 | `src/aliases.txt` | Module alias map | `src/aliases.txt` |
 | `src/exclusions.yml` | Per-file rule suppressions | `src/exclusions.yml` |
 | `src/options.txt` | Project defaults for `--options-file` | `src/options.txt` |
@@ -137,8 +145,8 @@ entry point and all existing output formats remain backward-compatible with v1.5
 
 | Registry | Image | Tags |
 |---|---|---|
-| Docker Hub | `dermotmurphy/cstylecheck` | `1.6.0`, `1.6`, `1`, `latest` |
-| GitHub Container Registry | `ghcr.io/dermot-murphy/cstylecheck` | `1.6.0`, `1.6`, `1`, `latest` |
+| Docker Hub | `dermotmurphy/cstylecheck` | `1.6.1`, `1.6`, `1`, `latest` |
+| GitHub Container Registry | `ghcr.io/dermot-murphy/cstylecheck` | `1.6.1`, `1.6`, `1`, `latest` |
 
 Platforms: `linux/amd64`, `linux/arm64`.
 
@@ -152,7 +160,7 @@ Platforms: `linux/amd64`, `linux/arm64`.
 
 ### 5.4 Test Suite
 
-**Total: 1279 tests across 53 modules** — all passing.
+**Total: 1281 tests across 53 modules** — all passing.
 
 | Item | Test Count | Description |
 |---|---|---|
@@ -174,7 +182,7 @@ Platforms: `linux/amd64`, `linux/arm64`.
 | `tests/test_block_comment_spacing.py` | 29 | misc.block_comment_spacing |
 | `tests/test_copyright_header.py` | 55 | misc.copyright_header |
 | `tests/test_eof_comment.py` | 33 | misc.eof_comment |
-| `tests/test_cli.py` | 43 | CLI flags end-to-end |
+| `tests/test_cli.py` | 45 | CLI flags end-to-end (incl. startup banner in `--log`, v1.6.1) |
 | `tests/test_improvements.py` | 67 | bugs + new feature regression tests |
 | `tests/test_comment_ratio.py` | 24 | misc.comment_ratio (new in v1.2.0) |
 | `tests/test_whitespace_ratio.py` | 27 | misc.whitespace_ratio (new in v1.2.0) |
@@ -209,7 +217,7 @@ Platforms: `linux/amd64`, `linux/arm64`.
 | `tests/test_constant_comparison.py` | 27 | `misc.constant_comparison` rule (new in v1.6.0) |
 | `tests/test_unsigned_suffix_signed_params.py` | 15 | `misc.unsigned_suffix` signed-param exemption (new in v1.6.0) |
 | `tests/test_pointer_prefix_fix.py` | 20 | `variable.pointer_prefix` auto-fix mode (new in v1.6.0) |
-| **Total** | **1279** | |
+| **Total** | **1281** | |
 
 ### 5.5 Documentation
 
@@ -217,31 +225,31 @@ Platforms: `linux/amd64`, `linux/arm64`.
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SVD-001 | Software Version Description (this document) | 1.26 |
-| CSC-SWE1-001 | Software Requirements Specification | 2.24 |
-| CSC-SWE2-001 | Software Architecture Design | 1.28 |
-| CSC-SWE3-001 | Software Detailed Design | 1.34 |
-| CSC-SWE4-001 | Software Unit Verification Specification | 1.39 |
-| CSC-SWE5-001 | Software Integration Test Specification | 1.28 |
-| CSC-SWE6-001 | Software Qualification Test Specification | 1.31 |
-| CSC-SYS2-001 | System Requirements Specification | 2.17 |
-| CSC-SYS3-001 | System Architecture Design | 1.19 |
-| CSC-SYS4-001 | System Integration Test Specification | 1.25 |
-| CSC-SYS5-001 | System Verification Specification | 1.22 |
-| CSC-MAN3-001 | Project Management Plan | 1.21 |
-| CSC-MAN5-001 | Risk Management Plan | 1.17 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.22 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
-| CSC-SUP9-001 | Problem Resolution Plan | 1.15 |
-| CSC-SUP10-001 | Change Request Plan | 1.17 |
-| CSC-ACQ4-001 | Supplier Monitoring Plan | 1.16 |
-| CSC-PA2-001 | Capability Level 2 Records | 1.36 |
-| CSC-DEV-001 | AI Authorship Deviation Record | 1.14 |
-| CSC-DEV-002 | Independent Review Deviation Record | 1.14 |
+| CSC-SVD-001 | Software Version Description (this document) | 1.27 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.25 |
+| CSC-SWE2-001 | Software Architecture Design | 1.29 |
+| CSC-SWE3-001 | Software Detailed Design | 1.35 |
+| CSC-SWE4-001 | Software Unit Verification Specification | 1.40 |
+| CSC-SWE5-001 | Software Integration Test Specification | 1.29 |
+| CSC-SWE6-001 | Software Qualification Test Specification | 1.32 |
+| CSC-SYS2-001 | System Requirements Specification | 2.18 |
+| CSC-SYS3-001 | System Architecture Design | 1.20 |
+| CSC-SYS4-001 | System Integration Test Specification | 1.26 |
+| CSC-SYS5-001 | System Verification Specification | 1.23 |
+| CSC-MAN3-001 | Project Management Plan | 1.22 |
+| CSC-MAN5-001 | Risk Management Plan | 1.18 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.23 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.26 |
+| CSC-SUP9-001 | Problem Resolution Plan | 1.16 |
+| CSC-SUP10-001 | Change Request Plan | 1.18 |
+| CSC-ACQ4-001 | Supplier Monitoring Plan | 1.17 |
+| CSC-PA2-001 | Capability Level 2 Records | 1.37 |
+| CSC-DEV-001 | AI Authorship Deviation Record | 1.15 |
+| CSC-DEV-002 | Independent Review Deviation Record | 1.15 |
 
 ---
 
-## 6. Change Summary (v1.3.0 → v1.6.0)
+## 6. Change Summary (v1.3.0 → v1.6.1)
 
 ### 6.1 New Features
 
@@ -309,6 +317,13 @@ Platforms: `linux/amd64`, `linux/arm64`.
 | D-011 | 40 new tests (1223 from v1.5.0 baseline): 21 in `test_constant_comparison.py`, 9 in `test_unsigned_suffix_signed_params.py`, 10 in `test_pointer_prefix_fix.py` | — |
 | D-012 | 56 additional tests (1279 total): +9 in `test_yoda_condition.py` (B-008), +9 in `test_inline_suppression.py` (F-024), +6 in `test_constant_comparison.py` (B-009 edge cases), +8 in `test_defines.py`, +4 in `test_parameter_prefix.py` (B-007), +10 in `test_pointer_prefix_fix.py`, +4 in `test_print_summary.py`, +6 in `test_unsigned_suffix_signed_params.py` | — |
 
+### 6.6 v1.6.1 Bug Fix (2026-10-06)
+
+| ID | Description | Issue |
+|---|---|---|
+| B-012 | Startup banner no longer written into a machine-readable `--log` file — v1.6.0 wrote the two-line banner to the `--log` file for every output format, so with `--output-format json` or `sarif` the file did not parse and the GitHub Action, which reads its results from that file, failed on every run with `could not read results JSON`. `main()` now writes the banner to the log via `tee.log_print()` only when `--output-format` is `text`; for `json`, `sarif` and `html` the log file holds only the report document. The banner is still written to `stderr` for every format (SWE1-094) | [#439](https://github.com/dermot-murphy/CStyleCheck/issues/439) |
+| D-013 | 2 new tests (1281 total) in `test_cli.py` (`TestStartupBannerLogFile`): `test_text_log_file_has_banner` (text log starts with the banner) and `test_structured_log_file_has_no_banner` (json / sarif / html log equals the stdout document, has no banner, and JSON / SARIF parse; banner still on `stderr`) | [#439](https://github.com/dermot-murphy/CStyleCheck/issues/439) |
+
 ---
 
 ## 7. Known Issues and Limitations
@@ -343,11 +358,11 @@ All of the following CI checks must pass before merge to `develop` and sync to `
 
 ### 8.2 Qualification Test Status
 
-All 1279 tests pass with no failures. Test counts per module are documented in §5.4.
+All 1281 tests pass with no failures. Test counts per module are documented in §5.4.
 
 ### 8.3 Docker Build
 
-The Docker image is built for `linux/amd64` and `linux/arm64` and published to Docker Hub and GHCR automatically on creation of the `v1.6.0` tag via `docker_publish.yml`.
+The Docker image is built for `linux/amd64` and `linux/arm64` and published to Docker Hub and GHCR automatically on creation of the `v1.6.1` tag via `docker_publish.yml`.
 
 ### 8.4 GitHub Pages / Wiki
 
@@ -357,7 +372,7 @@ The GitHub Wiki is rebuilt automatically on any push to `main` that touches `REA
 
 ## 9. Installation and Upgrade Notes
 
-### 9.1 Upgrade from v1.5.x
+### 9.1 Upgrade from v1.6.0 / v1.5.x
 
 No breaking changes. All existing configurations, pre-commit hooks, and CLI flags work
 without modification. Upgrade steps:
@@ -367,10 +382,10 @@ without modification. Upgrade steps:
 pip install --upgrade cstylecheck
 
 # Docker
-docker pull dermotmurphy/cstylecheck:1.6.0
+docker pull dermotmurphy/cstylecheck:1.6.1
 
 # pre-commit (update rev in .pre-commit-config.yaml)
-rev: v1.6.0
+rev: v1.6.1
 ```
 
 ### 9.2 New Features — Optional Activation
@@ -398,16 +413,16 @@ The `src/cstylecheck.py` entry point shim is unchanged. The 72 rule IDs present 
 
 | Work Product | Document | Version | Status |
 |---|---|---|---|
-| System Requirements | CSC-SYS2-001 | 2.17 | Released |
-| System Architecture | CSC-SYS3-001 | 1.19 | Released |
-| System Integration Tests | CSC-SYS4-001 | 1.25 | Released |
-| System Verification | CSC-SYS5-001 | 1.22 | Released |
-| Software Requirements | CSC-SWE1-001 | 2.24 | Released |
-| Software Architecture | CSC-SWE2-001 | 1.28 | Released |
-| Detailed Design | CSC-SWE3-001 | 1.34 | Released |
-| Unit Verification | CSC-SWE4-001 | 1.39 | Released |
-| Integration Tests | CSC-SWE5-001 | 1.28 | Released |
-| Qualification Tests | CSC-SWE6-001 | 1.31 | Released |
+| System Requirements | CSC-SYS2-001 | 2.18 | Released |
+| System Architecture | CSC-SYS3-001 | 1.20 | Released |
+| System Integration Tests | CSC-SYS4-001 | 1.26 | Released |
+| System Verification | CSC-SYS5-001 | 1.23 | Released |
+| Software Requirements | CSC-SWE1-001 | 2.25 | Released |
+| Software Architecture | CSC-SWE2-001 | 1.29 | Released |
+| Detailed Design | CSC-SWE3-001 | 1.35 | Released |
+| Unit Verification | CSC-SWE4-001 | 1.40 | Released |
+| Integration Tests | CSC-SWE5-001 | 1.29 | Released |
+| Qualification Tests | CSC-SWE6-001 | 1.32 | Released |
 | Source Code | `src/cstylecheck/` (package) | 1.6.0 | Released |
 | Test Suite | `tests/` (1279 tests) | 1.6.0 | Released |
 | CI Automation | `.github/workflows/` + `scripts/ci/` | 1.6.0 | Released |
@@ -431,4 +446,4 @@ The `src/cstylecheck.py` entry point shim is unchanged. The 72 rule IDs present 
 
 ---
 
-*End of Software Version Description — CStyleCheck v1.6.0*
+*End of Software Version Description — CStyleCheck v1.6.1*

@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.39 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.40 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.4 |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.40 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): §5.12 adds UV-CLI-023 `TestStartupBannerLogFile.test_text_log_file_has_banner` and UV-CLI-024 `test_structured_log_file_has_no_banner` (the 2 v1.6.1 tests in `test_cli.py`; IDs renumbered from the v1.6.1 UV-CLI-011/012, which `develop` already uses for baseline tests); `test_cli.py` 43→45; total 1557→1559; SWE1-094 trace row cites UV-CLI-023/024 |
 | 1.39 | 2026-10-05 | Claude | Issue #441 (CR-441): add §5.22 catalogue for `test_output_dirs.py` (UV-OUT-001 to UV-OUT-004, 11 tests: missing parent folders of `--log`, `--write-baseline` and `--init-output` files are created; an uncreatable folder exits 2); §6 new module row, total 1546→1557 (59 modules); coverage-gate text 1546→1557; §7 SWE1-062, SWE1-065 and SWE1-075 rows cite UV-OUT |
 | 1.38 | 2026-10-05 | Claude | Issue #439: UV-CLI-019 adds `test_structured_log_file_has_no_banner` — with `--output-format json`, `sarif` or `html` and `--log FILE`, the log file equals the stdout document and has no banner (JSON and SARIF parse with `json.loads`); §6 `test_cli_requirements.py` 21→22; total 1545→1546; coverage-gate text 1545→1546; §7 SWE1-094 row notes the text-only `--log` copy |
 | 1.37 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
@@ -74,10 +75,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.24 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.34 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.28 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.25 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.35 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.29 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.26 |
 
 ---
 
@@ -104,7 +105,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1557 tests (2026-10-05 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425 and #423) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1559 tests (2026-10-06 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425, #423, #441 and the v1.6.1 back-merge) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -335,7 +336,7 @@ Tests are organised by test module. Each module maps to one or more COMP-05 sub-
 
 ---
 
-### 5.12 CLI and Integration — `test_cli.py` (43 tests)
+### 5.12 CLI and Integration — `test_cli.py` (45 tests)
 
 | TC-ID | Test Name | Unit Verified | Pass Condition |
 |---|---|---|---|
@@ -352,6 +353,8 @@ Tests are organised by test module. Each module maps to one or more COMP-05 sub-
 | UV-CLI-011 | `TestBaselineSuppression.test_moved_violation_still_suppressed`, `test_key_excludes_line`, `test_baseline_still_records_line` | UNIT-37, UNIT-119 | Violation moved to another line stays suppressed; `line` still written (issue #394) |
 | UV-CLI-012 | `TestBaselineSuppression.test_extra_copy_of_baselined_violation_reported`, `test_duplicate_entries_suppress_duplicates`, `test_different_message_not_suppressed`, `test_apply_baseline_does_not_mutate` | UNIT-119 | Multiset matching: one entry suppresses one violation (issue #394) |
 | UV-CLI-013 | `TestBaselineSuppression.test_normalise_*`, `test_write_uses_forward_slashes`, `test_windows_baseline_matches_posix_path`, `test_posix_baseline_matches_windows_path` | UNIT-36, UNIT-120 | Paths normalised to `/`; Windows and Linux baselines interchangeable (issue #395) |
+| UV-CLI-023 | `TestStartupBannerLogFile.test_text_log_file_has_banner` | UNIT-46, UNIT-86 | SWE1-094 (#439, v1.6.1 hotfix): with the default text output and `--log FILE`, the log file starts with the startup banner (`CStyleCheck <version>`) |
+| UV-CLI-024 | `TestStartupBannerLogFile.test_structured_log_file_has_no_banner` | UNIT-46, UNIT-86 | SWE1-094 (#439, v1.6.1 hotfix), negative: for each of `--output-format json`, `sarif` and `html` (subtests) with `--log FILE`, the log file equals the stdout document and does not start with the banner; the JSON and SARIF log files parse, the HTML log file starts with `<!DOCTYPE html>`; `stderr` still starts with the banner |
 
 ---
 
@@ -525,7 +528,7 @@ Added for issue #441. `--log`, `--write-baseline` and `--init-output` (with `--i
 | `test_dictionaries.py` | 32 | 32 | 0 | COMP-03 |
 | `test_improvements.py` | 80 | 80 | 0 | Multiple |
 | `test_barr_c.py` | 42 | 42 | 0 | Multiple |
-| `test_cli.py` | 43 | 43 | 0 | COMP-01, COMP-07 |
+| `test_cli.py` | 45 | 45 | 0 | COMP-01, COMP-07 |
 | `test_exclusions.py` | 28 | 28 | 0 | COMP-02 |
 | `test_eof_comment.py` | 33 | 33 | 0 | `_check_eof_comment` |
 | `test_copyright_header.py` | 55 | 55 | 0 | `_check_copyright_header` |
@@ -567,7 +570,7 @@ Added for issue #441. `--log`, `--write-baseline` and `--init-output` (with `--i
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
 | `test_cli_requirements.py` | 22 | 22 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
-| **Total** | **1557** | **1557** | **0** | All 81 rule IDs covered — 59 modules |
+| **Total** | **1559** | **1559** | **0** | All 81 rule IDs covered — 59 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -637,7 +640,7 @@ Added for issue #441. `--log`, `--write-baseline` and `--init-output` (with `--i
 | SWE1-091 | misc.constant_comparison (`_check_constant_comparison`) | `test_constant_comparison.py` |
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix | `test_pointer_prefix_fix.py` |
-| SWE1-094 | Startup banner to stderr (two lines, unconditional) | `test_cli_requirements.py` — UV-CLI-017 to UV-CLI-019 (#407, extended by #413); also SIT-024. Full: stream, two-line content and copyright format, ordering, piped stdout, `--log` copy (text output only; none for json/sarif/html, #439), no suppression option |
+| SWE1-094 | Startup banner to stderr (two lines, unconditional) | `test_cli_requirements.py` — UV-CLI-017 to UV-CLI-019 (#407, extended by #413); `test_cli.py` — UV-CLI-023, UV-CLI-024 (v1.6.1 hotfix, #439); also SIT-024. Full: stream, two-line content and copyright format, ordering, piped stdout, `--log` copy (text output only; none for json/sarif/html, #439), no suppression option |
 | SWE1-095 | Copyright in `--version` | `test_cli_requirements.py` — UV-CLI-018 (`test_copyright_line_format`: `--version` prints the version line then `(C) <year> <holder>` on its own line); `test_cli.py` — `TestVersionAndHelp` (tool name and exit code); also SIT-024 |
 | SWE1-096 | OS-native path separator in output | `test_cli_requirements.py` — UV-CLI-020 to UV-CLI-022 (#407); both `\` (Windows) and `/` (POSIX) behaviour asserted. The separator is applied once by `discover_files()` (`os.path.normpath`, UNIT-03); `Violation.__str__()` renders the path verbatim |
 | SWE1-097 | `print_summary()` restructure | `test_print_summary.py` |

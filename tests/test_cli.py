@@ -3,7 +3,7 @@
 Covers: --version, --help, --warnings-as-errors, --options-file, --defines,
 --banned-names, --exclusions, --summary, --log.
 """
-import sys, os, subprocess, tempfile, textwrap, unittest
+import json, sys, os, subprocess, tempfile, textwrap, unittest
 from pathlib import Path
 
 _HERE    = Path(__file__).resolve().parent
@@ -121,6 +121,48 @@ class TestOptionsFile(unittest.TestCase):
             _run("--log", str(log), files=[src])
             content = log.read_text(encoding="utf-8")
         self.assertIn("misc.indentation", content)
+
+
+# ---------------------------------------------------------------------------
+class TestStartupBannerLogFile(unittest.TestCase):
+    """The --log file holds the banner only for text output (#439)."""
+
+    def _run_split(self, *args):
+        cmd = [sys.executable, CHECKER, "--config", YAML, *args]
+        # Force UTF-8 stdout in the child so the html report (which holds
+        # non-ASCII characters) decodes the same on Windows as on Linux.
+        env = {**os.environ, "PYTHONUTF8": "1"}
+        r = subprocess.run(cmd, capture_output=True, text=True,
+                           encoding="utf-8", env=env)
+        return r.stdout, r.stderr
+
+    def test_text_log_file_has_banner(self):
+        with tempfile.TemporaryDirectory() as td:
+            log = Path(td) / "out.log"
+            src = _write(td, "main.c", "\tvoid f(void){}\n")
+            self._run_split("--log", str(log), str(src))
+            content = log.read_text(encoding="utf-8")
+        self.assertTrue(content.startswith("CStyleCheck "), content[:80])
+
+    def test_structured_log_file_has_no_banner(self):
+        for fmt in ("json", "sarif", "html"):
+            with self.subTest(fmt=fmt), tempfile.TemporaryDirectory() as td:
+                src = _write(td, "main.c", "\tvoid f(void){}\n")
+                log = Path(td) / f"results.{fmt}"
+                out, err = self._run_split("--output-format", fmt,
+                                           "--log", str(log), str(src))
+                log_text = log.read_text(encoding="utf-8")
+                # the log is exactly the document written to stdout
+                self.assertEqual(log_text.strip(), out.strip())
+                self.assertFalse(log_text.startswith("CStyleCheck "),
+                                 log_text[:80])
+                if fmt == "html":
+                    self.assertTrue(log_text.startswith("<!DOCTYPE html>"),
+                                    log_text[:80])
+                else:
+                    json.loads(log_text)  # raises if anything precedes it
+                # the banner still goes to stderr
+                self.assertTrue(err.startswith("CStyleCheck "), err[:80])
 
 
 # ---------------------------------------------------------------------------

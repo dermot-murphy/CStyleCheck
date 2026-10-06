@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN5-001 | **Version** | 1.17 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-MAN5-001 | **Version** | 1.18 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | MAN.5 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.18 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.17 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.16 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.15 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-012: new RISK-009 (user-visible behaviour change on upgrade); one review frequency per risk (RISK-005 quarterly in §5, §6 note and §7; RISK-004 review recorded 2026-09-29); RR-003-005 owner confirmation of RISK-003/005 remains pending, tracked in #430. AUD10-F-021: CSC-AUD-009 residuals RR-003-004/005 tracking recorded in §6. AUD10-F-031: risk Status fields set to Active/Accepted to match §6; approval-by-merge policy (CSC-DEV-002 §5.2); RR-003-004/005 closed |
@@ -49,9 +50,9 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.21 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.17 |
+| CSC-MAN3-001 | Project Management Plan | 1.22 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.26 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.18 |
 
 ---
 

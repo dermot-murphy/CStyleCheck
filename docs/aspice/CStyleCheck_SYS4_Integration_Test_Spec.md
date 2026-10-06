@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.25 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.26 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.4 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.26 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): SITC-006 step 4 (no startup banner in a json / sarif / html `--log` file), SYS-F-046 reference, v1.6.1 execution record and overall result brought in from the v1.6.1 release |
 | 1.25 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.24 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.23 | 2026-09-29 | Claude | Approval-by-merge policy (CSC-DEV-002 §5.2), #430: Review & Approval table entries set to approval by the owner's merge of the introducing PR |
@@ -71,9 +72,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.17 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.19 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.22 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.18 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.20 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.23 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
@@ -225,19 +226,21 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | **Test Case ID** | SITC-006 |
 | **Test Objective** | Verify that `--log FILE` writes identical content to both stdout and the log file |
 | **Architecture Interface** | IF-09 |
-| **Requirement Reference** | SYS-F-031 |
+| **Requirement Reference** | SYS-F-031, SYS-F-046 |
 | **Pre-conditions** | Writable output directory |
 | **Test Method** | Dynamic execution; file comparison |
 
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
 | 1 | Invoke with `--log output/results.txt` | Violating source | stdout shows violations |
-| 2 | Read `output/results.txt` | Log file | Content matches stdout |
+| 2 | Read `output/results.txt` | Log file | Content matches stdout (text output: the log file also starts with the two-line startup banner, SYS-F-046) |
 | 3 | Verify file created | — | File exists and is non-empty |
+| 4 | Invoke with `--output-format json`, `sarif` and `html`, each with `--log FILE` (v1.6.1, #439) | Violating source | The log file equals the stdout document with no startup banner; the JSON and SARIF log files parse; the banner is still written to stderr |
 
 | Execution Date | Tester | SW Version | Result | Deviation Ref |
 |---|---|---|---|---|
 | 2026-05-28 | GitHub Actions (automated) / Dermot Murphy (manual review) | 93178cd | PASS | |
+| 2026-10-06 | GitHub Actions (automated) / Dermot Murphy (manual review) — step 4 added (#439) | v1.6.1 | PASS | |
 
 ---
 
@@ -514,7 +517,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-003 | Options file integration | PASS | |
 | SITC-004 | JSON output format | PASS | |
 | SITC-005 | SARIF output format | PASS | |
-| SITC-006 | Log file output | PASS | |
+| SITC-006 | Log file output (v1.6.1: no startup banner in a json / sarif / html log file, #439) | PASS | |
 | SITC-007 | Baseline suppression round-trip | PASS | |
 | SITC-008 | Cross-file sign compatibility | PASS | |
 | SITC-009 | exclusions file integration | PASS | |
@@ -527,7 +530,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-016 | v1.6.0 inline suppression — block-comment form and all directive variants | PASS | |
 | SITC-017 | Post-v1.6.0 MISRA/Barr-C rules (8 rule IDs; all 81 rule IDs now covered) | PASS | |
 
-**Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016), GitHub Actions (automated) / Dermot Murphy (manual review), 1279 tests all PASS on Python 3.10 / 3.11 / 3.12.
+**Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016); 2026-10-06 (v1.6.1, SITC-006 step 4), GitHub Actions (automated) / Dermot Murphy (manual review), 1281 tests all PASS on Python 3.10 / 3.11 / 3.12.
 
 **Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), 1452 after #412 (8 tests), 1463 after #418 (11 tests), 1481 after #420 (18 tests), 1508 after #422 (27 tests), 1524 after #424 (16 tests), 1532 after #425 (8 tests) and 1545 after #423 (13 tests), all PASS.
 
@@ -544,7 +547,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-003 | SYS-F-003, SYS-NF-008 | IF-01 | SIT-003 |
 | SITC-004 | SYS-F-028 | IF-08, IF-09 | SIT-004 |
 | SITC-005 | SYS-F-029 | IF-08, IF-09 | SIT-005 |
-| SITC-006 | SYS-F-031 | IF-09 | SIT-006 |
+| SITC-006 | SYS-F-031, SYS-F-046 | IF-09 | SIT-006, SIT-024 |
 | SITC-007 | SYS-F-034, SYS-F-035, SYS-F-036 | IF-10, IF-08, IF-09 | SIT-007 |
 | SITC-008 | SYS-F-021 | IF-07 | SIT-008 |
 | SITC-009 | SYS-F-008, SYS-NF-009 | IF-04, IF-08 | SIT-009 |

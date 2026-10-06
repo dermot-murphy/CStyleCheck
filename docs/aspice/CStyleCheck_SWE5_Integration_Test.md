@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.28 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.29 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.5 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.29 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): SIT-024 steps 5 and 6 (startup banner in the `--log` file for text output only) and the v1.6.1 execution record / overall result brought in from the v1.6.1 release |
 | 1.28 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.27 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.26 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-007: SIT-024 step 2 expects the copyright line in the code's format `(C) <year> <holder>` (no word "Copyright"; SWE1-095, UV-CLI-018). AUD10-F-019: post-v1.6.0 test-count note extended through #422 (1508), #424 (1524), #425 (1532) and #423 (1545); approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -64,11 +65,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.28 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.24 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.39 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.31 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.25 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.29 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.25 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.40 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.32 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.26 |
 
 ### 3.2 Test Environment
 
@@ -651,10 +652,13 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | 2 | Run with `--version` | `--version` flag | stdout contains the version string `CStyleCheck <version>` and the copyright notice `(C) <year> <holder>` (`(C) 2026 Dermot Murphy`) on separate lines (SWE1-095; UV-CLI-018) |
 | 3 | Run with `--quiet` | `--quiet` | Option rejected (exit 2); the banner has no suppression option (SWE1-094, #413) |
 | 4 | Verify banner does not appear in `stdout` violation output | Normal run | `stdout` violation lines are not prefixed with banner content |
+| 5 | Run with text output and a log file (v1.6.1, #439) | `--log FILE` | The log file starts with the startup banner (`CStyleCheck <version>`) |
+| 6 | Run with each machine-readable format and a log file (v1.6.1, #439) | `--output-format json` / `sarif` / `html`, `--log FILE` | The log file equals the stdout document and contains no banner (JSON / SARIF parse; HTML starts with `<!DOCTYPE html>`); `stderr` still starts with the banner |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
 | 2026-07-06 | GitHub Actions (automated) | 3.11 | PASS | |
+| 2026-10-06 | GitHub Actions (automated) — v1.6.1, steps 5 and 6 added (#439) | 3.10 / 3.11 / 3.12 | PASS | |
 
 ---
 
@@ -761,12 +765,12 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SIT-021 | `misc.constant_comparison` rule (constant==constant detection) | IF-03, IF-06, IF-10 | PASS | |
 | SIT-022 | `misc.unsigned_suffix` signed-parameter argument exemption | IF-03, IF-06, IF-10 | PASS | |
 | SIT-023 | `variable.pointer_prefix` auto-fix mode (signature, body, doxygen, .h file) | IF-06, IF-10 | PASS | |
-| SIT-024 | Startup banner and `--version` copyright output | IF-02, IF-10 | PASS | |
+| SIT-024 | Startup banner and `--version` copyright output; banner in the `--log` file for text output only (v1.6.1, #439) | IF-02, IF-10 | PASS | |
 | SIT-025 | Block-comment `/* */` inline suppression form | IF-06 | PASS | |
 | SIT-026 | `--summary` output restructure (Files before Results, header, dynamic separator) | IF-10 | PASS | |
 | SIT-027 | Post-v1.6.0 MISRA/Barr-C rules (goto, assignment in condition, multiple statements, void pointer, recursion, sizeof type, boolean comparison, empty else) | IF-03, IF-06, IF-10 | PASS | |
 
-**Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence)
+**Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence). v1.6.1, 2026-10-06: 1281 tests all PASS (SIT-024 steps 5 and 6 added for #439)
 
 **Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests; #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: 1452 tests; #418 (the other 7 post-v1.6.0 rules opt-in) adds 11: 1463 tests; #420 (presets / `--init` enable the standard-specific opt-in rules) adds 18: 1481 tests; #422 (case-style config validation) adds 27: 1508 tests; #424 (`functions.case` removed) adds 16: 1524 tests; #425 (config errors exit 2 from both entry points) adds 8: 1532 tests; #423 (last enum member checked) adds 13: 1545 tests, all PASS (local run, Python 3.11).
 

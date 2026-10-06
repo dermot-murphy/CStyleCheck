@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-ACQ4-001 | **Version** | 1.16 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-ACQ4-001 | **Version** | 1.17 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | ACQ.4 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.17 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.16 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.2 CI workflow availability monitors `aspice_consistency.yml`; acceptance criterion counts six CI workflows; referenced-document versions resynced |
 | 1.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-030: SUP-09 (Python development and CI tool maintainers: pytest, pytest-cov, ruff, mypy with types-PyYAML, codespell) added to §4 with monitoring approach in new §5.8 and interface ACQ-IF-07 in §6; approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -59,10 +60,10 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.21 |
-| CSC-MAN5-001 | Risk Management Plan | 1.17 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.15 |
+| CSC-MAN3-001 | Project Management Plan | 1.22 |
+| CSC-MAN5-001 | Risk Management Plan | 1.18 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.26 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.16 |
 
 ---
 
