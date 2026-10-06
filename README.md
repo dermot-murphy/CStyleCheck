@@ -120,7 +120,7 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1279 tests)
+    cstylecheck_tests.yml      # runs the test suite on every commit (1281 tests)
     rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
@@ -608,6 +608,20 @@ on array subscripts and constant-only comparisons; non-ASCII characters removed 
 all output; OS-native path separators used consistently throughout.
 
 1 new rule + 5 features; **73 rule IDs** total. 56 new tests (1279 total).
+
+---
+
+### New in v1.6.1 (2026-10-06)
+
+Hotfix release. **Bug fix:** the startup banner is no longer written into a
+machine-readable `--log` file (#439). In v1.6.0 the banner was written to the `--log`
+file for every output format, so a `--output-format json` or `sarif` log file did not
+parse and the GitHub Action failed on every run with `could not read results JSON`. The
+banner now goes to the `--log` file only for `--output-format text`; for `json`, `sarif`
+and `html` the log file holds only the report document. It is still written to `stderr`
+for every format.
+
+No new rules; **73 rule IDs** total. 2 new tests (1281 total).
 
 ---
 
