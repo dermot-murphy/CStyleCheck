@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN3-001 | **Version** | 1.7 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-MAN3-001 | **Version** | 1.8 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | MAN.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.8 | 2026-10-06 | Claude | v1.6.1 hotfix (#439) — §4.1 scope, WBS-07 and WBS-10 test counts 1279→1281; §3.2 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.7 | 2026-07-06 | Claude | ASPICE audit — update WBS-07 and WBS-10 stale test counts — closes #379 |
 | 1.6 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.5 | 2026-06-04 | Claude | Deep accuracy audit: fix §3 Purpose version text v1.0.0→v1.2.0, update SWE1-001 version in §3.2 (1.3→1.5) — resolves issue #163 |
@@ -51,11 +52,11 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | System Requirements Specification | 1.6 |
-| CSC-SWE1-001 | Software Requirements Specification | 1.9 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.7 |
-| CSC-MAN5-001 | Risk Management Plan | 1.3 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.4 |
+| CSC-SYS2-001 | System Requirements Specification | 2.3 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.7 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.11 |
+| CSC-MAN5-001 | Risk Management Plan | 1.4 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.9 |
 
 ---
 
@@ -64,7 +65,7 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 ### 4.1 In Scope
 
 - Design, implementation, and testing of `src/cstylecheck/` package (10 sub-modules) implementing 53 rule IDs
-- Test suite (1279 pytest tests across 53 test modules)
+- Test suite (1281 pytest tests across 53 test modules)
 - Docker image build and multi-platform publication to GHCR and Docker Hub
 - GitHub Action integration (`action.yml`)
 - pre-commit hook integration (`.pre-commit-hooks.yml`)
@@ -126,10 +127,10 @@ Requirements  →  Architecture  →  Detailed Design  →  Implementation
 | WBS-04 | Software architecture (SWE.2) | 6h | Claude | Complete |
 | WBS-05 | Detailed design (SWE.3) | 8h | Claude | Complete |
 | WBS-06 | Core linter implementation | 80h | Claude | Complete |
-| WBS-07 | Test suite (1279 tests) | 40h | Claude | Complete |
+| WBS-07 | Test suite (1281 tests) | 40h | Claude | Complete |
 | WBS-08 | Docker packaging and CI | 8h | Claude | Complete |
 | WBS-09 | GitHub Action and pre-commit | 6h | Claude | Complete |
-| WBS-10 | Unit verification (SWE.4) | 4h | Claude | Complete — 1279 tests across 53 modules; SWE4 catalogue updated (issues #148, #163 resolved) |
+| WBS-10 | Unit verification (SWE.4) | 4h | Claude | Complete — 1281 tests across 53 modules (v1.6.1); SWE4 catalogue updated (issues #148, #163 resolved) |
 | WBS-11 | Integration testing (SWE.5) | 4h | Claude | In Progress — blocked by #152 (results recording); test execution complete |
 | WBS-12 | Qualification testing (SWE.6) | 4h | Claude | Largely Complete — CI pipeline constitutes qualification execution; result recording open (issue #152) |
 | WBS-13 | System integration testing (SYS.4) | 4h | Claude | In Progress — blocked by #152 (results recording); test execution complete |
@@ -213,9 +214,11 @@ Requirements  →  Architecture  →  Detailed Design  →  Implementation
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-04-15 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-04-15 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-04-15 |
-| Approver | Dermot Murphy | Approved | 2026-04-15 |
+| Author | Claude | Approved | 2026-10-06 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

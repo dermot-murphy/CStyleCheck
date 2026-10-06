@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.20 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.21 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.4 |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.21 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: §5.12 adds UV-CLI-011 `TestStartupBannerLogFile.test_text_log_file_has_banner` and UV-CLI-012 `test_structured_log_file_has_no_banner` (json / sarif / html `--log` file equals the stdout document, has no banner, JSON and SARIF parse; banner still on `stderr`), both tracing to SWE1-094; §5.12 heading and §6 `test_cli.py` 43→45; total 1279→1281; CI-gate text 1279→1281; §7 adds the SWE1-094 row; §3.1 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.20 | 2026-07-06 | Claude | ASPICE audit — update §6 per-row test counts for 8 modules (+56 total): test_defines.py 22→30, test_yoda_condition.py 37→46, test_inline_suppression.py 15→24, test_constant_comparison.py 21→27, test_parameter_prefix.py 47→51, test_pointer_prefix_fix.py 10→20, test_print_summary.py 7→11, test_unsigned_suffix_signed_params.py 9→15; update §3.1 refs (SWE1 2.4→2.6, SWE3 1.15→1.16, SWE5 1.11→1.14); add SWE1-091/092/093 to §7 traceability — closes #374 |
 | 1.19 | 2026-07-06 | Claude | v1.6.0 RC — update test total 1223→1279 (+56 across 8 modules: yoda_condition 37→46, inline_suppression 15→24, constant_comparison 21→27, defines 22→30, parameter_prefix 47→51, pointer_prefix_fix 10→20, print_summary 7→11, unsigned_suffix_signed_params 9→15); update coverage comment; update §5.5 SVD→1.22 |
 | 1.18 | 2026-07-01 | Claude | v1.6.0 — add test_constant_comparison.py (21 tests), test_unsigned_suffix_signed_params.py (9 tests), test_pointer_prefix_fix.py (10 tests); update §3.1 refs (SWE1 2.4→2.5, SWE5 1.11→1.12); update test total 1183→1223, modules 50→53; update coverage comment — closes #339 #340 #341 |
@@ -55,10 +56,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.6 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.16 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.14 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.9 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.17 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.15 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.11 |
 
 ---
 
@@ -85,7 +86,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1279 tests including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1281 tests (v1.6.1) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -315,7 +316,7 @@ Tests are organised by test module. Each module maps to one or more COMP-05 sub-
 
 ---
 
-### 5.12 CLI and Integration — `test_cli.py` (43 tests)
+### 5.12 CLI and Integration — `test_cli.py` (45 tests)
 
 | TC-ID | Test Name | Unit Verified | Pass Condition |
 |---|---|---|---|
@@ -329,6 +330,8 @@ Tests are organised by test module. Each module maps to one or more COMP-05 sub-
 | UV-CLI-008 | `test_baseline_write_and_load` | UNIT-35, UNIT-36, UNIT-37 | Round-trip: write then suppress |
 | UV-CLI-009 | `test_exclude_glob_applied` | UNIT-04 | Excluded files not scanned |
 | UV-CLI-010 | `test_version_flag` | UNIT-46 | `--version` outputs version; exit 0 |
+| UV-CLI-011 | `TestStartupBannerLogFile.test_text_log_file_has_banner` | UNIT-46, UNIT-86 | SWE1-094 (#439): with the default text output and `--log FILE`, the log file starts with the startup banner (`CStyleCheck <version>`) |
+| UV-CLI-012 | `TestStartupBannerLogFile.test_structured_log_file_has_no_banner` | UNIT-46, UNIT-86 | SWE1-094 (#439), negative: for each of `--output-format json`, `sarif` and `html` (subtests) with `--log FILE`, the log file equals the stdout document and does not start with the banner; the JSON and SARIF log files parse with `json.loads`, the HTML log file starts with `<!DOCTYPE html>`; `stderr` still starts with the banner |
 
 ---
 
@@ -401,7 +404,7 @@ Added in v1.13. Covers the per-file breakdown extension to `print_summary()` (SW
 | `test_dictionaries.py` | 32 | 32 | 0 | COMP-03 |
 | `test_improvements.py` | 67 | 67 | 0 | Multiple |
 | `test_barr_c.py` | 42 | 42 | 0 | Multiple |
-| `test_cli.py` | 43 | 43 | 0 | COMP-01, COMP-07 |
+| `test_cli.py` | 45 | 45 | 0 | COMP-01, COMP-07 |
 | `test_exclusions.py` | 28 | 28 | 0 | COMP-02 |
 | `test_eof_comment.py` | 33 | 33 | 0 | `_check_eof_comment` |
 | `test_copyright_header.py` | 55 | 55 | 0 | `_check_copyright_header` |
@@ -437,7 +440,7 @@ Added in v1.13. Covers the per-file breakdown extension to `print_summary()` (SW
 | `test_constant_comparison.py` | 27 | 27 | 0 | COMP-05f (`_check_constant_comparison`) |
 | `test_unsigned_suffix_signed_params.py` | 15 | 15 | 0 | COMP-05f (`_check_misc` signed-param exemption) |
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
-| **Total** | **1279** | **1279** | **0** | All rules covered — 53 modules |
+| **Total** | **1281** | **1281** | **0** | All rules covered — 53 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -488,6 +491,7 @@ Added in v1.13. Covers the per-file breakdown extension to `print_summary()` (SW
 | SWE1-091 | misc.constant_comparison (`_check_constant_comparison`) | `test_constant_comparison.py` |
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix | `test_pointer_prefix_fix.py` |
+| SWE1-094 | Startup banner to stderr; `--log` copy for text output only (#439) | `test_cli.py` — UV-CLI-011 (text log file starts with the banner), UV-CLI-012 (json / sarif / html log file holds only the report document; banner still on `stderr`) |
 
 ---
 
@@ -495,9 +499,11 @@ Added in v1.13. Covers the per-file breakdown extension to `print_summary()` (SW
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-10-06 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

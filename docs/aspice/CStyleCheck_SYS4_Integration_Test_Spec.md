@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.11 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.12 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.4 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.12 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: SITC-006 adds step 4 — with `--output-format json` / `sarif` / `html` the `--log` file holds only the report document (no startup banner) and parses; requirement reference adds SYS-F-046; v1.6.1 execution record; §5 overall result 1279→1281; §6 SITC-006 row adds SYS-F-046 and SIT-024; §3.3 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.11 | 2026-07-06 | Claude | ASPICE audit — add SITC-016 for v1.6.0 block-comment inline suppression — closes #379 |
 | 1.10 | 2026-07-06 | Claude | v1.6.0 RC — update §5 overall result 1183→1279; update §3.3 SWE5→1.13, SVD→1.22 |
 | 1.9 | 2026-06-27 | Fix §3.3 cross-ref: SYS2 1.9→2.0 | Dermot Murphy |
@@ -57,9 +58,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.0 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.5 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.7 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.3 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.6 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.8 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
@@ -211,19 +212,21 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | **Test Case ID** | SITC-006 |
 | **Test Objective** | Verify that `--log FILE` writes identical content to both stdout and the log file |
 | **Architecture Interface** | IF-09 |
-| **Requirement Reference** | SYS-F-031 |
+| **Requirement Reference** | SYS-F-031, SYS-F-046 |
 | **Pre-conditions** | Writable output directory |
 | **Test Method** | Dynamic execution; file comparison |
 
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
 | 1 | Invoke with `--log output/results.txt` | Violating source | stdout shows violations |
-| 2 | Read `output/results.txt` | Log file | Content matches stdout |
+| 2 | Read `output/results.txt` | Log file | Content matches stdout (text output: the log file also starts with the two-line startup banner, SYS-F-046) |
 | 3 | Verify file created | — | File exists and is non-empty |
+| 4 | Invoke with `--output-format json`, `sarif` and `html`, each with `--log FILE` (v1.6.1, #439) | Violating source | The log file equals the stdout document with no startup banner; the JSON and SARIF log files parse; the banner is still written to stderr |
 
 | Execution Date | Tester | SW Version | Result | Deviation Ref |
 |---|---|---|---|---|
 | 2026-05-28 | GitHub Actions (automated) / Dermot Murphy (manual review) | 93178cd | PASS | |
+| 2026-10-06 | GitHub Actions (automated) / Dermot Murphy (manual review) — step 4 added (#439) | v1.6.1 | PASS | |
 
 ---
 
@@ -473,7 +476,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-003 | Options file integration | PASS | |
 | SITC-004 | JSON output format | PASS | |
 | SITC-005 | SARIF output format | PASS | |
-| SITC-006 | Log file output | PASS | |
+| SITC-006 | Log file output (v1.6.1: no startup banner in a json / sarif / html log file, #439) | PASS | |
 | SITC-007 | Baseline suppression round-trip | PASS | |
 | SITC-008 | Cross-file sign compatibility | PASS | |
 | SITC-009 | exclusions file integration | PASS | |
@@ -485,7 +488,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-015 | v1.4.0 rule coverage (macro safety, function quality, file constraints, naming) | PASS | |
 | SITC-016 | v1.6.0 inline suppression — block-comment form and all directive variants | PASS | |
 
-**Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016), GitHub Actions (automated) / Dermot Murphy (manual review), 1279 tests all PASS on Python 3.10 / 3.11 / 3.12.
+**Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016); 2026-10-06 (v1.6.1, SITC-006 step 4), GitHub Actions (automated) / Dermot Murphy (manual review), 1281 tests all PASS on Python 3.10 / 3.11 / 3.12.
 
 > **📋 Note:** All SITC test cases must achieve PASS status before the system verification (SYS.5) activities commence. Any FAIL result must be tracked as a GitHub Issue and resolved via the change control process (SUP.10).
 
@@ -500,7 +503,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-003 | SYS-F-003, SYS-NF-008 | IF-01 | SIT-003 |
 | SITC-004 | SYS-F-028 | IF-08, IF-09 | SIT-004 |
 | SITC-005 | SYS-F-029 | IF-08, IF-09 | SIT-005 |
-| SITC-006 | SYS-F-031 | IF-09 | SIT-006 |
+| SITC-006 | SYS-F-031, SYS-F-046 | IF-09 | SIT-006, SIT-024 |
 | SITC-007 | SYS-F-034, SYS-F-035, SYS-F-036 | IF-10, IF-08, IF-09 | SIT-007 |
 | SITC-008 | SYS-F-021 | IF-07 | SIT-008 |
 | SITC-009 | SYS-F-008, SYS-NF-009 | IF-04, IF-08 | SIT-009 |
@@ -518,9 +521,11 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-10-06 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

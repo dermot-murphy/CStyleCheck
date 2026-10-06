@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.2 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.3 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.2 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.3 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: SYS-F-046 — the startup banner is written to the `--log` file for text output only, so a json / sarif / html log file holds only the report document; SYS-F-046 also corrected to the implemented banner (two lines on stderr: tool name and version, then copyright; written whether or not stdout is a terminal; never on stdout); §6 design reference updated; §3.3 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 2.2 | 2026-07-06 | Claude | ASPICE audit — SYS-F-011 73 rule IDs; scope v1.5.0→v1.6.0; add SYS-F-046 startup banner requirement — closes #379 |
 | 2.1 | 2026-06-27 | Fix §3.3 cross-refs: SUP8 1.7→1.9, SWE1 2.2→2.4 | Dermot Murphy |
 | 2.0 | 2026-06-27 | Claude | ASPICE audit — §3.1 scope v1.4.1→v1.5.0 and 71→72 rule IDs; §3.3 SWE1 ref 1.9→2.2; SYS-F-011 71→72; §6 RTM add SWE1-MISRA-004/SWE1-089/SWE1-090 traceability; update Review & Approval dates — closes #319 #323 |
@@ -61,9 +62,9 @@ The system is deployed in four integration modes:
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.9 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.5 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.4 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.11 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.6 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.7 |
 
 ### 3.4 Glossary
 
@@ -195,7 +196,7 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-043 | The system shall provide an interactive configuration wizard (`--init`) that generates `.cstylecheck.yml` through a Q&A session; `--preset barr-c\|minimal\|misra` shall write a pre-built config without wizard interaction; `--init-output FILE` shall set the output path; `--overwrite` shall allow replacing an existing config file | Mandatory | Test | STK-002 |
 | SYS-F-044 | The system shall support per-directory configuration overrides when `--per-dir-config` is specified; the system shall walk upward from each source file's directory, deep-merging any `.cstylecheck.yml` found along the path; the nearest config wins; a `root: true` entry shall stop the upward search; per-directory resolution results shall be cached | Mandatory | Test | STK-002 |
 | SYS-F-045 | The system shall produce a self-contained HTML report when `--output-format html` is specified; the report shall include inline CSS, summary cards (errors/warnings/info/total/files checked), and per-file violation tables; the HTML shall be written to `--log FILE` if provided, otherwise to stdout | Mandatory | Test | STK-007 |
-| SYS-F-046 | The system shall print a startup banner to stderr listing the tool name, version, date-time, and the number of source files to be checked; the banner shall be suppressed when stdout is not a terminal (i.e., piped or redirected) | Mandatory | Test | STK-001 |
+| SYS-F-046 | The system shall print a two-line startup banner to stderr — the tool name and version, then the copyright notice — on every checking run, whether or not stdout is a terminal (i.e., also when piped or redirected); the banner shall not be written to stdout. When a log file is requested (`--log`), the banner shall also be written to it for text output only; for machine-readable output formats (json, sarif, html) the log file shall hold only the report document | Mandatory | Test | STK-001 |
 
 ### 5.9 Non-Functional Requirements — Integration
 
@@ -227,7 +228,7 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-043 | Config wizard and presets | STK-002 | `wizard.py` Wizard module | SWE1-075 |
 | SYS-F-044 | Per-directory config | STK-002 | `config.resolve_per_dir_config()` | SWE1-076 |
 | SYS-F-045 | HTML report output | STK-007 | `output._violations_to_html()` | SWE1-077 |
-| SYS-F-046 | Startup banner | STK-001 | `cli.py` — startup banner output to stderr | SWE1-091 |
+| SYS-F-046 | Startup banner | STK-001 | `cli.py` `main()` — banner written to stderr (and `--log` for text output only), never stdout | SWE1-091 |
 
 ---
 
@@ -235,9 +236,11 @@ The following table summarises the stakeholder needs from which the system requi
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-10-06 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

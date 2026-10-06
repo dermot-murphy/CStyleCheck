@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.14 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.15 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.5 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.15 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: SIT-024 adds steps 5 and 6 — the startup banner is written to the `--log` file for text output only; a json / sarif / html log file holds only the report document (`test_cli.py` `TestStartupBannerLogFile`); SIT-024 execution record for v1.6.1; §3.2 CM baseline v1.6.1; §6 overall result 1279→1281; §3.1 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.14 | 2026-07-06 | Claude | ASPICE audit — add SIT-024 body (missing from doc); add SIT-025 (block-comment suppression), SIT-026 (--summary restructure); update §3.1 refs (SWE2 1.11→1.12, SWE4 1.18→1.20, SWE6 1.14→1.16); update §6 and §7 — closes #375 |
 | 1.13 | 2026-07-06 | Claude | v1.6.0 RC — update §6 overall result 1223→1279; §3.1 SWE4→1.19, SVD→1.22; add SIT-024 (startup banner/copyright output) |
 | 1.12 | 2026-07-01 | Claude | Add SIT-021/022/023 (constant_comparison, unsigned_suffix signed-param, pointer_prefix fix); update §3 scope to v1.6.0; §6 overall result 1183→1223; §3.1 SWE1→2.5, SWE4→1.18, SWE6→1.14 |
@@ -50,11 +51,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.12 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.5 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.20 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.16 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.9 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.13 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.21 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.17 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.12 |
 
 ### 3.2 Test Environment
 
@@ -64,7 +65,7 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 | **Python Versions** | 3.10, 3.11, 3.12 |
 | **Test runner** | pytest 7+ via `cstylecheck_tests.yml` CI workflow |
 | **Invocation method** | `subprocess.run()` — full process invocation including argument parsing |
-| **CM Baseline ID** | v1.6.0 (pending merge of claude/embedded-c-style-standards-pgqhdc to develop/main) |
+| **CM Baseline ID** | v1.6.1 (`hotfix/1.6.1` merged to `main`; v1.6.0 baseline plus the #439 fix) |
 
 ### 3.3 Integration Verification Criteria
 
@@ -630,10 +631,13 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | 2 | Run with `--version` | `--version` flag | stdout or stderr contains both the version string and "Copyright" on separate lines |
 | 3 | Run with `--quiet` flag (if supported) | `--quiet` | Startup banner is suppressed |
 | 4 | Verify banner does not appear in `stdout` violation output | Normal run | `stdout` violation lines are not prefixed with banner content |
+| 5 | Run with text output and a log file (v1.6.1, #439) | `--log FILE` | The log file starts with the startup banner (`CStyleCheck <version>`) |
+| 6 | Run with each machine-readable format and a log file (v1.6.1, #439) | `--output-format json` / `sarif` / `html`, `--log FILE` | The log file equals the stdout document and contains no banner (JSON / SARIF parse; HTML starts with `<!DOCTYPE html>`); `stderr` still starts with the banner |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
 | 2026-07-06 | GitHub Actions (automated) | 3.11 | PASS | |
+| 2026-10-06 | GitHub Actions (automated) — v1.6.1, steps 5 and 6 added (#439) | 3.10 / 3.11 / 3.12 | PASS | |
 
 ---
 
@@ -710,11 +714,11 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SIT-021 | `misc.constant_comparison` rule (constant==constant detection) | IF-03, IF-06, IF-10 | PASS | |
 | SIT-022 | `misc.unsigned_suffix` signed-parameter argument exemption | IF-03, IF-06, IF-10 | PASS | |
 | SIT-023 | `variable.pointer_prefix` auto-fix mode (signature, body, doxygen, .h file) | IF-06, IF-10 | PASS | |
-| SIT-024 | Startup banner and `--version` copyright output | IF-02, IF-10 | PASS | |
+| SIT-024 | Startup banner and `--version` copyright output; banner in the `--log` file for text output only (v1.6.1, #439) | IF-02, IF-10 | PASS | |
 | SIT-025 | Block-comment `/* */` inline suppression form | IF-06 | PASS | |
 | SIT-026 | `--summary` output restructure (Files before Results, header, dynamic separator) | IF-10 | PASS | |
 
-**Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence)
+**Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence). v1.6.1, 2026-10-06: 1281 tests all PASS (SIT-024 steps 5 and 6 added for #439)
 
 > **📋 Note:** All 10 defined software architecture interfaces must be covered before integration testing is considered complete. Any uncovered interface must be resolved via a new or updated test case.
 
@@ -757,9 +761,11 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-10-06 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.
