@@ -178,7 +178,9 @@ linked entries under *Changed* and *Fixed* for details.
   written to the `--log` file only for `--output-format text`; for `json`, `sarif` and
   `html` the log file holds only the report document. The banner is still written to
   `stderr` for every format. SWE1-094 updated. 1 new test in
-  `tests/test_cli_requirements.py`; total 1545→1546.
+  `tests/test_cli_requirements.py`; total 1545→1546. Already released in
+  [1.6.1](#161--2026-10-06); merging `main` back into `develop` adds that release's
+  2 tests in `tests/test_cli.py` (`TestStartupBannerLogFile`); total 1557→1559.
 - **Last enum member is now checked (#423)** — `enum.member_case` and
   `enum.member_prefix` skipped the last member of a `typedef enum` when it had no
   trailing comma (e.g. `typedef enum { COLOUR_RED, badLast } colour_t;`), because the
@@ -262,6 +264,25 @@ linked entries under *Changed* and *Fixed* for details.
   the OS-native separator (both `\` and `/` behaviour, via `ntpath`/`posixpath`).
   Closes RR-003-001 (CSC-REVIEW-003) and AUD9-F-004 (CSC-AUD-009). Test total 1423→1439
   (issue [#407](https://github.com/dermot-murphy/CStyleCheck/issues/407)).
+
+---
+
+## [1.6.1] — 2026-10-06
+
+### Fixed
+
+- **Startup banner no longer written into a machine-readable `--log` file** — in
+  v1.6.0 the two-line startup banner was written to the `--log` file for every output
+  format, so with `--output-format json` or `sarif` the file did not parse. The GitHub
+  Action reads its results from that file, so it failed on every run with
+  `could not read results JSON`, whatever the checked code contained. The banner is now
+  written to the `--log` file only for `--output-format text`; for `json`, `sarif` and
+  `html` the log file holds only the report document. The banner is still written to
+  `stderr` for every format. SWE1-094 updated. 2 new tests in `tests/test_cli.py`
+  (`TestStartupBannerLogFile`); total 1279→1281
+  (issue [#439](https://github.com/dermot-murphy/CStyleCheck/issues/439)).
+- **ASPICE document cross-reference drift** — stale referenced-document version
+  citations in the ASPICE work products set to the current baseline.
 
 ---
 
@@ -695,7 +716,8 @@ Initial public release.
 
 ---
 
-[Unreleased]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.5.1...v1.6.0
 [1.5.1]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.4.1...v1.5.0

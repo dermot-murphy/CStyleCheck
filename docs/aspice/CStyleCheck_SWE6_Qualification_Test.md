@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.31 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.32 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.6 |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.32 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): §3.2 execution date, §3.3 criteria and §9 release readiness gate brought in from the v1.6.1 release; duplicate approval note removed |
 | 1.31 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.30 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.29 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-018: §3.3 coverage criterion restated as all 113 in-scope requirements, listed explicitly (SWE1-001 to 101, SWE1-109 to 116, SWE1-MISRA-001 to 004; SWE1-102 to 108 and 117 out of SWQ scope). AUD10-F-028: §5 overall verdict states its v1.6.0 baseline; current `develop` run added (1545 passed, 58 modules, 2026-09-29); approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -67,10 +68,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.24 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.28 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.22 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.25 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.29 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.23 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.26 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -81,7 +82,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | **Commit SHA** | `a6102d6` (v1.6.0 release). Post-v1.6.0 additions (SWQ-003 rules for SWE1-109 to SWE1-116, SWQ-007 steps 4/6/7): `develop` `296e91b` |
 | **Python Version** | 3.11 (primary); 3.10 and 3.12 (regression) |
 | **OS** | Ubuntu 24.04 |
-| **Test Execution Date** | 2026-06-26 |
+| **Test Execution Date** | 2026-10-06 |
 | **Tester** | Claude (automated CI) / Dermot Murphy (review) |
 
 ### 3.3 Qualification Criteria
@@ -92,8 +93,8 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | SW Requirements coverage | 100% | All 113 in-scope requirements traced to ≥ 1 SWQ test: SWE1-001 to SWE1-101 (101), SWE1-109 to SWE1-116 (8) and SWE1-MISRA-001 to SWE1-MISRA-004 (4). Out of SWQ scope: SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts, not part of the delivered package; see §6) |
 | Statement coverage | ≥ 90% | Coverage report at execution |
 | Branch coverage | ≥ 85% | Coverage report at execution |
-| Static verification | PASS | `rules.yml` CI job on v1.6.0 commit |
-| Open bug Issues targeting v1.6.0 | 0 | No unresolved bug-labelled Issues |
+| Static verification | PASS | `rules.yml` CI job on v1.6.1 commit |
+| Open bug Issues targeting v1.6.1 | 0 | No unresolved bug-labelled Issues |
 
 ---
 
@@ -478,15 +479,15 @@ The #425 rows were executed on 2026-09-29 by `tests/test_exit_code_entry_points.
 
 ## 9. Release Readiness Gate
 
-The following conditions were assessed for the **v1.6.0** release baseline (2026-07-01):
+The following conditions were assessed for the **v1.6.1** release baseline (2026-10-06; v1.6.0 baseline 2026-07-01 plus the #439 hotfix):
 
-- [x] All SWQ test cases: PASS — 1279 tests, 0 failures (Python 3.10 / 3.11 / 3.12)
+- [x] All SWQ test cases: PASS — 1281 tests, 0 failures (Python 3.10 / 3.11 / 3.12)
 - [x] Statement coverage ≥ 85% combined CI gate: PASS — 89.8% statement (v1.2.0 historical baseline; v1.6.0 CI measurement pending), 87.31% combined (`--cov-fail-under=85 --cov-branch`)
 - [x] Branch coverage ≥ 85% combined: PASS — 87.31% combined stmt+branch ≥ 85% gate ✅
-- [x] `rules.yml` CI job: PASS on v1.6.0 commit
+- [x] `rules.yml` CI job: PASS on v1.6.1 commit
 - [x] `cstylecheck_tests.yml` CI: PASS on Python 3.10, 3.11, 3.12
-- [x] `docker_publish.yml` CI: PASS; image available on GHCR and Docker Hub (`cstylecheck:1.6.0`, `:latest`)
-- [x] Zero open functional bug Issues: PASS — issues #339, #340, #341 resolved and merged in v1.6.0
+- [x] `docker_publish.yml` CI: PASS; image available on GHCR and Docker Hub (`cstylecheck:1.6.1`, `:latest`)
+- [x] Zero open functional bug Issues: PASS — issues #339, #340, #341 resolved and merged in v1.6.0; #439 (startup banner in a json / sarif / html `--log` file) resolved in v1.6.1
 - [x] This document approved and placed under CM baseline (SUP.8)
 - [x] All TBD items in SYS.5 requirements coverage resolved or formally accepted — 6 of 9 resolved; SYS-NF-010/011/012 formally deferred (see CSC-SYS5-001 §7)
 
@@ -503,7 +504,7 @@ The following conditions were assessed for the **v1.6.0** release baseline (2026
 
 > Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
-> **Note:** Software qualification is the final gate before release. This document must be approved and all release readiness conditions in §9 satisfied before the v1.6.0 release baseline is created and the product is released via SPL.2.
+> **Note:** Software qualification is the final gate before release. This document must be approved and all release readiness conditions in §9 satisfied before the v1.6.1 release baseline is created and the product is released via SPL.2.
 
 ---
 

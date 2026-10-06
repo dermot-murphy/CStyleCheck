@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS3-001 | **Version** | 1.19 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-SYS3-001 | **Version** | 1.20 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.20 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.19 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.18 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.17 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-003: §9 adds SYS-F-046 (startup banner, CR-413) → SS-01, `cli.main()`; approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -54,9 +55,9 @@ This System Architecture Description defines the top-level structural and behavi
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.17 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.25 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.18 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.26 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.26 |
 
 ---
 

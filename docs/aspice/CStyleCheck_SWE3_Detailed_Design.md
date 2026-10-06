@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.34 |
-| **Project** | CStyleCheck | **Date** | 2026-10-05 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.35 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.35 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): UNIT-86 `Tee.log_print()` notes from the v1.6.1 release that `main()` uses it for the startup banner only for text output; no design change |
 | 1.34 | 2026-10-05 | Claude | Issue #441 (CR-441): new UNIT-137 `ensure_parent_dir()` (`utils.py`) and UNIT-138 `_write_config()` (`wizard.py`) in the §4 catalogue, §4.1 package structure and §5; UNIT-46 step 3 and UNIT-36 create missing parent folders of the `--log` / `--write-baseline` file; UNIT-98/UNIT-99 write through UNIT-138 (an unwritable path is now `config_error()`, exit 2, instead of a traceback); §1 scope UNIT-01 to UNIT-138; §4 `utils.py`, `wizard.py` and `cli.py` (UNIT-46) line numbers; §8 SWE1-062, SWE1-065 and SWE1-075 rows |
 | 1.33 | 2026-10-05 | Claude | Issue #439: UNIT-46 step 3 — the startup banner goes to the log via `Tee.log_print()` only when `--output-format` is `text`, so a json / sarif / html `--log` file holds only the report document; §8 SWE1-094 row updated |
 | 1.32 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
@@ -65,9 +66,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.24 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.28 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.39 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.25 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.29 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.40 |
 
 ---
 
@@ -845,7 +846,7 @@ src/cstylecheck/
 **Methods:**
 - `__init__(log_fh=None)` — store optional file handle
 - `print(*args, **kwargs)` — call built-in `print` to stdout, and to `log_fh` if set
-- `log_print(*args, **kwargs)` — write only to `log_fh` (not stdout); used for content that must appear in the log file but not on the terminal
+- `log_print(*args, **kwargs)` — write only to `log_fh` (not stdout); used for content that must appear in the log file but not on the terminal. `main()` (UNIT-46) uses it for the startup banner only when `--output-format` is `text`; for json / sarif / html the log file holds only the report document (SWE1-094, #439)
 - `close()` — close and release `log_fh`
 
 ---

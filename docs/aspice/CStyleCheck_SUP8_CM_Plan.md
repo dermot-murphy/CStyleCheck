@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.25 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.26 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.8 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.26 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.25 | 2026-09-30 | Claude | Merge-time process controls (#437): §6.1 CI-061 (`scripts/aspice_check.py`), CI-062 (`aspice_consistency.yml`), CI-063 (PR template) and CI-064 (issue forms) added (64 CIs); §7.5 consistency workflow; §9 issue forms and PR template in the change-control steps, `python scripts/aspice_check.py --fix-citations` performs the cross-reference resync; referenced-document versions resynced |
 | 1.24 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.23 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-015: §7.1–7.3 aligned with §7.6 (CI-only hotfixes merge to `main` untagged) and allow `claude/<topic>-<id>` branches for feature and bug-fix work into `develop`; §9 approval step matches CSC-DEV-002 §5.2 (owner's merge is the approval record). AUD10-F-029: `logo/cstylecheck.jpg` added to CI-026 and `docs/templates/ASPICE_CL2_Test_Case_Template_1.md` to CI-055 (CI count unchanged at 60). AUD10-F-032: §9 note — cross-reference resyncs batched into one revision per document per change set; approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -73,9 +74,9 @@ This plan applies to all configuration items produced by the CStyleCheck project
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.15 |
-| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.17 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.24 |
+| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.16 |
+| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.18 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.25 |
 
 ---
 

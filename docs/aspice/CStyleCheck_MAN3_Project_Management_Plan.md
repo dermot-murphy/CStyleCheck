@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN3-001 | **Version** | 1.21 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-MAN3-001 | **Version** | 1.22 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | MAN.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.21 | 2026-09-30 | Claude | Merge-time process controls (#437): §4.1 scope lists 6 CI workflows (adds `aspice_consistency.yml`); §10.1 work-product consistency monitoring row; §10.2 corrective action for a consistency-check failure; referenced-document versions resynced |
 | 1.20 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.19 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-002: §8 release-classification decision — next release v2.0.0 (Major) replaces the planned v1.7.0, with the compatibility changes in scope listed. AUD10-F-016: §4.3 lifecycle text refreshed (package architecture, 12 modules; post-v1.6.0 development toward v2.0.0); PH-04 names the `src/cstylecheck/` package; WBS-16/WBS-17 overlap removed; approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -65,11 +66,11 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | System Requirements Specification | 2.17 |
-| CSC-SWE1-001 | Software Requirements Specification | 2.24 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
-| CSC-MAN5-001 | Risk Management Plan | 1.17 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.22 |
+| CSC-SYS2-001 | System Requirements Specification | 2.18 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.25 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.26 |
+| CSC-MAN5-001 | Risk Management Plan | 1.18 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.23 |
 
 ---
 

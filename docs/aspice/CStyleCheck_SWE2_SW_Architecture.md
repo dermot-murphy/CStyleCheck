@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.28 |
-| **Project** | CStyleCheck | **Date** | 2026-10-05 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.29 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.2 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.29 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): COMP-01 SWE1-094 trace row wording from the v1.6.1 release (banner in `--log` for text output only); no design change |
 | 1.28 | 2026-10-05 | Claude | Issue #439: COMP-01 key behaviour — the startup banner is written to the `--log` file only for text output; a json / sarif / html log file holds only the report document |
 | 1.27 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.26 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
@@ -62,10 +63,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.24 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.19 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.34 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.25 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.25 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.20 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.35 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.26 |
 
 ---
 
@@ -480,7 +481,7 @@ All config/usage errors go through `config_error()` (`utils.py`), which prints t
 | SWE1-091 | `misc.constant_comparison` rule | COMP-05f |
 | SWE1-092 | `misc.unsigned_suffix` signed-param exemption | COMP-05f |
 | SWE1-093 | `variable.pointer_prefix` auto-fix | COMP-08 |
-| SWE1-094 | Startup banner to stderr | COMP-01 |
+| SWE1-094 | Startup banner to stderr (and `--log` for text output only) | COMP-01 |
 | SWE1-095 | Copyright in `--version` output | COMP-01 |
 | SWE1-096 | OS-native path separator | COMP-11 (COMP-07) |
 | SWE1-097 | `print_summary()` restructure | COMP-07 |

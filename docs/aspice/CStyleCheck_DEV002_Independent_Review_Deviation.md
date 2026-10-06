@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-DEV-002 | **Version** | 1.14 |
-| **Project** | CStyleCheck | **Date** | 2026-09-30 |
+| **Document ID** | CSC-DEV-002 | **Version** | 1.15 |
+| **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Approved | **Classification** | Internal |
 | **Author** | Dermot Murphy | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | PA 2.2, GP 2.2.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.15 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.14 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.13 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
 | 1.12 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-014: §5.2 pull-request control states that the owner's merge of the PR is the approval record (no separate GitHub review approval, no approval timestamp); approval-by-merge policy (CSC-DEV-002 §5.2) |
@@ -174,9 +175,9 @@ This deviation is accepted on the basis that CStyleCheck is a single-person proj
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-DEV-001 | Process Deviation — AI-Assisted Authorship | 1.14 |
-| CSC-PA2-001 | Process Capability Records | 1.36 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.25 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.15 |
-| CSC-SUP10-001 | Change Request Plan | 1.17 |
+| CSC-DEV-001 | Process Deviation — AI-Assisted Authorship | 1.15 |
+| CSC-PA2-001 | Process Capability Records | 1.37 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.26 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.16 |
+| CSC-SUP10-001 | Change Request Plan | 1.18 |
 | GitHub Issue #61 | Designate independent reviewer (not approver) for SWE1, SWE4, SWE6 work products | — |
