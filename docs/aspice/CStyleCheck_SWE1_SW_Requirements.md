@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.25 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.26 |
 | **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.26 | 2026-10-06 | Claude | Issue #447: SWE1-091 — comparisons in `#if` / `#elif` preprocessor conditions (including backslash-continuation lines and directives with leading whitespace) are not reported by `misc.constant_comparison`; SWE1-005 — an `identifiers:` exclusion entry is matched against the identifiers a rule reports with its finding (for `misc.constant_comparison`, either operand), otherwise against the first quoted name in the message; RTM SWE1-091 row cites the new test classes |
 | 2.25 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 2.24 | 2026-10-05 | Claude | Issue #441 (CR-441): SWE1-062 (`--log`), SWE1-065 (`--write-baseline`) and SWE1-075 (`--init-output` for `--init` / `--preset`) — missing parent folders of the output file are created; a folder that cannot be created is a configuration error (exit 2) naming the path. RTM rows cite `test_output_dirs.py` (UV-OUT-001 to UV-OUT-004) |
 | 2.23 | 2026-10-05 | Claude | Issue #439: SWE1-094 — the startup banner is written to the `--log` file only when `--output-format` is `text`; for `json`, `sarif` and `html` the log file holds only the machine-readable document (it is still written to `stderr` for every format). RTM row updated |
@@ -73,10 +74,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.18 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.20 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.29 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.26 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.19 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.21 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.30 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.27 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
@@ -106,7 +107,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SWE1-002 | The software shall raise a configuration error (exit code 2) if the YAML file is absent, malformed, or unparseable, or if a case-style key holds a value that is not a canonical name or alias after normalisation; the case-style error message shall name the config file, the dotted key path, the value and the allowed values, and no file shall be checked (#422) | Mandatory | Test | SYS-F-039 |
 | SWE1-003 | The software shall apply project `--defines` substitutions to the preprocessed source text before any rule check, using the `apply_defines()` function | Mandatory | Test | SYS-F-006 |
 | SWE1-004 | The software shall load the module alias map via `load_alias_file()` and use it to derive accepted prefix strings per source file | Mandatory | Test | SYS-F-007 |
-| SWE1-005 | The software shall load per-file rule exclusions via `load_exclusions_file()` and pass the resulting map to each `Checker` instance | Mandatory | Test | SYS-F-008, SYS-NF-009 |
+| SWE1-005 | The software shall load per-file rule exclusions via `load_exclusions_file()` and pass the resulting map to each `Checker` instance; an `identifiers:` entry shall suppress a finding of a listed rule when it names one of the identifiers the rule reports with that finding (for `misc.constant_comparison`, either operand of the comparison) or, when the rule reports none, the first quoted name in the message (#447) | Mandatory | Test | SYS-F-008, SYS-NF-009 |
 | SWE1-006 | The software shall resolve the set of disabled rules for each source file via `_disabled_rules_for_file()` before instantiating the `Checker` | Mandatory | Test | SYS-F-008, SYS-F-025 |
 
 ### 4.2 Dictionary Management (SS-03)
@@ -276,7 +277,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SWE1-088 | The `_check_no_single_char_identifiers()` method shall report `naming.no_single_char_identifiers` for any declared identifier with a single-character name that does not appear in `naming.no_single_char_identifiers.exempt` | Mandatory | Test | SYS-F-020 |
 | SWE1-089 | The `print_summary()` function shall include a per-file breakdown section showing the count of files with errors only, files with warnings (no errors), files with info only, and files with no violations (clean); the section shall be omitted when `files_checked` is zero | Mandatory | Test | SYS-F-032 |
 | SWE1-090 | The `_check_defines()` method shall exempt object-like `#define` names from `constant.case` when the name ends (case-insensitively) with the configured `typedefs.suffix.suffix` value and `typedefs.suffix.enabled: true`; function-like `#define` names shall not be exempted | Mandatory | Test | SYS-F-011 |
-| SWE1-091 | The `_check_constant_comparison()` method shall report `misc.constant_comparison` for any `==` or `!=` operator where both the left-hand token and the right-hand token are recognised as compile-time constants (decimal/hex literals, char literals, `true`/`false`/`TRUE`/`FALSE`/`NULL`/`nullptr`, or ALL\_CAPS identifiers) when `misc.constant_comparison.enabled: true`; comparisons inside `#define` RHS and `return` statements shall be exempt | Mandatory | Test | SYS-F-020 |
+| SWE1-091 | The `_check_constant_comparison()` method shall report `misc.constant_comparison` for any `==` or `!=` operator where both the left-hand token and the right-hand token are recognised as compile-time constants (decimal/hex literals, char literals, `true`/`false`/`TRUE`/`FALSE`/`NULL`/`nullptr`, or ALL\_CAPS identifiers) when `misc.constant_comparison.enabled: true`; comparisons inside `#define` RHS and `return` statements shall be exempt, and comparisons in `#if` / `#elif` preprocessor conditions (including backslash-continuation lines and directives written with leading whitespace) shall not be reported, because they compare constants at compile time by design (#447) | Mandatory | Test | SYS-F-020 |
 | SWE1-092 | The `_check_misc()` method shall exempt integer literals from `misc.unsigned_suffix` when they appear as arguments at positions corresponding to signed-type parameters (`int8_t`, `int16_t`, `int32_t`, `int64_t`, `int`, `short`, `long`, `char`, and `signed` variants) of functions declared or defined within the same translation unit | Mandatory | Test | SYS-F-020 |
 | SWE1-093 | The `_fix_pointer_prefix()` function in `fixer.py` shall rename a non-compliant pointer parameter or variable to its prefixed form by replacing all word-boundary occurrences of the old name within the enclosing function's signature and body; it shall also rename the parameter in any doxygen `@param`/`\param` comment block immediately preceding the function; the `fix_pointer_prefix_in_header()` function shall apply the same rename to function declarations in the corresponding `.h` file when invoked by the `--fix` CLI mode | Mandatory | Test | SYS-F-020 |
 
@@ -360,7 +361,7 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-088 | No single-char identifiers | SYS-F-020 | `Checker._check_no_single_char_identifiers()` | `test_no_single_char_identifiers.py` |
 | SWE1-089 | Per-file breakdown in print_summary | SYS-F-032 | `output.print_summary()` | `test_print_summary.py` |
 | SWE1-090 | Typedef-alias constant.case exemption in _check_defines | SYS-F-011 | `Checker._check_defines()` | `test_defines.py` |
-| SWE1-091 | misc.constant_comparison — flag constant-to-constant == / != | SYS-F-020 | `Checker._check_constant_comparison()` | `test_constant_comparison.py` |
+| SWE1-091 | misc.constant_comparison — flag constant-to-constant == / != (not in `#if` / `#elif` conditions, #447) | SYS-F-020 | `Checker._check_constant_comparison()` | `test_constant_comparison.py` (incl. `TestConstantComparisonPreprocessor`, `TestConstantComparisonIdentifierExclusion`, #447) |
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | SYS-F-020 | `Checker._check_misc()` | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix: rename in signature, body, doxygen, header | SYS-F-020 | `fixer._fix_pointer_prefix()`, `fixer.fix_pointer_prefix_in_header()` | `test_pointer_prefix_fix.py` |
 | SWE1-094 | Two-line startup banner to stderr at tool entry (unconditional; also `--log` for text output only) | SYS-F-046 | `main()` in `cli.py` | `test_cli_requirements.py` (UV-CLI-017 to 019) — full |

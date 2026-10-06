@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.29 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.30 |
 | **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.30 | 2026-10-06 | Claude | Issue #447: §6 post-v1.6.0 note — suite total 1545→1559 (#439, #441, v1.6.1 back-merge) →1569 (`misc.constant_comparison` skips `#if` / `#elif`), all PASS |
 | 1.29 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): SIT-024 steps 5 and 6 (startup banner in the `--log` file for text output only) and the v1.6.1 execution record / overall result brought in from the v1.6.1 release |
 | 1.28 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.27 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
@@ -65,11 +66,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.29 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.25 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.40 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.32 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.26 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.30 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.26 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.41 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.33 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.27 |
 
 ### 3.2 Test Environment
 
@@ -772,7 +773,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 **Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence). v1.6.1, 2026-10-06: 1281 tests all PASS (SIT-024 steps 5 and 6 added for #439)
 
-**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests; #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: 1452 tests; #418 (the other 7 post-v1.6.0 rules opt-in) adds 11: 1463 tests; #420 (presets / `--init` enable the standard-specific opt-in rules) adds 18: 1481 tests; #422 (case-style config validation) adds 27: 1508 tests; #424 (`functions.case` removed) adds 16: 1524 tests; #425 (config errors exit 2 from both entry points) adds 8: 1532 tests; #423 (last enum member checked) adds 13: 1545 tests, all PASS (local run, Python 3.11).
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests; #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: 1452 tests; #418 (the other 7 post-v1.6.0 rules opt-in) adds 11: 1463 tests; #420 (presets / `--init` enable the standard-specific opt-in rules) adds 18: 1481 tests; #422 (case-style config validation) adds 27: 1508 tests; #424 (`functions.case` removed) adds 16: 1524 tests; #425 (config errors exit 2 from both entry points) adds 8: 1532 tests; #423 (last enum member checked) adds 13: 1545 tests, all PASS (local run, Python 3.11); #439, #441 and the v1.6.1 back-merge add 14: 1559 tests; #447 (`misc.constant_comparison` skips `#if` / `#elif`) adds 10: 1569 tests, all PASS (local run, Python 3.14, 2026-10-06).
 
 > **📋 Note:** All 10 defined software architecture interfaces must be covered before integration testing is considered complete. Any uncovered interface must be resolved via a new or updated test case.
 

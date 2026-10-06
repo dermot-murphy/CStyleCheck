@@ -1705,6 +1705,17 @@ Flags `==` / `!=` where **both** operands are compile-time constants (numeric
 or char literals, `true`/`false`/`TRUE`/`FALSE`/`NULL`/`nullptr`, or ALL_CAPS
 identifiers). `#define` bodies and `return` statements are exempt.
 
+`#if` and `#elif` conditions are not checked, including their backslash-continuation
+lines: a preprocessor condition compares constants at compile time by design, for
+example `#if (BOARD_I2C_INSTANCE == 0U)` (#447). Comparisons in the code below the
+directive are still checked.
+
+To suppress these findings with an `--exclusions` file, add an `identifiers:` entry
+that names either operand, for example `BOARD_I2C_INSTANCE` or `0U`, with
+`misc.constant_comparison` in its `disabled_rules`. The entry suppresses every
+`misc.constant_comparison` finding in the matching files where that name is one of
+the two operands.
+
 ```c
 if (MAX_RETRIES == 3U) { … }   /* ✗ misc.constant_comparison */
 if (retries == MAX_RETRIES)    /* ✓ one side is a variable   */

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.32 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.33 |
 | **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.33 | 2026-10-06 | Claude | Issue #447: BP3 evidence — suite total 1559 after #439, #441 and the v1.6.1 back-merge, 1569 after #447 (`misc.constant_comparison` preprocessor and identifier-exclusion tests) |
 | 1.32 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): §3.2 execution date, §3.3 criteria and §9 release readiness gate brought in from the v1.6.1 release; duplicate approval note removed |
 | 1.31 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
 | 1.30 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
@@ -68,10 +69,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.25 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.29 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.23 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.26 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.26 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.30 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.24 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.27 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -527,5 +528,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1524 after #424; 1532 after #425; 1545 after #423).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1524 after #424; 1532 after #425; 1545 after #423; 1559 after #439, #441 and the v1.6.1 back-merge; 1569 after #447).
 

@@ -283,11 +283,17 @@ class Checker:
         line, col = offset_to_line_col(self._line_map, pos)
         return Violation(self.filepath, line, col, sev, rule, msg)
 
-    def _v(self, pos: int, sev: str, rule: str, msg: str) -> None:
+    def _v(self, pos: int, sev: str, rule: str, msg: str,
+           idents: tuple = None) -> None:
+        # An identifiers: exclusion entry is keyed on *idents* when the rule
+        # passes them, else on the first quoted text in the message.
         if self._ident_disabled:
-            _m = re.search(r"'([^']+)'", msg)
-            if _m and rule in self._ident_disabled.get(_m.group(1), frozenset()):
-                return
+            if idents is None:
+                _m = re.search(r"'([^']+)'", msg)
+                idents = (_m.group(1),) if _m else ()
+            for _id in idents:
+                if rule in self._ident_disabled.get(_id, frozenset()):
+                    return
         self.result.add(self._violation(pos, sev, rule, msg))
 
     def _prefix(self) -> str:
@@ -2215,6 +2221,10 @@ class Checker:
             if (NULL == NULL)       ← always true
             if (ERROR == SUCCESS)   ← always the same value
             if (true == false)      ← always false
+
+        Not checked: ``#if`` / ``#elif`` conditions, which compare constants
+        at compile time by design (#447).  An ``identifiers:`` exclusion
+        entry for either operand suppresses the finding.
         """
         cc_cfg = self.cfg.get("misc", {}).get("constant_comparison", {})
         if not cc_cfg.get("enabled", True):
@@ -2227,6 +2237,11 @@ class Checker:
                               self.clean, re.MULTILINE):
             skip.update(range(m.start(), m.end()))
         for m in re.finditer(r"\breturn\b[^;]*;", self.clean, re.MULTILINE):
+            skip.update(range(m.start(), m.end()))
+        # #if / #elif conditions (with any continuation lines) compare
+        # constants at compile time by design (#447).
+        for m in re.finditer(r"^[ \t]*#[ \t]*(?:if|elif)\b(?:[^\n]*\\\n)*[^\n]*",
+                              self.clean, re.MULTILINE):
             skip.update(range(m.start(), m.end()))
 
         _RE_CMP = re.compile(r"(?<![<>=!])([=!]=)(?!=)")
@@ -2275,7 +2290,8 @@ class Checker:
             if self._is_constant_token(lhs) and self._is_constant_token(rhs):
                 self._v(m.start(), sev, "misc.constant_comparison",
                         f"Both sides of '{op}' are constants: "
-                        f"'{lhs} {op} {rhs_display}'")
+                        f"'{lhs} {op} {rhs_display}'",
+                        idents=(lhs, rhs))
 
     # -----------------------------------------------------------------------
     # 11. MISRA C:2012/2023 Rule 7.3 — lowercase 'l' suffix forbidden

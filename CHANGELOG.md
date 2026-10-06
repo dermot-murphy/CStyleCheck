@@ -170,6 +170,19 @@ linked entries under *Changed* and *Fixed* for details.
 
 ### Fixed
 
+- **`misc.constant_comparison` no longer reports `#if` / `#elif` conditions (#447)** —
+  the rule reported comparisons in preprocessor conditions such as
+  `#if (BOARD_I2C_INSTANCE == 0U)`, which compare constants at compile time by design
+  (reported against v1.6.1). Comparisons in `#if` and `#elif` conditions are now skipped,
+  including their backslash-continuation lines and directives written with whitespace
+  before or after the `#`. Comparisons in run-time code, including the line straight
+  after an `#if`, are still reported. An `identifiers:` entry in an `--exclusions` file
+  can now suppress the rule: an entry naming either operand (for example
+  `BOARD_I2C_INSTANCE` or `0U`) with `misc.constant_comparison` in its `disabled_rules`
+  suppresses the finding. Before, the entry was matched against the operator text
+  (`==`), so no useful entry could target this rule. The message text is unchanged.
+  10 new tests in `tests/test_constant_comparison.py`; total 1559→1569
+  (issue [#447](https://github.com/dermot-murphy/CStyleCheck/issues/447)).
 - **Startup banner no longer written into a machine-readable `--log` file (#439)** — in
   v1.6.0 the two-line startup banner was written to the `--log` file for every output
   format, so with `--output-format json` or `sarif` the file did not parse. The GitHub

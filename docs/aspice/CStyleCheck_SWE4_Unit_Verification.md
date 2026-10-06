@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.40 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.41 |
 | **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.41 | 2026-10-06 | Claude | Issue #447: add §5.23 catalogue for `test_constant_comparison.py` (UV-CCMP-001 to UV-CCMP-008, 37 tests), including the two new classes UV-CCMP-007 `TestConstantComparisonPreprocessor` (5 tests: `#if` / `#elif`, indented and continuation-line conditions not reported; the next line still checked) and UV-CCMP-008 `TestConstantComparisonIdentifierExclusion` (5 tests: an `identifiers:` entry for either operand suppresses the finding; the operator text, another identifier or another rule does not); §6 `test_constant_comparison.py` 27→37; total 1559→1569; coverage-gate text 1559→1569; §7 SWE1-091 and SWE1-005/006 rows cite UV-CCMP |
 | 1.40 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): §5.12 adds UV-CLI-023 `TestStartupBannerLogFile.test_text_log_file_has_banner` and UV-CLI-024 `test_structured_log_file_has_no_banner` (the 2 v1.6.1 tests in `test_cli.py`; IDs renumbered from the v1.6.1 UV-CLI-011/012, which `develop` already uses for baseline tests); `test_cli.py` 43→45; total 1557→1559; SWE1-094 trace row cites UV-CLI-023/024 |
 | 1.39 | 2026-10-05 | Claude | Issue #441 (CR-441): add §5.22 catalogue for `test_output_dirs.py` (UV-OUT-001 to UV-OUT-004, 11 tests: missing parent folders of `--log`, `--write-baseline` and `--init-output` files are created; an uncreatable folder exits 2); §6 new module row, total 1546→1557 (59 modules); coverage-gate text 1546→1557; §7 SWE1-062, SWE1-065 and SWE1-075 rows cite UV-OUT |
 | 1.38 | 2026-10-05 | Claude | Issue #439: UV-CLI-019 adds `test_structured_log_file_has_no_banner` — with `--output-format json`, `sarif` or `html` and `--log FILE`, the log file equals the stdout document and has no banner (JSON and SARIF parse with `json.loads`); §6 `test_cli_requirements.py` 21→22; total 1545→1546; coverage-gate text 1545→1546; §7 SWE1-094 row notes the text-only `--log` copy |
@@ -75,10 +76,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.25 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.35 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.29 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.26 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.26 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.36 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.30 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.27 |
 
 ---
 
@@ -105,7 +106,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1559 tests (2026-10-06 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425, #423, #441 and the v1.6.1 back-merge) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1569 tests (2026-10-06 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425, #423, #441, the v1.6.1 back-merge and #447) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -507,6 +508,23 @@ Added for issue #441. `--log`, `--write-baseline` and `--init-output` (with `--i
 
 ---
 
+### 5.23 Constant Comparison — `test_constant_comparison.py` (37 tests)
+
+Catalogued for issue #447, which adds the last two classes. `misc.constant_comparison` reported `#if (BOARD_I2C_INSTANCE == 0U)` and similar preprocessor conditions, which compare constants at compile time by design; and an `identifiers:` exclusion entry could not target the rule, because the finding was keyed on the operator text (`'=='`). The earlier classes (UV-CCMP-001 to UV-CCMP-006) cover the rule as added in v1.6.0 and the array-subscript fix (#349).
+
+| TC-ID | Test Name(s) | SW-REQ | Unit Verified | Pass Condition |
+|---|---|---|---|---|
+| UV-CCMP-001 | `TestConstantComparisonViolations` (8 tests) | SWE1-091 | UNIT-116, UNIT-71 | Comparisons with a constant on both sides are reported: `NULL == NULL`, `true == false`, `TRUE == FALSE`, `ERROR == SUCCESS`, `STATE_A != STATE_B`, `0 == 0`, `0xFF == MAX_BYTE`, `nullptr == NULL` |
+| UV-CCMP-002 | `TestConstantComparisonPasses` (4 tests) | SWE1-091 | UNIT-116, UNIT-72 | Negative: a variable on either side (`NULL == p_ptr`, `p_ptr != NULL`, `a == b`, `state == ERROR_CODE`) is not reported |
+| UV-CCMP-003 | `TestConstantComparisonExemptContexts` (2 tests) | SWE1-091 | UNIT-116 | Negative: comparisons in a `#define` body and in a `return` statement are not reported |
+| UV-CCMP-004 | `TestConstantComparisonControl` (5 tests) | SWE1-091 | UNIT-116, UNIT-58 | `enabled: false` gives no findings; severity defaults to `warning` and can be set to `error`; the message names the operator and both operands; two constant comparisons in a function give exactly two findings |
+| UV-CCMP-005 | `TestConstantComparisonNotYoda` (2 tests) | SWE1-091 | UNIT-116 | Negative: `flag == NULL` and `NULL == p_ptr` (the `misc.yoda_condition` cases) are not reported by this rule |
+| UV-CCMP-006 | `TestConstantComparisonArraySubscript` (6 tests, #349) | SWE1-091 | UNIT-116, UNIT-71 | An ALL_CAPS array element (`API_TABLE[i].state`, `API_TABLE[0].field`) is a run-time value and is not reported; plain constant pairs are still reported |
+| UV-CCMP-007 | `TestConstantComparisonPreprocessor` (5 tests, #447) | SWE1-091 | UNIT-116 | Negative: comparisons in an `#if` or `#elif` condition, in a directive written with whitespace before and after `#`, and on a backslash-continuation line of an `#if` are not reported (the reported `#if (BOARD_I2C_INSTANCE == 0U)` case is reproduced); a constant comparison in run-time code on the line after an `#if` is still reported exactly once |
+| UV-CCMP-008 | `TestConstantComparisonIdentifierExclusion` (5 tests, #447) | SWE1-005, SWE1-091 | UNIT-58, UNIT-116 | An `identifiers:` exclusion for `misc.constant_comparison` naming the left operand (`BOARD_I2C_INSTANCE`) or the right operand (`0U`) suppresses the finding; negative: an entry for the operator text (`==`), for another identifier, or for the same identifier with another rule does not |
+
+---
+
 ## 6. Verification Results Summary
 
 | Test Module | Tests | Pass | Fail | Coverage Contribution |
@@ -565,12 +583,12 @@ Added for issue #441. `--log`, `--write-baseline` and `--init-output` (with `--i
 | `test_identifier_length.py` | 10 | 10 | 0 | COMP-05h (`_check_identifier_length`) |
 | `test_no_single_char_identifiers.py` | 8 | 8 | 0 | COMP-05h (`_check_no_single_char_identifiers`) |
 | `test_print_summary.py` | 11 | 11 | 0 | `output.print_summary` (per-file breakdown) |
-| `test_constant_comparison.py` | 27 | 27 | 0 | COMP-05f (`_check_constant_comparison`) |
+| `test_constant_comparison.py` | 37 | 37 | 0 | COMP-05f (`_check_constant_comparison`) |
 | `test_unsigned_suffix_signed_params.py` | 15 | 15 | 0 | COMP-05f (`_check_misc` signed-param exemption) |
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
 | `test_cli_requirements.py` | 22 | 22 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
-| **Total** | **1559** | **1559** | **0** | All 81 rule IDs covered — 59 modules |
+| **Total** | **1569** | **1569** | **0** | All 81 rule IDs covered — 59 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -588,7 +606,7 @@ Added for issue #441. `--log`, `--write-baseline` and `--init-output` (with `--i
 | SWE1-001, SWE1-002 | YAML configuration load / configuration errors | `test_config_loading.py` (13 tests: missing file, bad YAML, UTF-8/non-UTF-8); `test_cli.py` — UV-CLI-005; case-style normalisation and validation: `test_case_style_config.py` — UV-CASE-002 to UV-CASE-004 (#422); `functions.case` warning: `test_functions_case_removed.py` — UV-FCASE-002, UV-FCASE-003 (#424); exit code 2 from both entry points: `test_exit_code_entry_points.py` — UV-EXIT-001, UV-EXIT-003 (#425) |
 | SWE1-003 | `--defines` substitution | `test_cli.py` (`--defines` cases) |
 | SWE1-004 | Module alias map | `test_cli.py`, `test_improvements.py` (`--aliases` / `load_alias_file` cases) |
-| SWE1-005, SWE1-006 | Per-file / per-identifier exclusions | `test_exclusions.py` — `TestLoadExclusionsFile`, `TestDisabledRulesForFile`, end-to-end classes (28 tests) |
+| SWE1-005, SWE1-006 | Per-file / per-identifier exclusions | `test_exclusions.py` — `TestLoadExclusionsFile`, `TestDisabledRulesForFile`, end-to-end classes (28 tests); `identifiers:` entry matched on a reported operand: `test_constant_comparison.py` — UV-CCMP-008 (#447) |
 | SWE1-011, SWE1-012 | Comment and string stripping | `test_preprocessor.py` — `TestStripComments`, `TestStripStrings`, `TestPreprocess` |
 | SWE1-013 | Line map / offset → (line, col) | `test_preprocessor.py` — `TestBuildLineMap`, `TestOffsetToLineCol` |
 | SWE1-014 | Brace-depth array | `test_preprocessor.py` — `TestBuildBraceDepths` |
@@ -637,7 +655,7 @@ Added for issue #441. `--log`, `--write-baseline` and `--init-output` (with `--i
 | SWE1-MISRA-004 | Non-ASCII source characters (`_check_non_ascii_source`) | `test_misra_rules.py` — SWE4-TC-4.1-001 to 4.1-012 |
 | SWE1-089 | Per-file breakdown in `print_summary` | `test_print_summary.py` — UV-SUM-001 to UV-SUM-007 |
 | SWE1-090 | Typedef-alias `constant.case` exemption in `_check_defines` | `test_defines.py` — UV-DEF-008 to UV-DEF-013 |
-| SWE1-091 | misc.constant_comparison (`_check_constant_comparison`) | `test_constant_comparison.py` |
+| SWE1-091 | misc.constant_comparison (`_check_constant_comparison`) | `test_constant_comparison.py` — UV-CCMP-001 to UV-CCMP-008; `#if` / `#elif` conditions not reported: UV-CCMP-007; `identifiers:` exclusion by operand: UV-CCMP-008 (#447) |
 | SWE1-092 | misc.unsigned_suffix signed-parameter argument exemption | `test_unsigned_suffix_signed_params.py` |
 | SWE1-093 | variable.pointer_prefix auto-fix | `test_pointer_prefix_fix.py` |
 | SWE1-094 | Startup banner to stderr (two lines, unconditional) | `test_cli_requirements.py` — UV-CLI-017 to UV-CLI-019 (#407, extended by #413); `test_cli.py` — UV-CLI-023, UV-CLI-024 (v1.6.1 hotfix, #439); also SIT-024. Full: stream, two-line content and copyright format, ordering, piped stdout, `--log` copy (text output only; none for json/sarif/html, #439), no suppression option |

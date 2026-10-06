@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP1-001 | **Version** | 1.23 |
+| **Document ID** | CSC-SUP1-001 | **Version** | 1.24 |
 | **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
 | 1.23 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.22 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.3 new GATE-04 ASPICE consistency check (`aspice_consistency.yml`, `scripts/aspice_check.py`); the completed PR-template ASPICE checklist together with the owner merge is the per-PR review record (CSC-DEV-002 §5.2); §5.4 checklist covers GATE-01 to GATE-04; §6 process audit records include the PR checklists; referenced-document versions resynced |
 | 1.21 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
@@ -57,11 +58,11 @@ QA activities for CStyleCheck verify that project processes are followed as plan
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.22 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.26 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.16 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.18 |
-| CSC-SWE4-001 | Unit Verification Specification | 1.40 |
+| CSC-MAN3-001 | Project Management Plan | 1.23 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.27 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.17 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.19 |
+| CSC-SWE4-001 | Unit Verification Specification | 1.41 |
 
 ---
 

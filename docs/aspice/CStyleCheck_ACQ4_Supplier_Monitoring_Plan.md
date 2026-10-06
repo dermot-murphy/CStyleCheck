@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-ACQ4-001 | **Version** | 1.17 |
+| **Document ID** | CSC-ACQ4-001 | **Version** | 1.18 |
 | **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.18 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
 | 1.17 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.16 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.2 CI workflow availability monitors `aspice_consistency.yml`; acceptance criterion counts six CI workflows; referenced-document versions resynced |
 | 1.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
@@ -60,10 +61,10 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.22 |
-| CSC-MAN5-001 | Risk Management Plan | 1.18 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.26 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.16 |
+| CSC-MAN3-001 | Project Management Plan | 1.23 |
+| CSC-MAN5-001 | Risk Management Plan | 1.19 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.27 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.17 |
 
 ---
 

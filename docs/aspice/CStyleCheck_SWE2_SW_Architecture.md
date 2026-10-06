@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.29 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.30 |
 | **Project** | CStyleCheck | **Date** | 2026-10-06 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.30 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
 | 1.29 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): COMP-01 SWE1-094 trace row wording from the v1.6.1 release (banner in `--log` for text output only); no design change |
 | 1.28 | 2026-10-05 | Claude | Issue #439: COMP-01 key behaviour — the startup banner is written to the `--log` file only for text output; a json / sarif / html log file holds only the report document |
 | 1.27 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
@@ -63,10 +64,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.25 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.20 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.35 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.26 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.26 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.21 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.36 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.27 |
 
 ---
 
