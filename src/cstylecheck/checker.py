@@ -2997,7 +2997,8 @@ class Checker:
     # "<type> [*]" immediately before a name at statement start: a nested
     # declaration that shadows the local struct.
     _RE_SHADOW_DECL = re.compile(
-        r"[;{}]\s*(?:(?:const|volatile|static|register|unsigned|signed"
+        r"(?:[;{}]|\b(for)\s*\()\s*(?:(?:const|volatile|static|register"
+        r"|unsigned|signed"
         r"|struct|union|enum)\s+)*([A-Za-z_]\w*)\s*\**\s*$")
     _SHADOW_TYPE_KW = frozenset((
         "int", "char", "short", "long", "float", "double", "void",
@@ -3020,6 +3021,30 @@ class Checker:
                     return i
                 depth -= 1
         return limit
+
+    def _for_stmt_end(self, pos: int, limit: int) -> int:
+        """Return the end of the for statement whose header contains *pos*:
+        the '}' closing its braced body, or the ';' ending a single-statement
+        body."""
+        clean = self.clean
+        depth, i = 0, pos
+        while i < limit:                      # find the header's ')'
+            ch = clean[i]
+            if ch == "(":
+                depth += 1
+            elif ch == ")":
+                if depth == 0:
+                    break
+                depth -= 1
+            i += 1
+        j = i + 1
+        while j < limit and clean[j].isspace():
+            j += 1
+        if j < limit and clean[j] == "{":
+            end = _match_brace(clean, j)
+            return end if 0 <= end < limit else limit
+        semi = clean.find(";", j, limit)
+        return semi if semi >= 0 else limit
 
     def _struct_entries(self, key: str):
         """Resolve *key* in the struct table to its member entries, or None."""
@@ -3115,11 +3140,13 @@ class Checker:
                 if re.search(r"(?:\.|->)\s*$", before):
                     continue          # member of another object
                 dm = self._RE_SHADOW_DECL.search(before)
-                if dm and (dm.group(1) not in self._c_keywords
-                           or dm.group(1) in self._SHADOW_TYPE_KW):
+                if dm and (dm.group(2) not in self._c_keywords
+                           or dm.group(2) in self._SHADOW_TYPE_KW):
                     # A nested declaration of the same name: skip to the
-                    # end of the block that declares it.
-                    skip_until = self._block_end(q, scope_end)
+                    # end of the block (or for statement) that declares it.
+                    skip_until = (self._for_stmt_end(q, scope_end)
+                                  if dm.group(1)
+                                  else self._block_end(q, scope_end))
                     continue
                 if re.search(r"\bsizeof\s*\(?\s*$", before):
                     continue          # sizeof does not read the value

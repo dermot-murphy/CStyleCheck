@@ -231,6 +231,20 @@ class TestPartialStructAssignmentClean(unittest.TestCase):
                     "    { int c = 3; Use_Int(c); }\n"
                     "    c.parity = 1;\n    c.stop = 1;\n    Uart_Init(&c);")
 
+    def test_for_init_shadow_skipped(self):
+        # PR #457 re-review S1: 'c' declared in a for initialiser.
+        self._clean("    uart_cfg_t c;\n    c.baud = 1;\n"
+                    "    for (int c = 0; c < 3; c++) { Use_Int(c); }\n"
+                    "    c.parity = 1;\n    c.stop = 1;\n    Uart_Init(&c);")
+
+    def test_use_after_for_init_shadow_still_checked(self):
+        src = _fn("    uart_cfg_t c;\n    c.baud = 1;\n"
+                  "    for (int c = 0; c < 3; c++)\n        Use_Int(c);\n"
+                  "    Uart_Init(&c);")
+        viols = [v for v in run(src, _psa_cfg()) if v.rule == RULE_PSA]
+        self.assertEqual(len(viols), 1)
+        self.assertIn("line 9", viols[0].message)
+
     def test_use_after_shadowing_block_still_checked(self):
         src = _fn("    uart_cfg_t c;\n    c.baud = 1;\n"
                   "    { uart_cfg_t c = {0}; Uart_Init(&c); }\n"

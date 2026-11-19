@@ -2007,8 +2007,9 @@ void Uart_Setup(void)
   out-parameter that fills the struct);
 - a struct whose members are only read and which is never used as a whole;
 - `sizeof(s)`;
-- uses of another object of the same name declared in a nested block (shadowing):
-  the rest of that block is skipped.
+- uses of another object of the same name declared in a nested block or a `for`
+  initialiser (shadowing): the rest of that block, or that `for` statement, is
+  skipped.
 
 **Details and limitations:**
 
