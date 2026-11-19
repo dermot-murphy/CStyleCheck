@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-STD-001 | **Version** | 1.20 |
+| **Document ID** | CSC-STD-001 | **Version** | 1.21 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.21 | 2026-11-19 | Claude | Issue #456: §7.8 adds `misc.partial_struct_assignment` (MISRA C:2012 Rule 9.1 partial, Barr-C §7.2) and `misc.partial_struct_initialiser` (cf. MISRA C:2012 Rule 9.3), both opt-in; ten post-v1.6.0 rules |
 | 1.20 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.19 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
 | 1.18 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
@@ -59,9 +60,9 @@ The findings are presented in a unified coverage matrix and a prioritised list o
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.28 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.32 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.38 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.29 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.33 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.39 |
 
 ---
 
@@ -304,9 +305,9 @@ Rules currently implemented in CStyleCheck that go beyond the base standards:
 | `sign_compatibility` | Cross-file signed/unsigned parameter compatibility | CStyleCheck original |
 | `spell_check` | Spell-checking identifiers against a dictionary | CStyleCheck original |
 
-### 7.8 Post-v1.6.0 Additions (PRs #391, #392)
+### 7.8 Post-v1.6.0 Additions (PRs #391, #392; issue #456)
 
-The matrices above are a snapshot of the v1.2 survey (2026-06-06). Rules later implemented, such as function length and assert density (v1.4.0), are shown with their original survey symbol except where updated in this revision. The 8 rules added on `develop` after v1.6.0 map to the surveyed standards as follows:
+The matrices above are a snapshot of the v1.2 survey (2026-06-06). Rules later implemented, such as function length and assert density (v1.4.0), are shown with their original survey symbol except where updated in this revision. The 10 rules added on `develop` after v1.6.0 (8 by #391/#392, 2 by #456) map to the surveyed standards as follows:
 
 | CStyleCheck rule | Default state | Severity when enabled | MISRA C:2012 | Barr-C:2018 | Power of 10 / JSF | Previous matrix status |
 |---|---|---|---|---|---|---|
@@ -318,8 +319,10 @@ The matrices above are a snapshot of the v1.2 survey (2026-06-06). Rules later i
 | `misc.sizeof_type` | Opt-in: disabled by default; enabled by `--preset barr-c` and the `--init` Barr-C question | info | — | §5.7 | — | not listed |
 | `misc.boolean_comparison` | Opt-in: disabled by default; in no preset (enable explicitly) | warning | — (style rule; Rule 14.4 not enforced) | — | — | 📏 (MISRA-only) |
 | `misc.empty_else` | Opt-in: disabled by default; enabled by `--preset misra`, `--preset barr-c` and either `--init` question | warning | Rule 15.7 (intent) | §8.3 | — | not listed |
+| `misc.partial_struct_assignment` | Opt-in: disabled by default; enabled by `--preset misra`, `--preset barr-c` and either `--init` question | warning | Rule 9.1 (partial — local structs with only some members assigned before use as a whole) | §7.2 | — | 📏 (MISRA-only) |
+| `misc.partial_struct_initialiser` | Opt-in: disabled by default; enabled by `--preset misra` and the `--init` MISRA question | info | Rule 9.3 (related — struct analogue, intent only) | — | — | not listed |
 
-All eight rules are opt-in: they ship `enabled: false` in `src/rules.yml` and are disabled when the configuration key is absent (#412, #418). Since #420 the MISRA and Barr-C presets and the `--init` wizard enable the standard-specific rules at the severity shown; `misc.boolean_comparison` is a style rule and belongs to no preset. These rules give early, style-level feedback. They do not replace a MISRA C checker; cppcheck `--misra` remains authoritative for the MISRA rules listed (CSC-SWE1-001 Appendix A).
+All ten rules are opt-in: they ship `enabled: false` in `src/rules.yml` and are disabled when the configuration key is absent (#412, #418, #456). Since #420 the MISRA and Barr-C presets and the `--init` wizard enable the standard-specific rules at the severity shown; `misc.boolean_comparison` is a style rule and belongs to no preset. These rules give early, style-level feedback. They do not replace a MISRA C checker; cppcheck `--misra` remains authoritative for the MISRA rules listed (CSC-SWE1-001 Appendix A).
 
 ---
 
@@ -480,4 +483,4 @@ These rules are best handled by a dedicated formatting tool. CStyleCheck should 
 
 ---
 
-*End of Industry Standards Comparison Report — CSC-STD-001 v1.20*
+*End of Industry Standards Comparison Report — CSC-STD-001 v1.21*

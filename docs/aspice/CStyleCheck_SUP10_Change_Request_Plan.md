@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.21 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.22 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-11-19 | Claude | Issue #456: §7 register row and §7.1 record CR-456 (two opt-in rules for partially initialised local structs, `misc.partial_struct_assignment` and `misc.partial_struct_initialiser`; new requirements SWE1-118 to SWE1-120; Medium; disabled by default, no compatibility impact) |
 | 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.20 | 2026-11-19 | Claude | Issue #449: §6 CI-impact table — CI workflow scripts are CI-029 and CI-030 (CI-031 retired); referenced-document versions resynced |
 | 1.19 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
@@ -55,9 +56,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.29 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.19 |
-| CSC-MAN3-001 | Project Management Plan | 1.25 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.30 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.20 |
+| CSC-MAN3-001 | Project Management Plan | 1.26 |
 
 ---
 
@@ -189,6 +190,7 @@ Summary view:
 | #424 | `bug`, `config-change` | Remove unused `functions.case`; warn when a config still sets it | Medium | Closed — PR #427, merge `31acd91` | v2.0.0 |
 | #425 | `bug` | Config and usage errors exit 2 from the installed `cstylecheck` command | High | Closed — PR #428, merge `7ddf732` | v2.0.0 |
 | #441 | `enhancement` | [CR] Create the parent folder of output files (`--log`, `--write-baseline`, `--init-output`) if it does not exist | Medium | Open — PR #442 | v2.0.0 |
+| #456 | `enhancement` | [CR] Opt-in rules for partially initialised local structs (`misc.partial_struct_assignment`, `misc.partial_struct_initialiser`) | Medium | Open — implementing PR | v2.0.0 |
 
 ### 7.1 Change Request Records
 
@@ -297,6 +299,21 @@ Summary view:
 | **Impact analysis** | `--log`, `--write-baseline` and `--init-output` now create missing parent folders of the output file, so callers no longer need `mkdir -p` first. A run that succeeds today behaves the same; only runs that failed with a missing-folder configuration error now succeed. A folder that cannot be created is still a configuration error (exit 2). `--init` / `--preset` with an unwritable output path now exit 2 with a message instead of a traceback (exit 1). No impact on SIT, SWQ or SYS-VTC procedures, which write into existing folders |
 | **Verification** | 11 tests in `tests/test_output_dirs.py`; test total 1546→1557 |
 | **Approval** | Approved by owner merge of the implementing PR |
+| **Status / target release** | Open / v2.0.0 |
+
+| Field | CR-456 |
+|---|---|
+| **Issue / PR** | [#456](https://github.com/dermot-murphy/CStyleCheck/issues/456) / implementing PR |
+| **Date** | 2026-11-19 |
+| **Raised by / implemented by** | Dermot Murphy / Claude |
+| **Type** | `enhancement` — two new rules and new requirements |
+| **Impact level** | Medium — changes CIs `checker.py` (new module-level struct-definition table functions and four `Checker` methods), `cli.py` (`main()` struct-definition pre-pass), `wizard.py` (presets and `--init`), `src/rules.yml` and `tests/rules.yml`, and adds requirements SWE1-118 to SWE1-120 with a minor change to SWE1-075 and SYS-F-011 / SYS-F-020. Not High: both rules ship `enabled: false` and are disabled when the key is absent (CR-418 policy), so an existing project gets no new findings and no backwards-compatibility break |
+| **Change** | `misc.partial_struct_assignment` (warning) flags a non-static local struct without an initialiser that has only some members assigned before its first use as a whole; `misc.partial_struct_initialiser` (info) flags a local struct whose positional brace initialiser lists fewer values than members. The member lists come from the struct definitions of every scanned file, collected by the CLI before the per-file checks when either rule is enabled or `--per-dir-config` is used. `--preset misra` enables both rules, `--preset barr-c` enables `misc.partial_struct_assignment`; the `--init` wizard lists them with the other opt-in rules. The sample profile `examples/embedded_project/config/strict.yml` enables both |
+| **Rationale** | A partly assigned local struct passes indeterminate stack data to the callee (MISRA C:2012 Rule 9.1, Barr-C §7.2); a short positional initialiser hides whether the missing values were intended (cf. MISRA C:2012 Rule 9.3) |
+| **Affected work products** | SYS-F-011, SYS-F-020, SWE1-075, SWE1-118 to SWE1-120; CSC-SYS2-001 v2.22, CSC-SYS3-001 v1.24, CSC-SWE1-001 v2.29, CSC-SWE2-001 v1.33 (SWA-IF-11), CSC-SWE3-001 v1.39 (UNIT-139 to UNIT-145), CSC-SWE4-001 v1.44 (§5.24, UV-PSI-001 to UV-PSI-005), CSC-SWE5-001 v1.33 (SIT-028), CSC-SWE6-001 v1.36, CSC-SYS4-001 v1.30 (SITC-018), CSC-SYS5-001 v1.27, CSC-STD-001 v1.21, README, Rules-and-Configuration, CHANGELOG, `examples/embedded_project` |
+| **Impact analysis** | With the default configuration nothing changes. When either rule is enabled, every scanned file is read once before checking (the content is cached and reused, so each file is still read once, SYS-F-010). Struct types whose definition is not in a scanned file are not checked; order is lexical (no control-flow analysis). Configs regenerated with `--preset misra` / `--preset barr-c` or `--init` (standard question answered yes) enable the new rules and can report findings, as for CR-420 |
+| **Verification** | New module `tests/test_partial_struct.py` (47 tests) and 2 key-absent tests in `tests/test_misra_rules.py` (UV-MSR-009); `tests/test_init_wizard.py` preset / wizard tests cover the new rules; SIT-028, SITC-018; test total 1574→1623 |
+| **Approval** | By merge (CSC-DEV-002 §5.2) — owner merge of the implementing PR |
 | **Status / target release** | Open / v2.0.0 |
 
 ### 7.2 Release Classification Decision

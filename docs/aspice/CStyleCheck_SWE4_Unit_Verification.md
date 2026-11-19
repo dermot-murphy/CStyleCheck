@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.43 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.44 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.44 | 2026-11-19 | Claude | Issue #456 (CR-456): new §5.24 `test_partial_struct.py` (47 tests, UV-PSI-001 to UV-PSI-005) for SWE1-118 to SWE1-120 (UNIT-139 to UNIT-145); §5.14 `test_misra_rules.py` 160→162 (UV-MSR-009 11→13: key-absent tests for the two new opt-in rules; policy tests cover 10 opt-in rules); §5.18 UV-WIZ-004/005 — `misra` and `barr-c` presets and the wizard include the partial-struct rules (9 opt-in rules listed); §6 new module row, total 1574→1623 (60 modules, 83 rule IDs); §4.2 CI-gate test total; §7 rows SWE1-118 to SWE1-120 and SWE1-075 |
 | 1.43 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.42 | 2026-11-19 | Claude | Issue #449: §6 `test_workflow_config.py` 16→21 tests (`TestRepositoryProtection`, SUP9-TC-PROT-001 to 005: no push to the source branch, every workflow declares `permissions:`, rules-workflow token scopes, no `paths:` filter on `pull_request` in `cstylecheck_tests.yml`, *All Checks Passed* aggregate job); total 1569→1574; §4.2 CI-gate test count; referenced-document versions resynced |
 | 1.41 | 2026-10-06 | Claude | Issue #447: add §5.23 catalogue for `test_constant_comparison.py` (UV-CCMP-001 to UV-CCMP-008, 37 tests), including the two new classes UV-CCMP-007 `TestConstantComparisonPreprocessor` (5 tests: `#if` / `#elif`, indented and continuation-line conditions not reported; the next line still checked) and UV-CCMP-008 `TestConstantComparisonIdentifierExclusion` (5 tests: an `identifiers:` entry for either operand suppresses the finding; the operator text, another identifier or another rule does not); §6 `test_constant_comparison.py` 27→37; total 1559→1569; coverage-gate text 1559→1569; §7 SWE1-091 and SWE1-005/006 rows cite UV-CCMP |
@@ -78,10 +79,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.28 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.38 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.32 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.29 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.29 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.39 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.33 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.30 |
 
 ---
 
@@ -108,7 +109,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1574 tests (2026-10-06 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425, #423, #441, the v1.6.1 back-merge and #447) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1623 tests (2026-11-19 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425, #423, #441, the v1.6.1 back-merge, #447, #449 and #456) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -375,9 +376,9 @@ These test modules provide regression coverage for previously fixed bugs and new
 
 ---
 
-### 5.14 MISRA C and Barr-C Rule Tests — `test_misra_rules.py` (160 tests)
+### 5.14 MISRA C and Barr-C Rule Tests — `test_misra_rules.py` (162 tests)
 
-Covers four MISRA C:2012/2023 lexical rules, one BUG-004 regression, and the 8 MISRA/Barr-C rules added after v1.6.0 by PRs #391 and #392 (76 tests), and the opt-in policy tests for those rules (UV-MSR-009, 11 tests, #418).
+Covers four MISRA C:2012/2023 lexical rules, one BUG-004 regression, and the 8 MISRA/Barr-C rules added after v1.6.0 by PRs #391 and #392 (76 tests), and the opt-in policy tests for those rules and the two #456 rules (UV-MSR-009, 13 tests, #418, #456).
 ASPICE traceability: SWE1-MISRA-001 (Rule 7.3), SWE1-MISRA-002 (Rule 7.1), SWE1-MISRA-003 (Rule 4.2), SWE1-MISRA-004 (Rule 4.1), SWE1-109 to SWE1-116 (UNIT-128 to UNIT-135).
 
 | TC-ID | MISRA Rule | SWE4 Test ID range | Verified Behaviour |
@@ -395,7 +396,7 @@ ASPICE traceability: SWE1-MISRA-001 (Rule 7.3), SWE1-MISRA-002 (Rule 7.1), SWE1-
 | UV-MSR-006 | Barr-C §5.7 — `TestSizeofType` | 7 tests | `sizeof(primitive)` and `sizeof(*_t)` flagged; `sizeof(var)` and `sizeof(*ptr)` not flagged; disabled; severity; message (SWE1-114) |
 | UV-MSR-007 | Style rule (no MISRA citation, #410; opt-in, lowercase only, #412) — `TestBooleanComparison` | 18 tests | `== true`, `== false`, `!= true`, `true == x` and `x == false` flagged when enabled; `flag == TRUE`, `TRUE == flag` and `flag != FALSE` not flagged; not reported when the key or `misc` is absent or with the shipped `src/rules.yml`; reported when enabled explicitly; direct use, negation and comments not flagged; disabled; severity; message (SWE1-115) |
 | UV-MSR-008 | Barr-C §8.3 — `TestEmptyElse` | 9 tests | `else {}` flagged; `else` with a comment, non-empty `else`, `else if`, no `else` and comments not flagged; disabled; severity; message (SWE1-116) |
-| UV-MSR-009 | Opt-in policy (#418) — `test_optin_*` functions | 11 tests | Each of `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type` and `misc.empty_else` fires when enabled explicitly and is not reported when its key is absent or has no `enabled` flag (7 parametrized tests); all 8 opt-in rules ship `enabled: false` in `src/rules.yml` and `tests/rules.yml`; none of the 8 fires with an empty `misc` config (each fires when enabled); every `misc` rule shipped `enabled: false` reads `.get("enabled", False)` in code; `--update-config` adds the 8 keys as `enabled: false` (SWE1-109 to SWE1-116) |
+| UV-MSR-009 | Opt-in policy (#418, #456) — `test_optin_*` functions | 13 tests | Each of `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.empty_else`, `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` fires when enabled explicitly and is not reported when its key is absent or has no `enabled` flag (9 parametrized tests); all 10 opt-in rules ship `enabled: false` in `src/rules.yml` and `tests/rules.yml` (`test_optin_policy_all_shipped_disabled`); none of the 10 fires with an empty `misc` config (each fires when enabled); every `misc` rule shipped `enabled: false` reads `.get("enabled", False)` in code; `--update-config` adds the 10 keys as `enabled: false` (SWE1-109 to SWE1-116, SWE1-118, SWE1-119) |
 
 Each test class verifies: positive detection, negative non-detection, disabled-rule suppression, configurable severity, and violation message content.
 
@@ -454,15 +455,15 @@ Added for issue #407 (closes RR-003-001 in CSC-REVIEW-003 and the remaining part
 
 ### 5.18 Config Wizard and Presets — `test_init_wizard.py` (33 tests)
 
-Tests for `--init` and `--preset` (issue #190). UV-WIZ-004 and UV-WIZ-005 were added for issue #420 (presets and the wizard enable the standard-specific opt-in rules). They use one C snippet that triggers all 8 opt-in rules.
+Tests for `--init` and `--preset` (issue #190). UV-WIZ-004 and UV-WIZ-005 were added for issue #420 (presets and the wizard enable the standard-specific opt-in rules). They use one C snippet that triggers all 10 opt-in rules (the two partial-struct rules since #456).
 
 | TC-ID | Test Name(s) | SW-REQ | Unit Verified | Pass Condition |
 |---|---|---|---|---|
 | UV-WIZ-001 | `TestRunPreset` (8 tests) | SWE1-075 | UNIT-99 | Each preset writes a file; every preset is valid YAML with the header comment; unknown preset → 1; existing file kept without `overwrite`, replaced with it |
 | UV-WIZ-002 | `TestRunWizard` (5 tests) | SWE1-075 | UNIT-98 | All-default answers write a file; the `camelCase` answer is stored as canonical `camel` (#422); existing file: `n` aborts (1, file kept), `y` or `overwrite=True` replaces it |
 | UV-WIZ-003 | `TestCLIInit` (2 tests) | SWE1-075 | UNIT-46, UNIT-99 | `--preset minimal --init-output` writes the file (exit 0); `--help` lists the three presets |
-| UV-WIZ-004 | `TestPresetOptInRules` (9 tests) | SWE1-075 | UNIT-99 | `misra` enables exactly `goto_usage`, `assignment_in_condition`, `void_pointer`, `recursive_function`, `empty_else`; `barr-c` exactly `multiple_statements_per_line`, `sizeof_type`, `empty_else`; `minimal` none; `boolean_comparison` in no preset; each enabled rule written `enabled: true` with the `src/rules.yml` severity; output byte-identical across runs; the checker (in-process and via the CLI `--config`) fires exactly the enabled opt-in rules on the trigger snippet and no others, with no traceback |
-| UV-WIZ-005 | `TestWizardOptInRules` (9 tests) | SWE1-075 | UNIT-98 | The MISRA C:2012 and Barr-C questions are asked last (prompts 9 and 10) with `[y/N]`; default, explicit `n`/`N` and end of input enable none; `y` to MISRA enables the 5 MISRA rules, `y` to Barr-C the 3 Barr-C rules, both the union (7); the 7 rules are always listed with the shipped severity and `boolean_comparison` is not; the checker fires exactly the enabled rules |
+| UV-WIZ-004 | `TestPresetOptInRules` (9 tests) | SWE1-075 | UNIT-99 | `misra` enables exactly `goto_usage`, `assignment_in_condition`, `void_pointer`, `recursive_function`, `empty_else`, `partial_struct_assignment`, `partial_struct_initialiser` (`test_misra_enables_exactly_its_rules`); `barr-c` exactly `multiple_statements_per_line`, `sizeof_type`, `empty_else`, `partial_struct_assignment` (`test_barr_c_enables_exactly_its_rules`, #456); `minimal` none; `boolean_comparison` in no preset; each enabled rule written `enabled: true` with the `src/rules.yml` severity; output byte-identical across runs; the checker (in-process and via the CLI `--config`) fires exactly the enabled opt-in rules on the trigger snippet and no others, with no traceback |
+| UV-WIZ-005 | `TestWizardOptInRules` (9 tests) | SWE1-075 | UNIT-98 | The MISRA C:2012 and Barr-C questions are asked last (prompts 9 and 10) with `[y/N]`; default, explicit `n`/`N` and end of input enable none; `y` to MISRA enables the 7 MISRA rules, `y` to Barr-C the 4 Barr-C rules, both the union (9, #456); the 9 rules are always listed with the shipped severity and `boolean_comparison` is not; the checker fires exactly the enabled rules |
 
 ### 5.19 Case-Style Names in Configs — `test_case_style_config.py` (27 tests)
 
@@ -527,6 +528,20 @@ Catalogued for issue #447, which adds the last two classes. `misc.constant_compa
 
 ---
 
+### 5.24 Partially Initialised Local Structs — `test_partial_struct.py` (47 tests)
+
+Added for issue #456. The two opt-in rules `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` need the member list of each struct type, so the module also tests the struct-definition table and the CLI pre-pass that builds it from every scanned file.
+
+| TC-ID | Test Name(s) | SW-REQ | Unit Verified | Pass Condition |
+|---|---|---|---|---|
+| UV-PSI-001 | `TestCollectStructDefs` (10 tests) | SWE1-120 | UNIT-139, UNIT-141 | Typedef and tag keys recorded; a tagged struct without a typedef; function-pointer members and bit-fields (unnamed padding skipped); an anonymous union is one entry, anonymous struct members are flattened, a named nested struct is one member; `typedef struct tag Alias;` maps to the tag; pointer typedefs and unions not recorded; `struct_rules_enabled()` true only when a #456 rule is enabled |
+| UV-PSI-002 | `TestPartialStructAssignmentFlagged` (8 tests) | SWE1-118 | UNIT-143, UNIT-144 | Partly assigned struct then passed by address, passed by value, returned or copied is reported at the declaration with the use line and the unassigned members; one of two declarators flagged; type reached through a typedef alias; severity configurable |
+| UV-PSI-003 | `TestPartialStructAssignmentClean` (16 tests) | SWE1-118 | UNIT-142, UNIT-143, UNIT-144 | Negative: `{0}` initialiser, every member assigned, `memset` first, a configured custom fill function, whole-struct assignment first, `&s` out-parameter before any member write, member reads only, `sizeof(s)`, `&s.x` counts as assigned, `static` local, pointer and array declarators, unknown struct type, anonymous-union member, member of another object, rule disabled, code in a comment |
+| UV-PSI-004 | `TestPartialStructInitialiser` (10 tests) | SWE1-119 | UNIT-143, UNIT-145 | Short positional initialiser reported with the listed / total counts; negative: full positional list, trailing comma counted correctly, `{0}` and `{}`, designated initialiser, nested braces count as one value, file-scope object, copy initialiser, rule disabled; a `static` local is also checked |
+| UV-PSI-005 | `TestCrossFileStructDefs` (3 tests) | SWE1-118, SWE1-120 | UNIT-46, UNIT-140, UNIT-21 | Through the CLI: a struct defined in a scanned header is checked in a `.c` file; when the header is not scanned the struct is unknown and not reported; an inline suppression comment suppresses the finding |
+
+---
+
 ## 6. Verification Results Summary
 
 | Test Module | Tests | Pass | Fail | Coverage Contribution |
@@ -553,7 +568,7 @@ Catalogued for issue #447, which adds the last two classes. `misc.constant_compa
 | `test_eof_comment.py` | 33 | 33 | 0 | `_check_eof_comment` |
 | `test_copyright_header.py` | 55 | 55 | 0 | `_check_copyright_header` |
 | `test_parameter_prefix.py` | 51 | 51 | 0 | `_check_variables` |
-| `test_misra_rules.py` | 160 | 160 | 0 | `_check_lowercase_l_suffix`, `_check_octal_constants`, `_check_trigraphs`, `_check_non_ascii_source`, `_check_yoda`, `_check_goto_usage`, `_check_assignment_in_condition`, `_check_multiple_statements_per_line`, `_check_void_pointer`, `_check_recursive_function`, `_check_sizeof_type`, `_check_boolean_comparison`, `_check_empty_else` |
+| `test_misra_rules.py` | 162 | 162 | 0 | `_check_lowercase_l_suffix`, `_check_octal_constants`, `_check_trigraphs`, `_check_non_ascii_source`, `_check_yoda`, `_check_goto_usage`, `_check_assignment_in_condition`, `_check_multiple_statements_per_line`, `_check_void_pointer`, `_check_recursive_function`, `_check_sizeof_type`, `_check_boolean_comparison`, `_check_empty_else` |
 | `test_block_comment_spacing.py` | 29 | 29 | 0 | `_check_block_comment_spacing` |
 | `test_workflow_config.py` | 21 | 21 | 0 | CI workflow configuration regression |
 | `test_github_annotations.py` | 8 | 8 | 0 | GitHub Actions annotation output |
@@ -586,11 +601,12 @@ Catalogued for issue #447, which adds the last two classes. `misc.constant_compa
 | `test_no_single_char_identifiers.py` | 8 | 8 | 0 | COMP-05h (`_check_no_single_char_identifiers`) |
 | `test_print_summary.py` | 11 | 11 | 0 | `output.print_summary` (per-file breakdown) |
 | `test_constant_comparison.py` | 37 | 37 | 0 | COMP-05f (`_check_constant_comparison`) |
+| `test_partial_struct.py` | 47 | 47 | 0 | COMP-05f (`_check_partial_struct_assignment`, `_check_partial_struct_initialiser`, `_iter_local_struct_decls`, `_struct_entries`), COMP-05 (`collect_struct_defs`, `collect_struct_defs_from_source`, `struct_rules_enabled`), COMP-01 (`main` struct-definition pre-pass) |
 | `test_unsigned_suffix_signed_params.py` | 15 | 15 | 0 | COMP-05f (`_check_misc` signed-param exemption) |
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
 | `test_cli_requirements.py` | 22 | 22 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
-| **Total** | **1574** | **1574** | **0** | All 81 rule IDs covered — 59 modules |
+| **Total** | **1623** | **1623** | **0** | All 83 rule IDs covered — 60 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)
@@ -682,6 +698,9 @@ Catalogued for issue #447, which adds the last two classes. `misc.constant_compa
 | SWE1-115 | misc.boolean_comparison | `test_misra_rules.py` — UV-MSR-007, UV-MSR-009 |
 | SWE1-116 | misc.empty_else | `test_misra_rules.py` — UV-MSR-008, UV-MSR-009 |
 | SWE1-117 | Trend metrics — safety indicators and macro metrics | `test_collect_metrics.py` — UV-MET-008 (`TestCSourceMetrics`: `goto_count`, `assert_count`, `macro_count` with include guard excluded) |
+| SWE1-118 | misc.partial_struct_assignment | `test_partial_struct.py` — UV-PSI-002, UV-PSI-003, UV-PSI-005; `test_misra_rules.py` — UV-MSR-009 |
+| SWE1-119 | misc.partial_struct_initialiser | `test_partial_struct.py` — UV-PSI-004; `test_misra_rules.py` — UV-MSR-009 |
+| SWE1-120 | Cross-file struct-definition table | `test_partial_struct.py` — UV-PSI-001, UV-PSI-005 |
 
 ---
 

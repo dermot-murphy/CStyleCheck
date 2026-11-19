@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.28 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.29 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.29 | 2026-11-19 | Claude | Issue #456 (CR-456, CSC-SUP10-001 §7): SWE1-118 `misc.partial_struct_assignment` and SWE1-119 `misc.partial_struct_initialiser` (both opt-in, disabled by default), SWE1-120 cross-file struct-definition table (collected once before the per-file checks); §5 RTM rows; Appendix A.1 rows (MISRA C:2012 Rule 9.1 partial, Rule 9.3 related), A.2 Rules 9.1–9.5 note and A.3 gap-analysis row; SWE1-075 — `--preset misra` also enables both rules, `--preset barr-c` also enables `misc.partial_struct_assignment`, `--init` lists 9 opt-in rules; scope 81→83 rule IDs |
 | 2.28 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 2.27 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
 | 2.26 | 2026-10-06 | Claude | Issue #447: SWE1-091 — comparisons in `#if` / `#elif` preprocessor conditions (including backslash-continuation lines and directives with leading whitespace) are not reported by `misc.constant_comparison`; SWE1-005 — an `identifiers:` exclusion entry is matched against the identifiers a rule reports with its finding (for `misc.constant_comparison`, either operand), otherwise against the first quoted name in the message; RTM SWE1-091 row cites the new test classes |
@@ -68,7 +69,7 @@
 
 ### 3.1 Purpose
 
-This Software Requirements Specification (SRS) refines the system-level requirements from CSC-SYS2-001 into software-specific, implementable requirements for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline (81 rule IDs)**. It provides the direct input to software architectural design (SWE.2) and defines the verification criteria used in SWE.4–SWE.6.
+This Software Requirements Specification (SRS) refines the system-level requirements from CSC-SYS2-001 into software-specific, implementable requirements for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline (83 rule IDs)**. It provides the direct input to software architectural design (SWE.2) and defines the verification criteria used in SWE.4–SWE.6.
 
 This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requirements Analysis**.
 
@@ -76,10 +77,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.21 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.23 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.32 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.29 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.22 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.24 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.33 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.30 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
@@ -208,6 +209,9 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SWE1-114 | The `_check_sizeof_type()` method shall flag `sizeof` applied to a type name (primitive type, `*_t` typedef or capitalised type name, optionally followed by `*`) as `misc.sizeof_type` (default severity `info`); `sizeof(var)` and `sizeof(*var)` shall not be flagged (Barr-C:2018 §5.7). The rule shall be disabled by default, including when the configuration key is absent (opt-in, #418). | Mandatory | Test | SYS-F-020 |
 | SWE1-115 | The `_check_boolean_comparison()` method shall flag an `==` or `!=` comparison with the lowercase `<stdbool.h>` literals `true` or `false` on either side as `misc.boolean_comparison` (default severity `warning`); `TRUE`/`FALSE` macros shall not be flagged. The rule shall be disabled by default, including when the configuration key is absent (opt-in, #412) (style rule; MISRA C:2012 Rule 14.4 is not enforced — `if (flag == true)` is compliant with it) | Mandatory | Test | SYS-F-020 |
 | SWE1-116 | The `_check_empty_else()` method shall flag an `else { }` block whose body is empty in the original source as `misc.empty_else` (default severity `warning`); a block containing a comment shall not be flagged (Barr-C:2018 §8.3; MISRA C:2012 Rule 15.7 intent). The rule shall be disabled by default, including when the configuration key is absent (opt-in, #418). | Mandatory | Test | SYS-F-020 |
+| SWE1-118 | The `_check_partial_struct_assignment()` method shall flag a non-static local struct object declared without an initialiser (not a pointer or array) whose struct definition is known, when, before its first use as a whole (passed by value or by address to a function, returned, or copied with `x = s`), some but not all of its members are assigned, as `misc.partial_struct_assignment` (default severity `warning`), reported at the declaration with a message naming the use line and the unassigned members (MISRA C:2012 Rule 9.1, partial; Barr-C:2018 §7.2). A whole-struct assignment, or a call to a function listed in `fill_functions` (default `memset`, `memcpy`, `memmove`) with `&s` as its first argument, before the member writes shall count as assigning every member; `&s` passed to any other function before any member write shall count as an out-parameter fill and shall not be flagged; `&s.x` shall count member `x` as assigned; a nested member or array-element write shall count its top-level member; an anonymous union member shall count as assigned when any of its members is assigned, and anonymous struct members shall be flattened; `sizeof(s)` and member reads shall not be a use as a whole. Order shall be lexical (no control-flow analysis). The rule shall be disabled by default, including when the configuration key is absent (opt-in, #456). | Mandatory | Test | SYS-F-020 |
+| SWE1-119 | The `_check_partial_struct_initialiser()` method shall flag a local struct object (including a `static` local) whose positional brace initialiser lists fewer top-level values than the struct definition has members as `misc.partial_struct_initialiser` (default severity `info`); `{0}`, `{}`, designated initialisers (`.x =` or `[n] =`), non-brace initialisers, file-scope objects and structs whose definition is not known shall not be flagged (cf. MISRA C:2012 Rule 9.3; the code is well-defined, C11 §6.7.9 ¶21). The rule shall be disabled by default, including when the configuration key is absent (opt-in, #456). | Mandatory | Test | SYS-F-020 |
+| SWE1-120 | For SWE1-118 and SWE1-119, the member list of a struct type shall come from a struct-definition table keyed by `struct <tag>` and by typedef alias (`typedef struct tag Alias;` maps to the tag); when either rule is enabled in the root configuration or `--per-dir-config` is used, the CLI shall read every scanned file once before the per-file checks, collect the struct definitions of all files and pass the table to each `Checker`, whose own file's definitions take precedence. A struct type whose definition is in no scanned file shall not be checked (#456). | Mandatory | Test | SYS-F-020 |
 
 ### 4.10 Rule Engine — Cross-File Sign Compatibility (SS-04/SS-05)
 
@@ -263,7 +267,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 | SWE1-072 | The `preprocessor.parse_inline_suppressions()` function shall parse `// cstylecheck: disable=rule.id` and `// cstylecheck: enable=rule.id` directives in C source, and equivalently `/* cstylecheck: disable=rule.id */` block-comment form on the same line; directives shall be case-insensitive and shall support comma-separated lists of rule IDs | Mandatory | Test | SYS-F-008, SYS-F-041 |
 | SWE1-073 | The `parse_inline_suppressions()` function shall support `disable-next-line=rule.id` to suppress the immediately following non-blank, non-comment line; a `disable=rule.id` on the same line as code shall suppress that line only; an unpaired `disable=` shall suppress from that point to end of file | Mandatory | Test | SYS-F-008, SYS-F-041 |
 | SWE1-074 | The `fixer.py` module shall apply safe mechanical in-place fixes when `--fix` is specified; `--dry-run` shall display a unified diff without writing; `--safe-only` shall restrict fixes to zero-risk substitutions; currently fixable rules: `misc.unsigned_suffix` (`42u` → `42U`), `misc.lowercase_l_suffix` (`100l` → `100L`), and `variable.pointer_prefix` (rename via `_fix_pointer_prefix` — see SWE1-093) | Mandatory | Test | SYS-F-020, SYS-F-042 |
-| SWE1-075 | The `wizard.py` module shall implement `--init` (interactive Q&A wizard writing `.cstylecheck.yml`) and `--preset barr-c\|minimal\|misra` (write pre-built config without wizard); `--init-output FILE` shall set the output path; `--overwrite` shall allow overwriting an existing file; the `misra` preset shall enable the opt-in rules `misc.goto_usage`, `misc.assignment_in_condition`, `misc.void_pointer`, `misc.recursive_function` and `misc.empty_else`, and the `barr-c` preset shall enable `misc.multiple_statements_per_line`, `misc.sizeof_type` and `misc.empty_else`, each written with `enabled: true` and its shipped default severity; the `minimal` preset shall enable none of them and no preset shall enable `misc.boolean_comparison`; after its other questions `--init` shall ask two yes/no questions, each defaulting to No (also on end of input), to enable the MISRA C:2012 rule set and the Barr-C rule set, and shall list those 7 rules with `enabled: true` only for the rule set(s) answered yes (#420); presets and `--init` shall write only canonical case-style names (keys of `_CASE_PATTERNS`), the wizard showing its friendly labels (`lower_snake`, `camelCase`, `PascalCase`) in the same order but storing `lower_snake`, `camel` or `pascal` (#422); presets and `--init` shall not write `functions.case` (#424). If the parent folder of FILE, or any folder above it, does not exist, it shall be created first; a folder that cannot be created shall be a configuration error (exit 2) naming the path (#441) | Mandatory | Test | SYS-F-002, SYS-F-043 |
+| SWE1-075 | The `wizard.py` module shall implement `--init` (interactive Q&A wizard writing `.cstylecheck.yml`) and `--preset barr-c\|minimal\|misra` (write pre-built config without wizard); `--init-output FILE` shall set the output path; `--overwrite` shall allow overwriting an existing file; the `misra` preset shall enable the opt-in rules `misc.goto_usage`, `misc.assignment_in_condition`, `misc.void_pointer`, `misc.recursive_function`, `misc.empty_else`, `misc.partial_struct_assignment` and `misc.partial_struct_initialiser`, and the `barr-c` preset shall enable `misc.multiple_statements_per_line`, `misc.sizeof_type`, `misc.empty_else` and `misc.partial_struct_assignment` (#456), each written with `enabled: true` and its shipped default severity; the `minimal` preset shall enable none of them and no preset shall enable `misc.boolean_comparison`; after its other questions `--init` shall ask two yes/no questions, each defaulting to No (also on end of input), to enable the MISRA C:2012 rule set and the Barr-C rule set, and shall list those 9 rules with `enabled: true` only for the rule set(s) answered yes (#420, #456); presets and `--init` shall write only canonical case-style names (keys of `_CASE_PATTERNS`), the wizard showing its friendly labels (`lower_snake`, `camelCase`, `PascalCase`) in the same order but storing `lower_snake`, `camel` or `pascal` (#422); presets and `--init` shall not write `functions.case` (#424). If the parent folder of FILE, or any folder above it, does not exist, it shall be created first; a folder that cannot be created shall be a configuration error (exit 2) naming the path (#441) | Mandatory | Test | SYS-F-002, SYS-F-043 |
 | SWE1-076 | The `config.py resolve_per_dir_config()` function shall walk upward from each source file's directory when `--per-dir-config` is active, deep-merging any `.cstylecheck.yml` found on top of the root config; the nearest config wins; `root: true` in any `.cstylecheck.yml` stops the upward search; results shall be cached per directory | Mandatory | Test | SYS-F-002, SYS-F-044 |
 | SWE1-077 | The `output.py _violations_to_html()` function shall produce a self-contained HTML report when `--output-format html` is specified; the report shall include inline CSS, summary cards (errors/warnings/info/total/files), and per-file violation tables; when `--log FILE` is provided the HTML shall be written to that file, otherwise to stdout | Mandatory | Test | SYS-F-027, SYS-F-045 |
 | SWE1-078 | The `_check_function_length()` method shall report `misc.function_length` when a function body (opening `{` to closing `}`, inclusive) exceeds `misc.function_length.max_lines`; when `count_comments: false` blank and comment-only lines shall be excluded from the count | Mandatory | Test | SYS-F-020 |
@@ -380,6 +384,9 @@ The following criteria shall be met by all software requirements above. They are
 | SWE1-114 | misc.sizeof_type (Barr-C §5.7, opt-in) | SYS-F-020 | `Checker._check_sizeof_type()` | `test_misra_rules.py` |
 | SWE1-115 | misc.boolean_comparison (style, opt-in) | SYS-F-020 | `Checker._check_boolean_comparison()` | `test_misra_rules.py` |
 | SWE1-116 | misc.empty_else (Barr-C §8.3, opt-in) | SYS-F-020 | `Checker._check_empty_else()` | `test_misra_rules.py` |
+| SWE1-118 | misc.partial_struct_assignment (MISRA 9.1 partial, Barr-C §7.2, opt-in) | SYS-F-020 | `Checker._check_partial_struct_assignment()` | `test_partial_struct.py`, `test_misra_rules.py` |
+| SWE1-119 | misc.partial_struct_initialiser (cf. MISRA 9.3, opt-in) | SYS-F-020 | `Checker._check_partial_struct_initialiser()` | `test_partial_struct.py`, `test_misra_rules.py` |
+| SWE1-120 | Cross-file struct-definition table (#456) | SYS-F-020 | `collect_struct_defs()`, `collect_struct_defs_from_source()`, `Checker.__init__()` (`struct_defs`), `cli.main()` pre-pass | `test_partial_struct.py` |
 | SWE1-102 | Trend metrics — LOC classification | — (no SYS parent; CSC-MAN3-001 §10.3 trend monitoring, GP 2.1.4) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
 | SWE1-103 | Trend metrics — cyclomatic complexity / nesting | — (no SYS parent; CSC-MAN3-001 §10.3 trend monitoring, GP 2.1.4) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
 | SWE1-104 | Trend metrics — size | — (no SYS parent; CSC-MAN3-001 §10.3 trend monitoring, GP 2.1.4) | `scripts/collect_metrics.py` | `test_collect_metrics.py` |
@@ -454,6 +461,8 @@ CStyleCheck is a **complementary** tool to cppcheck (used for full MISRA C stati
 | `misc.sizeof_type` | `_check_sizeof_type()` | — | — | — | §5.7 | `test_misra_rules.py` |
 | `misc.boolean_comparison` | `_check_boolean_comparison()` | — (style rule; Rule 14.4 not enforced) | — | — | — | `test_misra_rules.py` |
 | `misc.empty_else` | `_check_empty_else()` | Rule 15.7 (informative) | Rule 15.7 | Required | §8.3 | `test_misra_rules.py` |
+| `misc.partial_struct_assignment` | `_check_partial_struct_assignment()` | Rule 9.1 (partial — local structs with only some members assigned before use as a whole; lexical order) | Rule 9.1 | Mandatory | §7.2 | `test_partial_struct.py` |
+| `misc.partial_struct_initialiser` | `_check_partial_struct_initialiser()` | Rule 9.3 (related — struct analogue of the array rule; intent only) | Rule 9.3 | Required | — | `test_partial_struct.py` |
 
 ### A.2 MISRA C Rules Delegated to cppcheck
 
@@ -469,7 +478,7 @@ The following MISRA C rules require full compiler-level analysis and are enforce
 | Rules 2.1–2.7 | Rules 2.1–2.7 | Unused code, dead code, unreachable code | Required / Advisory |
 | Rules 6.1–6.2 | Rules 6.1–6.2 | Bit-field types | Required |
 | Rules 8.1–8.18 | Rules 8.1–8.18 | Declarations and definitions | Required / Advisory |
-| Rules 9.1–9.5 | Rules 9.1–9.5 | Initialisation | Required / Advisory |
+| Rules 9.1–9.5 | Rules 9.1–9.5 | Initialisation (Rule 9.1 also partially covered by `misc.partial_struct_assignment`; the struct analogue of Rule 9.3 by `misc.partial_struct_initialiser`) | Mandatory / Required / Advisory |
 | Rules 10.1–10.8 | Rules 10.1–10.8 | Essential type model | Required |
 | Rules 11.1–11.9 | Rules 11.1–11.9 | Pointer type conversions (Rule 11.5 also partially covered by `misc.void_pointer`) | Required / Advisory |
 | Rules 12.1–12.5 | Rules 12.1–12.5 | Expressions | Required / Advisory |
@@ -493,7 +502,8 @@ The following MISRA C rules require full compiler-level analysis and are enforce
 | Types | Rules 6.1–6.2 | — | Rules 6.1–6.2 | None |
 | Sign / type model | Rules 10.1–10.8 | Rules 10.1, 10.3 (partial) | Full coverage | Rules 10.2, 10.4–10.8 (cppcheck) |
 | Control flow | Rules 14.1–15.7 | 15.1 ✅ (`misc.goto_usage`), 15.7 (partial, `misc.empty_else`) | Full coverage (including Rule 14.4, MISRA addon) | None critical |
+| Initialisation | Rules 9.1–9.5 | 9.1 (partial, `misc.partial_struct_assignment`), 9.3 (related, struct analogue, `misc.partial_struct_initialiser`) | Full coverage | None critical |
 | Side effects / pointers / functions | Rules 11.5, 13.4, 17.2 | 11.5 (`misc.void_pointer`), 13.4 (partial, `misc.assignment_in_condition`), 17.2 (direct only, `misc.recursive_function`) | Full coverage | None critical |
 
-> **Conclusion:** All MISRA C:2012/2023 Required rules are covered by the combination of CStyleCheck and cppcheck. The three new rules added in v1.1 (7.1, 7.3, 4.2) close the previously identified lexical-convention gap. The post-v1.6.0 rules (SWE1-109 to SWE1-116) add early, style-level detection for MISRA 11.5, 13.4, 15.1, 15.7 and 17.2. MISRA Rule 14.4 is not covered by CStyleCheck (`misc.boolean_comparison` is a style rule; `if (flag == true)` is compliant with Rule 14.4) and is delegated to cppcheck with the MISRA addon. cppcheck remains the authoritative checker for these rules.
+> **Conclusion:** All MISRA C:2012/2023 Required rules are covered by the combination of CStyleCheck and cppcheck. The three new rules added in v1.1 (7.1, 7.3, 4.2) close the previously identified lexical-convention gap. The post-v1.6.0 rules (SWE1-109 to SWE1-116) add early, style-level detection for MISRA 11.5, 13.4, 15.1, 15.7 and 17.2, and SWE1-118/SWE1-119 (#456) for Rule 9.1 (partial) and the struct analogue of Rule 9.3. MISRA Rule 14.4 is not covered by CStyleCheck (`misc.boolean_comparison` is a style rule; `if (flag == true)` is compliant with Rule 14.4) and is delegated to cppcheck with the MISRA addon. cppcheck remains the authoritative checker for these rules.
 

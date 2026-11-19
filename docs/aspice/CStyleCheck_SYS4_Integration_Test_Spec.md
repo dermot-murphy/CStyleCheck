@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.29 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.30 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.30 | 2026-11-19 | Claude | Issue #456 (CR-456): new SITC-018 for the 2 opt-in partially-initialised local struct rules (struct definitions collected from every scanned file; all 83 rule IDs covered), with §5 and §6 rows; test total 1574→1623 |
 | 1.29 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.28 | 2026-11-19 | Claude | #449: test total 1569→1574 (5 workflow-configuration tests); referenced-document versions resynced |
 | 1.27 | 2026-10-06 | Claude | #447: test total 1559 (#439, #441, v1.6.1 back-merge) →1569 (`misc.constant_comparison` preprocessor and identifier-exclusion tests) |
@@ -75,9 +76,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.21 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.23 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.26 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.22 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.24 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.27 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
@@ -507,7 +508,32 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | **Result** | PASS |
 | **Date** | 2026-09-29 |
 | **Environment** | Python 3.11, develop `296e91b` (local pytest run) |
-| **Evidence** | `tests/test_misra_rules.py` — UV-MSR-001 to UV-MSR-008 (76 tests) and UV-MSR-009 (opt-in policy, 11 tests, #418); SIT-027 |
+| **Evidence** | `tests/test_misra_rules.py` — UV-MSR-001 to UV-MSR-008 (76 tests) and UV-MSR-009 (opt-in policy, 11 tests, #418; 13 since #456); SIT-027 |
+
+---
+
+### SITC-018 — Partially Initialised Local Struct Rules (#456)
+
+| Field | Value |
+|---|---|
+| **Test Case ID** | SITC-018 |
+| **Test Objective** | Verify end-to-end that `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` are loaded from `rules.yml`, use the struct definitions of every scanned file (a type defined in a header is known in a `.c` file scanned in the same run), detect their violations, honour `enabled`/`severity` and inline suppression, and are reported through the standard output path |
+| **Architecture Interface** | IF-01, IF-06, IF-08, IF-09 |
+| **Requirement Reference** | SYS-F-011, SYS-F-020, SYS-F-025, SYS-F-026 |
+
+| Step | Action | Expected Result |
+|---|---|---|
+| 1 | Run cstylecheck on a header defining a struct and a C file that declares it without an initialiser, assigns one member and passes it to a function, with `misc.partial_struct_assignment.enabled: true` | One `misc.partial_struct_assignment` warning at the declaration, naming the use line and the unassigned members |
+| 2 | Re-run on the C file only | No violation (struct definition not in a scanned file) |
+| 3 | A local struct with a short positional initialiser, with `misc.partial_struct_initialiser.enabled: true` | One `misc.partial_struct_initialiser` info; `{0}` and designated initialisers not reported |
+| 4 | Re-run steps 1 and 3 with the default config (keys absent), and with an inline suppression comment | No violation: both rules are opt-in (#456); the suppressed finding is not reported |
+
+| Execution Details | Value |
+|---|---|
+| **Result** | PASS |
+| **Date** | 2026-11-19 |
+| **Environment** | Python 3.14, branch `claude/partial-struct-init-456` (local pytest run) |
+| **Evidence** | `tests/test_partial_struct.py` — UV-PSI-001 to UV-PSI-005 (47 tests); `tests/test_misra_rules.py` — UV-MSR-009; SIT-028 |
 
 ---
 
@@ -532,10 +558,11 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-015 | v1.4.0 rule coverage (macro safety, function quality, file constraints, naming) | PASS | |
 | SITC-016 | v1.6.0 inline suppression — block-comment form and all directive variants | PASS | |
 | SITC-017 | Post-v1.6.0 MISRA/Barr-C rules (8 rule IDs; all 81 rule IDs now covered) | PASS | |
+| SITC-018 | Partially initialised local struct rules (2 rule IDs, #456; all 83 rule IDs covered) | PASS | |
 
 **Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016); 2026-10-06 (v1.6.1, SITC-006 step 4), GitHub Actions (automated) / Dermot Murphy (manual review), 1281 tests all PASS on Python 3.10 / 3.11 / 3.12.
 
-**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), 1452 after #412 (8 tests), 1463 after #418 (11 tests), 1481 after #420 (18 tests), 1508 after #422 (27 tests), 1524 after #424 (16 tests), 1532 after #425 (8 tests), 1545 after #423 (13 tests), 1559 after #439, #441 and the v1.6.1 back-merge (14 tests) 1569 after #447 (10 tests) and 1574 after #449 (5 tests), all PASS.
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), 1452 after #412 (8 tests), 1463 after #418 (11 tests), 1481 after #420 (18 tests), 1508 after #422 (27 tests), 1524 after #424 (16 tests), 1532 after #425 (8 tests), 1545 after #423 (13 tests), 1559 after #439, #441 and the v1.6.1 back-merge (14 tests) 1569 after #447 (10 tests), 1574 after #449 (5 tests) and 1623 after #456 (49 tests; SITC-018 PASS, local run, Python 3.14, 2026-11-19), all PASS.
 
 > **📋 Note:** All SITC test cases must achieve PASS status before the system verification (SYS.5) activities commence. Any FAIL result must be tracked as a GitHub Issue and resolved via the change control process (SUP.10).
 
@@ -562,6 +589,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-015 | SYS-F-011, SYS-F-017, SYS-F-020 | IF-01, IF-02, IF-06, IF-08, IF-09 | SIT-019 |
 | SITC-016 | SYS-F-041 | IF-01, IF-06, IF-08, IF-09 | SIT-025 |
 | SITC-017 | SYS-F-011, SYS-F-020, SYS-F-025, SYS-F-026 | IF-01, IF-06, IF-08, IF-09 | SIT-027 |
+| SITC-018 | SYS-F-011, SYS-F-020, SYS-F-025, SYS-F-026 | IF-01, IF-06, IF-08, IF-09 | SIT-028 |
 
 ---
 

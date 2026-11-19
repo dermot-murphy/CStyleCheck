@@ -241,3 +241,9 @@ misc:
   empty_else:
     enabled: true
     severity: warning     # Barr-C §8.3
+  partial_struct_assignment:
+    enabled: true
+    severity: warning     # MISRA C:2012 Rule 9.1, Barr-C §7.2
+  partial_struct_initialiser:
+    enabled: true
+    severity: info        # cf. MISRA C:2012 Rule 9.3
