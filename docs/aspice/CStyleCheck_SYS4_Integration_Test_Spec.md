@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.27 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.28 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.4 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.28 | 2026-11-19 | Claude | #449: test total 1569→1574 (5 workflow-configuration tests); referenced-document versions resynced |
 | 1.27 | 2026-10-06 | Claude | #447: test total 1559 (#439, #441, v1.6.1 back-merge) →1569 (`misc.constant_comparison` preprocessor and identifier-exclusion tests) |
 | 1.26 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): SITC-006 step 4 (no startup banner in a json / sarif / html `--log` file), SYS-F-046 reference, v1.6.1 execution record and overall result brought in from the v1.6.1 release |
 | 1.25 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
@@ -73,9 +74,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.19 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.21 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.24 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.20 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.22 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.25 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
@@ -533,7 +534,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 **Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016); 2026-10-06 (v1.6.1, SITC-006 step 4), GitHub Actions (automated) / Dermot Murphy (manual review), 1281 tests all PASS on Python 3.10 / 3.11 / 3.12.
 
-**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), 1452 after #412 (8 tests), 1463 after #418 (11 tests), 1481 after #420 (18 tests), 1508 after #422 (27 tests), 1524 after #424 (16 tests), 1532 after #425 (8 tests), 1545 after #423 (13 tests), 1559 after #439, #441 and the v1.6.1 back-merge (14 tests) and 1569 after #447 (10 tests), all PASS.
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), 1452 after #412 (8 tests), 1463 after #418 (11 tests), 1481 after #420 (18 tests), 1508 after #422 (27 tests), 1524 after #424 (16 tests), 1532 after #425 (8 tests), 1545 after #423 (13 tests), 1559 after #439, #441 and the v1.6.1 back-merge (14 tests) 1569 after #447 (10 tests) and 1574 after #449 (5 tests), all PASS.
 
 > **📋 Note:** All SITC test cases must achieve PASS status before the system verification (SYS.5) activities commence. Any FAIL result must be tracked as a GitHub Issue and resolved via the change control process (SUP.10).
 

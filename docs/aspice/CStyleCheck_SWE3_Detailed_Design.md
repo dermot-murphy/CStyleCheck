@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.36 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.37 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.37 | 2026-11-19 | Claude | Issue #449: UNIT-49 `scripts/ci/update_readme_badge.py` retired (script deleted; the README badge is a fixed shields.io endpoint URL and `cstylecheck_rules.yml` no longer commits to the source branch); §4 catalogue row and §5 specification marked retired, UNIT number not reused; referenced-document versions resynced |
 | 1.36 | 2026-10-06 | Claude | Issue #447: UNIT-116 algorithm — `#if` / `#elif` conditions (with continuation lines) are skipped, and the finding is emitted through `_v()` with `idents=(lhs, rhs)`; UNIT-58 `_v()` takes an optional `idents` tuple that an `identifiers:` exclusion entry is matched against, otherwise the first quoted name in the message; §4 catalogue `checker.py` line numbers updated (UNIT-21 onwards) |
 | 1.35 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): UNIT-86 `Tee.log_print()` notes from the v1.6.1 release that `main()` uses it for the startup banner only for text output; no design change |
 | 1.34 | 2026-10-05 | Claude | Issue #441 (CR-441): new UNIT-137 `ensure_parent_dir()` (`utils.py`) and UNIT-138 `_write_config()` (`wizard.py`) in the §4 catalogue, §4.1 package structure and §5; UNIT-46 step 3 and UNIT-36 create missing parent folders of the `--log` / `--write-baseline` file; UNIT-98/UNIT-99 write through UNIT-138 (an unwritable path is now `config_error()`, exit 2, instead of a traceback); §1 scope UNIT-01 to UNIT-138; §4 `utils.py`, `wizard.py` and `cli.py` (UNIT-46) line numbers; §8 SWE1-062, SWE1-065 and SWE1-075 rows |
@@ -67,9 +68,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.26 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.30 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.41 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.27 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.31 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.42 |
 
 ---
 
@@ -127,7 +128,7 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-46 | `main` | `cli.py:371` | Entry point | `cli.py` |
 | UNIT-47 | `append_trend_record` (script) | `scripts/ci/append_trend_record.py` | CI script | (unchanged) |
 | UNIT-48 | `generate_trend` (script) | `scripts/ci/generate_trend.py` | CI script | (unchanged) |
-| UNIT-49 | `update_readme_badge` (script) | `scripts/ci/update_readme_badge.py` | CI script | (unchanged) |
+| UNIT-49 | *Retired (#449)* — update_readme_badge (script) | — (deleted) | CI script | — |
 | UNIT-50 | `load_spell_words` | `config.py:426` | COMP-02 | `config.py` |
 | UNIT-51 | `load_banned_names_file` | `config.py:689` | COMP-02 | `config.py` |
 | UNIT-52 | `load_copyright_file` | `config.py:724` | COMP-02 | `config.py` |
@@ -1571,9 +1572,11 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 ---
 
-### UNIT-49 — `scripts/ci/update_readme_badge.py` (script)
+### UNIT-49 — `scripts/ci/update_readme_badge.py` (script) — *retired (#449)*
 
-**Purpose:** Update the Naming Convention badge link in `README.md` of the source-branch worktree.
+**Status:** Retired by #449. The script is deleted and no workflow calls it: the README Naming Convention badge is a fixed shields.io endpoint URL that reads `cstylecheck/badge.json` from `gh-pages` (UNIT-48), so no commit to the source branch is needed. The UNIT number is not reused. The design below is kept for traceability.
+
+**Purpose (historical):** Update the Naming Convention badge link in `README.md` of the source-branch worktree.
 
 **Algorithm:** Take the worktree path (positional argument; exit 1 if it is missing) and `REPO` (environment), then build the shields.io endpoint badge and the gh-pages trend link. If `README.md` is missing, exit 0. Replace an existing `[![Naming Convention](…)](…)` badge, or insert one after the first heading, and write the file.
 

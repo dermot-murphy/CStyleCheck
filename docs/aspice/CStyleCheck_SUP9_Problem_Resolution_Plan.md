@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP9-001 | **Version** | 1.17 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SUP9-001 | **Version** | 1.18 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.9 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.18 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
 | 1.17 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
 | 1.16 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.15 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.1 problems raised with the bug issue form (`.github/ISSUE_TEMPLATE/bug.yml`), SEV-4 added to the severity field, SEV label applied at triage; §5.2 step 2 applies the SEV label; referenced-document versions resynced |
@@ -51,10 +52,10 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.23 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.27 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.19 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.24 |
+| CSC-MAN3-001 | Project Management Plan | 1.24 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.28 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.20 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.25 |
 
 ---
 

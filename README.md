@@ -113,7 +113,7 @@ tests/
     test_case_style_config.py # 27 tests: case-style names, aliases and config validation
     test_functions_case_removed.py # 16 tests: functions.case removed / deprecated
     test_thread_safe_globals.py # 4 tests: thread-safety of globals
-    test_workflow_config.py #  16 tests: CI workflow regression tests
+    test_workflow_config.py #  21 tests: CI workflow regression tests
     test_inline_suppression.py # 24 tests: inline suppression comments
     test_fix_mode.py        #  11 tests: auto-fix engine (apply_fixes, unified_diff)
     test_init_wizard.py     #  33 tests: config wizard and presets (run_wizard, run_preset)
@@ -141,7 +141,7 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1569 tests)
+    cstylecheck_tests.yml      # runs the test suite on every commit (1574 tests)
     cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
@@ -587,7 +587,7 @@ rules opt-in) adds 11, #420 (preset opt-in rules) adds 18, #422 (case-style name
 checked) adds 13, #439 (no startup banner in a json / sarif / html `--log` file) adds 1, and #441
 (missing output folders created) adds 11, the v1.6.1 back-merge (#439 tests from `main`,
 `TestStartupBannerLogFile`) adds 2, and #447 (`misc.constant_comparison` skips `#if` / `#elif`)
-adds 10: **1569 tests** in total.
+adds 10, and #449 (repository protection, workflow-configuration tests) adds 5: **1574 tests** in total.
 
 ### New in v1.2.0 (2026-05-29)
 

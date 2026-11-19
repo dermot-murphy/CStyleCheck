@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.27 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.28 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.8 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.28 | 2026-11-19 | Claude | Issue #449 (repository protection): §6.1 CI-031 `scripts/ci/update_readme_badge.py` retired — the README Naming Convention badge is a fixed shields.io endpoint URL, so `cstylecheck_rules.yml` no longer pushes a commit to the source branch (63 CIs in use); §7.1 protection rules state the `Do_Not_Delete_Main_Develop` ruleset (pull request required, merge commits only, no deletion, required check *All Checks Passed*) and the `Protect release tags` ruleset; §7.5 required status check and read-only default `GITHUB_TOKEN` (only jobs that write declare `contents: write`); referenced-document versions resynced |
 | 1.27 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
 | 1.26 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.25 | 2026-09-30 | Claude | Merge-time process controls (#437): §6.1 CI-061 (`scripts/aspice_check.py`), CI-062 (`aspice_consistency.yml`), CI-063 (PR template) and CI-064 (issue forms) added (64 CIs); §7.5 consistency workflow; §9 issue forms and PR template in the change-control steps, `python scripts/aspice_check.py --fix-citations` performs the cross-reference resync; referenced-document versions resynced |
@@ -75,9 +76,9 @@ This plan applies to all configuration items produced by the CStyleCheck project
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.17 |
-| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.19 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.26 |
+| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.18 |
+| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.20 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.27 |
 
 ---
 
@@ -165,7 +166,7 @@ All items in the following table are placed under configuration control.
 | CI-028 | AI Authorship Deviation Record | `docs/aspice/CStyleCheck_DEV001_AI_Authorship_Deviation.md` | Documentation |
 | CI-029 | CI trend-record append script | `scripts/ci/append_trend_record.py` | CI script |
 | CI-030 | CI trend HTML and badge generation script | `scripts/ci/generate_trend.py` | CI script |
-| CI-031 | CI README badge update script | `scripts/ci/update_readme_badge.py` | CI script |
+| CI-031 | *Retired (#449).* CI README badge update script (scripts/ci/update_readme_badge.py, deleted): the README badge is a fixed shields.io endpoint URL and needs no per-run commit | — | CI script (retired) |
 | CI-032 | Independent Review Deviation Record | `docs/aspice/CStyleCheck_DEV002_Independent_Review_Deviation.md` | Documentation |
 | CI-033 | Software Version Description | `docs/aspice/CStyleCheck_SVD_Software_Version_Description.md` | Documentation |
 | CI-034 | CI — wiki publish workflow | `.github/workflows/wiki_publish.yml` | CI/CD |
@@ -220,8 +221,8 @@ CStyleCheck uses the **Git Flow** branching model. The following branches are de
 
 | Branch | Purpose | Protection Rules |
 |---|---|---|
-| `main` | Production-ready code only; reflects the latest release baseline | Direct push prohibited; merged from `release/*` or `hotfix/*` only; every release merge and every hotfix that changes the delivered software creates a version tag; CI/repository-configuration-only hotfixes are not tagged (§7.6) |
-| `develop` | Integration branch for completed features; always buildable | Direct push restricted; merged from `feature/*`, `bugfix/*` and `claude/<topic>-<id>` (AI-authored feature or bug-fix work, see CLAUDE.md) via pull request; CI must pass |
+| `main` | Production-ready code only; reflects the latest release baseline | Direct push prohibited and deletion blocked (ruleset `Do_Not_Delete_Main_Develop`: pull request required, merge commits only, required status check *All Checks Passed*, #449); merged from `release/*` or `hotfix/*` only; every release merge and every hotfix that changes the delivered software creates a version tag; CI/repository-configuration-only hotfixes are not tagged (§7.6) |
+| `develop` | Integration branch for completed features; always buildable | Direct push prohibited and deletion blocked (same ruleset as `main`, #449); merged from `feature/*`, `bugfix/*` and `claude/<topic>-<id>` (AI-authored feature or bug-fix work, see CLAUDE.md) via pull request; CI must pass |
 
 ### 7.2 Supporting Branches
 
@@ -259,7 +260,8 @@ main ──► hotfix/* ──► main ──► tag v1.0.1
 
 ### 7.5 CI Enforcement
 
-- All merges to `develop` and `main` require CI (`cstylecheck_tests.yml`) to pass
+- All merges to `develop` and `main` require CI (`cstylecheck_tests.yml`) to pass. Its *All Checks Passed* job runs on every pull request (no `paths:` filter on `pull_request`; the unit tests run only when a test-relevant path changed) and is the required status check of the `Do_Not_Delete_Main_Develop` ruleset (#449)
+- The default `GITHUB_TOKEN` is read-only. A workflow or job that writes declares its own `permissions:` (`cstylecheck_rules.yml` *Update Trend* and `metrics.yml`: `contents: write` for `gh-pages`; `docker_publish.yml`: `packages: write`, and `contents: write` for the release). No workflow pushes to `develop` or `main` (#449); version tags `v*` / `V*` cannot be updated or deleted (ruleset `Protect release tags`)
 - The `cstylecheck_rules.yml` workflow runs the linter against the project's own source on every commit touching C files, enforcing self-hosting of the tool's own rules
 - The `aspice_consistency.yml` workflow (CI-062) runs `python scripts/aspice_check.py` on every pull request and on pushes to `develop` and `main`, without a path filter, so no merge can leave a work product inconsistent with the code, the tests or another work product (#437)
 - Supporting branches are deleted after merge
