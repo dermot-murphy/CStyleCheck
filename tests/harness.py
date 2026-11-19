@@ -95,6 +95,8 @@ _ALL_OFF: dict = {
         "sizeof_type":                      {"enabled": False},
         "boolean_comparison":               {"enabled": False},
         "empty_else":                       {"enabled": False},
+        "partial_struct_assignment":        {"enabled": False},
+        "partial_struct_initialiser":       {"enabled": False},
     },
     "reserved_names":    {"enabled": False},
     "sign_compatibility":{"enabled": False},

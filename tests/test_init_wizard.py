@@ -185,15 +185,28 @@ _OPT_IN_RULES = (
     "goto_usage", "assignment_in_condition", "multiple_statements_per_line",
     "void_pointer", "recursive_function", "sizeof_type",
     "boolean_comparison", "empty_else",
+    "partial_struct_assignment", "partial_struct_initialiser",
 )
 _MISRA_RULES  = {"goto_usage", "assignment_in_condition", "void_pointer",
-                 "recursive_function", "empty_else"}
-_BARR_C_RULES = {"multiple_statements_per_line", "sizeof_type", "empty_else"}
+                 "recursive_function", "empty_else",
+                 "partial_struct_assignment", "partial_struct_initialiser"}
+_BARR_C_RULES = {"multiple_statements_per_line", "sizeof_type", "empty_else",
+                 "partial_struct_assignment"}
 
 # One snippet that triggers every opt-in rule when it is enabled.
 _TRIGGER_SRC = """\
 #include <stdint.h>
 #include <stdbool.h>
+typedef struct { int a; int b; } pair_t;
+static void use_pair(const pair_t *p_pair);
+static void pairs(void)
+{
+    pair_t pr;
+    pair_t pq = { 1 };
+    pr.a = 1;
+    use_pair(&pr);
+    use_pair(&pq);
+}
 static int fact(int n)
 {
     int x = 0; int y = 1;
@@ -236,10 +249,10 @@ def _fired_opt_in(cfg):
 class TestPresetOptInRules(unittest.TestCase):
     """#420: preset contents for the opt-in (#418) rules."""
 
-    def test_misra_enables_exactly_five_rules(self):
+    def test_misra_enables_exactly_its_rules(self):
         self.assertEqual(_enabled_opt_in(_preset_cfg("misra")), _MISRA_RULES)
 
-    def test_barr_c_enables_exactly_three_rules(self):
+    def test_barr_c_enables_exactly_its_rules(self):
         self.assertEqual(_enabled_opt_in(_preset_cfg("barr-c")), _BARR_C_RULES)
 
     def test_minimal_enables_none(self):

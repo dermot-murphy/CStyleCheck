@@ -1110,9 +1110,17 @@ _OPTIN_SNIPPETS = {
         "void f(bool x){ if (x == true) { (void)x; } }\n",
     "empty_else":
         "void f(int x){ if (x > 0) { (void)x; } else {} }\n",
+    # #456: opt-in from the start, same policy.
+    "partial_struct_assignment":
+        "struct pt { int x; int y; };\n"
+        "void f(void){ struct pt p; p.x = 1; g(&p); }\n",
+    "partial_struct_initialiser":
+        "struct pq { int x; int y; };\n"
+        "void h(void){ struct pq q = { 1 }; g(&q); }\n",
 }
 
-# The 7 rules made opt-in by #418 (boolean_comparison was already opt-in, #412).
+# The 7 rules made opt-in by #418 (boolean_comparison was already opt-in,
+# #412) and the 2 rules added opt-in by #456.
 _OPTIN_418 = sorted(k for k in _OPTIN_SNIPPETS if k != "boolean_comparison")
 
 
@@ -1136,8 +1144,8 @@ def _shipped_disabled_misc_keys(path):
                   if isinstance(v, dict) and v.get("enabled") is False)
 
 
-def test_optin_policy_all_eight_shipped_disabled():
-    """#418: all 8 opt-in rules ship 'enabled: false' in both rules.yml files."""
+def test_optin_policy_all_shipped_disabled():
+    """#418/#456: all 10 opt-in rules ship 'enabled: false' in both rules.yml files."""
     for path in (_REPO / "src" / "rules.yml", _REPO / "tests" / "rules.yml"):
         shipped_off = set(_shipped_disabled_misc_keys(path))
         missing = sorted(set(_OPTIN_SNIPPETS) - shipped_off)
@@ -1149,7 +1157,7 @@ def test_optin_policy_none_fire_with_empty_misc_config():
     stays off when the whole misc section of the config is empty."""
     shipped_off = set(_shipped_disabled_misc_keys(_REPO / "src" / "rules.yml"))
     keys = sorted(k for k in _OPTIN_SNIPPETS if k in shipped_off)
-    assert len(keys) == 8
+    assert len(keys) == 10
     src = "".join(_OPTIN_SNIPPETS[k] for k in keys)
     # Non-vacuous: with every rule enabled, each one fires on the snippet.
     on = set(rules(src, cfg_only(misc={k: {"enabled": True} for k in keys})))

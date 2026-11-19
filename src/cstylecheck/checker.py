@@ -198,6 +198,157 @@ def _enum_members(body: str) -> list:
             start = idx + 1
     return members
 
+
+# ---------------------------------------------------------------------------
+# Struct definition table (#456) — used by misc.partial_struct_assignment and
+# misc.partial_struct_initialiser.  Keys are "struct <tag>" for tagged
+# definitions and the alias name for typedefs.  A value is either a tuple of
+# member entries or, for "typedef struct tag Alias;", the key it aliases.
+# Each member entry is a tuple of alternative names: a named member is
+# ("name",); an anonymous union contributes one entry holding all of its
+# member names (assigning any one of them covers it); an anonymous struct
+# contributes one entry per member.
+# ---------------------------------------------------------------------------
+
+RE_STRUCT_DEF_OPEN = re.compile(
+    r"\b(typedef\s+)?(struct|union)\s+(?:([A-Za-z_]\w*)\s*)?\{")
+RE_STRUCT_TYPEDEF_ALIAS = re.compile(
+    r"\btypedef\s+struct\s+([A-Za-z_]\w*)\s+([A-Za-z_]\w*)\s*;")
+_RE_FUNC_PTR_MEMBER = re.compile(r"\(\s*\*\s*([A-Za-z_]\w*)\s*\)")
+_UNNAMED_BITFIELD_TYPES = frozenset((
+    "int", "signed", "unsigned", "char", "short", "long", "_Bool", "bool",
+))
+
+
+def _match_brace(text: str, open_pos: int) -> int:
+    """Return the index of the '}' matching the '{' at *open_pos* (or -1)."""
+    depth = 0
+    for i in range(open_pos, len(text)):
+        ch = text[i]
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return i
+    return -1
+
+
+def _split_top_level(text: str, sep: str) -> list:
+    """Split *text* on *sep* outside (), [] and {}."""
+    parts, depth, start = [], 0, 0
+    for i, ch in enumerate(text):
+        if ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth = max(depth - 1, 0)
+        elif ch == sep and depth == 0:
+            parts.append(text[start:i])
+            start = i + 1
+    parts.append(text[start:])
+    return parts
+
+
+def _declarator_name(chunk: str) -> str | None:
+    """Return the member name declared by one declarator chunk, or None."""
+    fp = _RE_FUNC_PTR_MEMBER.search(chunk)
+    if fp:
+        return fp.group(1)
+    bitfield = ":" in chunk
+    chunk = chunk.split(":", 1)[0]
+    chunk = re.sub(r"\[[^\]]*\]", " ", chunk)
+    words = re.findall(r"[A-Za-z_]\w*", chunk)
+    if not words:
+        return None
+    name = words[-1]
+    if bitfield and (name in _UNNAMED_BITFIELD_TYPES
+                     or re.search(r"_[tT]$", name)):
+        return None   # unnamed bit-field (padding)
+    return name
+
+
+def _struct_members(body: str) -> tuple:
+    """Return the member entries of a struct body (text between braces)."""
+    text = RE_PP_LINE.sub(lambda pm: " " * len(pm.group(0)), body)
+    entries: list = []
+    for decl in _split_top_level(text, ";"):
+        decl = decl.strip()
+        if not decl:
+            continue
+        brace = decl.find("{")
+        if brace >= 0:
+            close = _match_brace(decl, brace)
+            if close < 0:
+                continue
+            after = decl[close + 1:].strip()
+            if after:
+                for chunk in _split_top_level(after, ","):
+                    name = _declarator_name(chunk)
+                    if name:
+                        entries.append((name,))
+                continue
+            inner = _struct_members(decl[brace + 1:close])
+            if re.match(r"union\b", decl):
+                names = tuple(n for e in inner for n in e)
+                if names:
+                    entries.append(names)
+            else:
+                entries.extend(inner)
+            continue
+        for idx, chunk in enumerate(_split_top_level(decl, ",")):
+            if idx > 0:
+                # Later declarators carry no type: "int a, b;" -> "b".
+                chunk = "int " + chunk
+            name = _declarator_name(chunk)
+            if name:
+                entries.append((name,))
+    return tuple(entries)
+
+
+def collect_struct_defs(clean: str) -> dict:
+    """Return the struct definition table of one preprocessed source text."""
+    defs: dict = {}
+    for m in RE_STRUCT_DEF_OPEN.finditer(clean):
+        if m.group(2) != "struct":
+            continue
+        open_pos = m.end() - 1
+        close = _match_brace(clean, open_pos)
+        if close < 0:
+            continue
+        members = _struct_members(clean[open_pos + 1:close])
+        if m.group(3):
+            defs[f"struct {m.group(3)}"] = members
+        if m.group(1):
+            semi = clean.find(";", close)
+            if semi > 0:
+                for chunk in _split_top_level(clean[close + 1:semi], ","):
+                    if "*" in chunk:
+                        continue
+                    nm = re.match(r"\s*([A-Za-z_]\w*)\s*$", chunk)
+                    if nm:
+                        defs[nm.group(1)] = members
+    for m in RE_STRUCT_TYPEDEF_ALIAS.finditer(clean):
+        defs.setdefault(m.group(2), f"struct {m.group(1)}")
+    return defs
+
+
+def collect_struct_defs_from_source(source: str,
+                                    defines: list | None = None) -> dict:
+    """Preprocess *source* (and apply *defines*) then collect struct defs."""
+    clean = preprocess(source.replace("\r\n", "\n").replace("\r", "\n"))
+    if defines:
+        clean = apply_defines(clean, defines)
+    return collect_struct_defs(clean)
+
+
+def struct_rules_enabled(cfg: dict) -> bool:
+    """True when either #456 rule is enabled in *cfg*."""
+    misc = cfg.get("misc", {}) or {}
+    return any(
+        (misc.get(k, {}) or {}).get("enabled", False)
+        for k in ("partial_struct_assignment", "partial_struct_initialiser")
+    )
+
 RE_COMMENT_WORD = re.compile(r"[A-Za-z][A-Za-z']{2,}")
 
 
@@ -217,6 +368,7 @@ class Checker:
         copyright_header=None,
         c_keywords: frozenset | None = None,
         c_stdlib_names: frozenset | None = None,
+        struct_defs: dict | None = None,
     ):
         self.filepath      = filepath
         # Normalise line endings once at construction time so all check
@@ -274,6 +426,11 @@ class Checker:
         self._c_stdlib_names: frozenset = (
             c_stdlib_names if c_stdlib_names is not None else C_STDLIB_NAMES
         )
+        # Struct definition table (#456): this file's definitions merged
+        # over *struct_defs*, the table the CLI collects from every scanned
+        # file (so struct types defined in headers are known).
+        self._struct_defs: dict = dict(struct_defs or {})
+        self._struct_defs.update(collect_struct_defs(self.clean))
 
     # -----------------------------------------------------------------------
     # Internal helpers
@@ -397,6 +554,8 @@ class Checker:
         self._check_sizeof_type()                   # Barr-C §5.7
         self._check_boolean_comparison()            # style: redundant == true/false
         self._check_empty_else()                    # Barr-C §8.3
+        self._check_partial_struct_assignment()     # MISRA 9.1 / Barr-C §7.2 (#456)
+        self._check_partial_struct_initialiser()    # cf. MISRA 9.3 (#456)
         if self._spell_dict is not None:
             self._check_spelling()
         # Remove violations for rules that are disabled for this file
@@ -2457,7 +2616,8 @@ class Checker:
     # Opt-in policy (#418): the MISRA / Barr-C rules added after v1.6.0
     # (the sections that follow: goto_usage, assignment_in_condition,
     # multiple_statements_per_line, void_pointer, recursive_function,
-    # sizeof_type, boolean_comparison, empty_else) ship 'enabled: false' in
+    # sizeof_type, boolean_comparison, empty_else; partial_struct_assignment
+    # and partial_struct_initialiser, #456) ship 'enabled: false' in
     # rules.yml and are disabled when their key is absent from the config
     # (cfg.get("enabled", False)).  See CONTRIBUTING.md.
     # -----------------------------------------------------------------------
@@ -2790,6 +2950,202 @@ class Checker:
                 m.start(), sev, "misc.empty_else",
                 "Empty else clause; remove it or add a comment explaining "
                 "why no action is required here (Barr-C §8.3)"
+            )
+
+    # -----------------------------------------------------------------------
+    # Partially initialised local structs (#456)
+    # -----------------------------------------------------------------------
+    # misc.partial_struct_assignment: a non-static local struct declared
+    # without an initialiser holds indeterminate stack data in every member.
+    # When only some members are assigned before the struct is used as a
+    # whole (passed by value or address, returned, copied), the remaining
+    # members carry that stack data along.  Related: MISRA C:2012 Rule 9.1,
+    # Barr-C §7.2.
+    #
+    #   Violation:  uart_cfg_t cfg;  cfg.baud = 9600U;  Uart_Init(&cfg);
+    #   Correct:    uart_cfg_t cfg = {0};  cfg.baud = 9600U;  Uart_Init(&cfg);
+    #
+    # misc.partial_struct_initialiser: a positional brace initialiser that
+    # lists fewer values than the struct has members.  Well-defined (the
+    # rest are zero, C11 §6.7.9 p21); flagged only to make intent explicit.
+    # {0}, {} and designated initialisers are not flagged.  Related:
+    # MISRA C:2012 Rule 9.3 (the same rule for arrays).
+    #
+    # Member lists come from the struct definition table: definitions in
+    # this file plus, from the CLI, those of every scanned file.  A struct
+    # whose definition is not known is not checked.  Both rules are opt-in.
+    # -----------------------------------------------------------------------
+
+    _RE_LOCAL_STRUCT_DECL = re.compile(
+        r"(?<=[;{}])\s*"
+        r"((?:(?:static|extern|register|const|volatile)\s+)*)"
+        r"(?:struct\s+([A-Za-z_]\w*)|([A-Za-z_]\w*))"
+        r"(?=\s+(?:(?:const|volatile)\s+)*[A-Za-z_]\w*\s*[=;,\[])"
+    )
+    _DEFAULT_FILL_FUNCTIONS = ("memset", "memcpy", "memmove")
+
+    def _struct_entries(self, key: str):
+        """Resolve *key* in the struct table to its member entries, or None."""
+        for _ in range(8):
+            val = self._struct_defs.get(key)
+            if val is None or isinstance(val, tuple):
+                return val
+            key = val
+        return None
+
+    def _iter_local_struct_decls(self):
+        """Yield (name_pos, name, type_label, entries, init, is_static,
+        stmt_end, scope_end) for each struct declarator inside a function.
+
+        *init* is the initialiser text, or None when there is none.  Pointer
+        and array declarators are not yielded.
+        """
+        clean = self.clean
+        for _fpos, _fname, b_start, b_end in self._iter_function_bodies():
+            for m in self._RE_LOCAL_STRUCT_DECL.finditer(clean, b_start + 1,
+                                                          b_end - 1):
+                quals = m.group(1)
+                if "extern" in quals:
+                    continue
+                if m.group(2):
+                    label = f"struct {m.group(2)}"
+                elif m.group(3) in self._c_keywords:
+                    continue
+                else:
+                    label = m.group(3)
+                entries = self._struct_entries(label)
+                if not entries:
+                    continue
+                # Statement end: first ';' outside (), [] and {}.
+                depth, semi = 0, -1
+                for i in range(m.end(), b_end):
+                    ch = clean[i]
+                    if ch in "([{":
+                        depth += 1
+                    elif ch in ")]}":
+                        depth -= 1
+                        if depth < 0:
+                            break
+                    elif ch == ";" and depth == 0:
+                        semi = i
+                        break
+                if semi < 0:
+                    continue
+                # Scope end: the '}' closing the enclosing block.
+                depth, scope_end = 0, b_end - 1
+                for i in range(semi, b_end):
+                    ch = clean[i]
+                    if ch == "{":
+                        depth += 1
+                    elif ch == "}":
+                        if depth == 0:
+                            scope_end = i
+                            break
+                        depth -= 1
+                decl_text = clean[m.end():semi]
+                offset = m.end()
+                for chunk in _split_top_level(decl_text, ","):
+                    head, eq, init = chunk.partition("=")
+                    nm = re.match(r"\s*(?:(?:const|volatile)\s+)*"
+                                  r"([A-Za-z_]\w*)\s*$", head)
+                    if nm:
+                        yield (offset + nm.start(1), nm.group(1), label,
+                               entries, init.strip() if eq else None,
+                               "static" in quals, semi, scope_end)
+                    offset += len(chunk) + 1
+
+    def _check_partial_struct_assignment(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("partial_struct_assignment", {})
+        if not cfg.get("enabled", False):   # opt-in (#456)
+            return
+        sev = cfg.get("severity", "warning")
+        fills = frozenset(cfg.get("fill_functions",
+                                  self._DEFAULT_FILL_FUNCTIONS))
+        clean = self.clean
+        for (pos, name, label, entries, init, is_static,
+             semi, scope_end) in self._iter_local_struct_decls():
+            if init is not None or is_static:
+                continue
+            assigned: set = set()
+            use_pos = None
+            word = re.compile(r"\b" + re.escape(name) + r"\b")
+            for um in word.finditer(clean, semi + 1, scope_end):
+                q = um.start()
+                before = clean[max(0, q - 120):q]
+                if re.search(r"(?:\.|->)\s*$", before):
+                    continue          # member of another object
+                if re.search(r"\bsizeof\s*\(?\s*$", before):
+                    continue          # sizeof does not read the value
+                rest = clean[um.end():scope_end]
+                mm = re.match(r"\s*\.\s*([A-Za-z_]\w*)", rest)
+                if mm:
+                    tail = rest[mm.end():]
+                    tm = re.match(r"(?:\s*\[[^\]]*\]|\s*\.\s*[A-Za-z_]\w*)*"
+                                  r"\s*=(?!=)", tail)
+                    if tm or re.search(r"&\s*\(?\s*$", before):
+                        assigned.add(mm.group(1))
+                    continue          # member read: not a whole use
+                if re.match(r"\s*=(?!=)", rest) and \
+                        re.search(r"[;{}]\s*$", before):
+                    break             # whole-struct assignment
+                fm = re.search(r"\b([A-Za-z_]\w*)\s*\(\s*&\s*\(?\s*$", before)
+                if fm and fm.group(1) in fills:
+                    break             # fill function writes every member
+                if assigned:
+                    use_pos = q
+                break                 # first use as a whole
+            if use_pos is None:
+                continue
+            missing = [e[0] if len(e) == 1 else "/".join(e)
+                       for e in entries if not assigned.intersection(e)]
+            if not missing:
+                continue
+            shown = ", ".join(missing[:5]) + (", ..." if len(missing) > 5
+                                              else "")
+            use_line, _ = offset_to_line_col(self._line_map, use_pos)
+            self._v(
+                pos, sev, "misc.partial_struct_assignment",
+                f"Local struct '{name}' ({label}) has no initialiser and "
+                f"only {len(entries) - len(missing)} of {len(entries)} "
+                f"members are assigned before its use at line {use_line}; "
+                f"unassigned members hold indeterminate stack data: {shown}. "
+                f"Initialise it with '= {{0}}' or assign every member "
+                f"(MISRA C:2012 Rule 9.1, Barr-C §7.2)",
+                idents=(name,),
+            )
+
+    def _check_partial_struct_initialiser(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("partial_struct_initialiser", {})
+        if not cfg.get("enabled", False):   # opt-in (#456)
+            return
+        sev = cfg.get("severity", "info")
+        for (pos, name, label, entries, init, _static,
+             _semi, _scope) in self._iter_local_struct_decls():
+            if not init or not init.startswith("{"):
+                continue
+            close = _match_brace(init, 0)
+            if close < 0:
+                continue
+            inner = init[1:close].strip()
+            if inner in ("", "0"):
+                continue          # {} / {0}: deliberate zero initialisation
+            items = [s.strip() for s in _split_top_level(inner, ",")]
+            if items and not items[-1]:
+                items.pop()       # trailing comma
+            if any(s.startswith((".", "[")) for s in items):
+                continue          # designated initialiser names its members
+            if len(items) >= len(entries):
+                continue
+            rest = [e[0] for e in entries[len(items):]]
+            shown = ", ".join(rest[:5]) + (", ..." if len(rest) > 5 else "")
+            self._v(
+                pos, sev, "misc.partial_struct_initialiser",
+                f"Initialiser of local struct '{name}' ({label}) lists "
+                f"{len(items)} of {len(entries)} members; members "
+                f"zero-initialised implicitly: {shown}. List every member, use "
+                f"designated initialisers or '{{0}}' (cf. MISRA C:2012 "
+                f"Rule 9.3)",
+                idents=(name,),
             )
 
     # -----------------------------------------------------------------------
