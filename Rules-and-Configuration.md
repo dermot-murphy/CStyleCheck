@@ -1874,7 +1874,8 @@ misc:
 capitalised type names.
 
 A name declared as an object in the same file (a variable, parameter or array) is
-not taken for a type, even when it is upper case or ends in `_t`, so
+not taken for a type (a C keyword such as `long` in `sizeof(long int)` never counts
+as an object name), even when it is upper case or ends in `_t`, so
 `sizeof(STAGE_TABLE) / sizeof(STAGE_TABLE[0])` on a `const` lookup table is not
 reported (#460). A name declared by `typedef` is still reported. An object
 declared only in another file (for example an `extern` in a header) is not known,
@@ -2005,34 +2006,67 @@ the working directory, as for `--include`.
 - Definition files are read **only** for struct, typedef and `#define` definitions.
   They are never checked and never reported on, and `--exclude` does not apply to
   them: an excluded SDK folder can still be named here.
-- The two rules share one list: the `definition_paths` of every enabled
-  `misc.partial_struct_*` rule are joined (in order, without duplicates), and
-  `--definitions` globs are added after them.
+- The two rules share one list: the `definition_paths` of both
+  `misc.partial_struct_*` entries are joined (in order, without duplicates), and
+  `--definitions` globs are added after them. A rule's list is read even when that
+  rule is disabled in the root config, so the root config can name the paths for a
+  rule that per-directory configs enable.
 - Precedence: the checked files come first, then the definition files in the order
-  their globs are listed. A `#define` keeps the first value found; a struct
-  definition from a definition file never replaces one from a checked file or from
-  an earlier definition file.
+  their globs are listed (files matched by one glob are taken in sorted order). A
+  struct definition from a definition file never replaces one from a checked file or
+  from an earlier definition file. For `#define`s, see *How `#define`s are
+  collected* below.
 - Only the root configuration's `definition_paths` are used. A per-directory
   `.cstylecheck.yml` (`--per-dir-config`) does not add any; put them in the root
   config or use `--definitions`.
+- The pre-scan runs only when a partial-struct rule is enabled (or
+  `--per-dir-config` is used). Otherwise `--definitions` is ignored and a `WARNING`
+  is printed on stderr.
 
 > **Tip:** list the project's own configuration headers (for example
 > `sdk_config.h`) **first**, then keep the SDK globs narrow (the driver and MDK
 > include folders, not the whole SDK). SDK example folders contain their own
 > `sdk_config.h` files with different values; if one of them is read first, its
 > `#define`s win and `#if` blocks in struct bodies are resolved against the wrong
-> configuration.
+> configuration. A broad glob also costs time: every matched file is read once per
+> run (on a downstream project, 228 checked files plus 1002 SDK headers take about
+> 26 s for the pre-scan).
+
+#### How `#define`s are collected
+
+The `#define`s of the checked files and the definition files form one project-wide
+macro table (#463):
+
+- A **plain** `#define` is one at the top level of a file, or inside an include
+  guard only (an `#ifndef X` whose next directive is `#define X`, as in
+  `#ifndef DRV_H` / `#define DRV_H`).
+- A **default** is an `#ifndef X` immediately followed by `#define X …`, the usual
+  form of an SDK's configuration default.
+- A `#define` under any other `#if` / `#ifdef` / `#else` arm is **not used**:
+  whether it applies is not known.
+- A plain `#define` beats a default. Among `#define`s of the same kind, the first
+  file in precedence order wins (checked files, then definition files in glob
+  order).
+- An `#undef` at the top level (or inside a guard only) of any file drops the name:
+  it becomes unknown.
+- The project-wide table beats a file's own `#define`s, which only fill names the
+  table does not have. So a checked `sdk_config.h` that sets `NRFX_SPIM_EXTENDED_ENABLED 1`
+  beats the SDK header's own `#ifndef` default of `0`.
 
 #### `#if` blocks inside struct definitions
 
-A member inside `#if` / `#ifdef` / `#ifndef` / `#elif` / `#else` in a struct body
-counts only when the condition evaluates true from the `#define`s found in the
-checked files and definition files (#463). The evaluator handles object-like and
-simple function-like macros, `defined`, integer arithmetic, comparison and logical
-operators. An identifier with no known `#define` is **unknown**, not 0: a condition
-whose value depends on it is unknown, and the members under it are left out of the
-count. The exception is a group with an `#else` in which every arm declares the
-member: that member is counted whichever arm is compiled.
+A member inside `#if` / `#ifdef` / `#ifndef` / `#elif` / `#elifdef` / `#elifndef` /
+`#else` in a struct body counts only when the condition evaluates true from the
+macro table (#463). The evaluator handles object-like and simple function-like
+macros (expanded as C does, with no parentheses added), `defined`, integer
+arithmetic, comparison and logical operators; backslash-continued conditions are
+joined. An identifier with no known `#define` is **unknown**, not 0: a condition
+whose value depends on it is unknown, and so is `#ifdef X` / `#ifndef X` when `X`
+is not in the table. Members under an unknown condition are left out of the
+count. The exception is a group in which one arm must be compiled (it has an
+`#else`, or an `#elif` that is true by itself) and every arm that may be compiled
+declares the member: that member is counted, in its declaration position. A
+condition too deeply nested to evaluate is unknown.
 
 ```c
 #define EXTENDED_ENABLED 0
@@ -2057,9 +2091,11 @@ checked". Set `report_unknown_types: true` on either rule to get one `info` find
 hal_acc.c:438:22: INFO [misc.partial_struct_assignment] Local 'spi_config' (nrfx_spim_config_t) not checked: no definition of 'nrfx_spim_config_t' was found in the scanned files or the rule's definition_paths
 ```
 
-A type counts as unknown when it is written `struct tag`, or is a name that is
-neither a typedef found in the scanned or definition files nor a standard type
-(`uint8_t`, `size_t`, `bool`, …). `misc.partial_struct_assignment` reports
+A type counts as unknown when it is written `struct tag`, when it is a typedef
+alias of a struct that has no definition (`typedef struct foo_s foo_t;`, an opaque
+handle), or when it is a name that is neither a typedef, nor a `#define` (such as
+`#define U8 unsigned char`), found in the scanned or definition files, nor a
+standard type (`uint8_t`, `size_t`, `bool`, …). `misc.partial_struct_assignment` reports
 non-static locals with no initialiser; `misc.partial_struct_initialiser` reports
 locals with a positional brace initialiser (not `{0}`, `{}` or a designated
 initialiser). The default is `false`, so existing output does not change.
@@ -2118,9 +2154,10 @@ void Uart_Setup(void)
   reported nor counted as an assignment.
 - A struct declared in a `for` initialiser is not checked.
 - A member inside `#if` / `#ifdef` / `#elif` / `#else` counts only when its condition
-  evaluates true; an unknown condition leaves it out, unless every arm of a group with
-  `#else` declares it (see *`#if` blocks inside struct definitions* above). Token
-  pasting, stringising and `#undef` are not evaluated.
+  evaluates true; an unknown condition leaves it out, unless one arm must compile and
+  every arm declares it (see *`#if` blocks inside struct definitions* above). Token
+  pasting and stringising are not evaluated, and a `#define` under a conditional is
+  not used.
 - Only the root configuration's `definition_paths` are used; per-directory configs
   do not add any (see above).
 - A function whose return type is written `struct tag` (not a typedef name) is not

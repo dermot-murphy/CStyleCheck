@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP9-001 | **Version** | 1.22 |
+| **Document ID** | CSC-SUP9-001 | **Version** | 1.23 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.23 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
 | 1.22 | 2026-11-19 | Claude | Issues #460 and #463: §6.2 problem classification rows (both SEV-3 Minor, rules added after v1.6.1 and not in a release; fixed on `develop` by the implementing PR for v2.0.0); referenced-document versions resynced |
 | 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.20 | 2026-11-19 | Claude | Cross-reference version resync with #456 |
@@ -56,10 +57,10 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.28 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.32 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.24 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.29 |
+| CSC-MAN3-001 | Project Management Plan | 1.29 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.33 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.25 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.30 |
 
 ---
 

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.24 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.25 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.25 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
 | 2.24 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SYS-F-020 — the partial-struct rules may read struct definitions from files that are not checked (#461), resolve `#if` blocks in struct definitions (#463) and optionally report locals of unknown struct type (#462); `sizeof` of an object is not reported as a type operand (#460); §6 RTM SYS-F-011 to SYS-F-026 adds SWE1-121 to SWE1-123 |
 | 2.23 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 2.22 | 2026-11-19 | Claude | Issue #456 (CR-456): SYS-F-011 81→83 rule IDs; SYS-F-020 adds the opt-in partially-initialised local struct rules (`misc.partial_struct_assignment`, MISRA 9.1 / Barr-C §7.2; `misc.partial_struct_initialiser`, cf. MISRA 9.3) and their preset membership; §6 RTM SYS-F-011 to SYS-F-026 adds SWE1-118 to SWE1-120; scope text |
@@ -83,9 +84,9 @@ The system is deployed in four integration modes:
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.32 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.26 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.31 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.33 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.27 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.32 |
 
 ### 3.4 Glossary
 

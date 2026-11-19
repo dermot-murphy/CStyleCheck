@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-DEV-002 | **Version** | 1.21 |
+| **Document ID** | CSC-DEV-002 | **Version** | 1.22 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Approved | **Classification** | Internal |
 | **Author** | Dermot Murphy | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
 | 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
 | 1.20 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.19 | 2026-11-19 | Claude | Cross-reference version resync with #456 |
@@ -181,9 +182,9 @@ This deviation is accepted on the basis that CStyleCheck is a single-person proj
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-DEV-001 | Process Deviation — AI-Assisted Authorship | 1.21 |
-| CSC-PA2-001 | Process Capability Records | 1.43 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.32 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.22 |
-| CSC-SUP10-001 | Change Request Plan | 1.24 |
+| CSC-DEV-001 | Process Deviation — AI-Assisted Authorship | 1.22 |
+| CSC-PA2-001 | Process Capability Records | 1.44 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.33 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.23 |
+| CSC-SUP10-001 | Change Request Plan | 1.25 |
 | GitHub Issue #61 | Designate independent reviewer (not approver) for SWE1, SWE4, SWE6 work products | — |

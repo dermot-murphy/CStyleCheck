@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.35 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.36 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.36 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): SIT-028 step 8 — a plain `#define` beats an `#ifndef` default, first file in precedence order wins within a kind; new steps 11 (`--definitions` warning when no partial-struct rule is enabled) and 12 (checked configuration header beats an SDK default); test file cites UV-PSI-009; execution record; §6 post-v1.6.0 note — suite total 1655→1671 |
 | 1.35 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SIT-028 — SW-REQ adds SWE1-121 to SWE1-123; steps 7 to 10 (definition files through `definition_paths` and `--definitions` with `--exclude`, macro precedence, `#if` members, `report_unknown_types`); SWA-IF-11 also carries the macro table and typedef names; execution record; §6 post-v1.6.0 note — suite total 1630→1655; §7 SIT-028 row |
 | 1.34 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.33 | 2026-11-19 | Claude | Issue #456 (CR-456): new SIT-028 (partially initialised local struct rules through the CLI, cross-file struct-definition table, SWA-IF-11) with §6 and §7 rows; §4 interface SWA-IF-11 (11 SWA interfaces); SIT-016 step 4 — the trigger snippet covers 10 opt-in rules, `misra` adds both partial-struct rules and `barr-c` adds `misc.partial_struct_assignment`; §6 post-v1.6.0 note — suite total 1574→1630, 83 rule IDs |
@@ -71,11 +72,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.35 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.31 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.46 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.38 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.32 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.36 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.47 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.39 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.33 |
 
 ### 3.2 Test Environment
 
@@ -753,7 +754,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-11) must be exercised 
 | **Objective** | Verify end-to-end that the CLI collects the struct definitions of every scanned file before the per-file checks and passes the table to each `Checker` (SWA-IF-11), and that `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` read their `misc.*` config and report through the Violation / output path (#456) |
 | **Interfaces** | SWA-IF-03, SWA-IF-06, SWA-IF-10, SWA-IF-11 |
 | **SW-REQ** | SWE1-118, SWE1-119, SWE1-120, SWE1-121, SWE1-122, SWE1-123 |
-| **Test file** | `test_partial_struct.py` (UV-PSI-002 to UV-PSI-008; UV-PSI-005 and UV-PSI-007 run `cli.main()`) |
+| **Test file** | `test_partial_struct.py` (UV-PSI-002 to UV-PSI-009; UV-PSI-005 and UV-PSI-007 run `cli.main()`) |
 
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
@@ -764,14 +765,17 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-11) must be exercised 
 | 5 | `uart_cfg_t cfg = { 9600 };`, `= { 9600, 0 }`, `= { .baud = 9600 }`, `= {0}` | Config with `misc.partial_struct_initialiser.enabled: true` | `misc.partial_struct_initialiser` info for the short positional initialiser only |
 | 6 | The inputs of steps 1 and 5 | Default config (no keys for the 2 rules) | Neither rule ID reported: both rules are opt-in (#456) |
 | 7 | `sdk/drv.h` defines `drv_cfg_t` (two members, a third under `#if DRV_EXTENDED`); `app_config.h` defines `DRV_EXTENDED 1`; `app.c` assigns the two plain members and passes `&cfg`; CLI run on `app.c` with `--exclude "sdk/**"` | Step 1 config, then with `definition_paths: [app_config.h, sdk/*.h]` | Without definition files: no finding. With them: one `misc.partial_struct_assignment` warning naming `2 of 3` and `delay`; no finding in `drv.h` (never checked, although excluded) (#461) |
-| 8 | Step 7 with `definition_paths: [sdk/*.h, app_config.h]` (`sdk/sdk_config.h` defines `DRV_EXTENDED 0`) | Step 7 config | No finding: the earlier definition file's `#define` wins, so the struct has 2 members (#461, #463) |
+| 8 | Step 7 with `definition_paths: [sdk/*.h, app_config.h]` (`sdk/sdk_config.h` defines `DRV_EXTENDED 0`) | Step 7 config | No finding: both are plain `#define`s, so the first file in precedence order wins and the struct has 2 members (#461, #463) |
 | 9 | Step 7 with `--definitions app_config.h --definitions "sdk/**/*.h"` instead of `definition_paths` | Step 1 config | Same finding as step 7 (#461) |
 | 10 | Locals of an unknown typedef, of an undefined `struct tag`, of an enum typedef, of `uint8_t` and of a known struct | `report_unknown_types: true` | One `info` finding under the rule's own ID for each of the first two only; none with the default `false` (#462) |
+| 11 | `--definitions app_config.h` with neither partial-struct rule enabled | Default config | `WARNING: --definitions is ignored …` on stderr; no pre-scan (#461) |
+| 12 | A checked `sdk_config.h` with `#define DRV_EXTENDED 1`; the definition-file header guards its default `#ifndef DRV_EXTENDED` / `#define DRV_EXTENDED 0` | Step 7 config | The checked plain `#define` beats the header's default: the extended member counts (#463) |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
 | 2026-11-19 | Local pytest run, `claude/partial-struct-init-456` (54 tests in `test_partial_struct.py`, 2 in `test_misra_rules.py`) | 3.14 | PASS | CI matrix run (3.10 / 3.11 / 3.12) to be recorded at the next release |
 | 2026-11-19 | Local pytest run, `claude/partial-struct-sdk-460-463` (74 tests in `test_partial_struct.py`; steps 7 to 10, #461 to #463) | 3.14 | PASS | CI matrix run (3.10 / 3.11 / 3.12) to be recorded at the next release |
+| 2026-11-19 | Local pytest run, `claude/partial-struct-sdk-460-463` after the review fixes (89 tests in `test_partial_struct.py`; steps 8, 11, 12) | 3.14 | PASS | CI matrix run (3.10 / 3.11 / 3.12) to be recorded at the next release |
 
 ---
 
@@ -810,7 +814,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-11) must be exercised 
 
 **Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence). v1.6.1, 2026-10-06: 1281 tests all PASS (SIT-024 steps 5 and 6 added for #439)
 
-**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests; #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: 1452 tests; #418 (the other 7 post-v1.6.0 rules opt-in) adds 11: 1463 tests; #420 (presets / `--init` enable the standard-specific opt-in rules) adds 18: 1481 tests; #422 (case-style config validation) adds 27: 1508 tests; #424 (`functions.case` removed) adds 16: 1524 tests; #425 (config errors exit 2 from both entry points) adds 8: 1532 tests; #423 (last enum member checked) adds 13: 1545 tests, all PASS (local run, Python 3.11); #439, #441 and the v1.6.1 back-merge add 14: 1559 tests; #447 (`misc.constant_comparison` skips `#if` / `#elif`) adds 10: 1569 tests, all PASS (local run, Python 3.14, 2026-10-06); #449 (repository protection, workflow-configuration tests) adds 5: 1574 tests, all PASS (local run, Python 3.14, 2026-11-19); #456 (2 opt-in partial-struct rules, 83 rule IDs; SIT-028) adds 49: 1630 tests, all PASS (local run, Python 3.14, 2026-11-19); #460 to #463 (`misc.sizeof_type` objects, definition files, unknown struct types, `#if` members; SIT-028 steps 7 to 10) add 25: 1655 tests, all PASS (local run, Python 3.14, 2026-11-19).
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests; #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: 1452 tests; #418 (the other 7 post-v1.6.0 rules opt-in) adds 11: 1463 tests; #420 (presets / `--init` enable the standard-specific opt-in rules) adds 18: 1481 tests; #422 (case-style config validation) adds 27: 1508 tests; #424 (`functions.case` removed) adds 16: 1524 tests; #425 (config errors exit 2 from both entry points) adds 8: 1532 tests; #423 (last enum member checked) adds 13: 1545 tests, all PASS (local run, Python 3.11); #439, #441 and the v1.6.1 back-merge add 14: 1559 tests; #447 (`misc.constant_comparison` skips `#if` / `#elif`) adds 10: 1569 tests, all PASS (local run, Python 3.14, 2026-10-06); #449 (repository protection, workflow-configuration tests) adds 5: 1574 tests, all PASS (local run, Python 3.14, 2026-11-19); #456 (2 opt-in partial-struct rules, 83 rule IDs; SIT-028) adds 49: 1630 tests, all PASS (local run, Python 3.14, 2026-11-19); #460 to #463 (`misc.sizeof_type` objects, definition files, unknown struct types, `#if` members; SIT-028 steps 7 to 10) add 25: 1655 tests, and the review fixes 16 more: 1671 tests, all PASS (local run, Python 3.14, 2026-11-19).
 
 > **📋 Note:** All 11 defined software architecture interfaces must be covered before integration testing is considered complete. Any uncovered interface must be resolved via a new or updated test case.
 
@@ -847,7 +851,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-11) must be exercised 
 | SIT-025 | SWE1-072 | IF-06 | `test_inline_suppression.py` | — |
 | SIT-026 | SWE1-097 | IF-10 | `test_print_summary.py` | SWQ-004 |
 | SIT-027 | SWE1-109 to SWE1-116 | IF-03, IF-06, IF-10 | `test_misra_rules.py` — UV-MSR-001 to UV-MSR-008 | SWQ-003 |
-| SIT-028 | SWE1-118 to SWE1-123 | IF-03, IF-06, IF-10, IF-11 | `test_partial_struct.py` — UV-PSI-002 to UV-PSI-008 | SWQ-003 |
+| SIT-028 | SWE1-118 to SWE1-123 | IF-03, IF-06, IF-10, IF-11 | `test_partial_struct.py` — UV-PSI-002 to UV-PSI-009 | SWQ-003 |
 
 ---
 

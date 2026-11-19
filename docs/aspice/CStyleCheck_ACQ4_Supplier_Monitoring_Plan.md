@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-ACQ4-001 | **Version** | 1.23 |
+| **Document ID** | CSC-ACQ4-001 | **Version** | 1.24 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
 | 1.23 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
 | 1.22 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #456 |
@@ -66,10 +67,10 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.28 |
-| CSC-MAN5-001 | Risk Management Plan | 1.24 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.32 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.22 |
+| CSC-MAN3-001 | Project Management Plan | 1.29 |
+| CSC-MAN5-001 | Risk Management Plan | 1.25 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.33 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.23 |
 
 ---
 

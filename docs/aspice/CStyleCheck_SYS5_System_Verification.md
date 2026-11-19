@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.29 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.30 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.30 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): SYS-VTC-003 evidence — `test_partial_struct.py` 89 tests, 6 `misc.sizeof_type` object tests; result note test total 1655→1671 |
 | 1.29 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SYS-VTC-003 partial-struct row — definition files, `report_unknown_types` and `#if` members, evidence `test_partial_struct.py` 74 tests; MISRA/Barr-C row notes the #460 `misc.sizeof_type` tests; result note test total 1630→1655 |
 | 1.28 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.27 | 2026-11-19 | Claude | Issue #456 (CR-456): SYS-VTC-003 → 83 rule IDs (new row for `misc.partial_struct_assignment` and `misc.partial_struct_initialiser`, evidence `test_partial_struct.py` and SITC-018); result note test total 1574→1630; §6/§7 rule-ID counts |
@@ -65,11 +66,11 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.24 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.26 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.32 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.25 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.27 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.33 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.32 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.33 |
 
 ### 3.3 System Configuration Under Test
 
@@ -182,14 +183,14 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | Misc — file quality (v1.2.x) | `misc.copyright_header`, `misc.eof_comment`, `misc.comment_ratio`, `misc.whitespace_ratio` | `test_copyright_header.py`, `test_eof_comment.py`, `test_comment_ratio.py`, `test_whitespace_ratio.py` | PASS |
 | Misc — MISRA C | `misc.lowercase_l_suffix`, `misc.octal_constant`, `misc.trigraph`, `misc.non_ascii_source` | `test_misra_rules.py` | PASS |
 | Misc — constant comparison (v1.6.0) | `misc.constant_comparison` | `test_constant_comparison.py` | PASS |
-| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` (all opt-in, #412, #418) | `test_misra_rules.py` (76 tests; opt-in policy UV-MSR-009, 11 tests; 13 since #456; 5 `misc.sizeof_type` object tests since #460), SITC-017 | PASS |
-| Misc — partially initialised local structs (post-v1.6.0, #456) | `misc.partial_struct_assignment`, `misc.partial_struct_initialiser` (both opt-in; definition files, `report_unknown_types` and `#if` members since #461 to #463) | `test_partial_struct.py` (74 tests), SITC-018 | PASS |
+| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` (all opt-in, #412, #418) | `test_misra_rules.py` (76 tests; opt-in policy UV-MSR-009, 11 tests; 13 since #456; 6 `misc.sizeof_type` object tests since #460), SITC-017 | PASS |
+| Misc — partially initialised local structs (post-v1.6.0, #456) | `misc.partial_struct_assignment`, `misc.partial_struct_initialiser` (both opt-in; definition files, `report_unknown_types` and `#if` members since #461 to #463) | `test_partial_struct.py` (89 tests), SITC-018 | PASS |
 | Misc — function quality (v1.4.0) | `misc.function_length`, `misc.function_doc_header`, `misc.assert_density`, `misc.null_statement_comment`, `misc.declaration_spacing` | `test_function_length.py`, `test_function_doc_header.py`, `test_assert_density.py`, `test_null_statement_comment.py`, `test_declaration_spacing.py` | PASS |
 | Misc — file constraints (v1.4.0) | `misc.file_length`, `misc.reserved_header_name` | `test_file_length.py`, `test_reserved_header_name.py` | PASS |
 | Naming (v1.4.0) | `naming.identifier_length`, `naming.no_single_char_identifiers` | `test_identifier_length.py`, `test_no_single_char_identifiers.py` | PASS |
 | Other | `reserved_name`, `spell_check`, `sign_compatibility`, `misc.declared_not_defined` | `test_reserved_name.py`, `test_spell_check.py`, `test_sign_compatibility.py`, `test_declared_not_defined.py` | PASS |
 
-**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1444 tests, all PASS, after #408, #407 and #413; 1452 tests, all PASS, after #412; 1463 tests, all PASS, after #418; 1481 tests, all PASS, after #420; 1508 tests, all PASS, after #422; 1524 tests, all PASS, after #424; 1532 tests, all PASS, after #425; 1545 tests, all PASS, after #423; 1559 tests, all PASS, after #439, #441 and the v1.6.1 back-merge; 1569 tests, all PASS, after #447; 1574 tests, all PASS, after #449; extended to 83 rule IDs by #456: 1630 tests, all PASS (local run, Python 3.14, 2026-11-19); 1655 tests, all PASS, after #460 to #463 (local run, Python 3.14, 2026-11-19)
+**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1444 tests, all PASS, after #408, #407 and #413; 1452 tests, all PASS, after #412; 1463 tests, all PASS, after #418; 1481 tests, all PASS, after #420; 1508 tests, all PASS, after #422; 1524 tests, all PASS, after #424; 1532 tests, all PASS, after #425; 1545 tests, all PASS, after #423; 1559 tests, all PASS, after #439, #441 and the v1.6.1 back-merge; 1569 tests, all PASS, after #447; 1574 tests, all PASS, after #449; extended to 83 rule IDs by #456: 1630 tests, all PASS (local run, Python 3.14, 2026-11-19); 1655 tests, all PASS, after #460 to #463, and 1671 after their review fixes (local run, Python 3.14, 2026-11-19)
 
 ---
 

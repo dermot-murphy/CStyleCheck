@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.38 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.39 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.39 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): SWQ-003 partial-struct row — `test_partial_struct.py` 89 tests (UV-PSI-001 to UV-PSI-009); BP3 evidence — `test_misra_rules.py` 168 tests, suite total 1671 |
 | 1.38 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SWQ-003 covers SWE1-121 to SWE1-123 (partial-struct row: definition files, `report_unknown_types`, `#if` members; `test_partial_struct.py` 74 tests) and the #460 `misc.sizeof_type` tests; §3.3 / §6 coverage 116→119 in-scope requirements (SWE1 defines 127); BP3 evidence — `test_misra_rules.py` 167 tests, suite total 1655 after #460 to #463 |
 | 1.37 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.36 | 2026-11-19 | Claude | Issue #456 (CR-456): SWQ-003 → 83 rule IDs, new row for `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` (SWE1-118 to SWE1-120, `test_partial_struct.py`); §3.3 / §6 coverage 113→116 in-scope requirements (SWE1 defines 124); BP3 evidence — `test_misra_rules.py` 162 tests, Rule 9.1 (partial) and Barr-C §7.2, suite total 1630 after #456 |
@@ -74,10 +75,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.31 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.35 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.29 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.32 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.36 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.30 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.33 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -194,7 +195,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Variable — pointer_prefix auto-fix (v1.6.0) | `variable.pointer_prefix` auto-fix via `--fix` | `test_pointer_prefix_fix.py` | PASS |
 | Output — v1.6.0 output behaviour (startup banner, --summary restructure, OS path sep) | `print_summary` restructure; stderr startup banner; OS-native path in output | `test_cli.py`, `test_cli_requirements.py`, `test_print_summary.py` | PASS |
 | Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` (all opt-in, #412, #418) | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-008, 76 tests; UV-MSR-009 opt-in policy, 13 tests since #456) | PASS (2026-09-29, develop `296e91b`, Python 3.11 local run) |
-| Misc — partially initialised local structs (post-v1.6.0, #456) | `misc.partial_struct_assignment`, `misc.partial_struct_initialiser` (both opt-in), with the cross-file struct-definition table; definition files (`definition_paths`, `--definitions`, #461), `report_unknown_types` (#462) and `#if` members (#463) | `test_partial_struct.py` (UV-PSI-001 to UV-PSI-008, 74 tests), `test_misra_rules.py` (UV-MSR-009) | PASS (2026-11-19, `claude/partial-struct-init-456`, Python 3.14 local run; #461 to #463: `claude/partial-struct-sdk-460-463`) |
+| Misc — partially initialised local structs (post-v1.6.0, #456) | `misc.partial_struct_assignment`, `misc.partial_struct_initialiser` (both opt-in), with the cross-file struct-definition table; definition files (`definition_paths`, `--definitions`, #461), `report_unknown_types` (#462) and `#if` members (#463) | `test_partial_struct.py` (UV-PSI-001 to UV-PSI-009, 89 tests), `test_misra_rules.py` (UV-MSR-009) | PASS (2026-11-19, `claude/partial-struct-init-456`, Python 3.14 local run; #461 to #463: `claude/partial-struct-sdk-460-463`) |
 
 **SWQ-003 Overall Result:** PASS
 
@@ -536,5 +537,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (167 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3; `tests/test_partial_struct.py` (74 test cases, #456, #461 to #463) does so for Rule 9.1 (partial: partly assigned local structs), the struct analogue of Rule 9.3 and Barr-C §7.2. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1524 after #424; 1532 after #425; 1545 after #423; 1559 after #439, #441 and the v1.6.1 back-merge; 1569 after #447; 1574 after #449; 1630 after #456; 1655 after #460 to #463).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (168 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3; `tests/test_partial_struct.py` (89 test cases, #456, #461 to #463) does so for Rule 9.1 (partial: partly assigned local structs), the struct analogue of Rule 9.3 and Barr-C §7.2. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1524 after #424; 1532 after #425; 1545 after #423; 1559 after #439, #441 and the v1.6.1 back-merge; 1569 after #447; 1574 after #449; 1630 after #456; 1655 after #460 to #463; 1671 after the #460 to #463 review fixes).
 
