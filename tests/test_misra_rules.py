@@ -958,6 +958,13 @@ class TestSizeofType(unittest.TestCase):
                "(void)n; (void)b; }\n")
         self.assertIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
 
+    def test_two_word_builtin_does_not_hide_keyword_finding(self):
+        src = ("void g(long int v);\n#define CAST(x) ((long int)(x))\n"
+               "void f(void){ int n = sizeof(int) + sizeof(double);\n"
+               "(void)n; }\n")
+        self.assertEqual(
+            sum(1 for r in rules(src, _sizeof_cfg()) if r == RULE_SIZEOF), 2)
+
     def test_upper_case_name_not_declared_still_flagged(self):
         src = "void f(void){ int n = sizeof(MY_TYPE);\n(void)n; }\n"
         self.assertIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))

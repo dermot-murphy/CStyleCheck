@@ -8,6 +8,8 @@ Imports from: models, preprocessor, utils, config.
 from __future__ import annotations
 
 import re
+from collections import ChainMap
+from collections.abc import Mapping
 from pathlib import Path
 
 from .models import (
@@ -325,34 +327,119 @@ def _struct_members(body: str) -> tuple:
 # because the table may be incomplete (compiler -D flags, unscanned headers).
 # ---------------------------------------------------------------------------
 
-_RE_DEFINE = re.compile(
-    r"^[ \t]*#[ \t]*define[ \t]+([A-Za-z_]\w*)(\([^)\n]*\))?[ \t]*(.*)$",
-    re.MULTILINE)
+_RE_DEFINE_LINE = re.compile(
+    r"[ \t]*#[ \t]*define[ \t]+([A-Za-z_]\w*)(\([^)\n]*\))?[ \t]*(.*)$")
+_RE_UNDEF_LINE = re.compile(r"[ \t]*#[ \t]*undef[ \t]+([A-Za-z_]\w*)")
 _RE_PP_COND = re.compile(
-    r"^[ \t]*#[ \t]*(if|ifdef|ifndef|elif|else|endif)\b(.*)$")
+    r"^[ \t]*#[ \t]*(if|ifdef|ifndef|elif|elifdef|elifndef|else|endif)\b(.*)$")
 _RE_PP_TOKEN = re.compile(
     r"\s*(?:((?:0[xX][0-9a-fA-F]+|\d+)[uUlL]*)(?![\w.])"
     r"|([A-Za-z_]\w*)"
     r"|(&&|\|\||==|!=|<=|>=|<<|>>|[-+*/%()!<>&|^~?:,]))")
 _UNKNOWN_TOKEN = "\0unknown"
 
+# Kinds of #define (#463 review):
+#   plain        outside any #if, or inside a guard (below) only
+#   default      "#ifndef X" immediately followed by "#define X": a
+#                configuration default or an include guard's own name
+#   conditional  under any other #if: whether it applies is not known, so
+#                it is not used
+# A guard is an "#ifndef X" whose next directive is "#define X"; the lines
+# inside it are treated as unconditional (an include guard, or a default).
+MACRO_PLAIN, MACRO_DEFAULT = "plain", "default"
+
+
+def _join_continuations(text: str) -> str:
+    """Join backslash-continued lines (the newline is removed)."""
+    return re.sub(r"\\[ \t]*\n", " ", text)
+
+
+def collect_macro_defs(clean: str) -> list:
+    """Return ``(name, params, body, kind)`` for every usable ``#define``
+    in *clean*, in file order; *kind* is MACRO_PLAIN or MACRO_DEFAULT.
+
+    Defines under a non-guard conditional are omitted.  A name that is
+    ``#undef``-ed outside any conditional is returned with *kind* None.
+    """
+    found: list = []
+    lines = [ln for ln in _join_continuations(clean).split("\n")
+             if ln.strip()]
+    stack: list = []          # True = guard frame, False = other conditional
+    for idx, line in enumerate(lines):
+        cm = _RE_PP_COND.match(line)
+        if cm:
+            kind = cm.group(1)
+            if kind in ("if", "ifdef", "ifndef"):
+                guard = False
+                if kind == "ifndef" and idx + 1 < len(lines):
+                    name = (cm.group(2).split() or [""])[0]
+                    dm = _RE_DEFINE_LINE.match(lines[idx + 1])
+                    guard = bool(dm and dm.group(1) == name)
+                stack.append(guard)
+            elif kind == "endif":
+                if stack:
+                    stack.pop()
+            elif stack:
+                stack[-1] = False      # #elif / #else arm: conditional
+            continue
+        if not all(stack):
+            continue
+        dm = _RE_DEFINE_LINE.match(line)
+        if dm:
+            params = None
+            if dm.group(2) is not None:
+                params = tuple(p.strip() for p in dm.group(2)[1:-1].split(",")
+                               if p.strip())
+            prev = lines[idx - 1] if idx else ""
+            pm = _RE_PP_COND.match(prev)
+            kind = (MACRO_DEFAULT if pm and pm.group(1) == "ifndef"
+                    and (pm.group(2).split() or [""])[0] == dm.group(1)
+                    else MACRO_PLAIN)
+            found.append((dm.group(1), params, dm.group(3).strip(), kind))
+            continue
+        um = _RE_UNDEF_LINE.match(line)
+        if um:
+            found.append((um.group(1), None, "", None))
+    return found
+
+
+class MacroTable:
+    """Merge #defines from several files (#463).
+
+    A plain definition beats a default; among the same kind the first file
+    added wins.  A name ``#undef``-ed outside a conditional anywhere is
+    dropped (unknown).  :attr:`table` maps a name to ``(params, body)``.
+    """
+
+    def __init__(self):
+        self._plain: dict = {}
+        self._default: dict = {}
+        self._undef: set = set()
+
+    def add(self, defs: list) -> None:
+        for name, params, body, kind in defs:
+            if kind is None:
+                self._undef.add(name)
+            elif kind == MACRO_PLAIN:
+                self._plain.setdefault(name, (params, body))
+            else:
+                self._default.setdefault(name, (params, body))
+
+    @property
+    def table(self) -> dict:
+        merged = dict(self._default)
+        merged.update(self._plain)
+        for name in self._undef:
+            merged.pop(name, None)
+        return merged
+
 
 def collect_macros(clean: str) -> dict:
-    """Return ``{name: (params, body)}`` for every ``#define`` in *clean*.
-
-    *params* is ``None`` for an object-like macro, otherwise a tuple of
-    parameter names.  The first definition of a name wins (configuration
-    headers guard defaults with ``#ifndef``).  ``#undef`` is ignored.
-    """
-    macros: dict = {}
-    text = re.sub(r"\\[ \t]*\n", " ", clean)
-    for m in _RE_DEFINE.finditer(text):
-        params = None
-        if m.group(2) is not None:
-            params = tuple(p.strip() for p in m.group(2)[1:-1].split(",")
-                           if p.strip())
-        macros.setdefault(m.group(1), (params, m.group(3).strip()))
-    return macros
+    """Return ``{name: (params, body)}`` for the usable ``#define``s of one
+    preprocessed source text (see :func:`collect_macro_defs`)."""
+    table = MacroTable()
+    table.add(collect_macro_defs(clean))
+    return table.table
 
 
 def _pp_tokenize(text: str) -> list | None:
@@ -375,7 +462,7 @@ def _pp_tokenize(text: str) -> list | None:
     return tokens
 
 
-def _pp_expand(tokens: list, macros: dict, depth: int = 0,
+def _pp_expand(tokens: list, macros: Mapping, depth: int = 0,
                active: frozenset = frozenset()) -> list:
     """Expand ``defined`` and macros in *tokens* (no token pasting or
     stringising).  Undefinable parts become the unknown token."""
@@ -400,8 +487,9 @@ def _pp_expand(tokens: list, macros: dict, depth: int = 0,
             if body_tokens is None:
                 body_tokens = [_UNKNOWN_TOKEN]
             if params is None:
-                out += ["("] + _pp_expand(body_tokens, macros, depth + 1,
-                                          active | {tok}) + [")"]
+                # Spliced as-is, like C (no parentheses are added).
+                out += _pp_expand(body_tokens, macros, depth + 1,
+                                  active | {tok})
                 i += 1
                 continue
             if i + 1 < n and tokens[i + 1] == "(":
@@ -433,9 +521,9 @@ def _pp_expand(tokens: list, macros: dict, depth: int = 0,
                 sub = dict(zip(params, args))
                 expanded: list = []
                 for t in body_tokens:
-                    expanded += (["("] + sub[t] + [")"]) if t in sub else [t]
-                out += ["("] + _pp_expand(expanded, macros, depth + 1,
-                                          active | {tok}) + [")"]
+                    expanded += sub[t] if t in sub else [t]
+                out += _pp_expand(expanded, macros, depth + 1,
+                                  active | {tok})
                 i = j + 1
                 continue
         out.append(tok)
@@ -564,28 +652,43 @@ class _PPExprParser:
         raise ValueError(f"unexpected token {tok!r}")
 
 
-def eval_pp_condition(expr: str, macros: dict) -> bool | None:
+def eval_pp_condition(expr: str, macros: Mapping) -> bool | None:
     """Evaluate a ``#if`` / ``#elif`` expression: True, False or None."""
     tokens = _pp_tokenize(expr)
     if tokens is None:
         return None
     try:
         value = _PPExprParser(_pp_expand(tokens, macros)).parse()
-    except (ValueError, KeyError, IndexError):
+    except (ValueError, KeyError, IndexError, RecursionError):
         return None
     return None if value is None else bool(value)
 
 
-def _resolve_conditionals(body: str, macros: dict) -> tuple:
+def _defined_value(kind: str, arg: str, macros: Mapping) -> bool | None:
+    """Value of an #ifdef / #ifndef (or #elifdef / #elifndef) test.  A
+    name missing from the table is unknown, not undefined."""
+    name = (arg.split() or [""])[0]
+    if name in macros:
+        return kind.endswith("ifdef")
+    return None
+
+
+_GROUP_MARK = "\0group"
+
+
+def _resolve_conditionals(body: str, macros: Mapping) -> tuple:
     """Split a struct body into the text that is certainly compiled and the
     unresolved conditional groups.
 
     Returns ``(active_text, groups)``.  *active_text* keeps lines whose
-    enclosing conditions are all true and blanks the rest.  Each group is
-    ``(has_else, branches)`` for a conditional whose outcome is unknown; a
-    branch is the text of one #if / #elif / #else arm that may be compiled.
+    enclosing conditions are all true, blanks the rest, and holds a
+    ``_GROUP_MARK<n>`` line where unresolved group *n* ends, so members
+    credited from it keep their declaration order.  Each group is
+    ``(exhaustive, branches)`` for a conditional whose outcome is unknown:
+    *exhaustive* is true when one of its arms must be compiled (it has an
+    #else, or an #elif that is true by itself); a branch is the text of one
+    arm that may be compiled.
     """
-    text = re.sub(r"\\[ \t]*\n", " \n", body)
     active: list = []
     groups: list = []
     stack: list = []
@@ -593,27 +696,25 @@ def _resolve_conditionals(body: str, macros: dict) -> tuple:
     def outer_state() -> bool:
         return all(f.current is True for f in stack)
 
-    for line in text.split("\n"):
+    for line in _join_continuations(body).split("\n"):
         m = _RE_PP_COND.match(line)
         if m:
             kind, arg = m.group(1), m.group(2).strip()
             v: bool | None
             if kind in ("if", "ifdef", "ifndef"):
-                if kind == "if":
-                    v = eval_pp_condition(arg, macros)
-                else:
-                    name = (arg.split() or [""])[0]
-                    defined = name in macros
-                    v = (True if defined else None) if kind == "ifdef" \
-                        else (False if defined else None)
+                v = (eval_pp_condition(arg, macros) if kind == "if"
+                     else _defined_value(kind, arg, macros))
                 stack.append(_CondFrame(v, outer_state()))
             elif stack:
                 frame = stack[-1]
-                if kind == "elif":
+                if kind in ("elif", "elifdef", "elifndef"):
                     if frame.any_true:
                         v = False
                     else:
-                        v = eval_pp_condition(arg, macros)
+                        v = (eval_pp_condition(arg, macros) if kind == "elif"
+                             else _defined_value(kind[2:], arg, macros))
+                        if v is True:
+                            frame.has_else = True    # an arm must compile
                         if frame.any_unknown and v is not False:
                             v = None      # taken only if an earlier arm is not
                     frame.enter(v)
@@ -624,7 +725,9 @@ def _resolve_conditionals(body: str, macros: dict) -> tuple:
                 else:                       # endif
                     stack.pop()
                     if frame.any_unknown and frame.outer_on:
+                        active.append(f"{_GROUP_MARK}{len(groups)}")
                         groups.append((frame.has_else, frame.branches))
+                        continue
             active.append("")
             continue
         if outer_state():
@@ -664,19 +767,29 @@ class _CondFrame:
             self.branches.append([])
 
 
-def _members_with_conditionals(body: str, macros: dict | None) -> tuple:
-    """Return the member entries of *body*, resolving #if blocks (#463)."""
+def _members_with_conditionals(body: str, macros: Mapping | None) -> tuple:
+    """Return the member entries of *body*, resolving #if blocks (#463).
+
+    A member of an unresolved group is counted only when the group is
+    exhaustive and every arm that may compile declares it; it is placed
+    where the group ends, keeping declaration order.
+    """
+    if "#" not in body:
+        return _struct_members(body)
     active, groups = _resolve_conditionals(body, macros or {})
-    entries = list(_struct_members(active))
-    for has_else, branches in groups:
-        if not has_else or not branches:
+    entries: list = []
+    parts = re.split(re.escape(_GROUP_MARK) + r"(\d+)", active)
+    for idx, part in enumerate(parts):
+        if idx % 2 == 0:
+            entries.extend(_struct_members(part))
+            continue
+        exhaustive, branches = groups[int(part)]
+        if not exhaustive or not branches:
             continue
         per_branch = [_struct_members("\n".join(b)) for b in branches]
         common = set.intersection(
             *({n for e in entries_b for n in e} for entries_b in per_branch))
-        for entry in per_branch[0]:
-            if set(entry) <= common:
-                entries.append(entry)
+        entries.extend(e for e in per_branch[0] if set(e) <= common)
     seen: set = set()
     unique: list = []
     for entry in entries:
@@ -722,12 +835,13 @@ def collect_typedef_names(clean: str) -> set:
 def collect_struct_defs(clean: str, macros: dict | None = None) -> dict:
     """Return the struct definition table of one preprocessed source text.
 
-    *macros* (from :func:`collect_macros`) resolves #if blocks inside
-    struct bodies (#463); this file's own #defines are always used too.
+    *macros* (the project-wide table) resolves #if blocks inside struct
+    bodies (#463) and wins over this file's own #defines, which only fill
+    names the table lacks: a project configuration header must beat an
+    SDK header's ``#ifndef`` default.  The file's own table is built only
+    when a struct body contains a preprocessor line.
     """
-    table = collect_macros(clean)
-    for name, val in (macros or {}).items():
-        table.setdefault(name, val)
+    table: Mapping | None = None
     defs: dict = {}
     for m in RE_STRUCT_DEF_OPEN.finditer(clean):
         if m.group(2) != "struct":
@@ -736,7 +850,10 @@ def collect_struct_defs(clean: str, macros: dict | None = None) -> dict:
         close = _match_brace(clean, open_pos)
         if close < 0:
             continue
-        members = _members_with_conditionals(clean[open_pos + 1:close], table)
+        body = clean[open_pos + 1:close]
+        if table is None and "#" in body:
+            table = ChainMap(macros or {}, collect_macros(clean))
+        members = _members_with_conditionals(body, table)
         if m.group(3):
             defs[f"struct {m.group(3)}"] = members
         if m.group(1):
@@ -782,13 +899,13 @@ def struct_rules_enabled(cfg: dict) -> bool:
 
 def struct_definition_paths(cfg: dict) -> list:
     """Return the ``definition_paths`` globs of both #456 rules (#461),
-    in order and without duplicates.  Only enabled rules contribute."""
+    in order and without duplicates.  A rule contributes its list even when
+    it is disabled here, so a root config can name the paths for rules that
+    per-directory configs enable."""
     misc = cfg.get("misc", {}) or {}
     paths: list = []
     for key in _STRUCT_RULE_KEYS:
         rule = misc.get(key, {}) or {}
-        if not rule.get("enabled", False):
-            continue
         for p in rule.get("definition_paths", []) or []:
             if p not in paths:
                 paths.append(p)
@@ -886,6 +1003,10 @@ class Checker:
             self._struct_defs.update(collect_struct_defs(self.clean, macros))
             self._type_names.update(type_names or ())
             self._type_names.update(collect_typedef_names(self.clean))
+            # A #define used as a type (e.g. "#define U8 unsigned char")
+            # is not an unknown struct type (#462).
+            self._type_names.update(macros or ())
+            self._type_names.update(collect_macros(self.clean))
         self._sizeof_objects: set | None = None   # lazily built (#460)
 
     # -----------------------------------------------------------------------
@@ -3333,9 +3454,12 @@ class Checker:
         """Names declared as objects (variables, parameters, arrays) in this
         file, excluding every typedef name (#460)."""
         if self._sizeof_objects is None:
+            # "long int)" or "unsigned long long)" must not make a C
+            # keyword an object name.
             names = {
                 m.group(2) for m in self._RE_OBJECT_DECL.finditer(self.clean)
                 if m.group(1) not in self._NOT_A_TYPE_WORD
+                and m.group(2) not in self._c_keywords
             }
             names -= collect_typedef_names(self.clean)
             self._sizeof_objects = names
@@ -3550,6 +3674,10 @@ class Checker:
         neither a known typedef nor a standard type (#462)."""
         if label.startswith("struct "):
             return True
+        if label in self._struct_defs:
+            # A typedef alias of a struct with no definition, e.g.
+            # "typedef struct foo_s foo_t;" (an opaque handle).
+            return self._struct_entries(label) is None
         return not (label in self._type_names
                     or label in self._STD_SCALAR_TYPES
                     or label in self._c_stdlib_names)

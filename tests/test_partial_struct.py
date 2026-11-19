@@ -435,9 +435,14 @@ class TestPreprocessorConditionals(unittest.TestCase):
             self._members(_COND_STRUCT, collect_macros("#define EXT 1\n")),
             ["a", "b", "c", "d"])
 
-    def test_this_file_macro_wins(self):
+    def test_this_file_macro_fills_gaps_only(self):
+        # The project-wide table wins (#463 review); this file's own
+        # #defines are used only for names the table lacks.
         src = "#define EXT 0\n" + _COND_STRUCT
-        self.assertEqual(self._members(src, {"EXT": (None, "1")}), ["a", "b"])
+        self.assertEqual(self._members(src, {"EXT": (None, "1")}),
+                         ["a", "b", "c", "d"])
+        self.assertEqual(self._members(src, {"OTHER": (None, "1")}),
+                         ["a", "b"])
 
     def test_ifdef_ifndef_else_elif(self):
         src = ("#define HAVE_X 1\ntypedef struct {\n#ifdef HAVE_X\n int x;\n"
@@ -565,9 +570,94 @@ class TestDefinitionPaths(unittest.TestCase):
         }}
         self.assertEqual(struct_definition_paths(cfg),
                          ["a/*.h", "b/*.h", "c/*.h"])
+        # A disabled rule still contributes (per-directory configs may
+        # enable it).
         cfg["misc"]["partial_struct_initialiser"]["enabled"] = False
-        self.assertEqual(struct_definition_paths(cfg), ["a/*.h", "b/*.h"])
+        self.assertEqual(struct_definition_paths(cfg),
+                         ["a/*.h", "b/*.h", "c/*.h"])
         self.assertEqual(struct_definition_paths({}), [])
+
+    def test_checked_config_beats_header_ifndef_default(self):
+        with tempfile.TemporaryDirectory() as td:
+            self._write(td, "    definition_paths:\n      - sdk/drv.h\n")
+            Path(td, "sdk", "drv.h").write_text(
+                "#ifndef DRV_EXTENDED\n#define DRV_EXTENDED 0\n#endif\n"
+                + Path(td, "sdk", "drv.h").read_text(), encoding="utf-8")
+            out = self._cli(td, "--include", "app.c",
+                            "--include", "app_config.h")
+            self.assertIn("2 of 3", out)
+
+    def test_definitions_ignored_warning(self):
+        import contextlib
+        import io
+        with tempfile.TemporaryDirectory() as td:
+            self._write(td)
+            Path(td, "c.yml").write_text("misc: {}\n", encoding="utf-8")
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self._cli(td, "--include", "app.c",
+                          "--definitions", "sdk/*.h")
+            self.assertIn("--definitions is ignored", err.getvalue())
+
+
+class TestMacroCollection(unittest.TestCase):
+    """#463 review: which #defines are used, and their precedence."""
+
+    def test_conditional_define_not_used(self):
+        self.assertNotIn("HAS_X", collect_macros(
+            "#if defined(NRF51)\n#define HAS_X 0\n#else\n#define HAS_X 1\n"
+            "#endif\n"))
+
+    def test_include_guard_contents_are_plain(self):
+        m = collect_macros("#ifndef DRV_H\n#define DRV_H\n\n"
+                           "#define CHECK(x) (x)\n#endif\n")
+        self.assertEqual(m["CHECK"], (("x",), "(x)"))
+
+    def test_ifndef_default_used(self):
+        self.assertEqual(collect_macros(
+            "#ifndef FEATURE\n#define FEATURE 1\n#endif\n")["FEATURE"],
+            (None, "1"))
+
+    def test_plain_beats_default_and_undef_drops(self):
+        from cstylecheck.checker import MacroTable, collect_macro_defs
+        t = MacroTable()
+        t.add(collect_macro_defs("#ifndef F\n#define F 0\n#endif\n"))
+        t.add(collect_macro_defs("#define F 1\n#define G 1\n#undef G\n"))
+        self.assertEqual(t.table, {"F": (None, "1")})
+
+    def test_global_table_beats_file_default(self):
+        src = ("#ifndef EXT\n#define EXT 0\n#endif\n" + _COND_STRUCT)
+        members = collect_struct_defs(src, {"EXT": (None, "1")})["cfg_t"]
+        self.assertEqual(len(members), 4)
+
+    def test_continued_if_condition(self):
+        src = ("#define X 1\n#define Y 0\ntypedef struct {\n int a;\n"
+               "#if X \\\n    && Y\n int b;\n#endif\n} cfg_t;\n")
+        self.assertEqual(collect_struct_defs(src)["cfg_t"], (("a",),))
+
+    def test_common_member_keeps_declaration_order(self):
+        src = ("typedef struct {\n int a;\n#if UNKNOWN\n int b;\n#else\n"
+               " long b;\n#endif\n int c;\n} cfg_t;\n")
+        self.assertEqual(collect_struct_defs(src)["cfg_t"],
+                         (("a",), ("b",), ("c",)))
+
+    def test_true_elif_makes_group_exhaustive(self):
+        src = ("typedef struct {\n#if UNKNOWN\n int a;\n#elif 1\n int a;\n"
+               "#endif\n} cfg_t;\n")
+        self.assertEqual(collect_struct_defs(src)["cfg_t"], (("a",),))
+
+    def test_elifdef(self):
+        src = ("#define B 1\ntypedef struct {\n#if 0\n int a;\n#elifdef B\n"
+               " int b;\n#endif\n} cfg_t;\n")
+        self.assertEqual(collect_struct_defs(src)["cfg_t"], (("b",),))
+
+    def test_macro_body_not_parenthesised(self):
+        m = collect_macros("#define X 2 + 3\n#define MUL(a,b) a*b\n")
+        self.assertTrue(eval_pp_condition("X * 2 == 8", m))
+        self.assertTrue(eval_pp_condition("MUL(1+1,2) == 3", m))
+
+    def test_deep_nesting_is_unknown_not_an_error(self):
+        self.assertIsNone(eval_pp_condition("(" * 400 + "1" + ")" * 400, {}))
 
 
 # ---------------------------------------------------------------------------
@@ -609,6 +699,19 @@ class TestReportUnknownTypes(unittest.TestCase):
         found = [v for v in run(src, cfg) if "not checked" in v.message]
         self.assertEqual([v.message.split("'")[1] for v in found], ["a"])
         self.assertEqual(found[0].rule, RULE_PSI)
+
+    def test_alias_of_undefined_struct_reported(self):
+        src = ("typedef struct foo_s foo_t;\n"
+               "void f(void)\n{\n    foo_t a;\n    Use(&a);\n}\n")
+        found = [v for v in run(src, _psa_cfg(report_unknown_types=True))
+                 if "not checked" in v.message]
+        self.assertEqual([v.message.split("'")[1] for v in found], ["a"])
+
+    def test_macro_type_not_reported(self):
+        src = ("#define U8 unsigned char\n"
+               "void f(void)\n{\n    U8 x;\n    Use(&x);\n}\n")
+        self.assertFalse([v for v in run(src, _psa_cfg(report_unknown_types=True))
+                          if "not checked" in v.message])
 
     def test_typedef_names_collected(self):
         self.assertEqual(

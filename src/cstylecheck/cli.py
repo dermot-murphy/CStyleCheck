@@ -31,8 +31,9 @@ from .fixer import (apply_fixes, unified_diff, FIXABLE_RULES, SAFE_RULES,
 from .utils import (module_name, _cfg, config_error, EXIT_CONFIG_ERROR,
                     ensure_parent_dir)
 from .checker import (
-    Checker, clean_for_struct_scan, collect_macros, collect_struct_defs,
-    collect_typedef_names, struct_definition_paths, struct_rules_enabled,
+    Checker, MacroTable, clean_for_struct_scan, collect_macro_defs,
+    collect_struct_defs, collect_typedef_names, struct_definition_paths,
+    struct_rules_enabled,
 )
 from .sign_checker import SignChecker, DeclaredNotDefinedChecker
 from .baseline import load_baseline, write_baseline, apply_baseline
@@ -587,18 +588,24 @@ def _main() -> int:
         struct_macros: dict | None = None
         type_names: set | None = None
         if struct_rules_enabled(cfg) or getattr(args, "per_dir_config", False):
-            struct_defs, struct_macros, type_names = {}, {}, set()
+            struct_defs, type_names = {}, set()
             def_globs = (struct_definition_paths(cfg)
                          + list(getattr(args, "definitions", None) or []))
             checked = set(files)
-            def_files = [
-                f for f in discover_files([], def_globs, [], {})
-                if f not in checked
-            ] if def_globs else []
+            # Files are sorted within each glob so the result does not
+            # depend on directory listing order; globs keep their order.
+            def_files: list = []
+            seen_defs: set = set(checked)
+            for pattern in def_globs:
+                for f in sorted(discover_files([], [pattern], [], {})):
+                    if f not in seen_defs:
+                        seen_defs.add(f)
+                        def_files.append(f)
             if getattr(args, "verbose", False) and def_globs:
                 print(f"Definition files: {len(def_files)}",
                       file=sys.stderr, flush=True)
             cleaned: list = []
+            macro_table = MacroTable()
             for filepath in files + def_files:
                 try:
                     source = Path(filepath).read_text(encoding="utf-8",
@@ -609,12 +616,13 @@ def _main() -> int:
                     source_cache[filepath] = source
                 clean = clean_for_struct_scan(source, defines)
                 cleaned.append((clean, filepath in checked))
-                for name, val in collect_macros(clean).items():
-                    struct_macros.setdefault(name, val)
+                macro_table.add(collect_macro_defs(clean))
+            struct_macros = macro_table.table
             # Precedence: checked files first, then definition files in the
-            # order their globs are listed.  A #define keeps its first value;
-            # a struct definition from a definition file never replaces one
-            # from a checked file or an earlier definition file.
+            # order their globs are listed.  For #defines a plain definition
+            # beats an #ifndef default, and within a kind the first wins
+            # (MacroTable).  A struct definition from a definition file never
+            # replaces one from a checked file or an earlier definition file.
             for clean, is_checked in cleaned:
                 found = collect_struct_defs(clean, struct_macros)
                 if is_checked:
@@ -624,6 +632,11 @@ def _main() -> int:
                         struct_defs.setdefault(key, val)
                 type_names.update(collect_typedef_names(clean))
             del cleaned
+        elif getattr(args, "definitions", None):
+            print("WARNING: --definitions is ignored: neither "
+                  "misc.partial_struct_assignment nor "
+                  "misc.partial_struct_initialiser is enabled",
+                  file=sys.stderr)
 
         for filepath in files:
             if getattr(args, "verbose", False):
