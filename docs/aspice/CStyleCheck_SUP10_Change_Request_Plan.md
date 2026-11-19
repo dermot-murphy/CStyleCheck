@@ -190,7 +190,7 @@ Summary view:
 | #424 | `bug`, `config-change` | Remove unused `functions.case`; warn when a config still sets it | Medium | Closed — PR #427, merge `31acd91` | v2.0.0 |
 | #425 | `bug` | Config and usage errors exit 2 from the installed `cstylecheck` command | High | Closed — PR #428, merge `7ddf732` | v2.0.0 |
 | #441 | `enhancement` | [CR] Create the parent folder of output files (`--log`, `--write-baseline`, `--init-output`) if it does not exist | Medium | Open — PR #442 | v2.0.0 |
-| #456 | `enhancement` | [CR] Opt-in rules for partially initialised local structs (`misc.partial_struct_assignment`, `misc.partial_struct_initialiser`) | Medium | Open — implementing PR | v2.0.0 |
+| #456 | `enhancement` | [CR] Opt-in rules for partially initialised local structs (`misc.partial_struct_assignment`, `misc.partial_struct_initialiser`) | Medium | Open — PR [#457](https://github.com/dermot-murphy/CStyleCheck/pull/457) | v2.0.0 |
 
 ### 7.1 Change Request Records
 
@@ -303,7 +303,7 @@ Summary view:
 
 | Field | CR-456 |
 |---|---|
-| **Issue / PR** | [#456](https://github.com/dermot-murphy/CStyleCheck/issues/456) / implementing PR |
+| **Issue / PR** | [#456](https://github.com/dermot-murphy/CStyleCheck/issues/456) / [#457](https://github.com/dermot-murphy/CStyleCheck/pull/457) |
 | **Date** | 2026-11-19 |
 | **Raised by / implemented by** | Dermot Murphy / Claude |
 | **Type** | `enhancement` — two new rules and new requirements |
