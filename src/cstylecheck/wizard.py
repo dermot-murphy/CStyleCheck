@@ -21,12 +21,14 @@ from .utils import config_error, ensure_parent_dir
 # Opt-in (#418) rules each standard-specific preset / wizard answer enables
 # (#420).  Order is the order the keys are written to the generated YAML.
 # misc.boolean_comparison is a style rule and belongs to no preset.
-MISRA_OPT_IN_RULES: tuple[str, ...] = (   # 15.1, 13.4, 11.5, 17.2, 15.7
+MISRA_OPT_IN_RULES: tuple[str, ...] = (   # 15.1, 13.4, 11.5, 17.2, 15.7, 9.1, 9.3
     "goto_usage", "assignment_in_condition", "void_pointer",
     "recursive_function", "empty_else",
+    "partial_struct_assignment", "partial_struct_initialiser",
 )
-BARR_C_OPT_IN_RULES: tuple[str, ...] = (  # §3.2, §5.7, §8.3
+BARR_C_OPT_IN_RULES: tuple[str, ...] = (  # §3.2, §5.7, §8.3, §7.2
     "multiple_statements_per_line", "sizeof_type", "empty_else",
+    "partial_struct_assignment",
 )
 # Shipped rules.yml default severities (unchanged by presets / wizard).
 _OPT_IN_SEVERITY: dict[str, str] = {
@@ -37,6 +39,8 @@ _OPT_IN_SEVERITY: dict[str, str] = {
     "recursive_function":           "error",
     "sizeof_type":                  "info",
     "empty_else":                   "warning",
+    "partial_struct_assignment":    "warning",
+    "partial_struct_initialiser":   "info",
 }
 
 
@@ -268,11 +272,13 @@ def run_wizard(
     # EOF / Enter keeps the default of No.
     misra_rules = _ask_bool(
         "Enable MISRA C:2012 rules (goto 15.1, assignment in condition 13.4, "
-        "void pointer 11.5, recursion 17.2, empty else 15.7)?",
+        "void pointer 11.5, recursion 17.2, empty else 15.7, "
+        "partial struct assignment 9.1, short struct initialiser 9.3)?",
         False, prompt_fn)
     barr_rules = _ask_bool(
         "Enable Barr-C rules (one statement per line §3.2, "
-        "sizeof on objects §5.7, empty else §8.3)?",
+        "sizeof on objects §5.7, empty else §8.3, "
+        "partial struct assignment §7.2)?",
         False, prompt_fn)
 
     # ---- Build config ----
@@ -317,7 +323,7 @@ def run_wizard(
     }
     # Opt-in rules (#418/#420): always listed so they can be toggled later;
     # enabled only when the matching question was answered yes.  empty_else
-    # is shared by both standards.
+    # and partial_struct_assignment are shared by both standards.
     for rule in dict.fromkeys(MISRA_OPT_IN_RULES + BARR_C_OPT_IN_RULES):
         on = ((misra_rules and rule in MISRA_OPT_IN_RULES)
               or (barr_rules and rule in BARR_C_OPT_IN_RULES))

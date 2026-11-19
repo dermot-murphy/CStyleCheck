@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.35 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.36 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.36 | 2026-11-19 | Claude | Issue #456 (CR-456): SWQ-003 → 83 rule IDs, new row for `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` (SWE1-118 to SWE1-120, `test_partial_struct.py`); §3.3 / §6 coverage 113→116 in-scope requirements (SWE1 defines 124); BP3 evidence — `test_misra_rules.py` 162 tests, Rule 9.1 (partial) and Barr-C §7.2, suite total 1630 after #456 |
 | 1.35 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.34 | 2026-11-19 | Claude | Issue #449: BP3 evidence — suite total 1574 after #449 (workflow-configuration tests); referenced-document versions resynced |
 | 1.33 | 2026-10-06 | Claude | Issue #447: BP3 evidence — suite total 1559 after #439, #441 and the v1.6.1 back-merge, 1569 after #447 (`misc.constant_comparison` preprocessor and identifier-exclusion tests) |
@@ -71,10 +72,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.28 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.32 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.26 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.29 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.29 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.33 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.27 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.30 |
 
 ### 3.2 Software Configuration Under Test
 
@@ -82,7 +83,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 |---|---|
 | **Software Version** | 1.6.0 |
 | **Git Tag** | v1.6.0 |
-| **Commit SHA** | `a6102d6` (v1.6.0 release). Post-v1.6.0 additions (SWQ-003 rules for SWE1-109 to SWE1-116, SWQ-007 steps 4/6/7): `develop` `296e91b` |
+| **Commit SHA** | `a6102d6` (v1.6.0 release). Post-v1.6.0 additions (SWQ-003 rules for SWE1-109 to SWE1-116, SWQ-007 steps 4/6/7): `develop` `296e91b`; SWQ-003 rules for SWE1-118 to SWE1-120 (#456): branch `claude/partial-struct-init-456` |
 | **Python Version** | 3.11 (primary); 3.10 and 3.12 (regression) |
 | **OS** | Ubuntu 24.04 |
 | **Test Execution Date** | 2026-10-06 |
@@ -93,7 +94,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Criterion | Target | Pass Condition |
 |---|---|---|
 | All SWQ test cases | PASS | Zero FAIL results |
-| SW Requirements coverage | 100% | All 113 in-scope requirements traced to ≥ 1 SWQ test: SWE1-001 to SWE1-101 (101), SWE1-109 to SWE1-116 (8) and SWE1-MISRA-001 to SWE1-MISRA-004 (4). Out of SWQ scope: SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts, not part of the delivered package; see §6) |
+| SW Requirements coverage | 100% | All 116 in-scope requirements traced to ≥ 1 SWQ test: SWE1-001 to SWE1-101 (101), SWE1-109 to SWE1-116 (8), SWE1-118 to SWE1-120 (3) and SWE1-MISRA-001 to SWE1-MISRA-004 (4). Out of SWQ scope: SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts, not part of the delivered package; see §6) |
 | Statement coverage | ≥ 90% | Coverage report at execution |
 | Branch coverage | ≥ 85% | Coverage report at execution |
 | Static verification | PASS | `rules.yml` CI job on v1.6.1 commit |
@@ -157,13 +158,13 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 ---
 
-### SWQ-003 — All 81 Rule IDs Detected
+### SWQ-003 — All 83 Rule IDs Detected
 
 | Field | Value |
 |---|---|
 | **Test Case ID** | SWQ-003 |
-| **Objective** | Verify all 81 rule IDs are implemented and detect violations when triggered (SWE1-017 to SWE1-093, SWE1-109 to SWE1-116) |
-| **SW-REQ** | SWE1-017 to SWE1-056, SWE1-MISRA-001 to SWE1-MISRA-004, SWE1-063, SWE1-071, SWE1-078 to SWE1-093, SWE1-098, SWE1-099, SWE1-109 to SWE1-116 |
+| **Objective** | Verify all 83 rule IDs are implemented and detect violations when triggered (SWE1-017 to SWE1-093, SWE1-109 to SWE1-116, SWE1-118 to SWE1-120) |
+| **SW-REQ** | SWE1-017 to SWE1-056, SWE1-MISRA-001 to SWE1-MISRA-004, SWE1-063, SWE1-071, SWE1-078 to SWE1-093, SWE1-098, SWE1-099, SWE1-109 to SWE1-116, SWE1-118 to SWE1-120 |
 
 | Rule Category | Rule IDs | Test Module | Result |
 |---|---|---|---|
@@ -190,7 +191,8 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Misc — unsigned_suffix signed-param exemption (v1.6.0) | `misc.unsigned_suffix` false-positive fix for signed-typed parameters | `test_unsigned_suffix_signed_params.py` | PASS |
 | Variable — pointer_prefix auto-fix (v1.6.0) | `variable.pointer_prefix` auto-fix via `--fix` | `test_pointer_prefix_fix.py` | PASS |
 | Output — v1.6.0 output behaviour (startup banner, --summary restructure, OS path sep) | `print_summary` restructure; stderr startup banner; OS-native path in output | `test_cli.py`, `test_cli_requirements.py`, `test_print_summary.py` | PASS |
-| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` (all opt-in, #412, #418) | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-008, 76 tests; UV-MSR-009 opt-in policy, 11 tests) | PASS (2026-09-29, develop `296e91b`, Python 3.11 local run) |
+| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` (all opt-in, #412, #418) | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-008, 76 tests; UV-MSR-009 opt-in policy, 13 tests since #456) | PASS (2026-09-29, develop `296e91b`, Python 3.11 local run) |
+| Misc — partially initialised local structs (post-v1.6.0, #456) | `misc.partial_struct_assignment`, `misc.partial_struct_initialiser` (both opt-in), with the cross-file struct-definition table | `test_partial_struct.py` (UV-PSI-001 to UV-PSI-005, 54 tests), `test_misra_rules.py` (UV-MSR-009) | PASS (2026-11-19, `claude/partial-struct-init-456`, Python 3.14 local run) |
 
 **SWQ-003 Overall Result:** PASS
 
@@ -399,7 +401,7 @@ The #425 rows were executed on 2026-09-29 by `tests/test_exit_code_entry_points.
 |---|---|---|---|---|
 | SWQ-001 | Configuration loading | SWE1-001 to SWE1-006 | PASS | |
 | SWQ-002 | File discovery and CLI | SWE1-068 to SWE1-070 | PASS | |
-| SWQ-003 | All 81 rule IDs | SWE1-017 to SWE1-056, SWE1-MISRA-001–004, SWE1-063, SWE1-071, SWE1-078–093, SWE1-098, SWE1-099, SWE1-109–116 | PASS | |
+| SWQ-003 | All 83 rule IDs | SWE1-017 to SWE1-056, SWE1-MISRA-001–004, SWE1-063, SWE1-071, SWE1-078–093, SWE1-098, SWE1-099, SWE1-109–116, SWE1-118–120 | PASS | |
 | SWQ-004 | Output format qualification | SWE1-057 to SWE1-064 | PASS | |
 | SWQ-005 | Dictionary and spell check | SWE1-007 to SWE1-010, SWE1-056 | PASS | |
 | SWQ-006 | Cross-file sign compatibility | SWE1-051 to SWE1-053 | PASS | |
@@ -454,8 +456,9 @@ The #425 rows were executed on 2026-09-29 by `tests/test_exit_code_entry_points.
 | SWE1-098, SWE1-099 | `fn_start` line correction; function-pointer typedef exemption | SWQ-003 | Covered |
 | SWE1-102 to SWE1-108, SWE1-117 | Trend-analysis metrics (CI scripts, COMP-13) | Outside SWE.6 scope (not part of the delivered `cstylecheck` package); verified by SWE.4 UV-MET-001 to UV-MET-010 | N/A |
 | SWE1-109 to SWE1-116 | Post-v1.6.0 MISRA/Barr-C rules (#391/#392) | SWQ-003, SIT-027 | Covered |
+| SWE1-118 to SWE1-120 | Partially initialised local struct rules and cross-file struct-definition table (#456) | SWQ-003, SIT-028 | Covered |
 
-**Requirements Coverage:** 113 / 113 in-scope requirements covered (100%). SWE1 defines 121 requirements (SWE1-001 to SWE1-117 plus SWE1-MISRA-001 to 004); the 8 trend-metrics requirements (SWE1-102 to SWE1-108, SWE1-117) are outside SWE.6 scope.
+**Requirements Coverage:** 116 / 116 in-scope requirements covered (100%). SWE1 defines 124 requirements (SWE1-001 to SWE1-120 plus SWE1-MISRA-001 to 004); the 8 trend-metrics requirements (SWE1-102 to SWE1-108, SWE1-117) are outside SWE.6 scope.
 
 ---
 
@@ -530,5 +533,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (160 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1524 after #424; 1532 after #425; 1545 after #423; 1559 after #439, #441 and the v1.6.1 back-merge; 1569 after #447; 1574 after #449).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (162 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3; `tests/test_partial_struct.py` (54 test cases, #456) does so for Rule 9.1 (partial: partly assigned local structs), the struct analogue of Rule 9.3 and Barr-C §7.2. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1524 after #424; 1532 after #425; 1545 after #423; 1559 after #439, #441 and the v1.6.1 back-merge; 1569 after #447; 1574 after #449; 1630 after #456).
 

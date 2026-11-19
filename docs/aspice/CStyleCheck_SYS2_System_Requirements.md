@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.21 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.22 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.22 | 2026-11-19 | Claude | Issue #456 (CR-456): SYS-F-011 81→83 rule IDs; SYS-F-020 adds the opt-in partially-initialised local struct rules (`misc.partial_struct_assignment`, MISRA 9.1 / Barr-C §7.2; `misc.partial_struct_initialiser`, cf. MISRA 9.3) and their preset membership; §6 RTM SYS-F-011 to SYS-F-026 adds SWE1-118 to SWE1-120; scope text |
 | 2.21 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 2.20 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
 | 2.19 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
@@ -59,7 +60,7 @@
 
 ### 3.1 Purpose
 
-This System Requirements Specification (SRS) defines the complete, structured set of system-level requirements for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline** — an embedded C naming-convention linter implementing Barr-C:2018 and MISRA-C complementary rules across 81 rule IDs (73 at v1.6.0).
+This System Requirements Specification (SRS) defines the complete, structured set of system-level requirements for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline** — an embedded C naming-convention linter implementing Barr-C:2018 and MISRA-C complementary rules across 83 rule IDs (73 at v1.6.0).
 
 This document satisfies the requirements of **Automotive SPICE® PAM v4.0, SYS.2 — System Requirements Analysis**.
 
@@ -80,9 +81,9 @@ The system is deployed in four integration modes:
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.29 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.23 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.28 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.30 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.24 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.29 |
 
 ### 3.4 Glossary
 
@@ -135,7 +136,7 @@ The following table summarises the stakeholder needs from which the system requi
 
 | REQ-ID | Requirement | Priority | Verification Method | Derived From |
 |---|---|---|---|---|
-| SYS-F-011 | The system shall enforce naming rules across 81 rule IDs covering: constants/macros, variables (by scope), functions, types (typedef/enum/struct), include guards, and miscellaneous rules (including MISRA C:2012/2023 Rule 4.1 non-ASCII source checking and the MISRA/Barr-C control-flow and type-safety rules listed in SYS-F-020) | Mandatory | Test | STK-001, STK-002 |
+| SYS-F-011 | The system shall enforce naming rules across 83 rule IDs covering: constants/macros, variables (by scope), functions, types (typedef/enum/struct), include guards, and miscellaneous rules (including MISRA C:2012/2023 Rule 4.1 non-ASCII source checking and the MISRA/Barr-C control-flow and type-safety rules listed in SYS-F-020) | Mandatory | Test | STK-001, STK-002 |
 | SYS-F-012 | The system shall enforce module-prefix requirements on global variables, file-scope static variables, public functions, macros, and constants | Mandatory | Test | STK-001 |
 | SYS-F-013 | The system shall enforce scope-aware variable rules: global (`g_` prefix), file-static (`s_` prefix), local, and parameter — each independently configurable | Mandatory | Test | STK-001 |
 | SYS-F-014 | The system shall enforce pointer-prefix rules: single pointer (`p_`), double pointer (`pp_`), boolean (`b_`), and handle variables (`h_`) | Mandatory | Test | STK-001 |
@@ -144,7 +145,7 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-017 | The system shall enforce min-length and max-length constraints on variable, function, constant, and macro identifiers | Mandatory | Test | STK-001 |
 | SYS-F-018 | The system shall enforce case rules (`lower_snake`, `UPPER_SNAKE`, `UpperCamelCase`) per identifier category | Mandatory | Test | STK-001 |
 | SYS-F-019 | The system shall enforce include guard presence and format rules | Mandatory | Test | STK-001 |
-| SYS-F-020 | The system shall enforce miscellaneous and macro-safety rules: line length, indentation, magic number detection, unsigned integer suffix (`U`/`UL`), yoda conditions, block comment spacing, function length, function documentation header, assert density, null statement commenting, declaration spacing, file length, reserved header name, macro trailing semicolon, macro multistatement wrapper, and (post-v1.6.0) `goto` usage (MISRA 15.1), assignment in a condition (MISRA 13.4), multiple statements per line (Barr-C §3.2), `void *` usage (MISRA 11.5), direct recursion (MISRA 17.2), `sizeof` with a type operand (Barr-C §5.7), comparison with `true`/`false` (style rule) and empty `else` (Barr-C §8.3); all eight post-v1.6.0 rules are opt-in — disabled by default, including when the configuration key is absent (#412, #418) — and, since #420, the MISRA rules are enabled by `--preset misra`, the Barr-C rules by `--preset barr-c` and both sets by `--init` on request (`misc.boolean_comparison` is in no preset) | Mandatory | Test | STK-001 |
+| SYS-F-020 | The system shall enforce miscellaneous and macro-safety rules: line length, indentation, magic number detection, unsigned integer suffix (`U`/`UL`), yoda conditions, block comment spacing, function length, function documentation header, assert density, null statement commenting, declaration spacing, file length, reserved header name, macro trailing semicolon, macro multistatement wrapper, and (post-v1.6.0) `goto` usage (MISRA 15.1), assignment in a condition (MISRA 13.4), multiple statements per line (Barr-C §3.2), `void *` usage (MISRA 11.5), direct recursion (MISRA 17.2), `sizeof` with a type operand (Barr-C §5.7), comparison with `true`/`false` (style rule), empty `else` (Barr-C §8.3), a local struct with only some members assigned before it is used as a whole (MISRA 9.1, Barr-C §7.2) and a short positional local struct initialiser (cf. MISRA 9.3) (#456); all ten post-v1.6.0 rules are opt-in — disabled by default, including when the configuration key is absent (#412, #418) — and, since #420, the MISRA rules are enabled by `--preset misra`, the Barr-C rules by `--preset barr-c` and both sets by `--init` on request (`misc.partial_struct_assignment` is in both sets, `misc.partial_struct_initialiser` in the MISRA set; `misc.boolean_comparison` is in no preset) | Mandatory | Test | STK-001 |
 | SYS-F-021 | The system shall perform cross-file sign-compatibility checking between related `.c` and `.h` files | Mandatory | Test | STK-001 |
 | SYS-F-022 | The system shall perform spell-checking on identifier tokens against a configurable dictionary | Mandatory | Test | STK-001 |
 | SYS-F-023 | The system shall detect reserved C/C++ keyword and stdlib name usage as identifiers | Mandatory | Test | STK-001 |
@@ -231,7 +232,7 @@ The following table summarises the stakeholder needs from which the system requi
 | REQ-ID | Category | Stakeholder Need | SYS.3 Architecture Element | SWE.1 SW Requirement |
 |---|---|---|---|---|
 | SYS-F-001 to SYS-F-010 | Input handling | STK-001, STK-002 | SS-01 (CLI), SS-02 (Config Loader), SS-04 (Source Parser) | SWE1-001, SWE1-003 to SWE1-012, SWE1-068, SWE1-070, SWE1-072, SWE1-073, SWE1-075, SWE1-076 |
-| SYS-F-011 to SYS-F-026 | Rule engine | STK-001, STK-002 | SS-05 (Rule Engine) | SWE1-001, SWE1-006, SWE1-016 to SWE1-056, SWE1-071, SWE1-074, SWE1-078 to SWE1-088, SWE1-090 to SWE1-093, SWE1-098, SWE1-099, SWE1-109 to SWE1-116, SWE1-MISRA-001 to SWE1-MISRA-004 |
+| SYS-F-011 to SYS-F-026 | Rule engine | STK-001, STK-002 | SS-05 (Rule Engine) | SWE1-001, SWE1-006, SWE1-016 to SWE1-056, SWE1-071, SWE1-074, SWE1-078 to SWE1-088, SWE1-090 to SWE1-093, SWE1-098, SWE1-099, SWE1-109 to SWE1-116, SWE1-118 to SWE1-120, SWE1-MISRA-001 to SWE1-MISRA-004 |
 | SYS-F-027 to SYS-F-033 | Output / reporting | STK-003, STK-005, STK-007 | SS-06 (Output Formatter) | SWE1-013, SWE1-057 to SWE1-064, SWE1-077, SWE1-089, SWE1-095 to SWE1-097 |
 | SYS-F-034 to SYS-F-036 | Baseline suppression | STK-004 | SS-01 (CLI), SS-05 (Rule Engine) | SWE1-065 to SWE1-067, SWE1-100, SWE1-101 |
 | SYS-F-037 to SYS-F-040 | Exit codes | STK-003 | SS-01 (CLI / Entry Point) | SWE1-002, SWE1-069 |

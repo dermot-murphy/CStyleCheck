@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.26 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.27 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.27 | 2026-11-19 | Claude | Issue #456 (CR-456): SYS-VTC-003 → 83 rule IDs (new row for `misc.partial_struct_assignment` and `misc.partial_struct_initialiser`, evidence `test_partial_struct.py` and SITC-018); result note test total 1574→1630; §6/§7 rule-ID counts |
 | 1.26 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.25 | 2026-11-19 | Claude | #449: VTC-003 result note test total 1569→1574 (5 workflow-configuration tests); referenced-document versions resynced |
 | 1.24 | 2026-10-06 | Claude | #447: VTC-003 result note test total 1559 (#439, #441, v1.6.1 back-merge) →1569 (`misc.constant_comparison` preprocessor and identifier-exclusion tests) |
@@ -62,11 +63,11 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.21 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.23 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.29 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.22 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.24 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.30 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.29 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.30 |
 
 ### 3.3 System Configuration Under Test
 
@@ -160,7 +161,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 |---|---|
 | **Test Case ID** | SYS-VTC-003 |
 | **Requirement** | SYS-F-011 through SYS-F-024, SYS-F-020 (v1.2.x–v1.4.x additions) |
-| **Objective** | Verify that all 81 rule IDs detect violations when triggered by conforming test inputs |
+| **Objective** | Verify that all 83 rule IDs detect violations when triggered by conforming test inputs |
 | **Pass Criteria** | Each rule ID appears in at least one violation report when a known-bad input is provided |
 
 | Rule Category | Rule IDs | Evidence Source | Result |
@@ -179,13 +180,14 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | Misc — file quality (v1.2.x) | `misc.copyright_header`, `misc.eof_comment`, `misc.comment_ratio`, `misc.whitespace_ratio` | `test_copyright_header.py`, `test_eof_comment.py`, `test_comment_ratio.py`, `test_whitespace_ratio.py` | PASS |
 | Misc — MISRA C | `misc.lowercase_l_suffix`, `misc.octal_constant`, `misc.trigraph`, `misc.non_ascii_source` | `test_misra_rules.py` | PASS |
 | Misc — constant comparison (v1.6.0) | `misc.constant_comparison` | `test_constant_comparison.py` | PASS |
-| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` (all opt-in, #412, #418) | `test_misra_rules.py` (76 tests; opt-in policy UV-MSR-009, 11 tests), SITC-017 | PASS |
+| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` (all opt-in, #412, #418) | `test_misra_rules.py` (76 tests; opt-in policy UV-MSR-009, 11 tests; 13 since #456), SITC-017 | PASS |
+| Misc — partially initialised local structs (post-v1.6.0, #456) | `misc.partial_struct_assignment`, `misc.partial_struct_initialiser` (both opt-in) | `test_partial_struct.py` (54 tests), SITC-018 | PASS |
 | Misc — function quality (v1.4.0) | `misc.function_length`, `misc.function_doc_header`, `misc.assert_density`, `misc.null_statement_comment`, `misc.declaration_spacing` | `test_function_length.py`, `test_function_doc_header.py`, `test_assert_density.py`, `test_null_statement_comment.py`, `test_declaration_spacing.py` | PASS |
 | Misc — file constraints (v1.4.0) | `misc.file_length`, `misc.reserved_header_name` | `test_file_length.py`, `test_reserved_header_name.py` | PASS |
 | Naming (v1.4.0) | `naming.identifier_length`, `naming.no_single_char_identifiers` | `test_identifier_length.py`, `test_no_single_char_identifiers.py` | PASS |
 | Other | `reserved_name`, `spell_check`, `sign_compatibility`, `misc.declared_not_defined` | `test_reserved_name.py`, `test_spell_check.py`, `test_sign_compatibility.py`, `test_declared_not_defined.py` | PASS |
 
-**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1444 tests, all PASS, after #408, #407 and #413; 1452 tests, all PASS, after #412; 1463 tests, all PASS, after #418; 1481 tests, all PASS, after #420; 1508 tests, all PASS, after #422; 1524 tests, all PASS, after #424; 1532 tests, all PASS, after #425; 1545 tests, all PASS, after #423; 1559 tests, all PASS, after #439, #441 and the v1.6.1 back-merge; 1569 tests, all PASS, after #447; 1574 tests, all PASS, after #449
+**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1444 tests, all PASS, after #408, #407 and #413; 1452 tests, all PASS, after #412; 1463 tests, all PASS, after #418; 1481 tests, all PASS, after #420; 1508 tests, all PASS, after #422; 1524 tests, all PASS, after #424; 1532 tests, all PASS, after #425; 1545 tests, all PASS, after #423; 1559 tests, all PASS, after #439, #441 and the v1.6.1 back-merge; 1569 tests, all PASS, after #447; 1574 tests, all PASS, after #449; extended to 83 rule IDs by #456: 1630 tests, all PASS (local run, Python 3.14, 2026-11-19)
 
 ---
 
@@ -420,7 +422,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 |---|---|---|---|---|
 | SYS-VTC-001 | Input: multiple files and globs | SYS-F-001, F-004, F-005, F-033 | PASS | |
 | SYS-VTC-002 | Configuration and rule enablement | SYS-F-002, F-006, F-007, F-009, F-025, F-026, NF-007 | PASS | |
-| SYS-VTC-003 | Full rule coverage (81 rule IDs) | SYS-F-011 to F-024, SYS-F-020 | PASS | |
+| SYS-VTC-003 | Full rule coverage (83 rule IDs) | SYS-F-011 to F-024, SYS-F-020 | PASS | |
 | SYS-VTC-004 | Module prefix enforcement | SYS-F-012 | PASS | |
 | SYS-VTC-005 | Pointer and scope prefix rules | SYS-F-013, F-014 | PASS | |
 | SYS-VTC-006 | Output formats: text, JSON, SARIF | SYS-F-027, F-028, F-029, F-032 | PASS | |
@@ -452,7 +454,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | SYS-F-008 | `--exclusions` file | SITC-009 | Covered |
 | SYS-F-009 | Dictionary override flags | SYS-VTC-002 | Covered |
 | SYS-F-010 | Single file read per invocation | SYS-VTC-003 (via cache), SITC-008 | Covered |
-| SYS-F-011 to F-024 | All 81 rule IDs | SYS-VTC-003, VTC-004, VTC-005 | Covered |
+| SYS-F-011 to F-024 | All 83 rule IDs | SYS-VTC-003, VTC-004, VTC-005 | Covered |
 | SYS-F-025 | Rule `enabled` toggle | SYS-VTC-002 | Covered |
 | SYS-F-026 | Per-rule severity | SYS-VTC-002 | Covered |
 | SYS-F-027 | Text output format | SYS-VTC-006 | Covered |

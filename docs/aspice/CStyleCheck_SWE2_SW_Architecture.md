@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.32 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.33 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.33 | 2026-11-19 | Claude | Issue #456 (CR-456): COMP-05f adds `_check_partial_struct_assignment` and `_check_partial_struct_initialiser` (opt-in) with the helpers `_struct_entries` and `_iter_local_struct_decls`; COMP-05 constructor input `struct_defs` and module-level struct-definition table functions (`collect_struct_defs`, `collect_struct_defs_from_source`, `struct_rules_enabled`); §7 SWA-IF-11 (struct-definition table, COMP-01 → COMP-05); §8.1 struct-definition pre-pass in `main()`; §10 rows for SWE1-118 to SWE1-120 |
 | 1.32 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.31 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
 | 1.30 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
@@ -66,10 +67,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.28 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.23 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.38 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.29 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.29 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.24 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.39 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.30 |
 
 ---
 
@@ -108,7 +109,9 @@ src/cstylecheck/   (package — 12 sub-modules)
 │   │                                   _check_goto_usage, _check_assignment_in_condition,
 │   │                                   _check_multiple_statements_per_line, _check_void_pointer,
 │   │                                   _check_recursive_function, _check_sizeof_type,
-│   │                                   _check_boolean_comparison, _check_empty_else)
+│   │                                   _check_boolean_comparison, _check_empty_else,
+│   │                                   _check_partial_struct_assignment,
+│   │                                   _check_partial_struct_initialiser)
 │   ├── [COMP-05g] Sign Checker        (class SignChecker — _check_calls)
 │   └── [COMP-05h] Naming Checker      (_check_identifier_length,
 │                                       _check_no_single_char_identifiers)
@@ -177,7 +180,7 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | Attribute | Value |
 |---|---|
 | **Class** | `Checker` |
-| **Constructor inputs** | `filepath`, `source`, `cfg`, `spell_words`, `alias_prefixes`, `disabled_rules`, `ident_disabled_rules`, `defines`, `extra_banned`, `copyright_header` |
+| **Constructor inputs** | `filepath`, `source`, `cfg`, `spell_words`, `alias_prefixes`, `disabled_rules`, `ident_disabled_rules`, `defines`, `extra_banned`, `copyright_header`, `struct_defs` (cross-file struct-definition table, #456; this file's own definitions are merged over it) |
 | **Public interface** | `run_all() → CheckResult` |
 | **Internal state** | `self.clean`, `self.module`, `self.result`, `self._line_map`, `self._brace_depths`, `self._comment_only`, `self._disabled_rules`, `self._alias_prefixes` |
 
@@ -241,6 +244,10 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | `_check_sizeof_type()` | `misc.sizeof_type` (Barr-C §5.7; opt-in, disabled by default, #418) |
 | `_check_boolean_comparison()` | `misc.boolean_comparison` (style; opt-in, disabled by default, #412) |
 | `_check_empty_else()` | `misc.empty_else` (Barr-C §8.3; opt-in, disabled by default, #418) |
+| `_check_partial_struct_assignment()` | `misc.partial_struct_assignment` (MISRA 9.1 partial, Barr-C §7.2; opt-in, disabled by default, #456) |
+| `_check_partial_struct_initialiser()` | `misc.partial_struct_initialiser` (cf. MISRA 9.3; opt-in, disabled by default, #456) |
+
+Both #456 rules share the helpers `_struct_entries()` (resolves a `struct <tag>` or typedef key, following alias chains, to its member entries) and `_iter_local_struct_decls()` (yields each struct-typed local declarator inside a function body, with its initialiser, `static` flag, statement end and scope end). The member lists come from a struct-definition table built by the module-level functions `collect_struct_defs()` (one preprocessed text; uses `RE_STRUCT_DEF_OPEN`, `RE_STRUCT_TYPEDEF_ALIAS` and the helpers `_match_brace()`, `_split_top_level()`, `_declarator_name()`, `_struct_members()`) and `collect_struct_defs_from_source()` (preprocesses and applies `--defines` first); `struct_rules_enabled()` tells `main()` whether either rule is enabled.
 
 #### COMP-05g — Sign Checker (`class SignChecker`)
 
@@ -357,6 +364,7 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | SWA-IF-08 | COMP-05 | COMP-06 | `List[Violation]` | Passed to `write_baseline()` or filtered by `apply_baseline()` against `load_baseline()` |
 | SWA-IF-09 | COMP-06 | COMP-05 | `collections.Counter` multiset of `file:rule:message` baseline keys (line number excluded; paths normalised to `/`) | Consumed by `apply_baseline()` in `main()`; each entry suppresses at most one violation (issues #394, #395) |
 | SWA-IF-10 | COMP-05 | COMP-07 | `List[Violation]`, `files_checked: int` | Rendered to stdout / file / JSON / SARIF |
+| SWA-IF-11 | COMP-01 (`main()`) | COMP-05 | Struct-definition table `dict` (`struct <tag>` or typedef alias → member entries or alias key) | Built once from all scanned files before the per-file loop when a #456 rule is enabled or `--per-dir-config` is used; passed as `Checker(..., struct_defs=...)` (#456) |
 
 ---
 
@@ -371,6 +379,8 @@ main()
 ├─ COMP-02: load_config() → cfg
 ├─ COMP-03: load dictionaries → keyword_set, stdlib_set, spell_set
 ├─ COMP-06: load_baseline() → Counter multiset of baseline keys (if --baseline-file)
+├─ struct-definition pre-pass (#456; only if a partial-struct rule is enabled or --per-dir-config):
+│   └─ for each file: read once into source_cache; collect_struct_defs_from_source() → struct_defs
 │
 ├─ for each file in file_list:
 │   ├─ read file once → raw_source (cached in source_cache dict)
@@ -405,7 +415,9 @@ main()
 │   │   ├─ _check_recursive_function()      [COMP-05f, post-v1.6.0]
 │   │   ├─ _check_sizeof_type()             [COMP-05f, post-v1.6.0]
 │   │   ├─ _check_boolean_comparison()      [COMP-05f, post-v1.6.0]
-│   │   └─ _check_empty_else()              [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_empty_else()              [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_partial_struct_assignment()  [COMP-05f, post-v1.6.0, #456]
+│   │   └─ _check_partial_struct_initialiser() [COMP-05f, post-v1.6.0, #456]
 │   └─ accumulate violations
 │
 ├─ COMP-05g: SignChecker(source_cache, cfg).check() → sign violations
@@ -499,6 +511,9 @@ All config/usage errors go through `config_error()` (`utils.py`), which prints t
 | SWE1-114 | `misc.sizeof_type` | COMP-05f |
 | SWE1-115 | `misc.boolean_comparison` | COMP-05f |
 | SWE1-116 | `misc.empty_else` | COMP-05f |
+| SWE1-118 | `misc.partial_struct_assignment` | COMP-05f |
+| SWE1-119 | `misc.partial_struct_initialiser` | COMP-05f |
+| SWE1-120 | Cross-file struct-definition table | COMP-05 (`collect_struct_defs`), COMP-01 (`main()` pre-pass) |
 
 ---
 

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS3-001 | **Version** | 1.23 |
+| **Document ID** | CSC-SYS3-001 | **Version** | 1.24 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-11-19 | Claude | Issue #456: §9 traceability 81→83 rule IDs (the 2 opt-in partially-initialised local struct rules in SS-05) |
 | 1.23 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.22 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
 | 1.21 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
@@ -58,9 +59,9 @@ This System Architecture Description defines the top-level structural and behavi
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.21 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.29 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.29 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.22 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.30 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.30 |
 
 ---
 
@@ -240,7 +241,7 @@ If any configuration or invocation error is detected during steps 1 or 2:
 | SYS REQ-ID | Requirement Summary | Subsystem(s) |
 |---|---|---|
 | SYS-F-001 to SYS-F-010 | Input handling | SS-01 (CLI & Options Loader) |
-| SYS-F-011 to SYS-F-026 | Rule checking (all 81 rule IDs — 73 at v1.6.0 plus the 8 MISRA/Barr-C rules from #391/#392) | SS-05 (Rule Engine), SS-03 (Dictionary Manager) |
+| SYS-F-011 to SYS-F-026 | Rule checking (all 83 rule IDs — 73 at v1.6.0 plus the 8 MISRA/Barr-C rules from #391/#392 and the 2 partial-struct rules from #456) | SS-05 (Rule Engine), SS-03 (Dictionary Manager) |
 | SYS-F-027 to SYS-F-033 | Output formats and reporting | SS-06 (Output Formatter) |
 | SYS-F-034 to SYS-F-036 | Baseline suppression | SS-01 (flags), SS-05 (filter), SS-06 (write) |
 | SYS-F-037 to SYS-F-040 | Exit codes | SS-06 (exit code return) |

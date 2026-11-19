@@ -8,7 +8,7 @@ The purpose of this project is three-fold:
 ![Logo](logo/cstylecheck.jpg)
 
 Embedded C Style Compliance Checker for GitHub Actions / pre-commit hooks.
-Implements **Barr-C:2018** and MISRA-C complementary rules across **81 rule IDs**.
+Implements **Barr-C:2018** and MISRA-C complementary rules across **83 rule IDs**.
 
 [![Tests](https://github.com/dermot-murphy/CStyleCheck/actions/workflows/cstylecheck_tests.yml/badge.svg)](https://github.com/dermot-murphy/CStyleCheck/actions/workflows/cstylecheck_tests.yml)
 [![Naming Convention](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/cstylecheck/badge.json)](https://dermot-murphy.github.io/CStyleCheck/cstylecheck/)
@@ -17,7 +17,7 @@ Implements **Barr-C:2018** and MISRA-C complementary rules across **81 rule IDs*
 Contributions are very welcome.
 
 📖 **[Rules and Configuration Reference](Rules-and-Configuration.md)** — full
-documentation for all 81 rules with YAML configuration and annotated C examples.
+documentation for all 83 rules with YAML configuration and annotated C examples.
 
 Draft companion documents (pending rule population, not yet authoritative):
 [Embedded C Style Guide](embedded_c_style_guide.md) ·
@@ -47,7 +47,7 @@ Full charts and history on the **[Trend Analysis](https://github.com/dermot-murp
 ```
 .pre-commit-hooks.yml   # pre-commit hook definition (id: cstylecheck)
 pyproject.toml           # pip / pipx / pre-commit packaging metadata
-Rules-and-Configuration.md  # wiki: all 81 rules with config and examples
+Rules-and-Configuration.md  # wiki: all 83 rules with config and examples
 src/
     cstylecheck.py          # thin CLI shim (backward-compatible entry point)
     cstylecheck/            # checker package (12 sub-modules)
@@ -57,7 +57,7 @@ src/
         models.py           # Violation, CheckResult, shared constants
         preprocessor.py     # comment/string stripping, token extraction
         utils.py            # case matching, module name helpers
-        checker.py          # main Checker class — all 81 rule implementations
+        checker.py          # main Checker class — all 83 rule implementations
         sign_checker.py     # cross-file sign-compatibility and declared_not_defined
         baseline.py         # baseline load/write
         output.py           # text / JSON / SARIF / HTML formatters, Tee, summary
@@ -104,7 +104,8 @@ tests/
     test_comment_ratio.py   #  24 tests: misc.comment_ratio
     test_whitespace_ratio.py #  27 tests: misc.whitespace_ratio
     test_declared_not_defined.py # 39 tests: misc.declared_not_defined
-    test_misra_rules.py     # 160 tests: MISRA C / Barr-C rule coverage
+    test_misra_rules.py     # 162 tests: MISRA C / Barr-C rule coverage
+    test_partial_struct.py  #  54 tests: misc.partial_struct_assignment / _initialiser
     test_parameter_prefix.py #  51 tests: variable.parameter.*
     test_print_summary.py   #  11 tests: --summary per-file breakdown
     test_exclusions.py      #  28 tests: per-file exclusions
@@ -141,7 +142,7 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1574 tests)
+    cstylecheck_tests.yml      # runs the test suite on every commit (1630 tests)
     cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
@@ -463,8 +464,8 @@ their shipped default severities:
 
 | Preset | Opt-in rules enabled |
 |---|---|
-| `misra` | `misc.goto_usage` (15.1), `misc.assignment_in_condition` (13.4), `misc.void_pointer` (11.5), `misc.recursive_function` (17.2), `misc.empty_else` (related to 15.7) |
-| `barr-c` | `misc.multiple_statements_per_line` (§3.2), `misc.sizeof_type` (§5.7), `misc.empty_else` (§8.3) |
+| `misra` | `misc.goto_usage` (15.1), `misc.assignment_in_condition` (13.4), `misc.void_pointer` (11.5), `misc.recursive_function` (17.2), `misc.empty_else` (related to 15.7), `misc.partial_struct_assignment` (related to 9.1), `misc.partial_struct_initialiser` (related to 9.3) |
+| `barr-c` | `misc.multiple_statements_per_line` (§3.2), `misc.sizeof_type` (§5.7), `misc.empty_else` (§8.3), `misc.partial_struct_assignment` (§7.2) |
 | `minimal` | none |
 
 `misc.boolean_comparison` is a style rule and is in no preset.
@@ -562,10 +563,18 @@ Matching rules:
   `misc.recursive_function` (MISRA 17.2, direct recursion, error),
   `misc.sizeof_type` (Barr-C §5.7, info), `misc.boolean_comparison` (style, lowercase `true`/`false` only) and
   `misc.empty_else` (Barr-C §8.3). See [Rules and Configuration](Rules-and-Configuration.md).
+- **Partially initialised local structs** (#456), two more **opt-in** rules:
+  `misc.partial_struct_assignment` (warning; a local struct with no initialiser that has
+  only some members assigned before it is used as a whole — the rest hold indeterminate
+  stack data; related to MISRA 9.1 and Barr-C §7.2) and `misc.partial_struct_initialiser`
+  (info; a positional brace initialiser with fewer values than members; related to MISRA
+  9.3). Struct definitions are collected from every scanned file. See
+  [Rules and Configuration](Rules-and-Configuration.md).
 - **Presets enable the matching opt-in rules** (#420): `--preset misra` enables the five
-  MISRA rules above (plus `misc.empty_else`), `--preset barr-c` enables the three Barr-C
-  rules, and `--init` asks two new yes/no questions (default No). `misc.boolean_comparison`
-  is in no preset.
+  MISRA rules above (plus `misc.empty_else`, and since #456 both partial-struct rules),
+  `--preset barr-c` enables the three Barr-C rules (plus `misc.partial_struct_assignment`
+  since #456), and `--init` asks two new yes/no questions (default No).
+  `misc.boolean_comparison` is in no preset.
 - **Unknown case-style names are a config error** (#422): presets and `--init` now write
   canonical case names (`lower_snake`, `upper_snake`, `camel`, `pascal`); aliases such as
   `PascalCase` or `UPPER_SNAKE` are accepted and converted; an unknown name stops the run
@@ -587,7 +596,8 @@ rules opt-in) adds 11, #420 (preset opt-in rules) adds 18, #422 (case-style name
 checked) adds 13, #439 (no startup banner in a json / sarif / html `--log` file) adds 1, and #441
 (missing output folders created) adds 11, the v1.6.1 back-merge (#439 tests from `main`,
 `TestStartupBannerLogFile`) adds 2, and #447 (`misc.constant_comparison` skips `#if` / `#elif`)
-adds 10, and #449 (repository protection, workflow-configuration tests) adds 5: **1574 tests** in total.
+adds 10, #449 (repository protection, workflow-configuration tests) adds 5, and #456 (partially
+initialised local structs, 2 new rules; **83 rule IDs** total) adds 56: **1630 tests** in total.
 
 ### New in v1.2.0 (2026-05-29)
 
@@ -888,7 +898,7 @@ Rule ID: `misc.eof_comment` · Default severity: `warning`
 
 ---
 
-## Rule IDs (81 total)
+## Rule IDs (83 total)
 
 | Category | Rule IDs |
 |---|---|
@@ -898,7 +908,7 @@ Rule ID: `misc.eof_comment` · Default severity: `warning`
 | Naming | `naming.identifier_length` `naming.no_single_char_identifiers` |
 | Types | `typedef.case` `typedef.suffix` `enum.type_case` `enum.type_suffix` `enum.member_case` `enum.member_prefix` `struct.tag_case` `struct.tag_suffix` `struct.member_case` |
 | Include guards | `include_guard.missing` `include_guard.format` |
-| Misc | `misc.copyright_header` `misc.eof_comment` `misc.line_length` `misc.indentation` `misc.magic_number` `misc.unsigned_suffix` `misc.lowercase_l_suffix` `misc.yoda_condition` `misc.block_comment_spacing` `misc.comment_ratio` `misc.whitespace_ratio` `misc.declared_not_defined` `misc.function_length` `misc.function_doc_header` `misc.assert_density` `misc.null_statement_comment` `misc.declaration_spacing` `misc.file_length` `misc.reserved_header_name` `misc.non_ascii_source` `misc.octal_constant` `misc.trigraph` `misc.constant_comparison` `misc.goto_usage` `misc.assignment_in_condition` `misc.multiple_statements_per_line` `misc.void_pointer` `misc.recursive_function` `misc.sizeof_type` `misc.boolean_comparison` `misc.empty_else` |
+| Misc | `misc.copyright_header` `misc.eof_comment` `misc.line_length` `misc.indentation` `misc.magic_number` `misc.unsigned_suffix` `misc.lowercase_l_suffix` `misc.yoda_condition` `misc.block_comment_spacing` `misc.comment_ratio` `misc.whitespace_ratio` `misc.declared_not_defined` `misc.function_length` `misc.function_doc_header` `misc.assert_density` `misc.null_statement_comment` `misc.declaration_spacing` `misc.file_length` `misc.reserved_header_name` `misc.non_ascii_source` `misc.octal_constant` `misc.trigraph` `misc.constant_comparison` `misc.goto_usage` `misc.assignment_in_condition` `misc.multiple_statements_per_line` `misc.void_pointer` `misc.recursive_function` `misc.sizeof_type` `misc.boolean_comparison` `misc.empty_else` `misc.partial_struct_assignment` `misc.partial_struct_initialiser` |
 | Other | `reserved_name` `spell_check` `sign_compatibility` |
 
 ---

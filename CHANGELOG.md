@@ -30,7 +30,7 @@ linked entries under *Changed* and *Fixed* for details.
 
 ### Added
 
-- **8 new MISRA C / Barr-C rules** (81 rule IDs in total), all **disabled by default** (opt-in; `enabled: false` in `src/rules.yml`, and off when the
+- **8 new MISRA C / Barr-C rules** (81 rule IDs; 83 with the two #456 rules below), all **disabled by default** (opt-in; `enabled: false` in `src/rules.yml`, and off when the
   key is absent — #412, #418):
   - `misc.goto_usage` (error, disabled by default) — every `goto` (MISRA C:2012 Rule 15.1)
     ([#391](https://github.com/dermot-murphy/CStyleCheck/pull/391)).
@@ -51,6 +51,33 @@ linked entries under *Changed* and *Fixed* for details.
   The last six were added in [#392](https://github.com/dermot-murphy/CStyleCheck/pull/392).
   Projects upgrading with an existing `rules.yml` can add the new keys with
   `--update-config` (they are added as `enabled: false`). 76 new tests in `tests/test_misra_rules.py`.
+- **Partially initialised local structs — 2 new opt-in rules (#456)** (83 rule IDs in
+  total), both **disabled by default** (`enabled: false` in `src/rules.yml`, and off when
+  the key is absent), so upgrading adds no new findings:
+  - `misc.partial_struct_assignment` (warning, disabled by default) — a non-static local
+    struct declared without an initialiser whose members are only partly assigned before
+    the struct is first used as a whole (passed by value or address, returned, copied);
+    the unassigned members hold indeterminate stack data. Reported at the declaration;
+    the message names the use line and the unassigned members. A whole-struct
+    assignment, a call to one of `fill_functions` (default `memset`, `memcpy`,
+    `memmove`) with `&s` as its first argument, or `&s` passed to any other function
+    before the member writes counts as initialising every member. Order is lexical (no
+    control-flow analysis). Related to MISRA C:2012 Rule 9.1 and Barr-C §7.2.
+  - `misc.partial_struct_initialiser` (info, disabled by default) — a local (including
+    `static` local) struct whose positional brace initialiser lists fewer values than the
+    struct has members. `{0}`, `{}` and designated initialisers are not flagged. The code
+    is well-defined C (unlisted members are zero), so this is about intent only; cf.
+    MISRA C:2012 Rule 9.3.
+
+  Member lists come from the struct and typedef definitions in every scanned file
+  (collected in one pass before the files are checked, only when either rule is enabled
+  or `--per-dir-config` is used). `--preset misra` enables both rules and `--preset
+  barr-c` enables `misc.partial_struct_assignment`; the `--init` wizard lists them with
+  the other opt-in rules. Known limitation: a function whose return type is written
+  `struct tag` is not recognised, so its body is not checked. New module
+  `tests/test_partial_struct.py` (54 tests) and 2 new tests in
+  `tests/test_misra_rules.py`; total 1574→1630
+  (issue [#456](https://github.com/dermot-murphy/CStyleCheck/issues/456)).
 - **Trend analysis — safety indicators** — `scripts/collect_metrics.py` records
   `assert_count`, `assert_density` (per KLOC SLOC), `goto_count`, `void_ptr_count`,
   `cast_count` (C-style casts) and `macro_count` (excluding include guards), counted on

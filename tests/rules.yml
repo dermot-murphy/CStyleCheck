@@ -875,6 +875,44 @@ misc:
     enabled: false          # opt-in; disabled by default (#418)
     severity: warning
 
+  # -----------------------------------------------------------------------
+  # Partially assigned local struct — MISRA C:2012 Rule 9.1 / Barr-C §7.2
+  # -----------------------------------------------------------------------
+  # A non-static local struct declared without an initialiser holds
+  # indeterminate stack data in every member.  Flags such a struct when only
+  # some of its members are assigned before it is used as a whole (passed by
+  # value or address, returned, copied).  Member lists come from the struct
+  # definitions in all scanned files; structs whose definition is not
+  # scanned are not checked.  A whole-struct assignment, or a call to one of
+  # fill_functions with '&s' as its first argument, before the member
+  # assignments counts as initialising every member.  Passing '&s' to any
+  # other function before a member is assigned counts as an out-parameter
+  # fill.  Order is lexical (no control-flow analysis).
+  #
+  #   Violation:  uart_cfg_t cfg;  cfg.baud = 9600U;  Uart_Init(&cfg);
+  #   Correct:    uart_cfg_t cfg = {0};  cfg.baud = 9600U;  Uart_Init(&cfg);
+  partial_struct_assignment:
+    enabled: false          # opt-in; disabled by default (#456)
+    severity: warning
+    fill_functions:         # functions that write every member of '&s'
+      - memset
+      - memcpy
+      - memmove
+
+  # -----------------------------------------------------------------------
+  # Short positional struct initialiser — cf. MISRA C:2012 Rule 9.3
+  # -----------------------------------------------------------------------
+  # A positional brace initialiser of a local struct that lists fewer values
+  # than the struct has members.  The unlisted members are zero (C11 §6.7.9
+  # p21), so this is about explicit intent only.  {0}, {} and designated
+  # initialisers (.member = value) are not flagged.
+  #
+  #   Violation:  uart_cfg_t cfg = { 9600U };
+  #   Correct:    uart_cfg_t cfg = { .baud = 9600U };   or   = {0}
+  partial_struct_initialiser:
+    enabled: false          # opt-in; disabled by default (#456)
+    severity: info
+
 # --- Reserved / banned identifier names ---
 # Checks that no declared variable, function, macro, or constant name
 # shadows a C keyword, C++ keyword, or C standard library name.

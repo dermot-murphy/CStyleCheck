@@ -30,7 +30,9 @@ from .fixer import (apply_fixes, unified_diff, FIXABLE_RULES, SAFE_RULES,
                     get_fn_name_for_fix, fix_pointer_prefix_in_header)
 from .utils import (module_name, _cfg, config_error, EXIT_CONFIG_ERROR,
                     ensure_parent_dir)
-from .checker import Checker
+from .checker import (
+    Checker, collect_struct_defs_from_source, struct_rules_enabled,
+)
 from .sign_checker import SignChecker, DeclaredNotDefinedChecker
 from .baseline import load_baseline, write_baseline, apply_baseline
 from .output import Tee, _violations_to_json, _violations_to_sarif, _violations_to_html, print_summary
@@ -566,6 +568,22 @@ def _main() -> int:
         # Per-directory config cache: {dir_path -> effective_cfg}
         _per_dir_cache: dict = {}
 
+        # Cross-file struct definition table (#456): the partial-struct rules
+        # need the member list of struct types defined in headers, so every
+        # file is scanned for struct definitions before any file is checked.
+        struct_defs: dict | None = None
+        if struct_rules_enabled(cfg) or getattr(args, "per_dir_config", False):
+            struct_defs = {}
+            for filepath in files:
+                try:
+                    source = Path(filepath).read_text(encoding="utf-8",
+                                                      errors="replace")
+                except OSError:
+                    continue
+                source_cache[filepath] = source
+                struct_defs.update(
+                    collect_struct_defs_from_source(source, defines))
+
         for filepath in files:
             if getattr(args, "verbose", False):
                 if _verbose_tty:
@@ -573,8 +591,12 @@ def _main() -> int:
                 else:
                     print(f"Scanning: {filepath}", file=sys.stderr, flush=True)
             try:
-                source = Path(filepath).read_text(encoding="utf-8", errors="replace")
-                source_cache[filepath] = source
+                if filepath in source_cache:
+                    source = source_cache[filepath]
+                else:
+                    source = Path(filepath).read_text(encoding="utf-8",
+                                                      errors="replace")
+                    source_cache[filepath] = source
             except OSError as e:
                 tee.print(f"ERROR: Cannot read {filepath}: {e}")
                 continue
@@ -610,6 +632,7 @@ def _main() -> int:
                 copyright_header=copyright_header,
                 c_keywords=keywords_set,
                 c_stdlib_names=stdlib_set,
+                struct_defs=struct_defs,
             )
             result  = checker.run_all()
             all_violations.extend(result.violations)

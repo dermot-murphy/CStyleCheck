@@ -72,6 +72,8 @@ and `info`.
    - [9.26 `sizeof` with a type operand (Barr-C §5.7)](#926-sizeof-with-a-type-operand-barr-c-57)
    - [9.27 Boolean comparison](#927-boolean-comparison)
    - [9.28 Empty `else` (Barr-C §8.3)](#928-empty-else-barr-c-83)
+   - [9.29 Partially assigned local struct (MISRA C Rule 9.1, Barr-C §7.2)](#929-partially-assigned-local-struct-misra-c-rule-91-barr-c-72)
+   - [9.30 Short positional struct initialiser (cf. MISRA C Rule 9.3)](#930-short-positional-struct-initialiser-cf-misra-c-rule-93)
 10. [Reserved names](#10-reserved-names)
 11. [Spell check](#11-spell-check)
 12. [Sign compatibility](#12-sign-compatibility)
@@ -1937,6 +1939,132 @@ code. A block that contains a comment is accepted as intentional.
 
 ---
 
+### 9.29 Partially assigned local struct (MISRA C Rule 9.1, Barr-C §7.2)
+
+**Rule ID:** `misc.partial_struct_assignment` — **disabled by default (opt-in, #456)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. `--preset misra` (related to MISRA C:2012 Rule 9.1) and `--preset barr-c`
+(Barr-C §7.2) both enable it, as does answering yes to either the MISRA C:2012 or the
+Barr-C question in `--init`. To enable it by hand:
+
+```yaml
+misc:
+  partial_struct_assignment:
+    enabled: true        # default: false
+    severity: warning
+    fill_functions:      # functions that write every member of '&s'
+      - memset
+      - memcpy
+      - memmove
+```
+
+A non-static local struct declared without an initialiser holds indeterminate
+stack data in every member. The rule flags such a struct when, before its first
+use as a whole, the function assigns some but not all of its members. A use as a
+whole is passing the struct by value or by address to a function, returning it,
+or copying it (`x = s`). The violation is reported at the declaration; the
+message names the line of the use and the members that were not assigned.
+
+Member lists come from the struct definitions in **all scanned files**, so a type
+defined in a header is known when the header is in the scan. Both `struct tag`
+and typedef names (including `typedef struct tag Alias;`) are recognised.
+
+```c
+void Uart_Setup(void)
+{
+    uart_cfg_t cfg;                  /* ✗ misc.partial_struct_assignment */
+    cfg.baud = 9600U;                /*   (parity and stop_bits unassigned) */
+    Uart_Init(&cfg);
+}
+
+void Uart_Setup(void)
+{
+    uart_cfg_t cfg = {0};            /* ✓ initialiser */
+    cfg.baud = 9600U;
+    Uart_Init(&cfg);
+}
+
+void Uart_Setup(void)
+{
+    uart_cfg_t cfg;
+    (void)memset(&cfg, 0, sizeof(cfg)); /* ✓ fill function before the member writes */
+    cfg.baud = 9600U;
+    Uart_Init(&cfg);
+}
+```
+
+**Not flagged:**
+
+- any initialiser (`= {0}`, `= {}`, designated or positional, or a function result);
+- `static` locals (zero-initialised) and pointers or arrays of structs;
+- struct types whose definition is not in a scanned file;
+- a whole-struct assignment (`s = other;`), or a call to one of `fill_functions`
+  with `&s` as its first argument, before the member writes. A fill function is
+  recognised only when called as `name(&s, ...)`: a macro or function that takes
+  the struct by name (`INIT(s)`) counts as a use of the struct as a whole;
+- `&s` passed to any other function before any member is assigned (treated as an
+  out-parameter that fills the struct);
+- a struct whose members are only read and which is never used as a whole;
+- `sizeof(s)`;
+- uses of another object of the same name declared in a nested block or a `for`
+  initialiser (shadowing): the rest of that block, or that `for` statement, is
+  skipped.
+
+**Details and limitations:**
+
+- `&s.x` counts member `x` as assigned. A nested member write (`s.inner.a = 1`)
+  or an array-element write (`s.buf[0] = 1`) counts the top-level member as assigned.
+- An anonymous union member is covered when any one of its members is assigned;
+  the members of an anonymous struct member are counted individually.
+- Order is lexical: there is no control-flow analysis, so an assignment inside an
+  `if` branch counts as made, even when another branch does not make it.
+- A compound assignment (`s.x |= 1`) reads the indeterminate value; it is neither
+  reported nor counted as an assignment.
+- A struct declared in a `for` initialiser is not checked.
+- A member declared in both branches of `#if` / `#else` is counted once.
+- A function whose return type is written `struct tag` (not a typedef name) is not
+  recognised as a function definition, so its body is not checked.
+
+---
+
+### 9.30 Short positional struct initialiser (cf. MISRA C Rule 9.3)
+
+**Rule ID:** `misc.partial_struct_initialiser` — **disabled by default (opt-in, #456)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. `--preset misra` enables it (MISRA C:2012 Rule 9.3 is the same rule for
+arrays), as does answering yes to the MISRA C:2012 question in `--init`. To enable it
+by hand:
+
+```yaml
+misc:
+  partial_struct_initialiser:
+    enabled: true        # default: false
+    severity: info
+```
+
+Flags a local struct (including a `static` local) whose positional brace
+initialiser lists fewer top-level values than the struct has members. The code is
+well-defined C — unlisted members are zero (C11 §6.7.9 ¶21) — so the rule is about
+explicit intent only: it is not clear whether the missing values were forgotten.
+
+```c
+uart_cfg_t cfg = { 9600U };              /* ✗ misc.partial_struct_initialiser */
+uart_cfg_t cfg = { 9600U, PARITY_NONE, 1U }; /* ✓ every member listed */
+uart_cfg_t cfg = { .baud = 9600U };      /* ✓ designated initialiser */
+uart_cfg_t cfg = {0};                    /* ✓ zero idiom */
+```
+
+**Not flagged:** `{}`, a single zero value (`{0}`, `{0U}`, `{0UL}`, `{0x0}`,
+`{0.0f}`, `{false}`, `{FALSE}`, `{NULL}`), designated initialisers (`.x =` or
+`[n] =`), non-brace initialisers, file-scope objects, and struct types whose
+definition is not in a scanned file. A character literal such as `{'\0'}` is
+not recognised as zero. A member declared in both branches of `#if` / `#else` is
+counted once.
+
+---
+
 ## 10. Reserved names
 
 **Rule ID:** `reserved_name`
@@ -2287,6 +2415,8 @@ comma-separated lists.
 | `misc.sizeof_type` | info | `misc.sizeof_type.enabled` | `false` |
 | `misc.boolean_comparison` | warning | `misc.boolean_comparison.enabled` | `false` |
 | `misc.empty_else` | warning | `misc.empty_else.enabled` | `false` |
+| `misc.partial_struct_assignment` | warning | `misc.partial_struct_assignment.enabled` | `false` |
+| `misc.partial_struct_initialiser` | info | `misc.partial_struct_initialiser.enabled` | `false` |
 
 ---
 
@@ -2306,6 +2436,8 @@ are implemented, which are partially addressed, and which are explicitly out of 
 | Rule 7.1 | Octal constants shall not be used | **Implemented** | `misc.octal_constant` |
 | Rule 7.3 | The lowercase character 'l' shall not be used in a literal suffix | **Implemented** | `misc.lowercase_l_suffix` |
 | Rule 7.4 | A string literal shall not be assigned to an object unless the type is `const char *` | Out of scope | — |
+| Rule 9.1 | The value of an object with automatic storage duration shall not be read before it has been set | Partial — local structs with only some members assigned before use as a whole | `misc.partial_struct_assignment` |
+| Rule 9.3 | Arrays shall not be partially initialised | Related — the struct analogue: short positional initialisers of local structs (intent only) | `misc.partial_struct_initialiser` |
 | Rule 10.x | Essential type model (implicit conversions, composite expressions) | Out of scope | — |
 | Rule 11.5 | A conversion should not be performed from pointer to void into pointer to object | Partial — every `void *` use flagged | `misc.void_pointer` |
 | Rule 13.4 | The result of an assignment operator should not be used | Partial — assignments in `if`/`while`/`for` conditions | `misc.assignment_in_condition` |

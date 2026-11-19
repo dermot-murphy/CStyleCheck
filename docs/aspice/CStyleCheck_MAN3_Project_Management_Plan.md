@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN3-001 | **Version** | 1.25 |
+| **Document ID** | CSC-MAN3-001 | **Version** | 1.26 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.26 | 2026-11-19 | Claude | #456: §4.1 scope — 83 rule IDs (2 opt-in partially-initialised local struct rules added by #456); test suite 1630 tests across 60 modules; referenced-document versions resynced |
 | 1.25 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.24 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
 | 1.23 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
@@ -69,11 +70,11 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | System Requirements Specification | 2.21 |
-| CSC-SWE1-001 | Software Requirements Specification | 2.28 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.29 |
-| CSC-MAN5-001 | Risk Management Plan | 1.21 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.26 |
+| CSC-SYS2-001 | System Requirements Specification | 2.22 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.29 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.30 |
+| CSC-MAN5-001 | Risk Management Plan | 1.22 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.27 |
 
 ---
 
@@ -81,8 +82,8 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 ### 4.1 In Scope
 
-- Design, implementation, and testing of `src/cstylecheck/` package (12 sub-modules) implementing 81 rule IDs (73 at v1.6.0; 8 added on `develop` by #391/#392)
-- Test suite (1545 pytest tests across 58 test modules on `develop`, 2026-09-29, after #408, #407, #413, #412, #418, #420, #422, #424, #425 and #423; 1279 at v1.6.0)
+- Design, implementation, and testing of `src/cstylecheck/` package (12 sub-modules) implementing 83 rule IDs (73 at v1.6.0; 8 added on `develop` by #391/#392 and 2 by #456)
+- Test suite (1630 pytest tests across 60 test modules on `develop` with #456, 2026-11-19; 1545 across 58 modules on 2026-09-29, after #408, #407, #413, #412, #418, #420, #422, #424, #425 and #423; 1279 at v1.6.0)
 - Docker image build and multi-platform publication to GHCR and Docker Hub
 - GitHub Action integration (`action.yml`)
 - pre-commit hook integration (`.pre-commit-hooks.yml`)
