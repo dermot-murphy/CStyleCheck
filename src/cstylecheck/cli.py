@@ -591,8 +591,9 @@ def _main() -> int:
                 else:
                     print(f"Scanning: {filepath}", file=sys.stderr, flush=True)
             try:
-                source = source_cache.get(filepath)
-                if source is None:
+                if filepath in source_cache:
+                    source = source_cache[filepath]
+                else:
                     source = Path(filepath).read_text(encoding="utf-8",
                                                       errors="replace")
                     source_cache[filepath] = source
