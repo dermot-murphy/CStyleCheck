@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.42 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.43 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.43 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.42 | 2026-11-19 | Claude | Issue #449: §6 `test_workflow_config.py` 16→21 tests (`TestRepositoryProtection`, SUP9-TC-PROT-001 to 005: no push to the source branch, every workflow declares `permissions:`, rules-workflow token scopes, no `paths:` filter on `pull_request` in `cstylecheck_tests.yml`, *All Checks Passed* aggregate job); total 1569→1574; §4.2 CI-gate test count; referenced-document versions resynced |
 | 1.41 | 2026-10-06 | Claude | Issue #447: add §5.23 catalogue for `test_constant_comparison.py` (UV-CCMP-001 to UV-CCMP-008, 37 tests), including the two new classes UV-CCMP-007 `TestConstantComparisonPreprocessor` (5 tests: `#if` / `#elif`, indented and continuation-line conditions not reported; the next line still checked) and UV-CCMP-008 `TestConstantComparisonIdentifierExclusion` (5 tests: an `identifiers:` entry for either operand suppresses the finding; the operator text, another identifier or another rule does not); §6 `test_constant_comparison.py` 27→37; total 1559→1569; coverage-gate text 1559→1569; §7 SWE1-091 and SWE1-005/006 rows cite UV-CCMP |
 | 1.40 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): §5.12 adds UV-CLI-023 `TestStartupBannerLogFile.test_text_log_file_has_banner` and UV-CLI-024 `test_structured_log_file_has_no_banner` (the 2 v1.6.1 tests in `test_cli.py`; IDs renumbered from the v1.6.1 UV-CLI-011/012, which `develop` already uses for baseline tests); `test_cli.py` 43→45; total 1557→1559; SWE1-094 trace row cites UV-CLI-023/024 |
@@ -77,10 +78,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.27 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.37 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.31 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.28 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.28 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.38 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.32 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.29 |
 
 ---
 

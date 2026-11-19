@@ -140,7 +140,8 @@ linked entries under *Changed* and *Fixed* for details.
   Trend* gets `contents: write`), so the default `GITHUB_TOKEN` can be read-only.
   `cstylecheck_tests.yml` has no `paths:` filter on `pull_request` and adds an *All Checks
   Passed* job that passes when the unit tests passed or were skipped because no test-relevant
-  file changed; it is the required status check for `develop` and `main`. 5 new tests in
+  file changed. On `develop` it and *ASPICE work-product consistency* are required status
+  checks (ruleset `Develop_Required_Checks`; `main` is added after v2.0.0 — #453). 5 new tests in
   `tests/test_workflow_config.py` (`TestRepositoryProtection`); total 1569→1574.
 - **Dependabot targets `develop`** — `.github/dependabot.yml` sets `target-branch: develop`
   for the `pip` and `github-actions` ecosystems (hotfix

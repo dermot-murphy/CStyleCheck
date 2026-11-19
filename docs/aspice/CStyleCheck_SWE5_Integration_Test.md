@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.31 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.32 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.32 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.31 | 2026-11-19 | Claude | Issue #449: §6 post-v1.6.0 note — suite total 1569→1574 (5 workflow-configuration tests), all PASS; referenced-document versions resynced |
 | 1.30 | 2026-10-06 | Claude | Issue #447: §6 post-v1.6.0 note — suite total 1545→1559 (#439, #441, v1.6.1 back-merge) →1569 (`misc.constant_comparison` skips `#if` / `#elif`), all PASS |
 | 1.29 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): SIT-024 steps 5 and 6 (startup banner in the `--log` file for text output only) and the v1.6.1 execution record / overall result brought in from the v1.6.1 release |
@@ -67,11 +68,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.31 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.27 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.42 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.34 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.28 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.32 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.28 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.43 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.35 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.29 |
 
 ### 3.2 Test Environment
 

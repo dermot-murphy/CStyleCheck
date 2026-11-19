@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.27 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.28 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.28 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 2.27 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
 | 2.26 | 2026-10-06 | Claude | Issue #447: SWE1-091 — comparisons in `#if` / `#elif` preprocessor conditions (including backslash-continuation lines and directives with leading whitespace) are not reported by `misc.constant_comparison`; SWE1-005 — an `identifiers:` exclusion entry is matched against the identifiers a rule reports with its finding (for `misc.constant_comparison`, either operand), otherwise against the first quoted name in the message; RTM SWE1-091 row cites the new test classes |
 | 2.25 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
@@ -75,10 +76,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.20 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.22 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.31 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.28 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.21 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.23 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.32 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.29 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 

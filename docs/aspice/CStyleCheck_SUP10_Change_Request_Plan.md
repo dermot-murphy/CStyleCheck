@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.20 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.21 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.20 | 2026-11-19 | Claude | Issue #449: §6 CI-impact table — CI workflow scripts are CI-029 and CI-030 (CI-031 retired); referenced-document versions resynced |
 | 1.19 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
 | 1.18 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
@@ -54,9 +55,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.28 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.18 |
-| CSC-MAN3-001 | Project Management Plan | 1.24 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.29 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.19 |
+| CSC-MAN3-001 | Project Management Plan | 1.25 |
 
 ---
 

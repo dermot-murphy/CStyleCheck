@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.34 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.35 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.35 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.34 | 2026-11-19 | Claude | Issue #449: BP3 evidence — suite total 1574 after #449 (workflow-configuration tests); referenced-document versions resynced |
 | 1.33 | 2026-10-06 | Claude | Issue #447: BP3 evidence — suite total 1559 after #439, #441 and the v1.6.1 back-merge, 1569 after #447 (`misc.constant_comparison` preprocessor and identifier-exclusion tests) |
 | 1.32 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): §3.2 execution date, §3.3 criteria and §9 release readiness gate brought in from the v1.6.1 release; duplicate approval note removed |
@@ -70,10 +71,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.27 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.31 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.25 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.28 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.28 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.32 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.26 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.29 |
 
 ### 3.2 Software Configuration Under Test
 

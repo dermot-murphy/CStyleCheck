@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.28 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.29 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.29 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.28 | 2026-11-19 | Claude | #449: test total 1569→1574 (5 workflow-configuration tests); referenced-document versions resynced |
 | 1.27 | 2026-10-06 | Claude | #447: test total 1559 (#439, #441, v1.6.1 back-merge) →1569 (`misc.constant_comparison` preprocessor and identifier-exclusion tests) |
 | 1.26 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): SITC-006 step 4 (no startup banner in a json / sarif / html `--log` file), SYS-F-046 reference, v1.6.1 execution record and overall result brought in from the v1.6.1 release |
@@ -74,9 +75,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.20 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.22 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.25 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.21 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.23 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.26 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
