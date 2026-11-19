@@ -22,7 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.44 | 2026-11-19 | Claude | Issue #456 (CR-456): new §5.24 `test_partial_struct.py` (47 tests, UV-PSI-001 to UV-PSI-005) for SWE1-118 to SWE1-120 (UNIT-139 to UNIT-145); §5.14 `test_misra_rules.py` 160→162 (UV-MSR-009 11→13: key-absent tests for the two new opt-in rules; policy tests cover 10 opt-in rules); §5.18 UV-WIZ-004/005 — `misra` and `barr-c` presets and the wizard include the partial-struct rules (9 opt-in rules listed); §6 new module row, total 1574→1623 (60 modules, 83 rule IDs); §4.2 CI-gate test total; §7 rows SWE1-118 to SWE1-120 and SWE1-075 |
+| 1.44 | 2026-11-19 | Claude | Issue #456 (CR-456): new §5.24 `test_partial_struct.py` (52 tests, UV-PSI-001 to UV-PSI-005) for SWE1-118 to SWE1-120 (UNIT-139 to UNIT-145); §5.14 `test_misra_rules.py` 160→162 (UV-MSR-009 11→13: key-absent tests for the two new opt-in rules; policy tests cover 10 opt-in rules); §5.18 UV-WIZ-004/005 — `misra` and `barr-c` presets and the wizard include the partial-struct rules (9 opt-in rules listed); §6 new module row, total 1574→1628 (60 modules, 83 rule IDs); §4.2 CI-gate test total; §7 rows SWE1-118 to SWE1-120 and SWE1-075 |
 | 1.43 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.42 | 2026-11-19 | Claude | Issue #449: §6 `test_workflow_config.py` 16→21 tests (`TestRepositoryProtection`, SUP9-TC-PROT-001 to 005: no push to the source branch, every workflow declares `permissions:`, rules-workflow token scopes, no `paths:` filter on `pull_request` in `cstylecheck_tests.yml`, *All Checks Passed* aggregate job); total 1569→1574; §4.2 CI-gate test count; referenced-document versions resynced |
 | 1.41 | 2026-10-06 | Claude | Issue #447: add §5.23 catalogue for `test_constant_comparison.py` (UV-CCMP-001 to UV-CCMP-008, 37 tests), including the two new classes UV-CCMP-007 `TestConstantComparisonPreprocessor` (5 tests: `#if` / `#elif`, indented and continuation-line conditions not reported; the next line still checked) and UV-CCMP-008 `TestConstantComparisonIdentifierExclusion` (5 tests: an `identifiers:` entry for either operand suppresses the finding; the operator text, another identifier or another rule does not); §6 `test_constant_comparison.py` 27→37; total 1559→1569; coverage-gate text 1559→1569; §7 SWE1-091 and SWE1-005/006 rows cite UV-CCMP |
@@ -109,7 +109,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1623 tests (2026-11-19 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425, #423, #441, the v1.6.1 back-merge, #447, #449 and #456) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1628 tests (2026-11-19 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425, #423, #441, the v1.6.1 back-merge, #447, #449 and #456) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -528,7 +528,7 @@ Catalogued for issue #447, which adds the last two classes. `misc.constant_compa
 
 ---
 
-### 5.24 Partially Initialised Local Structs — `test_partial_struct.py` (47 tests)
+### 5.24 Partially Initialised Local Structs — `test_partial_struct.py` (52 tests)
 
 Added for issue #456. The two opt-in rules `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` need the member list of each struct type, so the module also tests the struct-definition table and the CLI pre-pass that builds it from every scanned file.
 
@@ -536,8 +536,8 @@ Added for issue #456. The two opt-in rules `misc.partial_struct_assignment` and 
 |---|---|---|---|---|
 | UV-PSI-001 | `TestCollectStructDefs` (10 tests) | SWE1-120 | UNIT-139, UNIT-141 | Typedef and tag keys recorded; a tagged struct without a typedef; function-pointer members and bit-fields (unnamed padding skipped); an anonymous union is one entry, anonymous struct members are flattened, a named nested struct is one member; `typedef struct tag Alias;` maps to the tag; pointer typedefs and unions not recorded; `struct_rules_enabled()` true only when a #456 rule is enabled |
 | UV-PSI-002 | `TestPartialStructAssignmentFlagged` (8 tests) | SWE1-118 | UNIT-143, UNIT-144 | Partly assigned struct then passed by address, passed by value, returned or copied is reported at the declaration with the use line and the unassigned members; one of two declarators flagged; type reached through a typedef alias; severity configurable |
-| UV-PSI-003 | `TestPartialStructAssignmentClean` (16 tests) | SWE1-118 | UNIT-142, UNIT-143, UNIT-144 | Negative: `{0}` initialiser, every member assigned, `memset` first, a configured custom fill function, whole-struct assignment first, `&s` out-parameter before any member write, member reads only, `sizeof(s)`, `&s.x` counts as assigned, `static` local, pointer and array declarators, unknown struct type, anonymous-union member, member of another object, rule disabled, code in a comment |
-| UV-PSI-004 | `TestPartialStructInitialiser` (10 tests) | SWE1-119 | UNIT-143, UNIT-145 | Short positional initialiser reported with the listed / total counts; negative: full positional list, trailing comma counted correctly, `{0}` and `{}`, designated initialiser, nested braces count as one value, file-scope object, copy initialiser, rule disabled; a `static` local is also checked |
+| UV-PSI-003 | `TestPartialStructAssignmentClean` (19 tests) | SWE1-118 | UNIT-142, UNIT-143, UNIT-144 | Negative: `{0}` initialiser, every member assigned, `memset` first, a configured custom fill function, whole-struct assignment first, `&s` out-parameter before any member write, member reads only, `sizeof(s)`, `&s.x` counts as assigned, `static` local, pointer and array declarators, unknown struct type, anonymous-union member, member of another object, a nested block that shadows the name (and a use after that block still checked), rule disabled, no struct table built when both rules are disabled, code in a comment |
+| UV-PSI-004 | `TestPartialStructInitialiser` (12 tests) | SWE1-119 | UNIT-143, UNIT-145 | Short positional initialiser reported with the listed / total counts; negative: full positional list, trailing comma counted correctly, `{0}` and `{}`, single zero values (`{0U}`, `{0UL}`, `{false}`, `{0x0}`, `{NULL}`, `{0.0f}`, `{0,}`), a member declared in both `#if` / `#else` branches counted once, designated initialiser, nested braces count as one value, file-scope object, copy initialiser, rule disabled; a `static` local is also checked |
 | UV-PSI-005 | `TestCrossFileStructDefs` (3 tests) | SWE1-118, SWE1-120 | UNIT-46, UNIT-140, UNIT-21 | Through the CLI: a struct defined in a scanned header is checked in a `.c` file; when the header is not scanned the struct is unknown and not reported; an inline suppression comment suppresses the finding |
 
 ---
@@ -601,12 +601,12 @@ Added for issue #456. The two opt-in rules `misc.partial_struct_assignment` and 
 | `test_no_single_char_identifiers.py` | 8 | 8 | 0 | COMP-05h (`_check_no_single_char_identifiers`) |
 | `test_print_summary.py` | 11 | 11 | 0 | `output.print_summary` (per-file breakdown) |
 | `test_constant_comparison.py` | 37 | 37 | 0 | COMP-05f (`_check_constant_comparison`) |
-| `test_partial_struct.py` | 47 | 47 | 0 | COMP-05f (`_check_partial_struct_assignment`, `_check_partial_struct_initialiser`, `_iter_local_struct_decls`, `_struct_entries`), COMP-05 (`collect_struct_defs`, `collect_struct_defs_from_source`, `struct_rules_enabled`), COMP-01 (`main` struct-definition pre-pass) |
+| `test_partial_struct.py` | 52 | 52 | 0 | COMP-05f (`_check_partial_struct_assignment`, `_check_partial_struct_initialiser`, `_iter_local_struct_decls`, `_struct_entries`), COMP-05 (`collect_struct_defs`, `collect_struct_defs_from_source`, `struct_rules_enabled`), COMP-01 (`main` struct-definition pre-pass) |
 | `test_unsigned_suffix_signed_params.py` | 15 | 15 | 0 | COMP-05f (`_check_misc` signed-param exemption) |
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
 | `test_cli_requirements.py` | 22 | 22 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
-| **Total** | **1623** | **1623** | **0** | All 83 rule IDs covered — 60 modules |
+| **Total** | **1628** | **1628** | **0** | All 83 rule IDs covered — 60 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)

@@ -2000,11 +2000,15 @@ void Uart_Setup(void)
 - `static` locals (zero-initialised) and pointers or arrays of structs;
 - struct types whose definition is not in a scanned file;
 - a whole-struct assignment (`s = other;`), or a call to one of `fill_functions`
-  with `&s` as its first argument, before the member writes;
+  with `&s` as its first argument, before the member writes. A fill function is
+  recognised only when called as `name(&s, ...)`: a macro or function that takes
+  the struct by name (`INIT(s)`) counts as a use of the struct as a whole;
 - `&s` passed to any other function before any member is assigned (treated as an
   out-parameter that fills the struct);
 - a struct whose members are only read and which is never used as a whole;
-- `sizeof(s)`.
+- `sizeof(s)`;
+- uses of another object of the same name declared in a nested block (shadowing):
+  the rest of that block is skipped.
 
 **Details and limitations:**
 
@@ -2013,7 +2017,11 @@ void Uart_Setup(void)
 - An anonymous union member is covered when any one of its members is assigned;
   the members of an anonymous struct member are counted individually.
 - Order is lexical: there is no control-flow analysis, so an assignment inside an
-  `if` branch counts as made.
+  `if` branch counts as made, even when another branch does not make it.
+- A compound assignment (`s.x |= 1`) reads the indeterminate value; it is neither
+  reported nor counted as an assignment.
+- A struct declared in a `for` initialiser is not checked.
+- A member declared in both branches of `#if` / `#else` is counted once.
 - A function whose return type is written `struct tag` (not a typedef name) is not
   recognised as a function definition, so its body is not checked.
 
@@ -2047,9 +2055,12 @@ uart_cfg_t cfg = { .baud = 9600U };      /* ✓ designated initialiser */
 uart_cfg_t cfg = {0};                    /* ✓ zero idiom */
 ```
 
-**Not flagged:** `{0}`, `{}`, designated initialisers (`.x =` or `[n] =`),
-non-brace initialisers, file-scope objects, and struct types whose definition is
-not in a scanned file.
+**Not flagged:** `{}`, a single zero value (`{0}`, `{0U}`, `{0UL}`, `{0x0}`,
+`{0.0f}`, `{false}`, `{FALSE}`, `{NULL}`), designated initialisers (`.x =` or
+`[n] =`), non-brace initialisers, file-scope objects, and struct types whose
+definition is not in a scanned file. A character literal such as `{'\0'}` is
+not recognised as zero. A member declared in both branches of `#if` / `#else` is
+counted once.
 
 ---
 

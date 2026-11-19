@@ -302,7 +302,15 @@ def _struct_members(body: str) -> tuple:
             name = _declarator_name(chunk)
             if name:
                 entries.append((name,))
-    return tuple(entries)
+    # Both branches of a conditional (#if / #else) member are parsed; keep
+    # the first entry for each name so a member is counted once.
+    seen: set = set()
+    unique: list = []
+    for entry in entries:
+        if not seen.intersection(entry):
+            unique.append(entry)
+        seen.update(entry)
+    return tuple(unique)
 
 
 def collect_struct_defs(clean: str) -> dict:
@@ -429,8 +437,11 @@ class Checker:
         # Struct definition table (#456): this file's definitions merged
         # over *struct_defs*, the table the CLI collects from every scanned
         # file (so struct types defined in headers are known).
-        self._struct_defs: dict = dict(struct_defs or {})
-        self._struct_defs.update(collect_struct_defs(self.clean))
+        # Built only when either rule is enabled for this file.
+        self._struct_defs: dict = {}
+        if struct_rules_enabled(cfg):
+            self._struct_defs.update(struct_defs or {})
+            self._struct_defs.update(collect_struct_defs(self.clean))
 
     # -----------------------------------------------------------------------
     # Internal helpers
@@ -2983,6 +2994,32 @@ class Checker:
         r"(?=\s+(?:(?:const|volatile)\s+)*[A-Za-z_]\w*\s*[=;,\[])"
     )
     _DEFAULT_FILL_FUNCTIONS = ("memset", "memcpy", "memmove")
+    # "<type> [*]" immediately before a name at statement start: a nested
+    # declaration that shadows the local struct.
+    _RE_SHADOW_DECL = re.compile(
+        r"[;{}]\s*(?:(?:const|volatile|static|register|unsigned|signed"
+        r"|struct|union|enum)\s+)*([A-Za-z_]\w*)\s*\**\s*$")
+    _SHADOW_TYPE_KW = frozenset((
+        "int", "char", "short", "long", "float", "double", "void",
+        "_Bool", "signed", "unsigned",
+    ))
+    # Single-item brace initialisers that zero the whole struct.
+    _RE_ZERO_ITEM = re.compile(
+        r"(?:0+[uUlL]*|0[xX]0+[uUlL]*|0*\.0*[fFlL]?|0\.?[fF]"
+        r"|false|FALSE|NULL|\(\s*void\s*\*\s*\)\s*0)")
+
+    def _block_end(self, pos: int, limit: int) -> int:
+        """Return the index of the '}' closing the block containing *pos*."""
+        depth = 0
+        for i in range(pos, limit):
+            ch = self.clean[i]
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                if depth == 0:
+                    return i
+                depth -= 1
+        return limit
 
     def _struct_entries(self, key: str):
         """Resolve *key* in the struct table to its member entries, or None."""
@@ -3069,11 +3106,21 @@ class Checker:
             assigned: set = set()
             use_pos = None
             word = re.compile(r"\b" + re.escape(name) + r"\b")
+            skip_until = -1
             for um in word.finditer(clean, semi + 1, scope_end):
                 q = um.start()
+                if q < skip_until:
+                    continue          # inside a block that shadows the name
                 before = clean[max(0, q - 120):q]
                 if re.search(r"(?:\.|->)\s*$", before):
                     continue          # member of another object
+                dm = self._RE_SHADOW_DECL.search(before)
+                if dm and (dm.group(1) not in self._c_keywords
+                           or dm.group(1) in self._SHADOW_TYPE_KW):
+                    # A nested declaration of the same name: skip to the
+                    # end of the block that declares it.
+                    skip_until = self._block_end(q, scope_end)
+                    continue
                 if re.search(r"\bsizeof\s*\(?\s*$", before):
                     continue          # sizeof does not read the value
                 rest = clean[um.end():scope_end]
@@ -3127,8 +3174,8 @@ class Checker:
             if close < 0:
                 continue
             inner = init[1:close].strip()
-            if inner in ("", "0"):
-                continue          # {} / {0}: deliberate zero initialisation
+            if not inner or self._RE_ZERO_ITEM.fullmatch(inner.rstrip(", ")):
+                continue          # {} / {0} / {0U} ...: zero initialisation
             items = [s.strip() for s in _split_top_level(inner, ",")]
             if items and not items[-1]:
                 items.pop()       # trailing comma

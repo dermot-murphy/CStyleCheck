@@ -105,7 +105,7 @@ tests/
     test_whitespace_ratio.py #  27 tests: misc.whitespace_ratio
     test_declared_not_defined.py # 39 tests: misc.declared_not_defined
     test_misra_rules.py     # 162 tests: MISRA C / Barr-C rule coverage
-    test_partial_struct.py  #  47 tests: misc.partial_struct_assignment / _initialiser
+    test_partial_struct.py  #  52 tests: misc.partial_struct_assignment / _initialiser
     test_parameter_prefix.py #  51 tests: variable.parameter.*
     test_print_summary.py   #  11 tests: --summary per-file breakdown
     test_exclusions.py      #  28 tests: per-file exclusions
@@ -142,7 +142,7 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1623 tests)
+    cstylecheck_tests.yml      # runs the test suite on every commit (1628 tests)
     cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
@@ -597,7 +597,7 @@ checked) adds 13, #439 (no startup banner in a json / sarif / html `--log` file)
 (missing output folders created) adds 11, the v1.6.1 back-merge (#439 tests from `main`,
 `TestStartupBannerLogFile`) adds 2, and #447 (`misc.constant_comparison` skips `#if` / `#elif`)
 adds 10, #449 (repository protection, workflow-configuration tests) adds 5, and #456 (partially
-initialised local structs, 2 new rules; **83 rule IDs** total) adds 49: **1623 tests** in total.
+initialised local structs, 2 new rules; **83 rule IDs** total) adds 54: **1628 tests** in total.
 
 ### New in v1.2.0 (2026-05-29)
 

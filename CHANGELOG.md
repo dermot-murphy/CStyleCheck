@@ -75,8 +75,8 @@ linked entries under *Changed* and *Fixed* for details.
   barr-c` enables `misc.partial_struct_assignment`; the `--init` wizard lists them with
   the other opt-in rules. Known limitation: a function whose return type is written
   `struct tag` is not recognised, so its body is not checked. New module
-  `tests/test_partial_struct.py` (47 tests) and 2 new tests in
-  `tests/test_misra_rules.py`; total 1574→1623
+  `tests/test_partial_struct.py` (52 tests) and 2 new tests in
+  `tests/test_misra_rules.py`; total 1574→1628
   (issue [#456](https://github.com/dermot-murphy/CStyleCheck/issues/456)).
 - **Trend analysis — safety indicators** — `scripts/collect_metrics.py` records
   `assert_count`, `assert_density` (per KLOC SLOC), `goto_count`, `void_ptr_count`,

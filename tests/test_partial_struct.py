@@ -225,9 +225,29 @@ class TestPartialStructAssignmentClean(unittest.TestCase):
         self._clean("    struct pt p = {0};\n    struct pt q;\n"
                     "    q.x = p.x;\n    q.y = 0;\n    Draw(q);")
 
+    def test_shadowing_block_skipped(self):
+        # PR #457 review R3: the inner 'c' is another object.
+        self._clean("    uart_cfg_t c;\n    c.baud = 1;\n"
+                    "    { int c = 3; Use_Int(c); }\n"
+                    "    c.parity = 1;\n    c.stop = 1;\n    Uart_Init(&c);")
+
+    def test_use_after_shadowing_block_still_checked(self):
+        src = _fn("    uart_cfg_t c;\n    c.baud = 1;\n"
+                  "    { uart_cfg_t c = {0}; Uart_Init(&c); }\n"
+                  "    Uart_Init(&c);")
+        viols = [v for v in run(src, _psa_cfg()) if v.rule == RULE_PSA]
+        self.assertEqual(len(viols), 1)
+        self.assertIn("line 8", viols[0].message)
+
     def test_disabled(self):
         src = _fn("    struct pt p;\n    p.x = 1;\n    Draw(p);")
         self.assertNotIn(RULE_PSA, rules(src, _psa_cfg(enabled=False)))
+
+    def test_table_not_built_when_rules_disabled(self):
+        # PR #457 review N3: no struct-table cost when both rules are off.
+        from cstylecheck.checker import Checker
+        c = Checker("test_module.c", _fn("    struct pt p;"), cfg_only())
+        self.assertEqual(c._struct_defs, {})
 
     def test_in_comment_not_flagged(self):
         self._clean("    /* struct pt p; p.x = 1; Draw(p); */\n    return;")
@@ -258,6 +278,21 @@ class TestPartialStructInitialiser(unittest.TestCase):
     def test_zero_and_empty_clean(self):
         src = _fn("    struct pt p = {0};\n    struct pt q = { };\n    Draw(p);"
                   "\n    Draw(q);")
+        self.assertNotIn(RULE_PSI, rules(src, _psi_cfg()))
+
+    def test_zero_literal_variants_clean(self):
+        # PR #457 review R1: {0U}, {false}, {0x0}, {NULL}, {0.0f} zero the
+        # whole struct just like {0}.
+        for init in ("0U", "0UL", "false", "0x0", "NULL", "0.0f", "0,"):
+            with self.subTest(init=init):
+                src = _fn(f"    struct pt p = {{ {init} }};\n    Draw(p);")
+                self.assertNotIn(RULE_PSI, rules(src, _psi_cfg()))
+
+    def test_conditional_member_counted_once(self):
+        # PR #457 review R2: both #if / #else branches declare 'b'.
+        src = ("typedef struct { int a;\n#if X\n    int b;\n#else\n"
+               "    long b;\n#endif\n    int c; } cond_t;\n"
+               "void f(void)\n{\n    cond_t s = { 1, 2, 3 };\n    Put(&s);\n}\n")
         self.assertNotIn(RULE_PSI, rules(src, _psi_cfg()))
 
     def test_designated_clean(self):

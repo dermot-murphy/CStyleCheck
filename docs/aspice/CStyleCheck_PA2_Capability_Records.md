@@ -20,7 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.41 | 2026-11-19 | Claude | #456: work-product counts for the two opt-in partially-initialised local struct rules — SYS.4 18 SITC; SWE.1 124 requirements (116 with a SYS.2 parent); SWE.3 145 units; SWE.4 1623 tests (60 modules); SWE.5 28 SIT, 11 SWA interfaces; SWE.6 116/116; 83 rule IDs; referenced-document versions resynced |
+| 1.41 | 2026-11-19 | Claude | #456: work-product counts for the two opt-in partially-initialised local struct rules — SYS.4 18 SITC; SWE.1 124 requirements (116 with a SYS.2 parent); SWE.3 145 units; SWE.4 1628 tests (60 modules); SWE.5 28 SIT, 11 SWA interfaces; SWE.6 116/116; 83 rule IDs; referenced-document versions resynced |
 | 1.40 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.39 | 2026-11-19 | Claude | #449: SWE.4 evidence — test total 1569→1574 (5 workflow-configuration tests in `tests/test_workflow_config.py`); referenced-document versions resynced |
 | 1.38 | 2026-10-06 | Claude | #447: SWE.4 evidence — test total 1545→1569, 58→59 modules (1559 after #439, #441 and the v1.6.1 back-merge; 10 new tests in `tests/test_constant_comparison.py`) |
@@ -89,7 +89,7 @@ For each assessed process, performance objectives are defined in the table below
 | SWE.1 | 124 software requirements defined, reviewed, approved; 116 traceable to a SYS.2 parent, and the 8 trend-metrics requirements (SWE1-102 to SWE1-108, SWE1-117) traceable to CSC-MAN3-001 §10.3 | CSC-SWE1-001 §4.18 verification criteria | ✅ Defined |
 | SWE.2 | Architecture reviewed; all SWE.1 requirements mapped to components; interfaces defined | CSC-SWE2-001 §10 traceability | ✅ Defined |
 | SWE.3 | All 145 units designed (UNIT-01 to UNIT-145, each with a §5 specification); resource usage documented | CSC-SWE3-001 §4 unit catalogue | ✅ Defined |
-| SWE.4 | ≥ 85% combined statement + branch coverage (CI gate); ≥ 90% statement / ≥ 85% branch (long-term target); all 1623 unit tests PASS on Python 3.10/11/12 | CSC-SWE4-001 §4.2 coverage criteria | ✅ Defined |
+| SWE.4 | ≥ 85% combined statement + branch coverage (CI gate); ≥ 90% statement / ≥ 85% branch (long-term target); all 1628 unit tests PASS on Python 3.10/11/12 | CSC-SWE4-001 §4.2 coverage criteria | ✅ Defined |
 | SWE.5 | All 28 SIT integration test cases PASS; all 11 SWA interfaces covered | CSC-SWE5-001 §3.3 verification criteria | ✅ Defined |
 | SWE.6 | All 12 SWQ qualification test cases PASS; 100% SW requirements coverage; release gate met | CSC-SWE6-001 §3.3 qualification criteria | ✅ Defined |
 | MAN.3 | All WBS work packages completed; milestones achieved within schedule | CSC-MAN3-001 §8 schedule | ✅ Defined |
@@ -273,7 +273,7 @@ The table below summarises all assessed processes and their CL2 PA achievement e
 | SWE.1 | 124 SW requirements (SWE1-109 to SWE1-117 added; SWE1-118 to SWE1-120 by #456); SWE1-102 to 108/117 parent = CSC-MAN3-001 §10.3 | Objectives: §4.1; strategy: §4.2 | CSC-SWE1-001 v2.29; in CM | **L** | #430 (closed) |
 | SWE.2 | 13 components (COMP-13 trend scripts added), 11 interfaces (SWA-IF-11 struct-definition table, #456); COMP-05f and run_all() include the 8 new checks and the 2 #456 checks | Objectives: §4.1 | CSC-SWE2-001 v1.33; in CM | **L** | #430 (closed) |
 | SWE.3 | 145 units (UNIT-139 to UNIT-145 by #456), all with §5 specs; line references regenerated; §6.3 baseline format corrected | Objectives: §4.1 | CSC-SWE3-001 v1.39; in CM | **L** | #430 (closed) |
-| SWE.4 | 1623 unit tests (60 modules); §7 traces all SW requirements; SWE1-015/094/096 unit tests added by #407 (RR-003-001 closed; SWE1-094 aligned with the implementation by CR-413 (#413), fully verified) | Objectives: §4.1; coverage targets | CSC-SWE4-001 v1.44; CI evidence | **F** | #430 (closed) |
+| SWE.4 | 1628 unit tests (60 modules); §7 traces all SW requirements; SWE1-015/094/096 unit tests added by #407 (RR-003-001 closed; SWE1-094 aligned with the implementation by CR-413 (#413), fully verified) | Objectives: §4.1; coverage targets | CSC-SWE4-001 v1.44; CI evidence | **F** | #430 (closed) |
 | SWE.5 | 28 SIT tests (SIT-027 for the 8 new rules, SIT-028 for the 2 #456 rules); SIT-012 updated for #394/#395 | Objectives: §4.1 | CSC-SWE5-001 v1.33; in CM | **L** | #430 (closed) |
 | SWE.6 | 12 SWQ tests; SWQ-003 covers 83 rule IDs; SWQ-007 aligned with SWE1-100; 116/116 in-scope requirements | Objectives: §4.1; release gate | CSC-SWE6-001 v1.36; CI evidence | **F** | #430 (closed) |
 | MAN.3 | WBS, schedule (actuals to v1.6.0; next release v2.0.0 (Major) planned, classification decision §8) and trend-metrics monitoring (§10.3) | Objectives: §4.1; §4.3 monitoring | CSC-MAN3-001 v1.26; in CM | **L** | #430 (closed) |
