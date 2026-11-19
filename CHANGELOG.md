@@ -78,6 +78,32 @@ linked entries under *Changed* and *Fixed* for details.
   `tests/test_partial_struct.py` (54 tests) and 2 new tests in
   `tests/test_misra_rules.py`; total 1574→1630
   (issue [#456](https://github.com/dermot-murphy/CStyleCheck/issues/456)).
+- **`misc.partial_struct_*`: struct definitions from files that are not checked (#461)** —
+  new rule key `definition_paths: []` (globs relative to the working directory) on
+  `misc.partial_struct_assignment` and `misc.partial_struct_initialiser`, and new CLI
+  option `--definitions GLOB` (repeatable). The files they name are read only for struct,
+  typedef and `#define` definitions: they are never checked or reported on, and
+  `--exclude` does not apply to them, so excluded vendor SDK headers can supply member
+  lists. The lists of both enabled rules are joined; `--definitions` globs come after
+  them. Precedence: checked files first, then definition files in the order listed; a
+  `#define` keeps its first value and a struct definition from a definition file never
+  replaces one from a checked file or an earlier definition file. Only the root
+  configuration's `definition_paths` are used (per-directory configs do not add any).
+  List the project's own configuration headers (for example `sdk_config.h`) first and
+  keep SDK globs narrow: SDK example folders contain their own `sdk_config.h` files with
+  different values. On a downstream nRF52840 project (228 files, nRF5 SDK 17.1.0 headers
+  as `definition_paths`) the rule now reports two local `nrfx_spim_config_t` structs with
+  10 of 14 members assigned (`dcx_pin`, `rx_delay`, `use_hw_ss` and `ss_duration`
+  missing), which it missed before. 5 new tests (UV-PSI-007)
+  (issue [#461](https://github.com/dermot-murphy/CStyleCheck/issues/461)).
+- **`misc.partial_struct_*`: `report_unknown_types` (#462)** — new rule key, default
+  `false`. When `true`, the rule gives one `info` finding (under its own rule ID) for
+  each local it could not check because its struct type has no definition: an explicit
+  `struct tag`, or a name that is neither a known typedef nor a standard type.
+  `misc.partial_struct_assignment` reports non-static locals without an initialiser;
+  `misc.partial_struct_initialiser` reports locals with a positional brace initialiser.
+  The default output is unchanged. 4 new tests (UV-PSI-008)
+  (issue [#462](https://github.com/dermot-murphy/CStyleCheck/issues/462)).
 - **Trend analysis — safety indicators** — `scripts/collect_metrics.py` records
   `assert_count`, `assert_density` (per KLOC SLOC), `goto_count`, `void_ptr_count`,
   `cast_count` (C-style casts) and `macro_count` (excluding include guards), counted on
@@ -208,6 +234,28 @@ linked entries under *Changed* and *Fixed* for details.
 
 ### Fixed
 
+- **`misc.sizeof_type` no longer reports objects that look like types (#460)** —
+  `sizeof(NAME)` was reported when `NAME` was upper case or ended in `_t`, even when it
+  was an object, for example `sizeof (STAGE_TABLE) / sizeof (STAGE_TABLE[0])` on a
+  `static const` lookup table. A name declared as an object (variable, parameter or
+  array) in the same file is now not reported; a typedef name still is. Limitation: an
+  object declared only in another file (for example an `extern` in a header) is not
+  known. On a downstream nRF52840 project (228 files) the `misc.sizeof_type` findings
+  went from 9 to 8. Rule added after v1.6.1, so no released version is affected. 5 new
+  tests in `tests/test_misra_rules.py` (`TestSizeofType`)
+  (issue [#460](https://github.com/dermot-murphy/CStyleCheck/issues/460)).
+- **`misc.partial_struct_*` count members inside inactive `#if` blocks (#463)** — a member
+  inside `#if` / `#ifdef` / `#ifndef` / `#elif` / `#else` in a struct body now counts only
+  when the condition evaluates true from the `#define`s collected from the checked files
+  and definition files (object-like and simple function-like macros, `defined`, integer
+  arithmetic). An identifier with no known `#define` is unknown, not 0, and an unknown
+  condition leaves its members out of the count, unless every arm of a group with
+  `#else` declares the member. This replaces the earlier rule that a member declared in
+  both `#if` and `#else` branches is counted once. Before, every branch was counted, so
+  the rule named members that do not exist in the build (for example the four members of
+  `nrfx_spim_config_t` under `NRFX_SPIM_EXTENDED_ENABLED`). Rules added after v1.6.1, so
+  no released version is affected. 11 new tests (UV-PSI-006)
+  (issue [#463](https://github.com/dermot-murphy/CStyleCheck/issues/463)).
 - **`misc.constant_comparison` no longer reports `#if` / `#elif` conditions (#447)** —
   the rule reported comparisons in preprocessor conditions such as
   `#if (BOARD_I2C_INSTANCE == 0U)`, which compare constants at compile time by design
@@ -306,6 +354,10 @@ linked entries under *Changed* and *Fixed* for details.
   containing backslashes are still honoured. New helper `_normalise_path()`.
 
 ### Tests
+
+- **#460–#463** — 25 new tests: 5 in `tests/test_misra_rules.py` (`TestSizeofType`) and
+  20 in `tests/test_partial_struct.py` (`TestPreprocessorConditionals` 11,
+  `TestDefinitionPaths` 5, `TestReportUnknownTypes` 4); total 1630→1655.
 
 - **Unit tests for SWE1-015, SWE1-094 and SWE1-096 (#407)** — new module
   `tests/test_cli_requirements.py` (16 tests, UV-CLI-014 to UV-CLI-022) asserts that

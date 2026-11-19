@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.31 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.32 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.32 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
 | 1.31 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.30 | 2026-11-19 | Claude | Cross-reference version resync with #456 |
 | 1.29 | 2026-11-19 | Claude | Issue #453: §7.1 and §7.5 match the live rulesets — `Do_Not_Delete_Main_Develop` (`develop`, `main`: pull request required, merge commits only, no deletion or force-push) has no required status check; the new `Develop_Required_Checks` ruleset (`develop` only) requires *All Checks Passed* and *ASPICE work-product consistency*; `main` is added to it after v2.0.0 (#443) so hotfix PRs into `main` are not blocked before then |
@@ -79,9 +80,9 @@ This plan applies to all configuration items produced by the CStyleCheck project
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.21 |
-| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.23 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.30 |
+| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.22 |
+| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.24 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.31 |
 
 ---
 

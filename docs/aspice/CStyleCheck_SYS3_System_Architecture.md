@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS3-001 | **Version** | 1.25 |
+| **Document ID** | CSC-SYS3-001 | **Version** | 1.26 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.26 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
 | 1.25 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.24 | 2026-11-19 | Claude | Issue #456: §9 traceability 81→83 rule IDs (the 2 opt-in partially-initialised local struct rules in SS-05) |
 | 1.23 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
@@ -60,9 +61,9 @@ This System Architecture Description defines the top-level structural and behavi
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.23 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.31 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.31 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.24 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.32 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.32 |
 
 ---
 

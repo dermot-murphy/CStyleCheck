@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.34 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.35 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.35 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): COMP-05 constructor inputs `macros` and `type_names`; COMP-05f `_check_sizeof_type` exempts objects via `_object_names` (#460); module-level helpers `collect_macros`, `eval_pp_condition`, `_members_with_conditionals` (#463), `collect_typedef_names`, `clean_for_struct_scan`, `struct_definition_paths` (#461, #462) and `_is_unknown_struct_type` / `_report_unknown_type`; §7 SWA-IF-11 also carries the macro table and typedef-name set, built from the checked files and the definition files; §8.1 pre-pass reads definition files (`definition_paths`, `--definitions`, `--exclude` not applied); §10 rows SWE1-121 to SWE1-123 |
 | 1.34 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.33 | 2026-11-19 | Claude | Issue #456 (CR-456): COMP-05f adds `_check_partial_struct_assignment` and `_check_partial_struct_initialiser` (opt-in) with the helpers `_struct_entries` and `_iter_local_struct_decls`; COMP-05 constructor input `struct_defs` and module-level struct-definition table functions (`collect_struct_defs`, `collect_struct_defs_from_source`, `struct_rules_enabled`); §7 SWA-IF-11 (struct-definition table, COMP-01 → COMP-05); §8.1 struct-definition pre-pass in `main()`; §10 rows for SWE1-118 to SWE1-120 |
 | 1.32 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
@@ -68,10 +69,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.30 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.25 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.40 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.31 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.31 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.26 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.41 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.32 |
 
 ---
 
@@ -181,7 +182,7 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | Attribute | Value |
 |---|---|
 | **Class** | `Checker` |
-| **Constructor inputs** | `filepath`, `source`, `cfg`, `spell_words`, `alias_prefixes`, `disabled_rules`, `ident_disabled_rules`, `defines`, `extra_banned`, `copyright_header`, `struct_defs` (cross-file struct-definition table, #456; this file's own definitions are merged over it) |
+| **Constructor inputs** | `filepath`, `source`, `cfg`, `spell_words`, `alias_prefixes`, `disabled_rules`, `ident_disabled_rules`, `defines`, `extra_banned`, `copyright_header`, `struct_defs` (cross-file struct-definition table, #456; this file's own definitions are merged over it), `macros` (`#define` table that resolves `#if` blocks in struct bodies, #463), `type_names` (typedef names found by the pre-pass, #462) |
 | **Public interface** | `run_all() → CheckResult` |
 | **Internal state** | `self.clean`, `self.module`, `self.result`, `self._line_map`, `self._brace_depths`, `self._comment_only`, `self._disabled_rules`, `self._alias_prefixes` |
 
@@ -242,13 +243,15 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | `_check_multiple_statements_per_line()` | `misc.multiple_statements_per_line` (Barr-C §3.2; opt-in, disabled by default, #418) |
 | `_check_void_pointer()` | `misc.void_pointer` (MISRA 11.5; opt-in, disabled by default, #418) |
 | `_check_recursive_function()` | `misc.recursive_function` (MISRA 17.2, direct; opt-in, disabled by default, #418) |
-| `_check_sizeof_type()` | `misc.sizeof_type` (Barr-C §5.7; opt-in, disabled by default, #418) |
+| `_check_sizeof_type()` | `misc.sizeof_type` (Barr-C §5.7; opt-in, disabled by default, #418); a name declared as an object in the file (`_object_names()`) is not a type operand (#460) |
 | `_check_boolean_comparison()` | `misc.boolean_comparison` (style; opt-in, disabled by default, #412) |
 | `_check_empty_else()` | `misc.empty_else` (Barr-C §8.3; opt-in, disabled by default, #418) |
 | `_check_partial_struct_assignment()` | `misc.partial_struct_assignment` (MISRA 9.1 partial, Barr-C §7.2; opt-in, disabled by default, #456) |
 | `_check_partial_struct_initialiser()` | `misc.partial_struct_initialiser` (cf. MISRA 9.3; opt-in, disabled by default, #456) |
 
-Both #456 rules share the helpers `_struct_entries()` (resolves a `struct <tag>` or typedef key, following alias chains, to its member entries) and `_iter_local_struct_decls()` (yields each struct-typed local declarator inside a function body, with its initialiser, `static` flag, statement end and scope end). The member lists come from a struct-definition table built by the module-level functions `collect_struct_defs()` (one preprocessed text; uses `RE_STRUCT_DEF_OPEN`, `RE_STRUCT_TYPEDEF_ALIAS` and the helpers `_match_brace()`, `_split_top_level()`, `_declarator_name()`, `_struct_members()`) and `collect_struct_defs_from_source()` (preprocesses and applies `--defines` first); `struct_rules_enabled()` tells `main()` whether either rule is enabled.
+Both #456 rules share the helpers `_struct_entries()` (resolves a `struct <tag>` or typedef key, following alias chains, to its member entries) and `_iter_local_struct_decls()` (yields each struct-typed local declarator inside a function body, with its initialiser, `static` flag, statement end and scope end). The member lists come from a struct-definition table built by the module-level functions `collect_struct_defs()` (one preprocessed text; uses `RE_STRUCT_DEF_OPEN`, `RE_STRUCT_TYPEDEF_ALIAS` and the helpers `_match_brace()`, `_split_top_level()`, `_declarator_name()`, `_struct_members()`) and `collect_struct_defs_from_source()` (preprocesses and applies `--defines` first, via `clean_for_struct_scan()`); `struct_rules_enabled()` tells `main()` whether either rule is enabled.
+
+Since #461 to #463: `struct_definition_paths()` returns the `definition_paths` globs of the enabled rules in the root configuration, which `main()` joins with the `--definitions` globs to find **definition files** (read for definitions only, never checked, `--exclude` not applied). `collect_macros()` collects each file's `#define`s into one macro table (first value wins; checked files first, then definition files in listed order); `collect_struct_defs(clean, macros)` passes it to `_members_with_conditionals()`, which resolves the `#if` / `#ifdef` / `#elif` / `#else` blocks of a struct body with the three-valued evaluator `eval_pp_condition()` (helpers `_pp_tokenize()`, `_pp_expand()`, `_PPExprParser`, `_resolve_conditionals()`, `_CondFrame`) so that only members under a true condition count. `collect_typedef_names()` lists every typedef name; with `report_unknown_types: true`, `_iter_local_struct_decls(include_unknown=True)` also yields locals whose type `_is_unknown_struct_type()` finds unknown, and `_report_unknown_type()` reports each as `info` under the rule's own ID.
 
 #### COMP-05g — Sign Checker (`class SignChecker`)
 
@@ -365,7 +368,7 @@ Both #456 rules share the helpers `_struct_entries()` (resolves a `struct <tag>`
 | SWA-IF-08 | COMP-05 | COMP-06 | `List[Violation]` | Passed to `write_baseline()` or filtered by `apply_baseline()` against `load_baseline()` |
 | SWA-IF-09 | COMP-06 | COMP-05 | `collections.Counter` multiset of `file:rule:message` baseline keys (line number excluded; paths normalised to `/`) | Consumed by `apply_baseline()` in `main()`; each entry suppresses at most one violation (issues #394, #395) |
 | SWA-IF-10 | COMP-05 | COMP-07 | `List[Violation]`, `files_checked: int` | Rendered to stdout / file / JSON / SARIF |
-| SWA-IF-11 | COMP-01 (`main()`) | COMP-05 | Struct-definition table `dict` (`struct <tag>` or typedef alias → member entries or alias key) | Built once from all scanned files before the per-file loop when a #456 rule is enabled or `--per-dir-config` is used; passed as `Checker(..., struct_defs=...)` (#456) |
+| SWA-IF-11 | COMP-01 (`main()`) | COMP-05 | Struct-definition table `dict` (`struct <tag>` or typedef alias → member entries or alias key); macro table `dict` (name → (params, body), #463); typedef-name `set` (#462) | Built once from all scanned files and the definition files (`definition_paths`, `--definitions`; #461) before the per-file loop when a #456 rule is enabled or `--per-dir-config` is used; passed as `Checker(..., struct_defs=..., macros=..., type_names=...)` (#456, #461 to #463) |
 
 ---
 
@@ -381,7 +384,12 @@ main()
 ├─ COMP-03: load dictionaries → keyword_set, stdlib_set, spell_set
 ├─ COMP-06: load_baseline() → Counter multiset of baseline keys (if --baseline-file)
 ├─ struct-definition pre-pass (#456; only if a partial-struct rule is enabled or --per-dir-config):
-│   └─ for each file: read once into source_cache; collect_struct_defs_from_source() → struct_defs
+│   ├─ definition files = discover_files(struct_definition_paths(cfg) + --definitions), no --exclude,
+│   │   minus the checked files (#461)
+│   ├─ for each checked file, then each definition file: read once (checked files into source_cache);
+│   │   clean_for_struct_scan(); collect_macros() → macros (first value wins, #463)
+│   └─ for each cleaned text in the same order: collect_struct_defs(clean, macros) → struct_defs
+│       (checked files override; definition files only add new keys); collect_typedef_names() → type_names
 │
 ├─ for each file in file_list:
 │   ├─ read file once → raw_source (cached in source_cache dict)
@@ -515,6 +523,9 @@ All config/usage errors go through `config_error()` (`utils.py`), which prints t
 | SWE1-118 | `misc.partial_struct_assignment` | COMP-05f |
 | SWE1-119 | `misc.partial_struct_initialiser` | COMP-05f |
 | SWE1-120 | Cross-file struct-definition table | COMP-05 (`collect_struct_defs`), COMP-01 (`main()` pre-pass) |
+| SWE1-121 | Definition files (`definition_paths`, `--definitions`) | COMP-05 (`struct_definition_paths`, `clean_for_struct_scan`), COMP-01 (`main()` pre-pass, argument parser) |
+| SWE1-122 | `report_unknown_types` | COMP-05f (`_iter_local_struct_decls`, `_is_unknown_struct_type`, `_report_unknown_type`), COMP-05 (`collect_typedef_names`) |
+| SWE1-123 | `#if` members in struct definitions | COMP-05 (`collect_macros`, `eval_pp_condition`, `_members_with_conditionals`), COMP-01 (`main()` macro table) |
 
 ---
 

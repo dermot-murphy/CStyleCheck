@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.23 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.24 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-11-19 | Claude | Issues #461 and #462: §7 register rows and §7.1 records CR-461 (definition files for `misc.partial_struct_*`: `definition_paths`, `--definitions GLOB`; new requirement SWE1-121; Medium; backwards compatible) and CR-462 (`report_unknown_types`; new requirement SWE1-122; Low; backwards compatible); the companion problem reports #460 and #463 are in CSC-SUP9-001 §6.2; referenced-document versions resynced |
 | 1.23 | 2026-11-19 | Claude | Issue #458: §7 register and §7.1 records — CR-441 (PR #442, merge `81b6f2e`) and CR-456 (PR #457, merge `d97c0b2`) set to Closed |
 | 1.22 | 2026-11-19 | Claude | Issue #456: §7 register row and §7.1 record CR-456 (two opt-in rules for partially initialised local structs, `misc.partial_struct_assignment` and `misc.partial_struct_initialiser`; new requirements SWE1-118 to SWE1-120; Medium; disabled by default, no compatibility impact) |
 | 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
@@ -57,9 +58,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.31 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.21 |
-| CSC-MAN3-001 | Project Management Plan | 1.27 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.32 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.22 |
+| CSC-MAN3-001 | Project Management Plan | 1.28 |
 
 ---
 
@@ -192,6 +193,8 @@ Summary view:
 | #425 | `bug` | Config and usage errors exit 2 from the installed `cstylecheck` command | High | Closed — PR #428, merge `7ddf732` | v2.0.0 |
 | #441 | `enhancement` | [CR] Create the parent folder of output files (`--log`, `--write-baseline`, `--init-output`) if it does not exist | Medium | Closed — PR #442, merge `81b6f2e` | v2.0.0 |
 | #456 | `enhancement` | [CR] Opt-in rules for partially initialised local structs (`misc.partial_struct_assignment`, `misc.partial_struct_initialiser`) | Medium | Closed — PR [#457](https://github.com/dermot-murphy/CStyleCheck/pull/457), merge `d97c0b2` | v2.0.0 |
+| #461 | `enhancement` | [CR] `misc.partial_struct_*`: read struct definitions from excluded paths (e.g. vendor SDK headers) | Medium | Open — implementing PR | v2.0.0 |
+| #462 | `enhancement` | [CR] `misc.partial_struct_*`: optionally report locals whose struct type is unknown | Low | Open — implementing PR | v2.0.0 |
 
 ### 7.1 Change Request Records
 
@@ -316,6 +319,36 @@ Summary view:
 | **Verification** | New module `tests/test_partial_struct.py` (54 tests) and 2 key-absent tests in `tests/test_misra_rules.py` (UV-MSR-009); `tests/test_init_wizard.py` preset / wizard tests cover the new rules; SIT-028, SITC-018; test total 1574→1630 |
 | **Approval** | By merge (CSC-DEV-002 §5.2) — owner merge of the implementing PR |
 | **Status / target release** | Closed / v2.0.0 |
+
+| Field | CR-461 |
+|---|---|
+| **Issue / PR** | [#461](https://github.com/dermot-murphy/CStyleCheck/issues/461) / implementing PR (shared with #460, #462, #463) |
+| **Date** | 2026-11-19 |
+| **Raised by / implemented by** | Dermot Murphy / Claude |
+| **Type** | `enhancement` — new rule key, new CLI option and a new requirement |
+| **Impact level** | Medium — changes CIs `checker.py` (new module-level functions `struct_definition_paths`, `clean_for_struct_scan`, `collect_macros`, `collect_typedef_names`; `Checker.__init__` gains `macros=` and `type_names=`), `cli.py` (`--definitions GLOB`; the `main()` pre-pass reads definition files), `src/rules.yml` and `tests/rules.yml` (`definition_paths: []` on both rules), and adds requirement SWE1-121 with minor changes to SWE1-120 and SYS-F-020; SWA-IF-11 carries more data. Not High: the key defaults to an empty list and the option is new, so an existing configuration behaves as before |
+| **Change** | `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` take `definition_paths` (globs relative to the working directory; the lists of both enabled rules are joined), and the repeatable `--definitions GLOB` adds more. These **definition files** are read only for struct, typedef and `#define` definitions: they are never checked or reported on, and `--exclude` does not apply to them. Precedence: checked files first, then definition files in the order listed; a `#define` keeps its first value; a struct definition from a definition file never replaces one from a checked file or an earlier definition file. Only the root configuration's `definition_paths` are used |
+| **Rationale** | Projects exclude vendor SDK code from checking, but the local structs most often set member by member are SDK configuration structs (nRF `nrfx_spim_config_t`, STM32 HAL `*_InitTypeDef`); without their definitions the rule checks nothing. On a downstream nRF52840 project (228 files, nRF5 SDK 17.1.0 headers given as `definition_paths`) the rule now reports two local `nrfx_spim_config_t` structs with 10 of 14 members assigned (`dcx_pin`, `rx_delay`, `use_hw_ss` and `ss_duration` missing), which it missed before |
+| **Affected work products** | SYS-F-020, SWE1-120, SWE1-121; CSC-SYS2-001 v2.24, CSC-SWE1-001 v2.31, CSC-SWE2-001 v1.35 (SWA-IF-11), CSC-SWE3-001 v1.41 (UNIT-46, UNIT-88, UNIT-150, UNIT-151), CSC-SWE4-001 v1.46 (UV-PSI-007), CSC-SWE5-001 v1.35 (SIT-028), CSC-SWE6-001 v1.38, CSC-SYS4-001 v1.32 (SITC-018), CSC-SYS5-001 v1.29, README, Rules-and-Configuration, CHANGELOG |
+| **Impact analysis** | With no definition files nothing changes. With them, each definition file is read once per run in addition to the checked files (no source cache entry, as it is never checked); a broad glob over a whole SDK costs read time and can pick up SDK example `sdk_config.h` files whose `#define`s then win, so the documentation advises listing the project's configuration headers first and keeping SDK globs narrow. Per-directory configurations do not add definition files (a known limitation, documented). More structs become known, so enabling the option can report findings that were silently skipped before — the purpose of the change. No impact on SIT, SWQ or SYS-VTC procedures beyond the new SIT-028 / SITC-018 steps |
+| **Verification** | `tests/test_partial_struct.py` UV-PSI-007 `TestDefinitionPaths` (5 tests); SIT-028 steps 7 to 9, SITC-018 step 5; test total 1630→1655 with #460, #462 and #463 |
+| **Approval** | By merge (CSC-DEV-002 §5.2) — owner merge of the implementing PR |
+| **Status / target release** | Open / v2.0.0 |
+
+| Field | CR-462 |
+|---|---|
+| **Issue / PR** | [#462](https://github.com/dermot-murphy/CStyleCheck/issues/462) / implementing PR (shared with #460, #461, #463) |
+| **Date** | 2026-11-19 |
+| **Raised by / implemented by** | Dermot Murphy / Claude |
+| **Type** | `enhancement` — new rule key and a new requirement |
+| **Impact level** | Low — changes CI `checker.py` (`Checker._is_unknown_struct_type`, `Checker._report_unknown_type`, `_STD_SCALAR_TYPES`, `_iter_local_struct_decls(include_unknown=False)`, `collect_typedef_names`), `src/rules.yml` and `tests/rules.yml` (`report_unknown_types: false` on both rules), and adds requirement SWE1-122. The key defaults to `false`, so the output of an existing configuration does not change |
+| **Change** | With `report_unknown_types: true`, `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` give one `info` finding, under their own rule ID, for each local they could not check because its struct type has no definition: an explicit `struct tag`, or a name that is neither a typedef found in the checked or definition files nor a standard type. The assignment rule reports non-static locals without an initialiser; the initialiser rule reports locals with a positional brace initialiser |
+| **Rationale** | A run that skips every local of an unknown type reads as a clean result; the user cannot tell "fully initialised" from "never checked" (on a downstream nRF52840 project every SDK configuration struct was skipped this way, including one that really was partly initialised, see CR-461) |
+| **Affected work products** | SYS-F-020, SWE1-122; CSC-SYS2-001 v2.24, CSC-SWE1-001 v2.31, CSC-SWE2-001 v1.35, CSC-SWE3-001 v1.41 (UNIT-143 to UNIT-145, UNIT-149, UNIT-152, UNIT-153), CSC-SWE4-001 v1.46 (UV-PSI-008), CSC-SWE5-001 v1.35 (SIT-028), CSC-SWE6-001 v1.38, CSC-SYS4-001 v1.32 (SITC-018), CSC-SYS5-001 v1.29, README, Rules-and-Configuration, CHANGELOG |
+| **Impact analysis** | Default output unchanged. When enabled, the extra findings are `info` (they do not change the exit code unless `--warnings-as-errors` is used) and can be suppressed like any other finding (inline, `--exclusions`, baseline). A typedef name that is not a struct (enum, scalar, pointer typedef) is not reported when its typedef is in a checked or definition file; a project type defined only in an unscanned header is reported, which is the intent |
+| **Verification** | `tests/test_partial_struct.py` UV-PSI-008 `TestReportUnknownTypes` (4 tests); SIT-028 step 10, SITC-018 step 7 |
+| **Approval** | By merge (CSC-DEV-002 §5.2) — owner merge of the implementing PR |
+| **Status / target release** | Open / v2.0.0 |
 
 ### 7.2 Release Classification Decision
 

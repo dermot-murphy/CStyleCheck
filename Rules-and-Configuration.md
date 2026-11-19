@@ -1873,9 +1873,19 @@ misc:
 `sizeof(var)` or `sizeof(*p_var)`. Flags primitive types, `*_t` typedefs and
 capitalised type names.
 
+A name declared as an object in the same file (a variable, parameter or array) is
+not taken for a type, even when it is upper case or ends in `_t`, so
+`sizeof(STAGE_TABLE) / sizeof(STAGE_TABLE[0])` on a `const` lookup table is not
+reported (#460). A name declared by `typedef` is still reported. An object
+declared only in another file (for example an `extern` in a header) is not known,
+so `sizeof` of such an upper-case or `_t` name is still reported.
+
 ```c
 memset(p_buf, 0, sizeof(uint32_t) * N);   /* ✗ misc.sizeof_type */
 memset(p_buf, 0, sizeof(*p_buf) * N);     /* ✓ */
+
+static const stage_t STAGE_TABLE[] = { … };
+#define STAGE_COUNT (sizeof(STAGE_TABLE) / sizeof(STAGE_TABLE[0]))   /* ✓ object, not a type */
 ```
 
 ---
@@ -1957,6 +1967,8 @@ misc:
       - memset
       - memcpy
       - memmove
+    definition_paths: [] # files read only for struct / typedef / #define definitions (#461)
+    report_unknown_types: false  # info per local whose struct type is unknown (#462)
 ```
 
 A non-static local struct declared without an initialiser holds indeterminate
@@ -1969,6 +1981,88 @@ message names the line of the use and the members that were not assigned.
 Member lists come from the struct definitions in **all scanned files**, so a type
 defined in a header is known when the header is in the scan. Both `struct tag`
 and typedef names (including `typedef struct tag Alias;`) are recognised.
+
+#### Struct definitions from files that are not checked (`definition_paths`, `--definitions`)
+
+Vendor SDK code is normally excluded from checking (`--exclude "src/cots/**"`), but
+the structs most often set member by member are SDK configuration structs
+(`nrfx_spim_config_t`, `*_InitTypeDef` and so on). To give the rules their member
+lists, name the SDK headers as **definition files** (#461):
+
+```yaml
+misc:
+  partial_struct_assignment:
+    enabled: true
+    definition_paths:
+      - "software/config/sdk_config.h"                       # project config first
+      - "software/source/cots/nrfx/drivers/include/*.h"
+      - "software/source/cots/nrfx/mdk/*.h"
+```
+
+or on the command line with `--definitions GLOB` (repeatable). Globs are relative to
+the working directory, as for `--include`.
+
+- Definition files are read **only** for struct, typedef and `#define` definitions.
+  They are never checked and never reported on, and `--exclude` does not apply to
+  them: an excluded SDK folder can still be named here.
+- The two rules share one list: the `definition_paths` of every enabled
+  `misc.partial_struct_*` rule are joined (in order, without duplicates), and
+  `--definitions` globs are added after them.
+- Precedence: the checked files come first, then the definition files in the order
+  their globs are listed. A `#define` keeps the first value found; a struct
+  definition from a definition file never replaces one from a checked file or from
+  an earlier definition file.
+- Only the root configuration's `definition_paths` are used. A per-directory
+  `.cstylecheck.yml` (`--per-dir-config`) does not add any; put them in the root
+  config or use `--definitions`.
+
+> **Tip:** list the project's own configuration headers (for example
+> `sdk_config.h`) **first**, then keep the SDK globs narrow (the driver and MDK
+> include folders, not the whole SDK). SDK example folders contain their own
+> `sdk_config.h` files with different values; if one of them is read first, its
+> `#define`s win and `#if` blocks in struct bodies are resolved against the wrong
+> configuration.
+
+#### `#if` blocks inside struct definitions
+
+A member inside `#if` / `#ifdef` / `#ifndef` / `#elif` / `#else` in a struct body
+counts only when the condition evaluates true from the `#define`s found in the
+checked files and definition files (#463). The evaluator handles object-like and
+simple function-like macros, `defined`, integer arithmetic, comparison and logical
+operators. An identifier with no known `#define` is **unknown**, not 0: a condition
+whose value depends on it is unknown, and the members under it are left out of the
+count. The exception is a group with an `#else` in which every arm declares the
+member: that member is counted whichever arm is compiled.
+
+```c
+#define EXTENDED_ENABLED 0
+typedef struct
+{
+    uint8_t a;
+    uint8_t b;
+#if EXTENDED_ENABLED
+    uint8_t c;          /* not counted: condition is false */
+#endif
+} cfg_t;                /* 2 members: assigning a and b is complete */
+```
+
+#### Locals whose struct type is unknown (`report_unknown_types`)
+
+A local whose struct type has no definition in the checked files or definition
+files is skipped silently, so a clean run cannot tell "fully initialised" from "not
+checked". Set `report_unknown_types: true` on either rule to get one `info` finding
+(under that rule's ID) for each such local (#462):
+
+```
+hal_acc.c:438:22: INFO [misc.partial_struct_assignment] Local 'spi_config' (nrfx_spim_config_t) not checked: no definition of 'nrfx_spim_config_t' was found in the scanned files or the rule's definition_paths
+```
+
+A type counts as unknown when it is written `struct tag`, or is a name that is
+neither a typedef found in the scanned or definition files nor a standard type
+(`uint8_t`, `size_t`, `bool`, …). `misc.partial_struct_assignment` reports
+non-static locals with no initialiser; `misc.partial_struct_initialiser` reports
+locals with a positional brace initialiser (not `{0}`, `{}` or a designated
+initialiser). The default is `false`, so existing output does not change.
 
 ```c
 void Uart_Setup(void)
@@ -1998,7 +2092,8 @@ void Uart_Setup(void)
 
 - any initialiser (`= {0}`, `= {}`, designated or positional, or a function result);
 - `static` locals (zero-initialised) and pointers or arrays of structs;
-- struct types whose definition is not in a scanned file;
+- struct types whose definition is not in a scanned file or a definition file
+  (reported as `info` only with `report_unknown_types: true`);
 - a whole-struct assignment (`s = other;`), or a call to one of `fill_functions`
   with `&s` as its first argument, before the member writes. A fill function is
   recognised only when called as `name(&s, ...)`: a macro or function that takes
@@ -2022,7 +2117,12 @@ void Uart_Setup(void)
 - A compound assignment (`s.x |= 1`) reads the indeterminate value; it is neither
   reported nor counted as an assignment.
 - A struct declared in a `for` initialiser is not checked.
-- A member declared in both branches of `#if` / `#else` is counted once.
+- A member inside `#if` / `#ifdef` / `#elif` / `#else` counts only when its condition
+  evaluates true; an unknown condition leaves it out, unless every arm of a group with
+  `#else` declares it (see *`#if` blocks inside struct definitions* above). Token
+  pasting, stringising and `#undef` are not evaluated.
+- Only the root configuration's `definition_paths` are used; per-directory configs
+  do not add any (see above).
 - A function whose return type is written `struct tag` (not a typedef name) is not
   recognised as a function definition, so its body is not checked.
 
@@ -2042,7 +2142,13 @@ misc:
   partial_struct_initialiser:
     enabled: true        # default: false
     severity: info
+    definition_paths: [] # shared with partial_struct_assignment (#461)
+    report_unknown_types: false  # info per positional initialiser of an unknown type (#462)
 ```
+
+Member lists, `definition_paths`, `--definitions`, `#if` handling and
+`report_unknown_types` work as described for `misc.partial_struct_assignment`
+(§9.29).
 
 Flags a local struct (including a `static` local) whose positional brace
 initialiser lists fewer top-level values than the struct has members. The code is
@@ -2059,9 +2165,9 @@ uart_cfg_t cfg = {0};                    /* ✓ zero idiom */
 **Not flagged:** `{}`, a single zero value (`{0}`, `{0U}`, `{0UL}`, `{0x0}`,
 `{0.0f}`, `{false}`, `{FALSE}`, `{NULL}`), designated initialisers (`.x =` or
 `[n] =`), non-brace initialisers, file-scope objects, and struct types whose
-definition is not in a scanned file. A character literal such as `{'\0'}` is
-not recognised as zero. A member declared in both branches of `#if` / `#else` is
-counted once.
+definition is not in a scanned file or a definition file. A character literal
+such as `{'\0'}` is not recognised as zero. The member count leaves out members
+under an `#if` whose condition is false or unknown, as for §9.29 (#463).
 
 ---
 

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.31 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.32 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.32 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SITC-018 steps 5 to 7 (definition files read but not checked, `#if` members resolved from the collected `#define`s, `report_unknown_types`) and #460 evidence for SITC-017; execution record; test total 1630→1655 |
 | 1.31 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.30 | 2026-11-19 | Claude | Issue #456 (CR-456): new SITC-018 for the 2 opt-in partially-initialised local struct rules (struct definitions collected from every scanned file; all 83 rule IDs covered), with §5 and §6 rows; test total 1574→1630 |
 | 1.29 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
@@ -77,9 +78,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.23 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.25 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.28 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.24 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.26 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.29 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
@@ -509,7 +510,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | **Result** | PASS |
 | **Date** | 2026-09-29 |
 | **Environment** | Python 3.11, develop `296e91b` (local pytest run) |
-| **Evidence** | `tests/test_misra_rules.py` — UV-MSR-001 to UV-MSR-008 (76 tests) and UV-MSR-009 (opt-in policy, 11 tests, #418; 13 since #456); SIT-027 |
+| **Evidence** | `tests/test_misra_rules.py` — UV-MSR-001 to UV-MSR-008 (76 tests; 81 since the 5 `misc.sizeof_type` object tests of #460) and UV-MSR-009 (opt-in policy, 11 tests, #418; 13 since #456); SIT-027 |
 
 ---
 
@@ -528,13 +529,16 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | 2 | Re-run on the C file only | No violation (struct definition not in a scanned file) |
 | 3 | A local struct with a short positional initialiser, with `misc.partial_struct_initialiser.enabled: true` | One `misc.partial_struct_initialiser` info; `{0}` and designated initialisers not reported |
 | 4 | Re-run steps 1 and 3 with the default config (keys absent), and with an inline suppression comment | No violation: both rules are opt-in (#456); the suppressed finding is not reported |
+| 5 | Re-run step 2 with the header excluded (`--exclude`) and named in `definition_paths` (or with `--definitions`) | The step 1 warning is reported for the C file; nothing is reported for the header, which is read but never checked (#461) |
+| 6 | The header's struct has members under `#if CFG_X`, with `CFG_X` defined `0`, defined `1`, and not defined in any scanned or definition file | Members under the `#if` count only when `CFG_X` is `1`; when it is `0` or unknown they are left out of the count and not named as unassigned (#463) |
+| 7 | Step 2 with `report_unknown_types: true` | One `info` finding under `misc.partial_struct_assignment` naming the local and its unknown type; none with the default `false` (#462) |
 
 | Execution Details | Value |
 |---|---|
 | **Result** | PASS |
 | **Date** | 2026-11-19 |
-| **Environment** | Python 3.14, branch `claude/partial-struct-init-456` (local pytest run) |
-| **Evidence** | `tests/test_partial_struct.py` — UV-PSI-001 to UV-PSI-005 (54 tests); `tests/test_misra_rules.py` — UV-MSR-009; SIT-028 |
+| **Environment** | Python 3.14, branch `claude/partial-struct-init-456` (local pytest run); steps 5 to 7: branch `claude/partial-struct-sdk-460-463` |
+| **Evidence** | `tests/test_partial_struct.py` — UV-PSI-001 to UV-PSI-008 (74 tests); `tests/test_misra_rules.py` — UV-MSR-009; SIT-028 |
 
 ---
 
@@ -563,7 +567,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 **Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016); 2026-10-06 (v1.6.1, SITC-006 step 4), GitHub Actions (automated) / Dermot Murphy (manual review), 1281 tests all PASS on Python 3.10 / 3.11 / 3.12.
 
-**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), 1452 after #412 (8 tests), 1463 after #418 (11 tests), 1481 after #420 (18 tests), 1508 after #422 (27 tests), 1524 after #424 (16 tests), 1532 after #425 (8 tests), 1545 after #423 (13 tests), 1559 after #439, #441 and the v1.6.1 back-merge (14 tests) 1569 after #447 (10 tests), 1574 after #449 (5 tests) and 1630 after #456 (49 tests; SITC-018 PASS, local run, Python 3.14, 2026-11-19), all PASS.
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), 1452 after #412 (8 tests), 1463 after #418 (11 tests), 1481 after #420 (18 tests), 1508 after #422 (27 tests), 1524 after #424 (16 tests), 1532 after #425 (8 tests), 1545 after #423 (13 tests), 1559 after #439, #441 and the v1.6.1 back-merge (14 tests) 1569 after #447 (10 tests), 1574 after #449 (5 tests), 1630 after #456 (49 tests; SITC-018 PASS, local run, Python 3.14, 2026-11-19) and 1655 after #460 to #463 (25 tests; SITC-018 steps 5 to 7 PASS, local run, Python 3.14, 2026-11-19), all PASS.
 
 > **📋 Note:** All SITC test cases must achieve PASS status before the system verification (SYS.5) activities commence. Any FAIL result must be tracked as a GitHub Issue and resolved via the change control process (SUP.10).
 
