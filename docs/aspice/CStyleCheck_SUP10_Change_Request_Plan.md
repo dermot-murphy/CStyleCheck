@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.19 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.20 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.10 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.20 | 2026-11-19 | Claude | Issue #449: §6 CI-impact table — CI workflow scripts are CI-029 and CI-030 (CI-031 retired); referenced-document versions resynced |
 | 1.19 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
 | 1.18 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.17 | 2026-10-05 | Claude | Issue #441: §7 register row and §7.1 record CR-441 (create missing parent folders of `--log`, `--write-baseline` and `--init-output` files; Medium; backwards compatible) |
@@ -53,9 +54,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.27 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.17 |
-| CSC-MAN3-001 | Project Management Plan | 1.23 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.28 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.18 |
+| CSC-MAN3-001 | Project Management Plan | 1.24 |
 
 ---
 
@@ -162,7 +163,7 @@ When a CR is approved, the following CIs may require update:
 | New CLI flag | CI-045, CI-001 (`src/cstylecheck.py` entry-point shim, if the entry point changes), CI-004 (`src/options.txt`), CI-013 (`pyproject.toml`), CI-016 (`action.yml`), CI-015 (`.pre-commit-hooks.yml`), CI-026, CI-047, CI-055 |
 | New output format | CI-045, CI-016 (`action.yml`), CI-026, CI-047, CI-055 |
 | Config file change | CI-003 to CI-010, CI-050 (`src/project.defines`), CI-018; CI-045 when the loader or validation changes |
-| CI workflow change | CI-023, CI-024, CI-025, CI-034, CI-038 and CI-062 (`.github/workflows/*.yml`); CI-046 (`.github/dependabot.yml`); scripts CI-029 to CI-031, CI-035, CI-036, CI-039 to CI-043, CI-061; CSC-ACQ4-001 when a third-party action changes |
+| CI workflow change | CI-023, CI-024, CI-025, CI-034, CI-038 and CI-062 (`.github/workflows/*.yml`); CI-046 (`.github/dependabot.yml`); scripts CI-029, CI-030, CI-035, CI-036, CI-039 to CI-043, CI-061; CSC-ACQ4-001 when a third-party action changes |
 | Process template change | CI-063 (PR template), CI-064 (issue forms), with the plan that defines them (CSC-SUP1-001, CSC-SUP9-001, this plan) |
 | ASPICE document update | CI-055 (the affected work product, identified by its CSC document ID and version) + a new revision entry in its §2; cross-references resynced with `python scripts/aspice_check.py --fix-citations` (CI-061) |
 

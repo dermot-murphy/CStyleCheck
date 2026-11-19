@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.41 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.42 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.4 |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.42 | 2026-11-19 | Claude | Issue #449: §6 `test_workflow_config.py` 16→21 tests (`TestRepositoryProtection`, SUP9-TC-PROT-001 to 005: no push to the source branch, every workflow declares `permissions:`, rules-workflow token scopes, no `paths:` filter on `pull_request` in `cstylecheck_tests.yml`, *All Checks Passed* aggregate job); total 1569→1574; §4.2 CI-gate test count; referenced-document versions resynced |
 | 1.41 | 2026-10-06 | Claude | Issue #447: add §5.23 catalogue for `test_constant_comparison.py` (UV-CCMP-001 to UV-CCMP-008, 37 tests), including the two new classes UV-CCMP-007 `TestConstantComparisonPreprocessor` (5 tests: `#if` / `#elif`, indented and continuation-line conditions not reported; the next line still checked) and UV-CCMP-008 `TestConstantComparisonIdentifierExclusion` (5 tests: an `identifiers:` entry for either operand suppresses the finding; the operator text, another identifier or another rule does not); §6 `test_constant_comparison.py` 27→37; total 1559→1569; coverage-gate text 1559→1569; §7 SWE1-091 and SWE1-005/006 rows cite UV-CCMP |
 | 1.40 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): §5.12 adds UV-CLI-023 `TestStartupBannerLogFile.test_text_log_file_has_banner` and UV-CLI-024 `test_structured_log_file_has_no_banner` (the 2 v1.6.1 tests in `test_cli.py`; IDs renumbered from the v1.6.1 UV-CLI-011/012, which `develop` already uses for baseline tests); `test_cli.py` 43→45; total 1557→1559; SWE1-094 trace row cites UV-CLI-023/024 |
 | 1.39 | 2026-10-05 | Claude | Issue #441 (CR-441): add §5.22 catalogue for `test_output_dirs.py` (UV-OUT-001 to UV-OUT-004, 11 tests: missing parent folders of `--log`, `--write-baseline` and `--init-output` files are created; an uncreatable folder exits 2); §6 new module row, total 1546→1557 (59 modules); coverage-gate text 1546→1557; §7 SWE1-062, SWE1-065 and SWE1-075 rows cite UV-OUT |
@@ -76,10 +77,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.26 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.36 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.30 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.27 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.27 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.37 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.31 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.28 |
 
 ---
 
@@ -106,7 +107,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1569 tests (2026-10-06 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425, #423, #441, the v1.6.1 back-merge and #447) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1574 tests (2026-10-06 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425, #423, #441, the v1.6.1 back-merge and #447) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -553,7 +554,7 @@ Catalogued for issue #447, which adds the last two classes. `misc.constant_compa
 | `test_parameter_prefix.py` | 51 | 51 | 0 | `_check_variables` |
 | `test_misra_rules.py` | 160 | 160 | 0 | `_check_lowercase_l_suffix`, `_check_octal_constants`, `_check_trigraphs`, `_check_non_ascii_source`, `_check_yoda`, `_check_goto_usage`, `_check_assignment_in_condition`, `_check_multiple_statements_per_line`, `_check_void_pointer`, `_check_recursive_function`, `_check_sizeof_type`, `_check_boolean_comparison`, `_check_empty_else` |
 | `test_block_comment_spacing.py` | 29 | 29 | 0 | `_check_block_comment_spacing` |
-| `test_workflow_config.py` | 16 | 16 | 0 | CI workflow configuration regression |
+| `test_workflow_config.py` | 21 | 21 | 0 | CI workflow configuration regression |
 | `test_github_annotations.py` | 8 | 8 | 0 | GitHub Actions annotation output |
 | `test_case_patterns.py` | 6 | 6 | 0 | Case pattern matching (`_check_case_patterns`) |
 | `test_case_style_config.py` | 27 | 27 | 0 | COMP-02 (UNIT-05 `load_config` with sub-unit `validate_case_styles`), COMP-05 (UNIT-43 `matches_case` with sub-unit `normalize_case_style`), COMP-09 (`PRESETS`, `run_wizard`) |
@@ -588,7 +589,7 @@ Catalogued for issue #447, which adds the last two classes. `misc.constant_compa
 | `test_pointer_prefix_fix.py` | 20 | 20 | 0 | `fixer._fix_pointer_prefix`, `fixer.fix_pointer_prefix_in_header` |
 | `test_collect_metrics.py` | 54 | 54 | 0 | CI metrics scripts (UNIT-121 to UNIT-127) |
 | `test_cli_requirements.py` | 22 | 22 | 0 | COMP-01 (`main` source cache and startup banner, `discover_files` path normalisation), COMP-07 (`Violation.__str__`) |
-| **Total** | **1569** | **1569** | **0** | All 81 rule IDs covered — 59 modules |
+| **Total** | **1574** | **1574** | **0** | All 81 rule IDs covered — 59 modules |
 
 **Statement Coverage (v1.1.0 CI — unit tests excl. subprocess):** 86% (1,694 statements, 243 missed)
 **Statement Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 89.8% (1,694 statements, 172 missed)

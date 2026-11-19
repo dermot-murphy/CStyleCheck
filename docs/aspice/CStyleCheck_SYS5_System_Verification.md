@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.24 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.25 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.5 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.25 | 2026-11-19 | Claude | #449: VTC-003 result note test total 1569→1574 (5 workflow-configuration tests); referenced-document versions resynced |
 | 1.24 | 2026-10-06 | Claude | #447: VTC-003 result note test total 1559 (#439, #441, v1.6.1 back-merge) →1569 (`misc.constant_comparison` preprocessor and identifier-exclusion tests) |
 | 1.23 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.22 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
@@ -60,11 +61,11 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.19 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.21 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.27 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.20 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.22 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.28 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.27 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.28 |
 
 ### 3.3 System Configuration Under Test
 
@@ -183,7 +184,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | Naming (v1.4.0) | `naming.identifier_length`, `naming.no_single_char_identifiers` | `test_identifier_length.py`, `test_no_single_char_identifiers.py` | PASS |
 | Other | `reserved_name`, `spell_check`, `sign_compatibility`, `misc.declared_not_defined` | `test_reserved_name.py`, `test_spell_check.py`, `test_sign_compatibility.py`, `test_declared_not_defined.py` | PASS |
 
-**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1444 tests, all PASS, after #408, #407 and #413; 1452 tests, all PASS, after #412; 1463 tests, all PASS, after #418; 1481 tests, all PASS, after #420; 1508 tests, all PASS, after #422; 1524 tests, all PASS, after #424; 1532 tests, all PASS, after #425; 1545 tests, all PASS, after #423; 1559 tests, all PASS, after #439, #441 and the v1.6.1 back-merge; 1569 tests, all PASS, after #447
+**Overall VTC-003 Result:** PASS (v1.4.1, 2026-06-25; 1157 tests all PASS). Extended 2026-09-29 to 81 rule IDs: PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11); 1444 tests, all PASS, after #408, #407 and #413; 1452 tests, all PASS, after #412; 1463 tests, all PASS, after #418; 1481 tests, all PASS, after #420; 1508 tests, all PASS, after #422; 1524 tests, all PASS, after #424; 1532 tests, all PASS, after #425; 1545 tests, all PASS, after #423; 1559 tests, all PASS, after #439, #441 and the v1.6.1 back-merge; 1569 tests, all PASS, after #447; 1574 tests, all PASS, after #449
 
 ---
 

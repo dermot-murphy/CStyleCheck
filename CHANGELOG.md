@@ -132,6 +132,16 @@ linked entries under *Changed* and *Fixed* for details.
   rule, set `misc.boolean_comparison.enabled: true`. 8 new tests in
   `tests/test_misra_rules.py` and one changed (`TRUE` no longer flagged); total 1444→1452
   (issue [#412](https://github.com/dermot-murphy/CStyleCheck/issues/412)).
+- **Repository protection: no workflow pushes to `develop` or `main` (#449)** — the
+  *Update Trend* job of `cstylecheck_rules.yml` no longer commits a README badge update to the
+  source branch; the README *Naming Convention* badge is a fixed shields.io endpoint URL that
+  reads `cstylecheck/badge.json` from `gh-pages`. `scripts/ci/update_readme_badge.py` is
+  deleted. Every workflow declares `permissions:` (default `contents: read`; only *Update
+  Trend* gets `contents: write`), so the default `GITHUB_TOKEN` can be read-only.
+  `cstylecheck_tests.yml` has no `paths:` filter on `pull_request` and adds an *All Checks
+  Passed* job that passes when the unit tests passed or were skipped because no test-relevant
+  file changed; it is the required status check for `develop` and `main`. 5 new tests in
+  `tests/test_workflow_config.py` (`TestRepositoryProtection`); total 1569→1574.
 - **Dependabot targets `develop`** — `.github/dependabot.yml` sets `target-branch: develop`
   for the `pip` and `github-actions` ecosystems (hotfix
   [#399](https://github.com/dermot-murphy/CStyleCheck/pull/399), back-merged in

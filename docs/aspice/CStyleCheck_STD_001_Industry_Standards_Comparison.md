@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-STD-001 | **Version** | 1.18 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-STD-001 | **Version** | 1.19 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.1 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.19 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
 | 1.18 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
 | 1.17 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.16 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
@@ -57,9 +58,9 @@ The findings are presented in a unified coverage matrix and a prioritised list o
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.26 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.30 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.36 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.27 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.31 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.37 |
 
 ---
 
@@ -478,4 +479,4 @@ These rules are best handled by a dedicated formatting tool. CStyleCheck should 
 
 ---
 
-*End of Industry Standards Comparison Report — CSC-STD-001 v1.18*
+*End of Industry Standards Comparison Report — CSC-STD-001 v1.19*

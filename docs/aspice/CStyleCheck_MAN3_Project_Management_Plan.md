@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN3-001 | **Version** | 1.23 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-MAN3-001 | **Version** | 1.24 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | MAN.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
 | 1.23 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
 | 1.22 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
 | 1.21 | 2026-09-30 | Claude | Merge-time process controls (#437): §4.1 scope lists 6 CI workflows (adds `aspice_consistency.yml`); §10.1 work-product consistency monitoring row; §10.2 corrective action for a consistency-check failure; referenced-document versions resynced |
@@ -67,11 +68,11 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | System Requirements Specification | 2.19 |
-| CSC-SWE1-001 | Software Requirements Specification | 2.26 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.27 |
-| CSC-MAN5-001 | Risk Management Plan | 1.19 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.24 |
+| CSC-SYS2-001 | System Requirements Specification | 2.20 |
+| CSC-SWE1-001 | Software Requirements Specification | 2.27 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.28 |
+| CSC-MAN5-001 | Risk Management Plan | 1.20 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.25 |
 
 ---
 
