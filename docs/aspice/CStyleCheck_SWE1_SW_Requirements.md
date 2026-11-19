@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE1-001 | **Version** | 2.29 |
+| **Document ID** | CSC-SWE1-001 | **Version** | 2.30 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 2.30 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 2.29 | 2026-11-19 | Claude | Issue #456 (CR-456, CSC-SUP10-001 §7): SWE1-118 `misc.partial_struct_assignment` and SWE1-119 `misc.partial_struct_initialiser` (both opt-in, disabled by default), SWE1-120 cross-file struct-definition table (collected once before the per-file checks); §5 RTM rows; Appendix A.1 rows (MISRA C:2012 Rule 9.1 partial, Rule 9.3 related), A.2 Rules 9.1–9.5 note and A.3 gap-analysis row; SWE1-075 — `--preset misra` also enables both rules, `--preset barr-c` also enables `misc.partial_struct_assignment`, `--init` lists 9 opt-in rules; scope 81→83 rule IDs |
 | 2.28 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 2.27 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
@@ -77,10 +78,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.1 — Software Requir
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.22 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.24 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.33 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.30 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.23 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.25 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.34 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.31 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 

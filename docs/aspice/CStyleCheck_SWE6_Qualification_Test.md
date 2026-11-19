@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.36 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.37 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.37 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.36 | 2026-11-19 | Claude | Issue #456 (CR-456): SWQ-003 → 83 rule IDs, new row for `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` (SWE1-118 to SWE1-120, `test_partial_struct.py`); §3.3 / §6 coverage 113→116 in-scope requirements (SWE1 defines 124); BP3 evidence — `test_misra_rules.py` 162 tests, Rule 9.1 (partial) and Barr-C §7.2, suite total 1630 after #456 |
 | 1.35 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.34 | 2026-11-19 | Claude | Issue #449: BP3 evidence — suite total 1574 after #449 (workflow-configuration tests); referenced-document versions resynced |
@@ -72,10 +73,10 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.29 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.33 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.27 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.30 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.30 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.34 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.28 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.31 |
 
 ### 3.2 Software Configuration Under Test
 

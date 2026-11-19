@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.39 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.40 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.40 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.39 | 2026-11-19 | Claude | Issue #456 (CR-456): new UNIT-139 `collect_struct_defs`, UNIT-140 `collect_struct_defs_from_source`, UNIT-141 `struct_rules_enabled`, UNIT-142 `Checker._struct_entries`, UNIT-143 `Checker._iter_local_struct_decls`, UNIT-144 `Checker._check_partial_struct_assignment` and UNIT-145 `Checker._check_partial_struct_initialiser` in the §4 catalogue (helpers `_match_brace`, `_split_top_level`, `_declarator_name`, `_struct_members` as sub-units of UNIT-139), §4.1 package structure and §5; UNIT-21 merges the `struct_defs` table; UNIT-46 struct-definition pre-pass; UNIT-98/UNIT-99 — 9 opt-in rules, `misra` and `barr-c` presets add the partial-struct rules; §6.1 config keys `misc.partial_struct_assignment` (with `fill_functions`) and `misc.partial_struct_initialiser`; §8 rows SWE1-118 to SWE1-120 and SWE1-075; §1 scope UNIT-01 to UNIT-145; all §4 `file.py:<line>` citations resynced to the current source |
 | 1.38 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.37 | 2026-11-19 | Claude | Issue #449: UNIT-49 `scripts/ci/update_readme_badge.py` retired (script deleted; the README badge is a fixed shields.io endpoint URL and `cstylecheck_rules.yml` no longer commits to the source branch); §4 catalogue row and §5 specification marked retired, UNIT number not reused; referenced-document versions resynced |
@@ -70,9 +71,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.29 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.33 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.44 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.30 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.34 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.45 |
 
 ---
 

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.33 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.34 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.34 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.33 | 2026-11-19 | Claude | Issue #456 (CR-456): new SIT-028 (partially initialised local struct rules through the CLI, cross-file struct-definition table, SWA-IF-11) with §6 and §7 rows; §4 interface SWA-IF-11 (11 SWA interfaces); SIT-016 step 4 — the trigger snippet covers 10 opt-in rules, `misra` adds both partial-struct rules and `barr-c` adds `misc.partial_struct_assignment`; §6 post-v1.6.0 note — suite total 1574→1630, 83 rule IDs |
 | 1.32 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.31 | 2026-11-19 | Claude | Issue #449: §6 post-v1.6.0 note — suite total 1569→1574 (5 workflow-configuration tests), all PASS; referenced-document versions resynced |
@@ -69,11 +70,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.33 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.29 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.44 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.36 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.30 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.34 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.30 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.45 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.37 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.31 |
 
 ### 3.2 Test Environment
 

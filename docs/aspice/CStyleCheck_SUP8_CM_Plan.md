@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.30 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.31 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.31 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.30 | 2026-11-19 | Claude | Cross-reference version resync with #456 |
 | 1.29 | 2026-11-19 | Claude | Issue #453: §7.1 and §7.5 match the live rulesets — `Do_Not_Delete_Main_Develop` (`develop`, `main`: pull request required, merge commits only, no deletion or force-push) has no required status check; the new `Develop_Required_Checks` ruleset (`develop` only) requires *All Checks Passed* and *ASPICE work-product consistency*; `main` is added to it after v2.0.0 (#443) so hotfix PRs into `main` are not blocked before then |
 | 1.28 | 2026-11-19 | Claude | Issue #449 (repository protection): §6.1 CI-031 `scripts/ci/update_readme_badge.py` retired — the README Naming Convention badge is a fixed shields.io endpoint URL, so `cstylecheck_rules.yml` no longer pushes a commit to the source branch (63 CIs in use); §7.1 protection rules state the `Do_Not_Delete_Main_Develop` ruleset (pull request required, merge commits only, no deletion, required check *All Checks Passed*) and the `Protect release tags` ruleset; §7.5 required status check and read-only default `GITHUB_TOKEN` (only jobs that write declare `contents: write`); referenced-document versions resynced |
@@ -78,9 +79,9 @@ This plan applies to all configuration items produced by the CStyleCheck project
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.20 |
-| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.22 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.29 |
+| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.21 |
+| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.23 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.30 |
 
 ---
 

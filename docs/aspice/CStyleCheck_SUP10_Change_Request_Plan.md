@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.22 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.23 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.23 | 2026-11-19 | Claude | Issue #458: §7 register and §7.1 records — CR-441 (PR #442, merge `81b6f2e`) and CR-456 (PR #457, merge `d97c0b2`) set to Closed |
 | 1.22 | 2026-11-19 | Claude | Issue #456: §7 register row and §7.1 record CR-456 (two opt-in rules for partially initialised local structs, `misc.partial_struct_assignment` and `misc.partial_struct_initialiser`; new requirements SWE1-118 to SWE1-120; Medium; disabled by default, no compatibility impact) |
 | 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.20 | 2026-11-19 | Claude | Issue #449: §6 CI-impact table — CI workflow scripts are CI-029 and CI-030 (CI-031 retired); referenced-document versions resynced |
@@ -56,9 +57,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.30 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.20 |
-| CSC-MAN3-001 | Project Management Plan | 1.26 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.31 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.21 |
+| CSC-MAN3-001 | Project Management Plan | 1.27 |
 
 ---
 
@@ -189,8 +190,8 @@ Summary view:
 | #422 | `bug`, `config-change` | Normalise case-style aliases and reject unknown case-style names | High | Closed — PR #426, merge `e2555f0` | v2.0.0 |
 | #424 | `bug`, `config-change` | Remove unused `functions.case`; warn when a config still sets it | Medium | Closed — PR #427, merge `31acd91` | v2.0.0 |
 | #425 | `bug` | Config and usage errors exit 2 from the installed `cstylecheck` command | High | Closed — PR #428, merge `7ddf732` | v2.0.0 |
-| #441 | `enhancement` | [CR] Create the parent folder of output files (`--log`, `--write-baseline`, `--init-output`) if it does not exist | Medium | Open — PR #442 | v2.0.0 |
-| #456 | `enhancement` | [CR] Opt-in rules for partially initialised local structs (`misc.partial_struct_assignment`, `misc.partial_struct_initialiser`) | Medium | Open — PR [#457](https://github.com/dermot-murphy/CStyleCheck/pull/457) | v2.0.0 |
+| #441 | `enhancement` | [CR] Create the parent folder of output files (`--log`, `--write-baseline`, `--init-output`) if it does not exist | Medium | Closed — PR #442, merge `81b6f2e` | v2.0.0 |
+| #456 | `enhancement` | [CR] Opt-in rules for partially initialised local structs (`misc.partial_struct_assignment`, `misc.partial_struct_initialiser`) | Medium | Closed — PR [#457](https://github.com/dermot-murphy/CStyleCheck/pull/457), merge `d97c0b2` | v2.0.0 |
 
 ### 7.1 Change Request Records
 
@@ -299,7 +300,7 @@ Summary view:
 | **Impact analysis** | `--log`, `--write-baseline` and `--init-output` now create missing parent folders of the output file, so callers no longer need `mkdir -p` first. A run that succeeds today behaves the same; only runs that failed with a missing-folder configuration error now succeed. A folder that cannot be created is still a configuration error (exit 2). `--init` / `--preset` with an unwritable output path now exit 2 with a message instead of a traceback (exit 1). No impact on SIT, SWQ or SYS-VTC procedures, which write into existing folders |
 | **Verification** | 11 tests in `tests/test_output_dirs.py`; test total 1546→1557 |
 | **Approval** | Approved by owner merge of the implementing PR |
-| **Status / target release** | Open / v2.0.0 |
+| **Status / target release** | Closed / v2.0.0 |
 
 | Field | CR-456 |
 |---|---|
@@ -314,7 +315,7 @@ Summary view:
 | **Impact analysis** | With the default configuration nothing changes. When either rule is enabled, every scanned file is read once before checking (the content is cached and reused, so each file is still read once, SYS-F-010). Struct types whose definition is not in a scanned file are not checked; order is lexical (no control-flow analysis). Configs regenerated with `--preset misra` / `--preset barr-c` or `--init` (standard question answered yes) enable the new rules and can report findings, as for CR-420 |
 | **Verification** | New module `tests/test_partial_struct.py` (54 tests) and 2 key-absent tests in `tests/test_misra_rules.py` (UV-MSR-009); `tests/test_init_wizard.py` preset / wizard tests cover the new rules; SIT-028, SITC-018; test total 1574→1630 |
 | **Approval** | By merge (CSC-DEV-002 §5.2) — owner merge of the implementing PR |
-| **Status / target release** | Open / v2.0.0 |
+| **Status / target release** | Closed / v2.0.0 |
 
 ### 7.2 Release Classification Decision
 

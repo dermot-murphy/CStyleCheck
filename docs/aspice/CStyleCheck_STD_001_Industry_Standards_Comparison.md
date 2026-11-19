@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-STD-001 | **Version** | 1.21 |
+| **Document ID** | CSC-STD-001 | **Version** | 1.22 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.21 | 2026-11-19 | Claude | Issue #456: §7.8 adds `misc.partial_struct_assignment` (MISRA C:2012 Rule 9.1 partial, Barr-C §7.2) and `misc.partial_struct_initialiser` (cf. MISRA C:2012 Rule 9.3), both opt-in; ten post-v1.6.0 rules |
 | 1.20 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.19 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
@@ -60,9 +61,9 @@ The findings are presented in a unified coverage matrix and a prioritised list o
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.29 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.33 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.39 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.30 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.34 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.40 |
 
 ---
 
@@ -483,4 +484,4 @@ These rules are best handled by a dedicated formatting tool. CStyleCheck should 
 
 ---
 
-*End of Industry Standards Comparison Report — CSC-STD-001 v1.21*
+*End of Industry Standards Comparison Report — CSC-STD-001 v1.22*

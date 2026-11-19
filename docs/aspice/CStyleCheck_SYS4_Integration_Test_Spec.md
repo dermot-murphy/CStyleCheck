@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.30 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.31 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.31 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.30 | 2026-11-19 | Claude | Issue #456 (CR-456): new SITC-018 for the 2 opt-in partially-initialised local struct rules (struct definitions collected from every scanned file; all 83 rule IDs covered), with §5 and §6 rows; test total 1574→1630 |
 | 1.29 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.28 | 2026-11-19 | Claude | #449: test total 1569→1574 (5 workflow-configuration tests); referenced-document versions resynced |
@@ -76,9 +77,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.22 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.24 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.27 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.23 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.25 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.28 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
