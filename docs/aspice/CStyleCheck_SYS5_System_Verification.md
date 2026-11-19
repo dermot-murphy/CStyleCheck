@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.25 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.26 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.26 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.25 | 2026-11-19 | Claude | #449: VTC-003 result note test total 1569→1574 (5 workflow-configuration tests); referenced-document versions resynced |
 | 1.24 | 2026-10-06 | Claude | #447: VTC-003 result note test total 1559 (#439, #441, v1.6.1 back-merge) →1569 (`misc.constant_comparison` preprocessor and identifier-exclusion tests) |
 | 1.23 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
@@ -61,11 +62,11 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.20 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.22 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.28 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.21 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.23 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.29 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.28 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.29 |
 
 ### 3.3 System Configuration Under Test
 

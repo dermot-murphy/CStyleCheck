@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.37 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.38 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.38 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.37 | 2026-11-19 | Claude | Issue #449: UNIT-49 `scripts/ci/update_readme_badge.py` retired (script deleted; the README badge is a fixed shields.io endpoint URL and `cstylecheck_rules.yml` no longer commits to the source branch); §4 catalogue row and §5 specification marked retired, UNIT number not reused; referenced-document versions resynced |
 | 1.36 | 2026-10-06 | Claude | Issue #447: UNIT-116 algorithm — `#if` / `#elif` conditions (with continuation lines) are skipped, and the finding is emitted through `_v()` with `idents=(lhs, rhs)`; UNIT-58 `_v()` takes an optional `idents` tuple that an `identifiers:` exclusion entry is matched against, otherwise the first quoted name in the message; §4 catalogue `checker.py` line numbers updated (UNIT-21 onwards) |
 | 1.35 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): UNIT-86 `Tee.log_print()` notes from the v1.6.1 release that `main()` uses it for the startup banner only for text output; no design change |
@@ -68,9 +69,9 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.27 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.31 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.42 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.28 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.32 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.43 |
 
 ---
 
