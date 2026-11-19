@@ -313,8 +313,421 @@ def _struct_members(body: str) -> tuple:
     return tuple(unique)
 
 
-def collect_struct_defs(clean: str) -> dict:
-    """Return the struct definition table of one preprocessed source text."""
+# ---------------------------------------------------------------------------
+# Preprocessor conditionals in struct bodies (#463).  A member declared inside
+# #if / #ifdef / #ifndef / #elif / #else is counted only when the condition
+# can be evaluated as true from the macro table (object-like and simple
+# function-like #defines collected from the scanned and definition files).
+# A member under a condition that cannot be evaluated is left out of the
+# count, unless it is declared in every possible branch of a conditional
+# that has an #else.  Evaluation is three-valued: True, False or None
+# (unknown).  An identifier the table does not define is unknown, not 0,
+# because the table may be incomplete (compiler -D flags, unscanned headers).
+# ---------------------------------------------------------------------------
+
+_RE_DEFINE = re.compile(
+    r"^[ \t]*#[ \t]*define[ \t]+([A-Za-z_]\w*)(\([^)\n]*\))?[ \t]*(.*)$",
+    re.MULTILINE)
+_RE_PP_COND = re.compile(
+    r"^[ \t]*#[ \t]*(if|ifdef|ifndef|elif|else|endif)\b(.*)$")
+_RE_PP_TOKEN = re.compile(
+    r"\s*(?:((?:0[xX][0-9a-fA-F]+|\d+)[uUlL]*)(?![\w.])"
+    r"|([A-Za-z_]\w*)"
+    r"|(&&|\|\||==|!=|<=|>=|<<|>>|[-+*/%()!<>&|^~?:,]))")
+_UNKNOWN_TOKEN = "\0unknown"
+
+
+def collect_macros(clean: str) -> dict:
+    """Return ``{name: (params, body)}`` for every ``#define`` in *clean*.
+
+    *params* is ``None`` for an object-like macro, otherwise a tuple of
+    parameter names.  The first definition of a name wins (configuration
+    headers guard defaults with ``#ifndef``).  ``#undef`` is ignored.
+    """
+    macros: dict = {}
+    text = re.sub(r"\\[ \t]*\n", " ", clean)
+    for m in _RE_DEFINE.finditer(text):
+        params = None
+        if m.group(2) is not None:
+            params = tuple(p.strip() for p in m.group(2)[1:-1].split(",")
+                           if p.strip())
+        macros.setdefault(m.group(1), (params, m.group(3).strip()))
+    return macros
+
+
+def _pp_tokenize(text: str) -> list | None:
+    """Split a #if expression into tokens, or return None if it has
+    anything the evaluator does not handle (strings, character literals,
+    floating constants)."""
+    tokens, pos = [], 0
+    text = text.rstrip()
+    while pos < len(text):
+        m = _RE_PP_TOKEN.match(text, pos)
+        if not m or m.end() == pos:
+            if text[pos:].strip():
+                return None
+            break
+        tok = m.group(1) or m.group(2) or m.group(3)
+        if m.group(1):
+            tok = re.sub(r"[uUlL]+$", "", tok)
+        tokens.append(tok)
+        pos = m.end()
+    return tokens
+
+
+def _pp_expand(tokens: list, macros: dict, depth: int = 0,
+               active: frozenset = frozenset()) -> list:
+    """Expand ``defined`` and macros in *tokens* (no token pasting or
+    stringising).  Undefinable parts become the unknown token."""
+    out: list = []
+    i, n = 0, len(tokens)
+    while i < n:
+        tok = tokens[i]
+        if tok == "defined":
+            j = i + 1
+            paren = j < n and tokens[j] == "("
+            if paren:
+                j += 1
+            name = tokens[j] if j < n else ""
+            if paren:
+                j += 1
+            out.append("1" if name in macros else _UNKNOWN_TOKEN)
+            i = j + 1
+            continue
+        if tok in macros and tok not in active and depth < 16:
+            params, body = macros[tok]
+            body_tokens = _pp_tokenize(body) if body else []
+            if body_tokens is None:
+                body_tokens = [_UNKNOWN_TOKEN]
+            if params is None:
+                out += ["("] + _pp_expand(body_tokens, macros, depth + 1,
+                                          active | {tok}) + [")"]
+                i += 1
+                continue
+            if i + 1 < n and tokens[i + 1] == "(":
+                args: list = [[]]
+                level, j = 0, i + 2
+                while j < n:
+                    t = tokens[j]
+                    if t == "(":
+                        level += 1
+                    elif t == ")":
+                        if level == 0:
+                            break
+                        level -= 1
+                    elif t == "," and level == 0:
+                        args.append([])
+                        j += 1
+                        continue
+                    args[-1].append(t)
+                    j += 1
+                if j >= n:
+                    out.append(_UNKNOWN_TOKEN)
+                    break
+                if args == [[]]:
+                    args = []
+                if len(args) != len(params):
+                    out.append(_UNKNOWN_TOKEN)
+                    i = j + 1
+                    continue
+                sub = dict(zip(params, args))
+                expanded: list = []
+                for t in body_tokens:
+                    expanded += (["("] + sub[t] + [")"]) if t in sub else [t]
+                out += ["("] + _pp_expand(expanded, macros, depth + 1,
+                                          active | {tok}) + [")"]
+                i = j + 1
+                continue
+        out.append(tok)
+        i += 1
+    return out
+
+
+class _PPExprParser:
+    """Three-valued C preprocessor expression evaluator (int or None)."""
+
+    _BINARY = (
+        ("|",), ("^",), ("&",), ("==", "!="), ("<", ">", "<=", ">="),
+        ("<<", ">>"), ("+", "-"), ("*", "/", "%"),
+    )
+
+    def __init__(self, tokens: list):
+        self.tokens, self.pos = tokens, 0
+
+    def _peek(self):
+        return self.tokens[self.pos] if self.pos < len(self.tokens) else None
+
+    def _take(self):
+        tok = self._peek()
+        self.pos += 1
+        return tok
+
+    def parse(self):
+        value = self._ternary()
+        if self.pos != len(self.tokens):
+            raise ValueError("trailing tokens")
+        return value
+
+    def _ternary(self):
+        cond = self._logical_or()
+        if self._peek() != "?":
+            return cond
+        self._take()
+        a = self._ternary()
+        if self._take() != ":":
+            raise ValueError("expected ':'")
+        b = self._ternary()
+        if cond is None:
+            return a if a == b else None
+        return a if cond else b
+
+    def _logical_or(self):
+        left = self._logical_and()
+        while self._peek() == "||":
+            self._take()
+            right = self._logical_and()
+            if left or right:          # a known non-zero side decides it
+                left = 1
+            elif left is None or right is None:
+                left = None
+            else:
+                left = 0
+        return left
+
+    def _logical_and(self):
+        left = self._binary(0)
+        while self._peek() == "&&":
+            self._take()
+            right = self._binary(0)
+            if left == 0 or right == 0:   # a known zero side decides it
+                left = 0
+            elif left is None or right is None:
+                left = None
+            else:
+                left = 1
+        return left
+
+    def _binary(self, level: int):
+        if level == len(self._BINARY):
+            return self._unary()
+        left = self._binary(level + 1)
+        while self._peek() in self._BINARY[level]:
+            op = self._take()
+            right = self._binary(level + 1)
+            left = self._apply(op, left, right)
+        return left
+
+    @staticmethod
+    def _apply(op: str, a, b):
+        if a is None or b is None:
+            return None
+        if op in ("/", "%"):
+            if b == 0:
+                return None
+            q = abs(a) // abs(b) * (1 if (a < 0) == (b < 0) else -1)
+            return q if op == "/" else a - q * b
+        if op in ("<<", ">>") and not 0 <= b < 64:
+            return None
+        return int({
+            "|": lambda: a | b, "^": lambda: a ^ b, "&": lambda: a & b,
+            "==": lambda: a == b, "!=": lambda: a != b,
+            "<": lambda: a < b, ">": lambda: a > b,
+            "<=": lambda: a <= b, ">=": lambda: a >= b,
+            "<<": lambda: a << b, ">>": lambda: a >> b,
+            "+": lambda: a + b, "-": lambda: a - b, "*": lambda: a * b,
+        }[op]())
+
+    def _unary(self):
+        tok = self._peek()
+        if tok in ("!", "~", "-", "+"):
+            self._take()
+            v = self._unary()
+            if v is None:
+                return None
+            return {"!": int(not v), "~": ~v, "-": -v, "+": v}[tok]
+        return self._primary()
+
+    def _primary(self):
+        tok = self._take()
+        if tok is None:
+            raise ValueError("unexpected end")
+        if tok == "(":
+            v = self._ternary()
+            if self._take() != ")":
+                raise ValueError("expected ')'")
+            return v
+        if tok[0].isdigit():
+            return int(tok, 0) if not re.fullmatch(r"0\d+", tok) \
+                else int(tok, 8)
+        if tok == _UNKNOWN_TOKEN or re.match(r"[A-Za-z_]", tok):
+            return None                # not defined in the macro table
+        raise ValueError(f"unexpected token {tok!r}")
+
+
+def eval_pp_condition(expr: str, macros: dict) -> bool | None:
+    """Evaluate a ``#if`` / ``#elif`` expression: True, False or None."""
+    tokens = _pp_tokenize(expr)
+    if tokens is None:
+        return None
+    try:
+        value = _PPExprParser(_pp_expand(tokens, macros)).parse()
+    except (ValueError, KeyError, IndexError):
+        return None
+    return None if value is None else bool(value)
+
+
+def _resolve_conditionals(body: str, macros: dict) -> tuple:
+    """Split a struct body into the text that is certainly compiled and the
+    unresolved conditional groups.
+
+    Returns ``(active_text, groups)``.  *active_text* keeps lines whose
+    enclosing conditions are all true and blanks the rest.  Each group is
+    ``(has_else, branches)`` for a conditional whose outcome is unknown; a
+    branch is the text of one #if / #elif / #else arm that may be compiled.
+    """
+    text = re.sub(r"\\[ \t]*\n", " \n", body)
+    active: list = []
+    groups: list = []
+    stack: list = []
+
+    def outer_state() -> bool:
+        return all(f.current is True for f in stack)
+
+    for line in text.split("\n"):
+        m = _RE_PP_COND.match(line)
+        if m:
+            kind, arg = m.group(1), m.group(2).strip()
+            v: bool | None
+            if kind in ("if", "ifdef", "ifndef"):
+                if kind == "if":
+                    v = eval_pp_condition(arg, macros)
+                else:
+                    name = (arg.split() or [""])[0]
+                    defined = name in macros
+                    v = (True if defined else None) if kind == "ifdef" \
+                        else (False if defined else None)
+                stack.append(_CondFrame(v, outer_state()))
+            elif stack:
+                frame = stack[-1]
+                if kind == "elif":
+                    if frame.any_true:
+                        v = False
+                    else:
+                        v = eval_pp_condition(arg, macros)
+                        if frame.any_unknown and v is not False:
+                            v = None      # taken only if an earlier arm is not
+                    frame.enter(v)
+                elif kind == "else":
+                    frame.has_else = True
+                    frame.enter(False if frame.any_true
+                                else (None if frame.any_unknown else True))
+                else:                       # endif
+                    stack.pop()
+                    if frame.any_unknown and frame.outer_on:
+                        groups.append((frame.has_else, frame.branches))
+            active.append("")
+            continue
+        if outer_state():
+            active.append(line)
+            continue
+        active.append("")
+        # Attribute the line to the outermost unresolved frame when every
+        # frame inside it is in a true branch.
+        for idx, frame in enumerate(stack):
+            if frame.current is True:
+                continue
+            if frame.current is None and frame.outer_on and all(
+                    f.current is True for f in stack[idx + 1:]):
+                frame.branches[-1].append(line)
+            break
+    return "\n".join(active), groups
+
+
+class _CondFrame:
+    """One open #if group while resolving a struct body (#463)."""
+
+    def __init__(self, value: bool | None, outer_on: bool):
+        self.current: bool | None = None
+        self.any_true = False
+        self.any_unknown = False
+        self.has_else = False
+        self.outer_on = outer_on        # every enclosing arm is true
+        self.branches: list = []        # line lists of arms that may compile
+        self.enter(value)
+
+    def enter(self, value: bool | None) -> None:
+        """Start a new arm whose condition is *value*."""
+        self.current = value
+        self.any_true = self.any_true or value is True
+        self.any_unknown = self.any_unknown or value is None
+        if value is not False:
+            self.branches.append([])
+
+
+def _members_with_conditionals(body: str, macros: dict | None) -> tuple:
+    """Return the member entries of *body*, resolving #if blocks (#463)."""
+    active, groups = _resolve_conditionals(body, macros or {})
+    entries = list(_struct_members(active))
+    for has_else, branches in groups:
+        if not has_else or not branches:
+            continue
+        per_branch = [_struct_members("\n".join(b)) for b in branches]
+        common = set.intersection(
+            *({n for e in entries_b for n in e} for entries_b in per_branch))
+        for entry in per_branch[0]:
+            if set(entry) <= common:
+                entries.append(entry)
+    seen: set = set()
+    unique: list = []
+    for entry in entries:
+        if not seen.intersection(entry):
+            unique.append(entry)
+        seen.update(entry)
+    return tuple(unique)
+
+
+def collect_typedef_names(clean: str) -> set:
+    """Return every name declared by a ``typedef`` in *clean* (#462).
+
+    Used to tell a local of a known non-struct type (an enum, a scalar or a
+    pointer typedef) from one whose type is not known at all.
+    """
+    names: set = set()
+    for m in re.finditer(r"\btypedef\b", clean):
+        depth, end = 0, -1
+        for i in range(m.end(), len(clean)):
+            ch = clean[i]
+            if ch in "({[":
+                depth += 1
+            elif ch in ")}]":
+                depth -= 1
+            elif ch == ";" and depth == 0:
+                end = i
+                break
+        if end < 0:
+            continue
+        stmt = clean[m.end():end]
+        brace = stmt.rfind("}")
+        tail = stmt[brace + 1:] if brace >= 0 else stmt
+        for idx, chunk in enumerate(_split_top_level(tail, ",")):
+            if brace < 0 and idx == 0:
+                name = _declarator_name(chunk)
+            else:
+                name = _declarator_name("int " + chunk)
+            if name:
+                names.add(name)
+    return names
+
+
+def collect_struct_defs(clean: str, macros: dict | None = None) -> dict:
+    """Return the struct definition table of one preprocessed source text.
+
+    *macros* (from :func:`collect_macros`) resolves #if blocks inside
+    struct bodies (#463); this file's own #defines are always used too.
+    """
+    table = collect_macros(clean)
+    for name, val in (macros or {}).items():
+        table.setdefault(name, val)
     defs: dict = {}
     for m in RE_STRUCT_DEF_OPEN.finditer(clean):
         if m.group(2) != "struct":
@@ -323,7 +736,7 @@ def collect_struct_defs(clean: str) -> dict:
         close = _match_brace(clean, open_pos)
         if close < 0:
             continue
-        members = _struct_members(clean[open_pos + 1:close])
+        members = _members_with_conditionals(clean[open_pos + 1:close], table)
         if m.group(3):
             defs[f"struct {m.group(3)}"] = members
         if m.group(1):
@@ -340,13 +753,22 @@ def collect_struct_defs(clean: str) -> dict:
     return defs
 
 
-def collect_struct_defs_from_source(source: str,
-                                    defines: list | None = None) -> dict:
-    """Preprocess *source* (and apply *defines*) then collect struct defs."""
+def clean_for_struct_scan(source: str, defines: list | None = None) -> str:
+    """Preprocess *source* (and apply *defines*) for the struct pre-scan."""
     clean = preprocess(source.replace("\r\n", "\n").replace("\r", "\n"))
     if defines:
         clean = apply_defines(clean, defines)
-    return collect_struct_defs(clean)
+    return clean
+
+
+def collect_struct_defs_from_source(source: str,
+                                    defines: list | None = None,
+                                    macros: dict | None = None) -> dict:
+    """Preprocess *source* (and apply *defines*) then collect struct defs."""
+    return collect_struct_defs(clean_for_struct_scan(source, defines), macros)
+
+
+_STRUCT_RULE_KEYS = ("partial_struct_assignment", "partial_struct_initialiser")
 
 
 def struct_rules_enabled(cfg: dict) -> bool:
@@ -354,8 +776,23 @@ def struct_rules_enabled(cfg: dict) -> bool:
     misc = cfg.get("misc", {}) or {}
     return any(
         (misc.get(k, {}) or {}).get("enabled", False)
-        for k in ("partial_struct_assignment", "partial_struct_initialiser")
+        for k in _STRUCT_RULE_KEYS
     )
+
+
+def struct_definition_paths(cfg: dict) -> list:
+    """Return the ``definition_paths`` globs of both #456 rules (#461),
+    in order and without duplicates.  Only enabled rules contribute."""
+    misc = cfg.get("misc", {}) or {}
+    paths: list = []
+    for key in _STRUCT_RULE_KEYS:
+        rule = misc.get(key, {}) or {}
+        if not rule.get("enabled", False):
+            continue
+        for p in rule.get("definition_paths", []) or []:
+            if p not in paths:
+                paths.append(p)
+    return paths
 
 RE_COMMENT_WORD = re.compile(r"[A-Za-z][A-Za-z']{2,}")
 
@@ -377,6 +814,8 @@ class Checker:
         c_keywords: frozenset | None = None,
         c_stdlib_names: frozenset | None = None,
         struct_defs: dict | None = None,
+        macros: dict | None = None,
+        type_names: set | frozenset | None = None,
     ):
         self.filepath      = filepath
         # Normalise line endings once at construction time so all check
@@ -438,10 +877,16 @@ class Checker:
         # over *struct_defs*, the table the CLI collects from every scanned
         # file (so struct types defined in headers are known).
         # Built only when either rule is enabled for this file.
+        # *macros* (#463) resolves #if blocks in struct bodies; *type_names*
+        # (#462) lists every typedef name known to the CLI pre-scan.
         self._struct_defs: dict = {}
+        self._type_names: set = set()
         if struct_rules_enabled(cfg):
             self._struct_defs.update(struct_defs or {})
-            self._struct_defs.update(collect_struct_defs(self.clean))
+            self._struct_defs.update(collect_struct_defs(self.clean, macros))
+            self._type_names.update(type_names or ())
+            self._type_names.update(collect_typedef_names(self.clean))
+        self._sizeof_objects: set | None = None   # lazily built (#460)
 
     # -----------------------------------------------------------------------
     # Internal helpers
@@ -2871,12 +3316,40 @@ class Checker:
         r'(?:\s*\*+)?\s*\)'
     )
 
+    # A name declared as an object in this file (#460): "<word> [*] NAME"
+    # followed by '=', ';', ',', ')' or an array suffix.  Used to exempt
+    # sizeof(NAME) when NAME only looks like a type (upper case or '_t').
+    _RE_OBJECT_DECL = re.compile(
+        r"\b([A-Za-z_]\w*)(?:\s*\*+\s*|\s+)"
+        r"(?:(?:const|volatile)\s+)*([A-Za-z_]\w*)\s*"
+        r"(?:\[[^\]\n]*\]\s*)*(?=[=;,)])"
+    )
+    _NOT_A_TYPE_WORD = frozenset((
+        "const", "volatile", "struct", "union", "enum", "sizeof",
+        "signed", "unsigned", "typedef",
+    ))
+
+    def _object_names(self) -> set:
+        """Names declared as objects (variables, parameters, arrays) in this
+        file, excluding every typedef name (#460)."""
+        if self._sizeof_objects is None:
+            names = {
+                m.group(2) for m in self._RE_OBJECT_DECL.finditer(self.clean)
+                if m.group(1) not in self._NOT_A_TYPE_WORD
+            }
+            names -= collect_typedef_names(self.clean)
+            self._sizeof_objects = names
+        return self._sizeof_objects
+
     def _check_sizeof_type(self) -> None:
         cfg = self.cfg.get("misc", {}).get("sizeof_type", {})
         if not cfg.get("enabled", False):   # opt-in (#418)
             return
         sev = cfg.get("severity", "info")
         for m in self._RE_SIZEOF_TYPE.finditer(self.clean):
+            operand = re.findall(r"[A-Za-z_]\w*", m.group())[-1]
+            if operand in self._object_names():
+                continue      # an upper-case or '_t' object, not a type
             self._v(
                 m.start(), sev, "misc.sizeof_type",
                 "sizeof with a type operand is fragile; prefer sizeof(*var) "
@@ -3055,12 +3528,50 @@ class Checker:
             key = val
         return None
 
-    def _iter_local_struct_decls(self):
+    # Standard-library type names that are never structs the rule could
+    # check (#462): a local of one of these is not an "unknown type".
+    _STD_SCALAR_TYPES = frozenset((
+        "int8_t", "int16_t", "int32_t", "int64_t",
+        "uint8_t", "uint16_t", "uint32_t", "uint64_t",
+        "int_least8_t", "int_least16_t", "int_least32_t", "int_least64_t",
+        "uint_least8_t", "uint_least16_t", "uint_least32_t",
+        "uint_least64_t", "int_fast8_t", "int_fast16_t", "int_fast32_t",
+        "int_fast64_t", "uint_fast8_t", "uint_fast16_t", "uint_fast32_t",
+        "uint_fast64_t", "intptr_t", "uintptr_t", "intmax_t", "uintmax_t",
+        "size_t", "ssize_t", "ptrdiff_t", "wchar_t", "wint_t", "char16_t",
+        "char32_t", "bool", "_Bool", "float_t", "double_t", "sig_atomic_t",
+        "clock_t", "time_t", "off_t", "va_list", "max_align_t", "errno_t",
+        "rsize_t", "FILE", "fpos_t", "mbstate_t", "jmp_buf",
+    ))
+
+    def _is_unknown_struct_type(self, label: str) -> bool:
+        """True when *label* names a type the rule cannot check because no
+        definition was found: an explicit 'struct tag', or a name that is
+        neither a known typedef nor a standard type (#462)."""
+        if label.startswith("struct "):
+            return True
+        return not (label in self._type_names
+                    or label in self._STD_SCALAR_TYPES
+                    or label in self._c_stdlib_names)
+
+    def _report_unknown_type(self, rule: str, pos: int, name: str,
+                             label: str) -> None:
+        self._v(
+            pos, "info", rule,
+            f"Local '{name}' ({label}) not checked: no definition of "
+            f"'{label}' was found in the scanned files or the rule's "
+            f"definition_paths",
+            idents=(name,),
+        )
+
+    def _iter_local_struct_decls(self, include_unknown: bool = False):
         """Yield (name_pos, name, type_label, entries, init, is_static,
         stmt_end, scope_end) for each struct declarator inside a function.
 
         *init* is the initialiser text, or None when there is none.  Pointer
-        and array declarators are not yielded.
+        and array declarators are not yielded.  With *include_unknown*,
+        declarators whose type has no known definition and is not a known
+        non-struct type are yielded too, with *entries* None (#462).
         """
         clean = self.clean
         for _fpos, _fname, b_start, b_end in self._iter_function_bodies():
@@ -3076,7 +3587,10 @@ class Checker:
                 else:
                     label = m.group(3)
                 entries = self._struct_entries(label)
-                if not entries:
+                if entries is None and include_unknown \
+                        and self._is_unknown_struct_type(label):
+                    pass              # yielded with entries None (#462)
+                elif not entries:
                     continue
                 # Statement end: first ';' outside (), [] and {}.
                 depth, semi = 0, -1
@@ -3123,10 +3637,15 @@ class Checker:
         sev = cfg.get("severity", "warning")
         fills = frozenset(cfg.get("fill_functions",
                                   self._DEFAULT_FILL_FUNCTIONS))
+        report_unknown = bool(cfg.get("report_unknown_types", False))
         clean = self.clean
         for (pos, name, label, entries, init, is_static,
-             semi, scope_end) in self._iter_local_struct_decls():
+             semi, scope_end) in self._iter_local_struct_decls(report_unknown):
             if init is not None or is_static:
+                continue
+            if entries is None:
+                self._report_unknown_type(
+                    "misc.partial_struct_assignment", pos, name, label)
                 continue
             assigned: set = set()
             use_pos = None
@@ -3193,8 +3712,9 @@ class Checker:
         if not cfg.get("enabled", False):   # opt-in (#456)
             return
         sev = cfg.get("severity", "info")
+        report_unknown = bool(cfg.get("report_unknown_types", False))
         for (pos, name, label, entries, init, _static,
-             _semi, _scope) in self._iter_local_struct_decls():
+             _semi, _scope) in self._iter_local_struct_decls(report_unknown):
             if not init or not init.startswith("{"):
                 continue
             close = _match_brace(init, 0)
@@ -3208,6 +3728,10 @@ class Checker:
                 items.pop()       # trailing comma
             if any(s.startswith((".", "[")) for s in items):
                 continue          # designated initialiser names its members
+            if entries is None:
+                self._report_unknown_type(
+                    "misc.partial_struct_initialiser", pos, name, label)
+                continue
             if len(items) >= len(entries):
                 continue
             rest = [e[0] for e in entries[len(items):]]

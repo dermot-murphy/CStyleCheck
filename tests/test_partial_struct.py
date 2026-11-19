@@ -7,6 +7,9 @@ UV-PSI-002  misc.partial_struct_assignment — flagged cases
 UV-PSI-003  misc.partial_struct_assignment — not-flagged cases
 UV-PSI-004  misc.partial_struct_initialiser
 UV-PSI-005  Cross-file struct definitions (CLI pre-pass)
+UV-PSI-006  Preprocessor conditionals in struct bodies (#463)
+UV-PSI-007  Definition-only files: definition_paths / --definitions (#461)
+UV-PSI-008  report_unknown_types (#462)
 """
 import sys
 import tempfile
@@ -17,7 +20,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from harness import cfg_only, run, rules  # noqa: E402
 
 from cstylecheck.checker import (  # noqa: E402
-    collect_struct_defs, struct_rules_enabled,
+    collect_macros, collect_struct_defs, collect_typedef_names,
+    eval_pp_condition, struct_definition_paths, struct_rules_enabled,
 )
 
 RULE_PSA = "misc.partial_struct_assignment"
@@ -391,6 +395,228 @@ class TestCrossFileStructDefs(unittest.TestCase):
                 encoding="utf-8")
             out = self._cli(td, "app.c", "uart.h")
             self.assertNotIn(RULE_PSA, out)
+
+
+# ---------------------------------------------------------------------------
+# UV-PSI-006  Preprocessor conditionals in struct bodies (#463)
+# ---------------------------------------------------------------------------
+
+_COND_STRUCT = ("typedef struct\n{\n    int a;\n    int b;\n"
+                "#if EXT\n    int c;\n    int d;\n#endif\n} cfg_t;\n")
+_COND_USE = ("void f(void)\n{\n    cfg_t cfg;\n    cfg.a = 1;\n"
+             "    cfg.b = 2;\n    Apply(&cfg);\n}\n")
+
+
+class TestPreprocessorConditionals(unittest.TestCase):
+
+    def _members(self, src, macros=None):
+        return [e[0] for e in collect_struct_defs(src, macros)["cfg_t"]]
+
+    def test_condition_false_members_excluded(self):
+        src = "#define EXT 0\n" + _COND_STRUCT + _COND_USE
+        self.assertEqual(self._members(src), ["a", "b"])
+        self.assertNotIn(RULE_PSA, rules(src, _psa_cfg()))
+
+    def test_condition_true_members_counted(self):
+        src = "#define EXT 1\n" + _COND_STRUCT + _COND_USE
+        self.assertEqual(self._members(src), ["a", "b", "c", "d"])
+        msgs = [v.message for v in run(src, _psa_cfg()) if v.rule == RULE_PSA]
+        self.assertEqual(len(msgs), 1)
+        self.assertIn("2 of 4", msgs[0])
+        self.assertIn("c, d", msgs[0])
+
+    def test_condition_unknown_members_excluded(self):
+        src = _COND_STRUCT + _COND_USE
+        self.assertEqual(self._members(src), ["a", "b"])
+        self.assertNotIn(RULE_PSA, rules(src, _psa_cfg()))
+
+    def test_macro_from_other_file(self):
+        self.assertEqual(
+            self._members(_COND_STRUCT, collect_macros("#define EXT 1\n")),
+            ["a", "b", "c", "d"])
+
+    def test_this_file_macro_wins(self):
+        src = "#define EXT 0\n" + _COND_STRUCT
+        self.assertEqual(self._members(src, {"EXT": (None, "1")}), ["a", "b"])
+
+    def test_ifdef_ifndef_else_elif(self):
+        src = ("#define HAVE_X 1\ntypedef struct {\n#ifdef HAVE_X\n int x;\n"
+               "#endif\n#ifndef HAVE_X\n int nx;\n#endif\n#if 0\n int z;\n"
+               "#elif HAVE_X == 1\n int e;\n#else\n int f;\n#endif\n} cfg_t;\n")
+        self.assertEqual(self._members(src), ["x", "e"])
+
+    def test_member_in_every_branch_counted_when_unknown(self):
+        src = ("typedef struct {\n#if UNKNOWN\n int a;\n int p;\n#else\n"
+               " long a;\n#endif\n int b; } cfg_t;\n")
+        self.assertEqual(sorted(self._members(src)), ["a", "b"])
+
+    def test_no_else_member_not_counted_when_unknown(self):
+        src = ("typedef struct {\n#ifdef OPT\n int a;\n#endif\n"
+               " int b; } cfg_t;\n")
+        self.assertEqual(self._members(src), ["b"])
+
+    def test_nested_conditionals(self):
+        src = ("#define A 1\n#define B 0\ntypedef struct {\n#if A\n int a;\n"
+               "#if B\n int b;\n#else\n int nb;\n#endif\n#endif\n} cfg_t;\n")
+        self.assertEqual(self._members(src), ["a", "nb"])
+
+    def test_eval_function_like_macro_and_defined(self):
+        macros = collect_macros(
+            "#define CHECK(x) (x)\n#define FEATURE 1\n#define OFF 0\n")
+        self.assertTrue(eval_pp_condition(
+            "CHECK(FEATURE) || defined(__DOXYGEN__)", macros))
+        self.assertFalse(eval_pp_condition("CHECK(OFF) && defined(X)", macros))
+        self.assertIsNone(eval_pp_condition("CHECK(OFF) || defined(X)", macros))
+        self.assertTrue(eval_pp_condition("defined FEATURE && !OFF", macros))
+        self.assertTrue(eval_pp_condition("(0x10U >> 4) == 1UL", macros))
+        self.assertIsNone(eval_pp_condition("UNDEFINED_NAME", macros))
+        self.assertIsNone(eval_pp_condition("1 / 0", macros))
+        self.assertIsNone(eval_pp_condition('"str"', macros))
+        self.assertTrue(eval_pp_condition("1 ? 2 : 0", macros))
+
+    def test_initialiser_uses_resolved_count(self):
+        src = ("#define EXT 0\n" + _COND_STRUCT
+               + "void f(void)\n{\n    cfg_t c = { 1, 2 };\n    Put(&c);\n}\n")
+        self.assertNotIn(RULE_PSI, rules(src, _psi_cfg()))
+
+
+# ---------------------------------------------------------------------------
+# UV-PSI-007  Definition-only files (#461)
+# ---------------------------------------------------------------------------
+
+class TestDefinitionPaths(unittest.TestCase):
+
+    def _cli(self, td, *args):
+        import contextlib
+        import io
+        import os
+        from unittest import mock
+        from cstylecheck.cli import main
+        out = io.StringIO()
+        argv = ["cstylecheck", "--config", "c.yml", *args]
+        cwd = os.getcwd()
+        try:
+            os.chdir(td)
+            with mock.patch.object(sys, "argv", argv), \
+                    contextlib.redirect_stdout(out):
+                main()
+        finally:
+            os.chdir(cwd)
+        return out.getvalue()
+
+    def _write(self, td, config_extra=""):
+        sdk = Path(td, "sdk")
+        sdk.mkdir()
+        Path(sdk, "drv.h").write_text(
+            "typedef struct\n{\n    int pin;\n    int freq;\n"
+            "#if DRV_EXTENDED\n    int delay;\n#endif\n} drv_cfg_t;\n",
+            encoding="utf-8")
+        Path(sdk, "sdk_config.h").write_text("#define DRV_EXTENDED 0\n",
+                                             encoding="utf-8")
+        Path(td, "app_config.h").write_text("#define DRV_EXTENDED 1\n",
+                                            encoding="utf-8")
+        Path(td, "app.c").write_text(
+            "void App_Start(void)\n{\n    drv_cfg_t cfg;\n"
+            "    cfg.pin = 1;\n    cfg.freq = 2;\n    Drv_Init(&cfg);\n}\n",
+            encoding="utf-8")
+        Path(td, "c.yml").write_text(
+            "misc:\n  partial_struct_assignment:\n    enabled: true\n"
+            + config_extra, encoding="utf-8")
+
+    def test_without_definitions_not_checked(self):
+        with tempfile.TemporaryDirectory() as td:
+            self._write(td)
+            out = self._cli(td, "--include", "app.c", "--exclude", "sdk/**")
+            self.assertNotIn(RULE_PSA, out)
+
+    def test_definition_paths_config_reads_excluded_header(self):
+        with tempfile.TemporaryDirectory() as td:
+            self._write(td, "    definition_paths:\n"
+                            "      - app_config.h\n      - sdk/*.h\n")
+            out = self._cli(td, "--include", "app.c", "--exclude", "sdk/**")
+            self.assertIn(f"WARNING [{RULE_PSA}]", out)
+            self.assertIn("2 of 3", out)
+            self.assertIn("delay", out)
+            self.assertNotIn("drv.h", out)        # never checked
+
+    def test_earlier_definition_path_wins_for_macros(self):
+        with tempfile.TemporaryDirectory() as td:
+            self._write(td, "    definition_paths:\n"
+                            "      - sdk/*.h\n      - app_config.h\n")
+            out = self._cli(td, "--include", "app.c")
+            # sdk/sdk_config.h (DRV_EXTENDED 0) is read first: 2 members,
+            # both assigned, so nothing is reported.
+            self.assertNotIn(RULE_PSA, out)
+
+    def test_definitions_option(self):
+        with tempfile.TemporaryDirectory() as td:
+            self._write(td)
+            out = self._cli(td, "--include", "app.c",
+                            "--definitions", "app_config.h",
+                            "--definitions", "sdk/**/*.h")
+            self.assertIn("2 of 3", out)
+
+    def test_struct_definition_paths_helper(self):
+        cfg = {"misc": {
+            "partial_struct_assignment": {
+                "enabled": True, "definition_paths": ["a/*.h", "b/*.h"]},
+            "partial_struct_initialiser": {
+                "enabled": True, "definition_paths": ["b/*.h", "c/*.h"]},
+        }}
+        self.assertEqual(struct_definition_paths(cfg),
+                         ["a/*.h", "b/*.h", "c/*.h"])
+        cfg["misc"]["partial_struct_initialiser"]["enabled"] = False
+        self.assertEqual(struct_definition_paths(cfg), ["a/*.h", "b/*.h"])
+        self.assertEqual(struct_definition_paths({}), [])
+
+
+# ---------------------------------------------------------------------------
+# UV-PSI-008  report_unknown_types (#462)
+# ---------------------------------------------------------------------------
+
+class TestReportUnknownTypes(unittest.TestCase):
+
+    _SRC = ("typedef enum { MODE_A, MODE_B } mode_t;\n"
+            "typedef struct { int a; } known_t;\n"
+            "void f(void)\n{\n    vendor_cfg_t cfg;\n    struct ext_s e;\n"
+            "    mode_t m;\n    uint8_t n;\n    known_t k;\n    int i;\n"
+            "    static vendor_cfg_t s;\n    vendor_cfg_t z = {0};\n"
+            "    vendor_cfg_t *p;\n"
+            "    Use(&cfg, &e, &m, &n, &k, &i, &s, &z, p);\n}\n")
+
+    def _unknown(self, cfg):
+        return [v for v in run(self._SRC, cfg) if "not checked" in v.message]
+
+    def test_off_by_default(self):
+        self.assertEqual(self._unknown(_psa_cfg()), [])
+
+    def test_reports_only_unknown_types(self):
+        found = self._unknown(_psa_cfg(report_unknown_types=True))
+        by_name = {v.message.split("'")[1]: v for v in found}
+        self.assertEqual(sorted(by_name), ["cfg", "e"])
+        for v in found:
+            self.assertEqual(v.rule, RULE_PSA)
+            self.assertEqual(v.severity, "info")
+        self.assertIn("'vendor_cfg_t'", by_name["cfg"].message)
+        self.assertIn("'struct ext_s'", by_name["e"].message)
+
+    def test_initialiser_rule_reports_positional_init(self):
+        src = ("void f(void)\n{\n    vendor_cfg_t a = { 1, 2 };\n"
+               "    vendor_cfg_t b = {0};\n    vendor_cfg_t c = { .x = 1 };\n"
+               "    Use(&a, &b, &c);\n}\n")
+        cfg = cfg_only(misc={"partial_struct_initialiser": {
+            "enabled": True, "report_unknown_types": True}})
+        found = [v for v in run(src, cfg) if "not checked" in v.message]
+        self.assertEqual([v.message.split("'")[1] for v in found], ["a"])
+        self.assertEqual(found[0].rule, RULE_PSI)
+
+    def test_typedef_names_collected(self):
+        self.assertEqual(
+            collect_typedef_names(
+                "typedef unsigned char BYTE;\n"
+                "typedef struct { int a; } s_t, *s_p;\n"
+                "typedef enum { X } e_t;\ntypedef void (*cb_t)(int);\n"),
+            {"BYTE", "s_t", "s_p", "e_t", "cb_t"})
 
 
 if __name__ == "__main__":

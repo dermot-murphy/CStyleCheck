@@ -31,7 +31,8 @@ from .fixer import (apply_fixes, unified_diff, FIXABLE_RULES, SAFE_RULES,
 from .utils import (module_name, _cfg, config_error, EXIT_CONFIG_ERROR,
                     ensure_parent_dir)
 from .checker import (
-    Checker, collect_struct_defs_from_source, struct_rules_enabled,
+    Checker, clean_for_struct_scan, collect_macros, collect_struct_defs,
+    collect_typedef_names, struct_definition_paths, struct_rules_enabled,
 )
 from .sign_checker import SignChecker, DeclaredNotDefinedChecker
 from .baseline import load_baseline, write_baseline, apply_baseline
@@ -259,6 +260,12 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--exclude", action="append", default=[],
                    metavar="GLOB",
                    help="Glob pattern(s) to exclude (repeatable)")
+    p.add_argument("--definitions", action="append", default=[],
+                   metavar="GLOB",
+                   help="Glob pattern(s) of files read only for struct, "
+                        "typedef and #define definitions used by the "
+                        "misc.partial_struct_* rules; never checked, and "
+                        "--exclude does not apply (repeatable)")
     p.add_argument("--log", metavar="FILE",
                    help="Write all output to FILE in addition to stdout. "
                         "Missing folders in the path are created.")
@@ -571,18 +578,52 @@ def _main() -> int:
         # Cross-file struct definition table (#456): the partial-struct rules
         # need the member list of struct types defined in headers, so every
         # file is scanned for struct definitions before any file is checked.
+        # Files named by definition_paths / --definitions (#461) are read for
+        # struct, typedef and #define definitions only: they are never
+        # checked, and --exclude does not apply to them (vendor SDK headers
+        # are normally excluded from checking).  #defines from every file
+        # resolve #if blocks inside struct bodies (#463).
         struct_defs: dict | None = None
+        struct_macros: dict | None = None
+        type_names: set | None = None
         if struct_rules_enabled(cfg) or getattr(args, "per_dir_config", False):
-            struct_defs = {}
-            for filepath in files:
+            struct_defs, struct_macros, type_names = {}, {}, set()
+            def_globs = (struct_definition_paths(cfg)
+                         + list(getattr(args, "definitions", None) or []))
+            checked = set(files)
+            def_files = [
+                f for f in discover_files([], def_globs, [], {})
+                if f not in checked
+            ] if def_globs else []
+            if getattr(args, "verbose", False) and def_globs:
+                print(f"Definition files: {len(def_files)}",
+                      file=sys.stderr, flush=True)
+            cleaned: list = []
+            for filepath in files + def_files:
                 try:
                     source = Path(filepath).read_text(encoding="utf-8",
                                                       errors="replace")
                 except OSError:
                     continue
-                source_cache[filepath] = source
-                struct_defs.update(
-                    collect_struct_defs_from_source(source, defines))
+                if filepath in checked:
+                    source_cache[filepath] = source
+                clean = clean_for_struct_scan(source, defines)
+                cleaned.append((clean, filepath in checked))
+                for name, val in collect_macros(clean).items():
+                    struct_macros.setdefault(name, val)
+            # Precedence: checked files first, then definition files in the
+            # order their globs are listed.  A #define keeps its first value;
+            # a struct definition from a definition file never replaces one
+            # from a checked file or an earlier definition file.
+            for clean, is_checked in cleaned:
+                found = collect_struct_defs(clean, struct_macros)
+                if is_checked:
+                    struct_defs.update(found)
+                else:
+                    for key, val in found.items():
+                        struct_defs.setdefault(key, val)
+                type_names.update(collect_typedef_names(clean))
+            del cleaned
 
         for filepath in files:
             if getattr(args, "verbose", False):
@@ -633,6 +674,8 @@ def _main() -> int:
                 c_keywords=keywords_set,
                 c_stdlib_names=stdlib_set,
                 struct_defs=struct_defs,
+                macros=struct_macros,
+                type_names=type_names,
             )
             result  = checker.run_all()
             all_violations.extend(result.violations)

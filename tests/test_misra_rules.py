@@ -933,6 +933,35 @@ class TestSizeofType(unittest.TestCase):
         self.assertTrue(msgs)
         self.assertIn("sizeof", msgs[0])
 
+    # #460: an upper-case or '_t' name declared as an object is not a type.
+    def test_upper_case_array_object_clean(self):
+        src = ("typedef struct { int id; } stage_t;\n"
+               "static const stage_t STAGE_TABLE[] = { { 1 }, { 2 } };\n"
+               "#define STAGE_COUNT (sizeof (STAGE_TABLE) / "
+               "sizeof (STAGE_TABLE[0]))\n"
+               "int f(void){ return (int) STAGE_COUNT; }\n")
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_upper_case_local_and_parameter_clean(self):
+        src = ("void f(int MODE_T, char *BUF){ int BLOCK[4];\n"
+               "int n = sizeof(BLOCK) + sizeof(MODE_T) + sizeof(BUF);\n"
+               "(void)n; }\n")
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_object_name_ending_t_clean(self):
+        src = "void f(void){ int count_t = 0;\nint n = sizeof(count_t);\n(void)n; }\n"
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_upper_case_typedef_still_flagged(self):
+        src = ("typedef unsigned char BYTE;\n"
+               "void f(void){ BYTE b = 0U;\nint n = sizeof(BYTE);\n"
+               "(void)n; (void)b; }\n")
+        self.assertIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_upper_case_name_not_declared_still_flagged(self):
+        src = "void f(void){ int n = sizeof(MY_TYPE);\n(void)n; }\n"
+        self.assertIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
 
 class TestBooleanComparison(unittest.TestCase):
     def test_eq_true_flagged(self):

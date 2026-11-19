@@ -882,8 +882,11 @@ misc:
   # indeterminate stack data in every member.  Flags such a struct when only
   # some of its members are assigned before it is used as a whole (passed by
   # value or address, returned, copied).  Member lists come from the struct
-  # definitions in all scanned files; structs whose definition is not
-  # scanned are not checked.  A whole-struct assignment, or a call to one of
+  # definitions in all scanned files and in definition_paths; a local whose
+  # struct definition is not found is not checked (report_unknown_types
+  # lists them).  Members inside #if / #ifdef blocks count only when the
+  # condition evaluates true from the #defines found; an unknown condition
+  # leaves them out.  A whole-struct assignment, or a call to one of
   # fill_functions with '&s' as its first argument, before the member
   # assignments counts as initialising every member.  Passing '&s' to any
   # other function before a member is assigned counts as an out-parameter
@@ -898,6 +901,14 @@ misc:
       - memset
       - memcpy
       - memmove
+    # Files read only for struct, typedef and #define definitions (#461):
+    # never checked, and --exclude does not apply, so vendor SDK headers
+    # can supply member lists.  Globs are relative to the working directory.
+    # Earlier entries win when a macro is defined more than once, so list
+    # the project's own configuration headers first.  Shared with
+    # partial_struct_initialiser; --definitions GLOB adds more.
+    definition_paths: []
+    report_unknown_types: false   # info per local whose type is unknown (#462)
 
   # -----------------------------------------------------------------------
   # Short positional struct initialiser — cf. MISRA C:2012 Rule 9.3
@@ -912,6 +923,8 @@ misc:
   partial_struct_initialiser:
     enabled: false          # opt-in; disabled by default (#456)
     severity: info
+    definition_paths: []    # see partial_struct_assignment (#461)
+    report_unknown_types: false   # info per local whose type is unknown (#462)
 
 # --- Reserved / banned identifier names ---
 # Checks that no declared variable, function, macro, or constant name
