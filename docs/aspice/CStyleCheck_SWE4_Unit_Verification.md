@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.44 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.45 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.45 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.44 | 2026-11-19 | Claude | Issue #456 (CR-456): new §5.24 `test_partial_struct.py` (54 tests, UV-PSI-001 to UV-PSI-005) for SWE1-118 to SWE1-120 (UNIT-139 to UNIT-145); §5.14 `test_misra_rules.py` 160→162 (UV-MSR-009 11→13: key-absent tests for the two new opt-in rules; policy tests cover 10 opt-in rules); §5.18 UV-WIZ-004/005 — `misra` and `barr-c` presets and the wizard include the partial-struct rules (9 opt-in rules listed); §6 new module row, total 1574→1630 (60 modules, 83 rule IDs); §4.2 CI-gate test total; §7 rows SWE1-118 to SWE1-120 and SWE1-075 |
 | 1.43 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
 | 1.42 | 2026-11-19 | Claude | Issue #449: §6 `test_workflow_config.py` 16→21 tests (`TestRepositoryProtection`, SUP9-TC-PROT-001 to 005: no push to the source branch, every workflow declares `permissions:`, rules-workflow token scopes, no `paths:` filter on `pull_request` in `cstylecheck_tests.yml`, *All Checks Passed* aggregate job); total 1569→1574; §4.2 CI-gate test count; referenced-document versions resynced |
@@ -79,10 +80,10 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.29 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.39 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.33 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.30 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.30 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.40 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.34 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.31 |
 
 ---
 
