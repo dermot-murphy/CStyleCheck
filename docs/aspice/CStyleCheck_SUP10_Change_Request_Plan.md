@@ -60,7 +60,7 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.35 |
 | CSC-SUP9-001 | Problem Resolution Management Plan | 1.24 |
 | CSC-MAN3-001 | Project Management Plan | 1.30 |
 

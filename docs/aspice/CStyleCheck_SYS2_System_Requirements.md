@@ -84,7 +84,7 @@ The system is deployed in four integration modes:
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.35 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.27 |
 | CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.32 |
 

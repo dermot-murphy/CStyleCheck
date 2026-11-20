@@ -71,7 +71,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.27 |
 | CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.34 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.35 |
 
 ### 3.3 System Configuration Under Test
 

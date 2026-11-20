@@ -153,6 +153,6 @@ This deviation is accepted on the basis that Dermot Murphy is the sole accountab
 | Document ID | Title | Version |
 |---|---|---|
 | CSC-PA2-001 | Process Capability Records | 1.45 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.35 |
 | CSC-SUP9-001 | Problem Resolution Management Plan | 1.24 |
 | GitHub Issue #52 | AI listed as Author across all 18 ASPICE work products | — |

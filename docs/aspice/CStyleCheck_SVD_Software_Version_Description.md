@@ -76,7 +76,7 @@ This document satisfies the release-identification and configuration-status-acco
 | CSC-SWE4-001 | CStyleCheck Software Unit Verification Specification | 1.48 |
 | CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.37 |
 | CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.40 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.35 |
 | CSC-SUP1-001 | CStyleCheck Quality Assurance Plan | 1.30 |
 | CSC-MAN3-001 | CStyleCheck Project Management Plan | 1.30 |
 
@@ -269,7 +269,7 @@ Platforms: `linux/amd64`, `linux/arm64`.
 | CSC-MAN3-001 | Project Management Plan | 1.30 |
 | CSC-MAN5-001 | Risk Management Plan | 1.25 |
 | CSC-SUP1-001 | Quality Assurance Plan | 1.30 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.35 |
 | CSC-SUP9-001 | Problem Resolution Plan | 1.24 |
 | CSC-SUP10-001 | Change Request Plan | 1.26 |
 | CSC-ACQ4-001 | Supplier Monitoring Plan | 1.24 |

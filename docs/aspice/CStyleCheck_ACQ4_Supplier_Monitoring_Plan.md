@@ -69,7 +69,7 @@ There are no contracted Tier-1 software suppliers or subcontractors.
 |---|---|---|
 | CSC-MAN3-001 | Project Management Plan | 1.30 |
 | CSC-MAN5-001 | Risk Management Plan | 1.25 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.35 |
 | CSC-SUP9-001 | Problem Resolution Management Plan | 1.24 |
 
 ---
