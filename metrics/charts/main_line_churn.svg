@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="280" viewBox="0 0 640 280">
+<rect width="640" height="280" fill="#0d1117" rx="6" />
+<text x="68" y="22" font-size="13" font-weight="600" fill="#e6edf3" font-family="ui-monospace, 'Cascadia Code', monospace">Line churn per commit — main</text>
+<line x1="68" y1="224.0" x2="620" y2="224.0" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="228.0" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">0</text>
+<line x1="68" y1="176.31247799037448" x2="620" y2="176.31247799037448" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="180.31247799037448" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">5000</text>
+<line x1="68" y1="128.62495598074892" x2="620" y2="128.62495598074892" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="132.62495598074892" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">10000</text>
+<line x1="68" y1="80.93743397112337" x2="620" y2="80.93743397112337" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />
+<text x="63" y="84.93743397112337" text-anchor="end" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">15000</text>
+<line x1="68" y1="42" x2="68" y2="224" stroke="#484f58" stroke-width="1" />
+<line x1="68" y1="224" x2="620" y2="224" stroke="#484f58" stroke-width="1" />
+<text x="14" y="133" fill="#8b949e" font-family="ui-monospace, 'Cascadia Code', monospace" font-size="10" text-anchor="middle" transform="rotate(-90 14 133)">lines</text>
+<line x1="344.0" y1="224" x2="344.0" y2="228" stroke="#484f58" stroke-width="1" />
+<text x="344.0" y="240" text-anchor="middle" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Nov 20</text>
+<circle cx="344.0" cy="61.5" r="3" fill="#3fb950" />
+<circle cx="344.0" cy="213.76625777673436" r="3" fill="#f85149" />
+<rect x="68" y="255" width="14" height="3" fill="#3fb950" rx="1" />
+<text x="86" y="264" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Lines added</text>
+<rect x="173" y="255" width="14" height="3" fill="#f85149" rx="1" />
+<text x="191" y="264" fill="#8b949e" font-size="10" font-family="ui-monospace, 'Cascadia Code', monospace">Lines deleted</text>
+</svg>
