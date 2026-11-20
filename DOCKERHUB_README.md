@@ -46,7 +46,7 @@ docker run --rm -v "C:/MyProject:/repo" dermot-murphy/cstylecheck:latest ^
 
 ```yaml
 # .github/workflows/cstylecheck.yml
-- uses: dermot-murphy/CStyleCheck@v1
+- uses: dermot-murphy/CStyleCheck@v2.0.0
   with:
     config: src/rules.yml
     include: |
@@ -70,7 +70,7 @@ docker run --rm -v "C:/MyProject:/repo" dermot-murphy/cstylecheck:latest ^
 # .pre-commit-config.yml
 repos:
   - repo: https://github.com/dermot-murphy/CStyleCheck
-    rev: v1.6.1
+    rev: v2.0.0
     hooks:
       - id: cstylecheck
         args:
@@ -180,7 +180,7 @@ docker run --rm -v "$(pwd):/repo" dermot-murphy/cstylecheck:latest \
 | Tag | Description |
 |---|---|
 | `latest` | Latest `main` branch build |
-| `1.6.1` / `1.6` / `1` | Specific semantic version |
+| `2.0.0` / `2.0` / `2` | Specific semantic version |
 | `sha-<short>` | Exact commit SHA |
 
 Images are available for `linux/amd64` and `linux/arm64`.

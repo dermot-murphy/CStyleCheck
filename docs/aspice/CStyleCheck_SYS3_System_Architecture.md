@@ -63,8 +63,8 @@ This System Architecture Description defines the top-level structural and behavi
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.25 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.33 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.33 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.34 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
 
 ---
 

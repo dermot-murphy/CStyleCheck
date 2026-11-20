@@ -9,9 +9,13 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+---
+
+## [2.0.0] — 2026-11-20
+
 ### ⚠️ Compatibility
 
-The next release is planned as **v2.0.0** (Major), because the changes below can
+This is a **Major** release, because the changes below can
 break an existing project on upgrade (SUP10 §7.2, semantic-versioning policy). See the
 linked entries under *Changed* and *Fixed* for details.
 
@@ -24,9 +28,12 @@ linked entries under *Changed* and *Fixed* for details.
   code that passed before may report `enum.member_case` / `enum.member_prefix`.
 - **`functions.case` removed (#424)** — the key is ignored and prints a `WARNING`;
   use `functions.style`.
-- **New rules are opt-in (#412, #418)** — the 8 new `misc.*` rules ship
+- **New rules are opt-in (#412, #418, #456)** — the 10 new `misc.*` rules ship
   `enabled: false`; enable them per rule, or use `--preset misra` / `--preset barr-c`
   (#420).
+- **GitHub Action: pin `@v2.0.0`** — the README, `DOCKERHUB_README.md` and `action.yml`
+  usage examples now use `dermot-murphy/CStyleCheck@v2.0.0`; a workflow pinned to a v1.x
+  tag stays on that version until its pin is changed.
 
 ### Added
 
@@ -834,7 +841,8 @@ Initial public release.
 
 ---
 
-[Unreleased]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/dermot-murphy/CStyleCheck/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.6.1...v2.0.0
 [1.6.1]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.5.1...v1.6.0
 [1.5.1]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.5.0...v1.5.1

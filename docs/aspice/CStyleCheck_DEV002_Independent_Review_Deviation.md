@@ -183,8 +183,8 @@ This deviation is accepted on the basis that CStyleCheck is a single-person proj
 | Document ID | Title | Version |
 |---|---|---|
 | CSC-DEV-001 | Process Deviation — AI-Assisted Authorship | 1.22 |
-| CSC-PA2-001 | Process Capability Records | 1.44 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.33 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.23 |
-| CSC-SUP10-001 | Change Request Plan | 1.25 |
+| CSC-PA2-001 | Process Capability Records | 1.45 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.24 |
+| CSC-SUP10-001 | Change Request Plan | 1.26 |
 | GitHub Issue #61 | Designate independent reviewer (not approver) for SWE1, SWE4, SWE6 work products | — |

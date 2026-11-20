@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.33 |
-| **Project** | CStyleCheck | **Date** | 2026-11-19 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.34 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.4 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.34 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §3.2 scope v2.0.0; §3.4 CM baseline adds the v2.0.0 release baseline; §5 overall result for v2.0.0 (SITC-001 to SITC-018, 1671 tests); referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.33 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): SITC-018 step 6 — a plain `#define` in a checked configuration header beats an SDK `#ifndef` default; step 5 — `--definitions` warning when no partial-struct rule is enabled; evidence 89 tests; test total 1655→1671 |
 | 1.32 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SITC-018 steps 5 to 7 (definition files read but not checked, `#if` members resolved from the collected `#define`s, `report_unknown_types`) and #460 evidence for SITC-017; execution record; test total 1630→1655 |
 | 1.31 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
@@ -61,7 +62,7 @@
 
 ### 3.1 Purpose
 
-This System Integration Test Specification defines the integration test cases that verify the correct assembly, interface behaviour, and end-to-end operation of the **CStyleCheck v1.6.0 (and post-v1.6.0 `develop` baseline)** system across its six subsystems and five deployment modes. It satisfies **Automotive SPICE® PAM v4.0, SYS.4 — System Integration and Integration Verification**.
+This System Integration Test Specification defines the integration test cases that verify the correct assembly, interface behaviour, and end-to-end operation of the **CStyleCheck v2.0.0 (v1.6.0 / v1.6.1 plus the post-v1.6.0 `develop` changes)** system across its six subsystems and five deployment modes. It satisfies **Automotive SPICE® PAM v4.0, SYS.4 — System Integration and Integration Verification**.
 
 ### 3.2 Scope
 
@@ -81,7 +82,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 |---|---|---|
 | CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.25 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.27 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.30 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.31 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
@@ -92,7 +93,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | **Python Versions** | 3.10, 3.11, 3.12 (matrix) |
 | **Test Framework** | pytest + subprocess (for integration tests) |
 | **Docker Runtime** | Docker CLI on GitHub Actions runner |
-| **CM Baseline ID** | SITC-001 to SITC-014: `93178cd` (2026-05-28); SITC-015/016: v1.6.0 (`a6102d6`); SITC-007 re-run and SITC-017: `develop` `296e91b` (2026-09-29) |
+| **CM Baseline ID** | SITC-001 to SITC-014: `93178cd` (2026-05-28); SITC-015/016: v1.6.0 (`a6102d6`); SITC-007 re-run and SITC-017: `develop` `296e91b` (2026-09-29); v2.0.0 release baseline: tag `v2.0.0` on the `main` merge commit of `release/2.0.0` (2026-11-20, CR #443) |
 
 ### 3.5 Verification Criteria
 
@@ -566,7 +567,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-017 | Post-v1.6.0 MISRA/Barr-C rules (8 rule IDs; all 81 rule IDs now covered) | PASS | |
 | SITC-018 | Partially initialised local struct rules (2 rule IDs, #456; all 83 rule IDs covered) | PASS | |
 
-**Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016); 2026-10-06 (v1.6.1, SITC-006 step 4), GitHub Actions (automated) / Dermot Murphy (manual review), 1281 tests all PASS on Python 3.10 / 3.11 / 3.12.
+**Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016); 2026-10-06 (v1.6.1, SITC-006 step 4), GitHub Actions (automated) / Dermot Murphy (manual review), 1281 tests all PASS on Python 3.10 / 3.11 / 3.12. v2.0.0 release baseline (2026-11-20, CR #443): SITC-001 to SITC-018 PASS; 1671 tests all PASS (local run on `release/2.0.0`; CI matrix Python 3.10 / 3.11 / 3.12 is a merge gate of the release PR).
 
 **Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), 1452 after #412 (8 tests), 1463 after #418 (11 tests), 1481 after #420 (18 tests), 1508 after #422 (27 tests), 1524 after #424 (16 tests), 1532 after #425 (8 tests), 1545 after #423 (13 tests), 1559 after #439, #441 and the v1.6.1 back-merge (14 tests) 1569 after #447 (10 tests), 1574 after #449 (5 tests), 1630 after #456 (49 tests; SITC-018 PASS, local run, Python 3.14, 2026-11-19) and 1655 after #460 to #463 (25 tests; SITC-018 steps 5 to 7 PASS, local run, Python 3.14, 2026-11-19) and 1671 after the review fixes (16 tests), all PASS.
 
@@ -603,7 +604,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-09-29 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

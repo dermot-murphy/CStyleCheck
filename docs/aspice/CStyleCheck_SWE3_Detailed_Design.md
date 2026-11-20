@@ -75,7 +75,7 @@ This document defines the detailed design of each software unit (UNIT-01 to UNIT
 |---|---|---|
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
 | CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.36 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.47 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.48 |
 
 ---
 

@@ -6,13 +6,13 @@
 #
 # Minimal usage:
 #
-#   - uses: dermot-murphy/CStyleCheck@v1
+#   - uses: dermot-murphy/CStyleCheck@v2.0.0
 #     with:
 #       config: src/rules.yml
 #
 # Full example:
 #
-#   - uses: dermot-murphy/CStyleCheck@v1
+#   - uses: dermot-murphy/CStyleCheck@v2.0.0
 #     id: cstylecheck
 #     with:
 #       config:      src/rules.yml

@@ -1,4 +1,4 @@
-﻿# Software Qualification Test Specification
+# Software Qualification Test Specification
 
 *Automotive SPICE® PAM v4.0 | SWE.6 Software Verification*
 
@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.39 |
-| **Project** | CStyleCheck | **Date** | 2026-11-19 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.40 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.6 |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.40 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §3 scope v2.0.0; §3.2 configuration under test v2.0.0 (tag `v2.0.0` on the `main` merge commit of `release/2.0.0`), execution date 2026-11-20; §3.3 static-verification and open-bug criteria for v2.0.0; §5 v2.0.0 verdict; §9 release-readiness gate for the v2.0.0 baseline (1671 tests; no open bug Issue); §10 note; referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.39 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): SWQ-003 partial-struct row — `test_partial_struct.py` 89 tests (UV-PSI-001 to UV-PSI-009); BP3 evidence — `test_misra_rules.py` 168 tests, suite total 1671 |
 | 1.38 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SWQ-003 covers SWE1-121 to SWE1-123 (partial-struct row: definition files, `report_unknown_types`, `#if` members; `test_partial_struct.py` 74 tests) and the #460 `misc.sizeof_type` tests; §3.3 / §6 coverage 116→119 in-scope requirements (SWE1 defines 127); BP3 evidence — `test_misra_rules.py` 167 tests, suite total 1655 after #460 to #463 |
 | 1.37 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
@@ -67,7 +68,7 @@
 
 ## 3. Purpose & Scope
 
-This Software Qualification Test Specification defines the qualification test cases that verify **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline** against its software requirements (CSC-SWE1-001) as a complete software build. It satisfies **Automotive SPICE® PAM v4.0, SWE.6 — Software Verification**.
+This Software Qualification Test Specification defines the qualification test cases that verify **CStyleCheck v2.0.0** (v1.6.0 / v1.6.1 plus the post-v1.6.0 `develop` changes) against its software requirements (CSC-SWE1-001) as a complete software build. It satisfies **Automotive SPICE® PAM v4.0, SWE.6 — Software Verification**.
 
 Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they verify the software against its **specification**, not its internal architecture. They confirm that all SWE.1 requirements are met by the delivered software artefact and provide the final evidence gate before the software is released via SPL.2.
 
@@ -76,20 +77,20 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Document ID | Title | Version |
 |---|---|---|
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.36 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.30 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.33 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.37 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.31 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
 
 ### 3.2 Software Configuration Under Test
 
 | Attribute | Value |
 |---|---|
-| **Software Version** | 1.6.0 |
-| **Git Tag** | v1.6.0 |
-| **Commit SHA** | `a6102d6` (v1.6.0 release). Post-v1.6.0 additions (SWQ-003 rules for SWE1-109 to SWE1-116, SWQ-007 steps 4/6/7): `develop` `296e91b`; SWQ-003 rules for SWE1-118 to SWE1-120 (#456): branch `claude/partial-struct-init-456`; SWE1-121 to SWE1-123 and the SWE1-114 change (#460 to #463): branch `claude/partial-struct-sdk-460-463` |
+| **Software Version** | 2.0.0 |
+| **Git Tag** | v2.0.0 |
+| **Commit SHA** | Merge commit of `release/2.0.0` into `main` (tagged `v2.0.0`; release branch cut from `develop` `153d5d1`). Earlier executions: `a6102d6` (v1.6.0 release); post-v1.6.0 additions (SWQ-003 rules for SWE1-109 to SWE1-116, SWQ-007 steps 4/6/7): `develop` `296e91b`; SWQ-003 rules for SWE1-118 to SWE1-120 (#456): PR #457; SWE1-121 to SWE1-123 and the SWE1-114 change (#460 to #463): PR #464 |
 | **Python Version** | 3.11 (primary); 3.10 and 3.12 (regression) |
 | **OS** | Ubuntu 24.04 |
-| **Test Execution Date** | 2026-10-06 |
+| **Test Execution Date** | 2026-11-20 |
 | **Tester** | Claude (automated CI) / Dermot Murphy (review) |
 
 ### 3.3 Qualification Criteria
@@ -100,8 +101,8 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | SW Requirements coverage | 100% | All 119 in-scope requirements traced to ≥ 1 SWQ test: SWE1-001 to SWE1-101 (101), SWE1-109 to SWE1-116 (8), SWE1-118 to SWE1-123 (6) and SWE1-MISRA-001 to SWE1-MISRA-004 (4). Out of SWQ scope: SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts, not part of the delivered package; see §6) |
 | Statement coverage | ≥ 90% | Coverage report at execution |
 | Branch coverage | ≥ 85% | Coverage report at execution |
-| Static verification | PASS | `rules.yml` CI job on v1.6.1 commit |
-| Open bug Issues targeting v1.6.1 | 0 | No unresolved bug-labelled Issues |
+| Static verification | PASS | `rules.yml` CI job on v2.0.0 commit |
+| Open bug Issues targeting v2.0.0 | 0 | No unresolved bug-labelled Issues |
 
 ---
 
@@ -417,6 +418,8 @@ The #425 rows were executed on 2026-09-29 by `tests/test_exit_code_entry_points.
 
 **Overall Software Qualification Verdict — v1.6.0 baseline:** PASS (applies to the v1.6.0 release baseline — 1279 tests, 0 failures, Python 3.10 / 3.11 / 3.12; see §9)
 
+**Overall Software Qualification Verdict — v2.0.0 release baseline:** PASS (2026-11-20, CR #443 — 1671 tests, 0 failures; SWQ-003 covers all 83 rule IDs; 119/119 in-scope requirements; see §9)
+
 **Current `develop` run (not a release verdict):** 1545 passed, 58 test modules, 2026-09-29 (`develop` after #423, local run, Python 3.11). The qualification verdict for the next release (v2.0.0) is issued at release, including the CI matrix (Python 3.10 / 3.11 / 3.12).
 
 ---
@@ -489,17 +492,18 @@ The #425 rows were executed on 2026-09-29 by `tests/test_exit_code_entry_points.
 
 ## 9. Release Readiness Gate
 
-The following conditions were assessed for the **v1.6.1** release baseline (2026-10-06; v1.6.0 baseline 2026-07-01 plus the #439 hotfix):
+The following conditions were assessed for the **v2.0.0** release baseline (2026-11-20, CR #443; the v1.6.1 release baseline was assessed on 2026-10-06 with 1281 tests, #439 resolved):
 
-- [x] All SWQ test cases: PASS — 1281 tests, 0 failures (Python 3.10 / 3.11 / 3.12)
-- [x] Statement coverage ≥ 85% combined CI gate: PASS — 89.8% statement (v1.2.0 historical baseline; v1.6.0 CI measurement pending), 87.31% combined (`--cov-fail-under=85 --cov-branch`)
+- [x] All SWQ test cases: PASS — SWQ-001 to SWQ-012; 1671 tests, 0 failures (local run on `release/2.0.0`, Python 3.14, 2026-11-20)
+- [x] Statement coverage ≥ 85% combined CI gate: PASS — 89.8% statement (v1.2.0 historical baseline), 87.31% combined (`--cov-fail-under=85 --cov-branch`, enforced by `cstylecheck_tests.yml` on every pull request)
 - [x] Branch coverage ≥ 85% combined: PASS — 87.31% combined stmt+branch ≥ 85% gate ✅
-- [x] `rules.yml` CI job: PASS on v1.6.1 commit
-- [x] `cstylecheck_tests.yml` CI: PASS on Python 3.10, 3.11, 3.12
-- [x] `docker_publish.yml` CI: PASS; image available on GHCR and Docker Hub (`cstylecheck:1.6.1`, `:latest`)
-- [x] Zero open functional bug Issues: PASS — issues #339, #340, #341 resolved and merged in v1.6.0; #439 (startup banner in a json / sarif / html `--log` file) resolved in v1.6.1
-- [x] This document approved and placed under CM baseline (SUP.8)
+- [x] SW requirements coverage: 119/119 in-scope requirements (§6)
+- [x] `cstylecheck_tests.yml` (Python 3.10, 3.11, 3.12), `rules.yml` naming-convention check and `aspice_consistency.yml`: PASS on the release PR #465 `release/2.0.0` → `main` at `0c99dad` (runs 44714166810, 44714167028, 44714167031; CSC-SUP8-001 §8.2 step 1). The Docker build (`docker_publish.yml`) does not run on pull requests; it is checked after the merge, on the `v2.0.0` tag push (CR #443)
+- [x] Zero open functional bug Issues: PASS — no open `bug` Issue on 2026-11-20; #460 and #463 resolved by PR #464 (merge `153d5d1`); all post-v1.6.1 problem reports closed (CSC-SUP9-001 §6.2)
+- [x] This document approved and placed under CM baseline (SUP.8) — by the owner's merge of the release PR
 - [x] All TBD items in SYS.5 requirements coverage resolved or formally accepted — 6 of 9 resolved; SYS-NF-010/011/012 formally deferred (see CSC-SYS5-001 §7)
+
+After the tag (CSC-SUP8-001 §8.2 steps 4–7, §11.2 PCA; tracked in CR #443): `docker_publish.yml` publishes `cstylecheck:2.0.0`, `:2.0`, `:2` and `:latest` to GHCR and Docker Hub, and the GitHub Release is created from the CHANGELOG.
 
 ---
 
@@ -507,14 +511,14 @@ The following conditions were assessed for the **v1.6.1** release baseline (2026
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-09-29 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 
 > Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
-> **Note:** Software qualification is the final gate before release. This document must be approved and all release readiness conditions in §9 satisfied before the v1.6.1 release baseline is created and the product is released via SPL.2.
+> **Note:** Software qualification is the final gate before release. This document must be approved and all release readiness conditions in §9 satisfied before the v2.0.0 release baseline is created and the product is released via SPL.2.
 
 ---
 
