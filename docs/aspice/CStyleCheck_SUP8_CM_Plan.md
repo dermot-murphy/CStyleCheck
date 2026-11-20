@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.34 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.35 |
 | **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.35 | 2026-11-20 | Claude | Issue #455: `main` added to ruleset `Develop_Required_Checks` after the v2.0.0 release (#443), so *All Checks Passed* and *ASPICE work-product consistency* are required status checks on `develop` and `main`; §7.1 `main` row, §7.5 and §8.4 updated; approval by merge (CSC-DEV-002 §5.2) |
 | 1.34 | 2026-11-20 | Claude | v2.0.0 release (CR #443): new §8.4 release baseline record (v1.6.0, v1.6.1, v2.0.0 — branch flow, tag and change record per release baseline); §7.6 record — hotfix #399 recorded in CSC-SVD-001 §6.7.4; referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.33 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
 | 1.32 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
@@ -227,7 +228,7 @@ CStyleCheck uses the **Git Flow** branching model. The following branches are de
 
 | Branch | Purpose | Protection Rules |
 |---|---|---|
-| `main` | Production-ready code only; reflects the latest release baseline | Direct push prohibited and deletion blocked (ruleset `Do_Not_Delete_Main_Develop`: pull request required, merge commits only, no force-push, #449); no required status check until v2.0.0 (#443), when `main` is added to ruleset `Develop_Required_Checks` (#453); merged from `release/*` or `hotfix/*` only; every release merge and every hotfix that changes the delivered software creates a version tag; CI/repository-configuration-only hotfixes are not tagged (§7.6) |
+| `main` | Production-ready code only; reflects the latest release baseline | Direct push prohibited and deletion blocked (ruleset `Do_Not_Delete_Main_Develop`: pull request required, merge commits only, no force-push, #449); required status checks *All Checks Passed* and *ASPICE work-product consistency* (ruleset `Develop_Required_Checks`, added after v2.0.0, #455); merged from `release/*` or `hotfix/*` only; every release merge and every hotfix that changes the delivered software creates a version tag; CI/repository-configuration-only hotfixes are not tagged (§7.6) |
 | `develop` | Integration branch for completed features; always buildable | Direct push prohibited and deletion blocked (same ruleset as `main`, #449); required status checks *All Checks Passed* and *ASPICE work-product consistency* (ruleset `Develop_Required_Checks`, #453); merged from `feature/*`, `bugfix/*` and `claude/<topic>-<id>` (AI-authored feature or bug-fix work, see CLAUDE.md) via pull request; CI must pass |
 
 ### 7.2 Supporting Branches
@@ -266,7 +267,7 @@ main ──► hotfix/* ──► main ──► tag v1.0.1
 
 ### 7.5 CI Enforcement
 
-- All merges to `develop` and `main` require CI (`cstylecheck_tests.yml`) to pass. Its *All Checks Passed* job runs on every pull request (no `paths:` filter on `pull_request`; the unit tests run only when a test-relevant path changed) and, with *ASPICE work-product consistency* (`aspice_consistency.yml`), is a required status check of ruleset `Develop_Required_Checks` on `develop` (branches need not be up to date; #449, #453). `main` is added to that ruleset after v2.0.0 (#443), because until then `main` does not carry these workflows
+- All merges to `develop` and `main` require CI (`cstylecheck_tests.yml`) to pass. Its *All Checks Passed* job runs on every pull request (no `paths:` filter on `pull_request`; the unit tests run only when a test-relevant path changed) and, with *ASPICE work-product consistency* (`aspice_consistency.yml`), is a required status check of ruleset `Develop_Required_Checks` on `develop` and `main` (branches need not be up to date; #449, #453; `main` added after v2.0.0, #455)
 - The default `GITHUB_TOKEN` is read-only. A workflow or job that writes declares its own `permissions:` (`cstylecheck_rules.yml` *Update Trend* and `metrics.yml`: `contents: write` for `gh-pages`; `docker_publish.yml`: `packages: write`, and `contents: write` for the release). No workflow pushes to `develop` or `main` (#449); version tags `v*` / `V*` cannot be updated or deleted (ruleset `Protect release tags`)
 - The `cstylecheck_rules.yml` workflow runs the linter against the project's own source on every commit touching C files, enforcing self-hosting of the tool's own rules
 - The `aspice_consistency.yml` workflow (CI-062) runs `python scripts/aspice_check.py` on every pull request and on pushes to `develop` and `main`, without a path filter, so no merge can leave a work product inconsistent with the code, the tests or another work product (#437)
@@ -326,7 +327,7 @@ Release baselines created under §8.2 (and §7.6 for hotfixes) since v1.6.0. Eac
 | v1.6.1 | 2026-10-06 | Patch (hotfix) | `hotfix/1.6.1` → `main` (PR #444); back-merged to `develop` (PR #445) | `v1.6.1` on `be797a5` | #439; CSC-SVD-001 §6.6 |
 | v2.0.0 | 2026-11-20 | Major (CSC-SUP10-001 §7.2) | `release/2.0.0` cut from `develop` `153d5d1` → `main` (release PR); back-merged to `develop`; `release/2.0.0` deleted after the back-merge | Annotated tag `v2.0.0` on the `main` merge commit of `release/2.0.0`, created and pushed after the owner's merge (§8.2 steps 4–5) | CR #443 (CSC-SUP10-001 CR-443); CSC-SVD-001 §6.7 |
 
-The v2.0.0 release baseline contains 83 rule IDs and 1671 tests (60 modules). After the tag, `docker_publish.yml` publishes the container baseline (`2.0.0`, `2.0`, `2`, `latest`) and the Physical Configuration Audit (§11.2) is performed; both are tracked in CR #443. `main` is then added to ruleset `Develop_Required_Checks` (#455, §7.1).
+The v2.0.0 release baseline contains 83 rule IDs and 1671 tests (60 modules). After the tag, `docker_publish.yml` publishes the container baseline (`2.0.0`, `2.0`, `2`, `latest`) and the Physical Configuration Audit (§11.2) is performed; both are tracked in CR #443. `main` was then added to ruleset `Develop_Required_Checks` on 2026-11-20 (#455, §7.1).
 
 ---
 

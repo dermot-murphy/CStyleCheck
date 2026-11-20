@@ -9,6 +9,15 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- **Required status checks on `main` (#455)** — after the v2.0.0 release, `main` was
+  added to the repository ruleset `Develop_Required_Checks`, so *All Checks Passed* and
+  *ASPICE work-product consistency* are required on pull requests into `main` (hotfixes and
+  releases) as well as `develop`. Repository configuration only; no change to the tool.
+  CSC-SUP8-001 §7.1, §7.5 and §8.4 updated
+  (issue [#455](https://github.com/dermot-murphy/CStyleCheck/issues/455)).
+
 ---
 
 ## [2.0.0] — 2026-11-20

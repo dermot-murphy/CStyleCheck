@@ -73,7 +73,7 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.27 |
 | CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.42 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.35 |
 
 ---
 

@@ -79,7 +79,7 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
 | CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.37 |
 | CSC-SYS5-001 | CStyleCheck System Verification Report | 1.31 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.35 |
 
 ### 3.2 Software Configuration Under Test
 

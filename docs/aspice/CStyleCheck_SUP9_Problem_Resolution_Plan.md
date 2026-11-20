@@ -59,7 +59,7 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 | Document ID | Title | Version |
 |---|---|---|
 | CSC-MAN3-001 | Project Management Plan | 1.30 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.35 |
 | CSC-SUP10-001 | Change Request Management Plan | 1.26 |
 | CSC-SUP1-001 | Quality Assurance Plan | 1.30 |
 
