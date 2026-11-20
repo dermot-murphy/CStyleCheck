@@ -104,8 +104,8 @@ tests/
     test_comment_ratio.py   #  24 tests: misc.comment_ratio
     test_whitespace_ratio.py #  27 tests: misc.whitespace_ratio
     test_declared_not_defined.py # 39 tests: misc.declared_not_defined
-    test_misra_rules.py     # 162 tests: MISRA C / Barr-C rule coverage
-    test_partial_struct.py  #  54 tests: misc.partial_struct_assignment / _initialiser
+    test_misra_rules.py     # 168 tests: MISRA C / Barr-C rule coverage
+    test_partial_struct.py  #  89 tests: misc.partial_struct_assignment / _initialiser
     test_parameter_prefix.py #  51 tests: variable.parameter.*
     test_print_summary.py   #  11 tests: --summary per-file breakdown
     test_exclusions.py      #  28 tests: per-file exclusions
@@ -142,7 +142,7 @@ Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1630 tests)
+    cstylecheck_tests.yml      # runs the test suite on every commit (1671 tests)
     cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
@@ -202,6 +202,7 @@ pytest tests/ --cov=src --cov-report=term-missing
 | `--spell-words FILE` | Extra spell-check exempt words |
 | `--include GLOB` | Source glob to scan (repeatable) |
 | `--exclude GLOB` | Path/directory to exclude (repeatable) |
+| `--definitions GLOB` | Files read only for struct, typedef and `#define` definitions used by `misc.partial_struct_*` (e.g. vendor SDK headers); never checked, `--exclude` does not apply; ignored with a warning when neither rule is enabled (repeatable, #461) |
 | `--output-format FORMAT` | Output format: `text` (default), `json`, `sarif`, or `html` |
 | `--baseline-file FILE` | Suppress violations present in a saved baseline |
 | `--write-baseline FILE` | Write all current violations to FILE as a baseline, exit 0 (missing folders in the path are created) |
@@ -568,8 +569,15 @@ Matching rules:
   only some members assigned before it is used as a whole — the rest hold indeterminate
   stack data; related to MISRA 9.1 and Barr-C §7.2) and `misc.partial_struct_initialiser`
   (info; a positional brace initialiser with fewer values than members; related to MISRA
-  9.3). Struct definitions are collected from every scanned file. See
+  9.3). Struct definitions are collected from every scanned file, and from files named by
+  `definition_paths` / `--definitions GLOB` that are read for definitions only, so excluded
+  vendor SDK headers can supply member lists (#461). Members inside `#if` blocks of a
+  struct count only when the condition is true (#463), and `report_unknown_types: true`
+  reports locals whose struct type is unknown (#462). See
   [Rules and Configuration](Rules-and-Configuration.md).
+- **`misc.sizeof_type` no longer reports objects** (#460): `sizeof(NAME)` is not reported
+  when `NAME` is declared as a variable, parameter or array in the same file (for example an
+  upper-case `const` lookup table).
 - **Presets enable the matching opt-in rules** (#420): `--preset misra` enables the five
   MISRA rules above (plus `misc.empty_else`, and since #456 both partial-struct rules),
   `--preset barr-c` enables the three Barr-C rules (plus `misc.partial_struct_assignment`
@@ -597,7 +605,9 @@ checked) adds 13, #439 (no startup banner in a json / sarif / html `--log` file)
 (missing output folders created) adds 11, the v1.6.1 back-merge (#439 tests from `main`,
 `TestStartupBannerLogFile`) adds 2, and #447 (`misc.constant_comparison` skips `#if` / `#elif`)
 adds 10, #449 (repository protection, workflow-configuration tests) adds 5, and #456 (partially
-initialised local structs, 2 new rules; **83 rule IDs** total) adds 56: **1630 tests** in total.
+initialised local structs, 2 new rules; **83 rule IDs** total) adds 56, and #460–#463
+(`misc.sizeof_type` objects, definition files, unknown struct types, `#if` members in struct
+bodies) add 41: **1671 tests** in total.
 
 ### New in v1.2.0 (2026-05-29)
 

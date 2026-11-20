@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE3-001 | **Version** | 1.40 |
+| **Document ID** | CSC-SWE3-001 | **Version** | 1.42 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,8 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.42 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): new UNIT-155 `collect_macro_defs`, UNIT-156 `MacroTable`, UNIT-157 `_join_continuations` and UNIT-158 `_defined_value` in the §4 catalogue, §4.1 and §5; UNIT-146 is now the one-file form over UNIT-155/156; UNIT-139 — project-wide table over the file's own `#define`s (`ChainMap`, built only for bodies with a preprocessor line); UNIT-147 — continuation lines joined, macros spliced without added parentheses, `RecursionError` gives unknown; UNIT-148 — `#elifdef` / `#elifndef`, unknown `#ifdef`, a true `#elif` makes a group exhaustive, members of an every-arm group kept in declaration order; UNIT-151 — disabled rules' lists read; UNIT-46 — definition files sorted within each glob, `MacroTable`, `--definitions` warning; UNIT-21 / UNIT-152 — `#define` names count as known types, typedef alias of an undefined struct is unknown; UNIT-154 — C keywords never object names; §8 SWE1-123 row; §1 scope UNIT-01 to UNIT-158; §4 line citations resynced |
+| 1.41 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): new UNIT-146 `collect_macros`, UNIT-147 `eval_pp_condition` (sub-units `_pp_tokenize`, `_pp_expand`, `_PPExprParser`), UNIT-148 `_members_with_conditionals` (sub-units `_resolve_conditionals`, `_CondFrame`), UNIT-149 `collect_typedef_names`, UNIT-150 `clean_for_struct_scan`, UNIT-151 `struct_definition_paths`, UNIT-152 `Checker._is_unknown_struct_type`, UNIT-153 `Checker._report_unknown_type` and UNIT-154 `Checker._object_names` in the §4 catalogue, §4.1 package structure and §5; UNIT-133 — `sizeof(NAME)` not reported when NAME is declared as an object in the file (#460); UNIT-139 — `#if` members resolved with the macro table (#463; replaces the PR #457 review rule that a member in both `#if` / `#else` branches is counted once); UNIT-140 `macros` parameter; UNIT-21 `macros` and `type_names` inputs; UNIT-46 pre-pass reads definition files (`definition_paths`, `--definitions`; #461) and collects macros and typedef names; UNIT-88 `--definitions`; UNIT-143 `include_unknown`; UNIT-144 / UNIT-145 `report_unknown_types` (#462); §6.1 keys `definition_paths` and `report_unknown_types`; §8 rows SWE1-114, SWE1-120 to SWE1-123; §1 scope UNIT-01 to UNIT-154; all §4 `file.py:<line>` citations resynced to the current source |
 | 1.40 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.39 | 2026-11-19 | Claude | Issue #456 (CR-456): new UNIT-139 `collect_struct_defs`, UNIT-140 `collect_struct_defs_from_source`, UNIT-141 `struct_rules_enabled`, UNIT-142 `Checker._struct_entries`, UNIT-143 `Checker._iter_local_struct_decls`, UNIT-144 `Checker._check_partial_struct_assignment` and UNIT-145 `Checker._check_partial_struct_initialiser` in the §4 catalogue (helpers `_match_brace`, `_split_top_level`, `_declarator_name`, `_struct_members` as sub-units of UNIT-139), §4.1 package structure and §5; UNIT-21 merges the `struct_defs` table; UNIT-46 struct-definition pre-pass; UNIT-98/UNIT-99 — 9 opt-in rules, `misra` and `barr-c` presets add the partial-struct rules; §6.1 config keys `misc.partial_struct_assignment` (with `fill_functions`) and `misc.partial_struct_initialiser`; §8 rows SWE1-118 to SWE1-120 and SWE1-075; §1 scope UNIT-01 to UNIT-145; all §4 `file.py:<line>` citations resynced to the current source |
 | 1.38 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
@@ -65,15 +67,15 @@
 
 ## 3. Purpose & Scope
 
-This document defines the detailed design of each software unit (UNIT-01 to UNIT-145) in **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**, providing the algorithmic specification, interface contracts, and data design required for unit construction and verification. It satisfies **Automotive SPICE® PAM v4.0, SWE.3 — Software Detailed Design and Unit Construction**.
+This document defines the detailed design of each software unit (UNIT-01 to UNIT-158) in **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**, providing the algorithmic specification, interface contracts, and data design required for unit construction and verification. It satisfies **Automotive SPICE® PAM v4.0, SWE.3 — Software Detailed Design and Unit Construction**.
 
 ### 3.1 Referenced Documents
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.30 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.34 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.45 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.36 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.47 |
 
 ---
 
@@ -85,8 +87,8 @@ All source locations refer to the current package layout under `src/cstylecheck/
 |---|---|---|---|---|
 | UNIT-01 | `_read_options_file` | `config.py:32` | COMP-01 | `config.py` |
 | UNIT-02 | `_expand_options_file` | `config.py:63` | COMP-01 | `config.py` |
-| UNIT-03 | `discover_files` | `cli.py:121` | COMP-01 | `cli.py` |
-| UNIT-04 | `_path_matches_exclude` | `cli.py:47` | COMP-01 | `cli.py` |
+| UNIT-03 | `discover_files` | `cli.py:123` | COMP-01 | `cli.py` |
+| UNIT-04 | `_path_matches_exclude` | `cli.py:49` | COMP-01 | `cli.py` |
 | UNIT-05 | `load_config` | `config.py:397` | COMP-02 | `config.py` |
 | UNIT-06 | `load_alias_file` | `config.py:443` | COMP-02 | `config.py` |
 | UNIT-07 | `load_exclusions_file` | `config.py:489` | COMP-02 | `config.py` |
@@ -103,19 +105,19 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-18 | `offset_to_line_col` | `preprocessor.py:209` | COMP-04 | `preprocessor.py` |
 | UNIT-19 | `_build_brace_depths` | `preprocessor.py:182` | COMP-04 | `preprocessor.py` |
 | UNIT-20 | `_comment_only_lines` | `preprocessor.py:48` | COMP-04 | `preprocessor.py` |
-| UNIT-21 | `Checker.__init__` | `checker.py:364` | COMP-05 | `checker.py` |
-| UNIT-22 | `Checker.run_all` | `checker.py:529` | COMP-05 | `checker.py` |
-| UNIT-23 | `Checker._check_variables` | `checker.py:671` | COMP-05a | `checker.py` |
-| UNIT-24 | `Checker._check_functions` | `checker.py:1177` | COMP-05b | `checker.py` |
-| UNIT-25 | `Checker._check_defines` | `checker.py:592` | COMP-05c | `checker.py` |
-| UNIT-26 | `Checker._check_typedefs` | `checker.py:1275` | COMP-05d | `checker.py` |
-| UNIT-27 | `Checker._check_enums` | `checker.py:1299` | COMP-05d | `checker.py` |
-| UNIT-28 | `Checker._check_structs` | `checker.py:1362` | COMP-05d | `checker.py` |
-| UNIT-29 | `Checker._check_include_guard` | `checker.py:1504` | COMP-05e | `checker.py` |
-| UNIT-30 | `Checker._check_misc` | `checker.py:1537` | COMP-05f | `checker.py` |
-| UNIT-31 | `Checker._check_yoda` | `checker.py:2245` | COMP-05f | `checker.py` |
-| UNIT-32 | `Checker._check_reserved_names` | `checker.py:3247` | COMP-05f | `checker.py` |
-| UNIT-33 | `Checker._check_spelling` | `checker.py:2226` | COMP-05f | `checker.py` |
+| UNIT-21 | `Checker.__init__` | `checker.py:918` | COMP-05 | `checker.py` |
+| UNIT-22 | `Checker.run_all` | `checker.py:1095` | COMP-05 | `checker.py` |
+| UNIT-23 | `Checker._check_variables` | `checker.py:1237` | COMP-05a | `checker.py` |
+| UNIT-24 | `Checker._check_functions` | `checker.py:1743` | COMP-05b | `checker.py` |
+| UNIT-25 | `Checker._check_defines` | `checker.py:1158` | COMP-05c | `checker.py` |
+| UNIT-26 | `Checker._check_typedefs` | `checker.py:1841` | COMP-05d | `checker.py` |
+| UNIT-27 | `Checker._check_enums` | `checker.py:1865` | COMP-05d | `checker.py` |
+| UNIT-28 | `Checker._check_structs` | `checker.py:1928` | COMP-05d | `checker.py` |
+| UNIT-29 | `Checker._check_include_guard` | `checker.py:2070` | COMP-05e | `checker.py` |
+| UNIT-30 | `Checker._check_misc` | `checker.py:2103` | COMP-05f | `checker.py` |
+| UNIT-31 | `Checker._check_yoda` | `checker.py:2811` | COMP-05f | `checker.py` |
+| UNIT-32 | `Checker._check_reserved_names` | `checker.py:3899` | COMP-05f | `checker.py` |
+| UNIT-33 | `Checker._check_spelling` | `checker.py:2792` | COMP-05f | `checker.py` |
 | UNIT-34 | `SignChecker._check_calls` | `sign_checker.py:273` | COMP-05g | `sign_checker.py` |
 | UNIT-35 | `load_baseline` | `baseline.py:47` | COMP-06 | `baseline.py` |
 | UNIT-36 | `write_baseline` | `baseline.py:85` | COMP-06 | `baseline.py` |
@@ -128,7 +130,7 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-43 | `matches_case` | `utils.py:114` | COMP-05 (shared) | `utils.py` |
 | UNIT-44 | `matches_case_abbrev` | `utils.py:130` | COMP-05 (shared) | `utils.py` |
 | UNIT-45 | `module_name` | `utils.py:163` | COMP-05 (shared) | `utils.py` |
-| UNIT-46 | `main` | `cli.py:371` | Entry point | `cli.py` |
+| UNIT-46 | `main` | `cli.py:381` | Entry point | `cli.py` |
 | UNIT-47 | `append_trend_record` (script) | `scripts/ci/append_trend_record.py` | CI script | (unchanged) |
 | UNIT-48 | `generate_trend` (script) | `scripts/ci/generate_trend.py` | CI script | (unchanged) |
 | UNIT-49 | *Retired (#449)* — update_readme_badge (script) | — (deleted) | CI script | — |
@@ -139,22 +141,22 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-54 | `is_exempt` | `utils.py:167` | COMP-05 (shared) | `utils.py` |
 | UNIT-55 | `_cfg` | `utils.py:177` | COMP-05 (shared) | `utils.py` |
 | UNIT-56 | `extract_comments` | `preprocessor.py:158` | COMP-04 | `preprocessor.py` |
-| UNIT-57 | `Checker._violation` | `checker.py:450` | COMP-05 | `checker.py` |
-| UNIT-58 | `Checker._v` | `checker.py:454` | COMP-05 | `checker.py` |
-| UNIT-59 | `Checker._prefix` | `checker.py:467` | COMP-05 | `checker.py` |
-| UNIT-60 | `Checker._require_module_prefix` | `checker.py:473` | COMP-05 | `checker.py` |
-| UNIT-61 | `Checker._depth_at` | `checker.py:506` | COMP-05 | `checker.py` |
-| UNIT-62 | `Checker._strip_any_prefix` | `checker.py:511` | COMP-05 | `checker.py` |
-| UNIT-63 | `Checker._check_copyright_header` | `checker.py:1403` | COMP-05f | `checker.py` |
-| UNIT-64 | `Checker._body_is_object_verb` | `checker.py:1145` | COMP-05b | `checker.py` |
-| UNIT-65 | `Checker._check_comment_ratio` | `checker.py:1961` | COMP-05f | `checker.py` |
-| UNIT-66 | `Checker._check_lowercase_l_suffix` | `checker.py:2486` | COMP-05f | `checker.py` |
-| UNIT-67 | `Checker._check_octal_constants` | `checker.py:2524` | COMP-05f | `checker.py` |
-| UNIT-68 | `Checker._check_trigraphs` | `checker.py:2563` | COMP-05f | `checker.py` |
-| UNIT-69 | `Checker._is_reserved` | `checker.py:3229` | COMP-05f | `checker.py` |
-| UNIT-70 | `Checker._check_name_reserved` | `checker.py:3239` | COMP-05f | `checker.py` |
-| UNIT-71 | `Checker._is_constant_token` | `checker.py:2358` | COMP-05f | `checker.py` |
-| UNIT-72 | `Checker._is_variable_token` | `checker.py:2372` | COMP-05f | `checker.py` |
+| UNIT-57 | `Checker._violation` | `checker.py:1016` | COMP-05 | `checker.py` |
+| UNIT-58 | `Checker._v` | `checker.py:1020` | COMP-05 | `checker.py` |
+| UNIT-59 | `Checker._prefix` | `checker.py:1033` | COMP-05 | `checker.py` |
+| UNIT-60 | `Checker._require_module_prefix` | `checker.py:1039` | COMP-05 | `checker.py` |
+| UNIT-61 | `Checker._depth_at` | `checker.py:1072` | COMP-05 | `checker.py` |
+| UNIT-62 | `Checker._strip_any_prefix` | `checker.py:1077` | COMP-05 | `checker.py` |
+| UNIT-63 | `Checker._check_copyright_header` | `checker.py:1969` | COMP-05f | `checker.py` |
+| UNIT-64 | `Checker._body_is_object_verb` | `checker.py:1711` | COMP-05b | `checker.py` |
+| UNIT-65 | `Checker._check_comment_ratio` | `checker.py:2527` | COMP-05f | `checker.py` |
+| UNIT-66 | `Checker._check_lowercase_l_suffix` | `checker.py:3052` | COMP-05f | `checker.py` |
+| UNIT-67 | `Checker._check_octal_constants` | `checker.py:3090` | COMP-05f | `checker.py` |
+| UNIT-68 | `Checker._check_trigraphs` | `checker.py:3129` | COMP-05f | `checker.py` |
+| UNIT-69 | `Checker._is_reserved` | `checker.py:3881` | COMP-05f | `checker.py` |
+| UNIT-70 | `Checker._check_name_reserved` | `checker.py:3891` | COMP-05f | `checker.py` |
+| UNIT-71 | `Checker._is_constant_token` | `checker.py:2924` | COMP-05f | `checker.py` |
+| UNIT-72 | `Checker._is_variable_token` | `checker.py:2938` | COMP-05f | `checker.py` |
 | UNIT-73 | `_ParamSig` | `models.py:106` | COMP-05g | `models.py` |
 | UNIT-74 | `_FuncSig` | `models.py:114` | COMP-05g | `models.py` |
 | UNIT-75 | `_classify_tokens` | `sign_checker.py:70` | COMP-05g | `sign_checker.py` |
@@ -169,10 +171,10 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-84 | `DeclaredNotDefinedChecker` (class) | `sign_checker.py:319` | COMP-05g | `sign_checker.py` |
 | UNIT-85 | `_strip_module_prefix` | `utils.py:192` | COMP-05 (shared) | `utils.py` |
 | UNIT-86 | `Tee` | `output.py:18` | COMP-07 | `output.py` |
-| UNIT-87 | `parse_args` | `cli.py:193` | COMP-01 | `cli.py` |
-| UNIT-88 | `_build_parser` | `cli.py:198` | COMP-01 | `cli.py` |
+| UNIT-87 | `parse_args` | `cli.py:195` | COMP-01 | `cli.py` |
+| UNIT-88 | `_build_parser` | `cli.py:200` | COMP-01 | `cli.py` |
 | UNIT-89 | `_github_annotation_category` | `utils.py:52` | COMP-07 | `utils.py` |
-| UNIT-90 | `Checker._check_whitespace_ratio` | `checker.py:2099` | COMP-05f | `checker.py` |
+| UNIT-90 | `Checker._check_whitespace_ratio` | `checker.py:2665` | COMP-05f | `checker.py` |
 | UNIT-91 | `_find_default_rules` | `config.py:95` | COMP-02 | `config.py` |
 | UNIT-92 | `_deep_merge` | `config.py:116` | COMP-02 | `config.py` |
 | UNIT-93 | `_collect_paths` | `config.py:139` | COMP-02 | `config.py` |
@@ -184,21 +186,21 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-99 | `run_preset` | `wizard.py:342` | COMP-09 | `wizard.py` |
 | UNIT-100 | `resolve_per_dir_config` | `config.py:838` | COMP-10 | `config.py` |
 | UNIT-101 | `_violations_to_html` | `output.py:182` | COMP-07 | `output.py` |
-| UNIT-102 | `_check_function_length` | `checker.py:3445` | COMP-05f | `checker.py` |
-| UNIT-103 | `_check_function_doc_header` | `checker.py:3479` | COMP-05f | `checker.py` |
-| UNIT-104 | `_check_assert_density` | `checker.py:3573` | COMP-05f | `checker.py` |
-| UNIT-105 | `_check_null_statement_comment` | `checker.py:3719` | COMP-05f | `checker.py` |
-| UNIT-106 | `_check_declaration_spacing` | `checker.py:3603` | COMP-05f | `checker.py` |
-| UNIT-107 | `_check_file_length` | `checker.py:3665` | COMP-05f | `checker.py` |
-| UNIT-108 | `_check_reserved_header_name` | `checker.py:3698` | COMP-05f | `checker.py` |
-| UNIT-109 | `_check_macro_trailing_semicolon` | `checker.py:3319` | COMP-05b | `checker.py` |
-| UNIT-110 | `_check_macro_multistatement_wrapper` | `checker.py:3375` | COMP-05b | `checker.py` |
-| UNIT-111 | `_check_identifier_length` | `checker.py:3759` | COMP-05h | `checker.py` |
-| UNIT-112 | `_check_no_single_char_identifiers` | `checker.py:3815` | COMP-05h | `checker.py` |
-| UNIT-113 | `_check_non_ascii_source` | `checker.py:2589` | COMP-05f | `checker.py` |
+| UNIT-102 | `_check_function_length` | `checker.py:4097` | COMP-05f | `checker.py` |
+| UNIT-103 | `_check_function_doc_header` | `checker.py:4131` | COMP-05f | `checker.py` |
+| UNIT-104 | `_check_assert_density` | `checker.py:4225` | COMP-05f | `checker.py` |
+| UNIT-105 | `_check_null_statement_comment` | `checker.py:4371` | COMP-05f | `checker.py` |
+| UNIT-106 | `_check_declaration_spacing` | `checker.py:4255` | COMP-05f | `checker.py` |
+| UNIT-107 | `_check_file_length` | `checker.py:4317` | COMP-05f | `checker.py` |
+| UNIT-108 | `_check_reserved_header_name` | `checker.py:4350` | COMP-05f | `checker.py` |
+| UNIT-109 | `_check_macro_trailing_semicolon` | `checker.py:3971` | COMP-05b | `checker.py` |
+| UNIT-110 | `_check_macro_multistatement_wrapper` | `checker.py:4027` | COMP-05b | `checker.py` |
+| UNIT-111 | `_check_identifier_length` | `checker.py:4411` | COMP-05h | `checker.py` |
+| UNIT-112 | `_check_no_single_char_identifiers` | `checker.py:4467` | COMP-05h | `checker.py` |
+| UNIT-113 | `_check_non_ascii_source` | `checker.py:3155` | COMP-05f | `checker.py` |
 | UNIT-114 | `print_summary` (per-file breakdown) | `output.py:269` | COMP-07 | `output.py` |
-| UNIT-115 | `_check_defines` (typedef-alias exemption) | `checker.py:592` | COMP-05c | `checker.py` |
-| UNIT-116 | `Checker._check_constant_comparison` | `checker.py:2383` | COMP-05f | `checker.py` |
+| UNIT-115 | `_check_defines` (typedef-alias exemption) | `checker.py:1158` | COMP-05c | `checker.py` |
+| UNIT-116 | `Checker._check_constant_comparison` | `checker.py:2949` | COMP-05f | `checker.py` |
 | UNIT-117 | `_fix_pointer_prefix` | `fixer.py:92` | COMP-08 | `fixer.py` |
 | UNIT-118 | `fix_pointer_prefix_in_header` | `fixer.py:277` | COMP-08 | `fixer.py` |
 | UNIT-119 | `apply_baseline` | `baseline.py:67` | COMP-06 | `baseline.py` |
@@ -210,24 +212,37 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | UNIT-125 | `_c_source_metrics` | `scripts/collect_metrics.py` | COMP-13 (Trend-Analysis Scripts) | `scripts/collect_metrics.py` |
 | UNIT-126 | `_summarise_violations` | `scripts/collect_metrics.py` | COMP-13 (Trend-Analysis Scripts) | `scripts/collect_metrics.py` |
 | UNIT-127 | `_make_chart` (stacked) / `_stack_series` / `_category_series` | `scripts/generate_charts.py` | COMP-13 (Trend-Analysis Scripts) | `scripts/generate_charts.py` |
-| UNIT-128 | `Checker._check_goto_usage` | `checker.py:2650` | COMP-05f | `checker.py` |
-| UNIT-129 | `Checker._check_assignment_in_condition` | `checker.py:2681` | COMP-05f | `checker.py` |
-| UNIT-130 | `Checker._check_multiple_statements_per_line` | `checker.py:2755` | COMP-05f | `checker.py` |
-| UNIT-131 | `Checker._check_void_pointer` | `checker.py:2788` | COMP-05f | `checker.py` |
-| UNIT-132 | `Checker._check_recursive_function` | `checker.py:2821` | COMP-05f | `checker.py` |
-| UNIT-133 | `Checker._check_sizeof_type` | `checker.py:2874` | COMP-05f | `checker.py` |
-| UNIT-134 | `Checker._check_boolean_comparison` | `checker.py:2916` | COMP-05f | `checker.py` |
-| UNIT-135 | `Checker._check_empty_else` | `checker.py:2943` | COMP-05f | `checker.py` |
+| UNIT-128 | `Checker._check_goto_usage` | `checker.py:3216` | COMP-05f | `checker.py` |
+| UNIT-129 | `Checker._check_assignment_in_condition` | `checker.py:3247` | COMP-05f | `checker.py` |
+| UNIT-130 | `Checker._check_multiple_statements_per_line` | `checker.py:3321` | COMP-05f | `checker.py` |
+| UNIT-131 | `Checker._check_void_pointer` | `checker.py:3354` | COMP-05f | `checker.py` |
+| UNIT-132 | `Checker._check_recursive_function` | `checker.py:3387` | COMP-05f | `checker.py` |
+| UNIT-133 | `Checker._check_sizeof_type` | `checker.py:3468` | COMP-05f | `checker.py` |
+| UNIT-134 | `Checker._check_boolean_comparison` | `checker.py:3513` | COMP-05f | `checker.py` |
+| UNIT-135 | `Checker._check_empty_else` | `checker.py:3540` | COMP-05f | `checker.py` |
 | UNIT-136 | `config_error` | `utils.py:28` | COMP-05 (shared) | `utils.py` |
 | UNIT-137 | `ensure_parent_dir` | `utils.py:38` | COMP-05 (shared) | `utils.py` |
 | UNIT-138 | `_write_config` | `wizard.py:211` | COMP-09 | `wizard.py` |
-| UNIT-139 | `collect_struct_defs` | `checker.py:316` | COMP-05 (shared) | `checker.py` |
-| UNIT-140 | `collect_struct_defs_from_source` | `checker.py:343` | COMP-05 (shared) | `checker.py` |
-| UNIT-141 | `struct_rules_enabled` | `checker.py:352` | COMP-05 (shared) | `checker.py` |
-| UNIT-142 | `Checker._struct_entries` | `checker.py:3049` | COMP-05f | `checker.py` |
-| UNIT-143 | `Checker._iter_local_struct_decls` | `checker.py:3058` | COMP-05f | `checker.py` |
-| UNIT-144 | `Checker._check_partial_struct_assignment` | `checker.py:3119` | COMP-05f | `checker.py` |
-| UNIT-145 | `Checker._check_partial_struct_initialiser` | `checker.py:3191` | COMP-05f | `checker.py` |
+| UNIT-139 | `collect_struct_defs` | `checker.py:835` | COMP-05 (shared) | `checker.py` |
+| UNIT-140 | `collect_struct_defs_from_source` | `checker.py:881` | COMP-05 (shared) | `checker.py` |
+| UNIT-141 | `struct_rules_enabled` | `checker.py:891` | COMP-05 (shared) | `checker.py` |
+| UNIT-142 | `Checker._struct_entries` | `checker.py:3646` | COMP-05f | `checker.py` |
+| UNIT-143 | `Checker._iter_local_struct_decls` | `checker.py:3695` | COMP-05f | `checker.py` |
+| UNIT-144 | `Checker._check_partial_struct_assignment` | `checker.py:3761` | COMP-05f | `checker.py` |
+| UNIT-145 | `Checker._check_partial_struct_initialiser` | `checker.py:3838` | COMP-05f | `checker.py` |
+| UNIT-146 | `collect_macros` | `checker.py:437` | COMP-05 (shared) | `checker.py` |
+| UNIT-147 | `eval_pp_condition` | `checker.py:655` | COMP-05 (shared) | `checker.py` |
+| UNIT-148 | `_members_with_conditionals` | `checker.py:770` | COMP-05 (shared) | `checker.py` |
+| UNIT-149 | `collect_typedef_names` | `checker.py:802` | COMP-05 (shared) | `checker.py` |
+| UNIT-150 | `clean_for_struct_scan` | `checker.py:873` | COMP-05 (shared) | `checker.py` |
+| UNIT-151 | `struct_definition_paths` | `checker.py:900` | COMP-05 (shared) | `checker.py` |
+| UNIT-152 | `Checker._is_unknown_struct_type` | `checker.py:3671` | COMP-05f | `checker.py` |
+| UNIT-153 | `Checker._report_unknown_type` | `checker.py:3685` | COMP-05f | `checker.py` |
+| UNIT-154 | `Checker._object_names` | `checker.py:3453` | COMP-05f | `checker.py` |
+| UNIT-155 | `collect_macro_defs` | `checker.py:357` | COMP-05 (shared) | `checker.py` |
+| UNIT-156 | `MacroTable` | `checker.py:406` | COMP-05 (shared) | `checker.py` |
+| UNIT-157 | `_join_continuations` | `checker.py:352` | COMP-05 (shared) | `checker.py` |
+| UNIT-158 | `_defined_value` | `checker.py:667` | COMP-05 (shared) | `checker.py` |
 
 **Sub-units (helpers not catalogued separately).** The following helper functions are designed and verified as part of the unit named, not as units of their own:
 
@@ -236,11 +251,16 @@ All source locations refer to the current package layout under `src/cstylecheck/
 | `deprecated_key_warnings` | `config.py:304` | UNIT-05 `load_config` | UNIT-05 step 4 |
 | `validate_case_styles` | `config.py:330` | UNIT-05 `load_config` | UNIT-05 step 3 |
 | `normalize_case_style` | `utils.py:96` | UNIT-43 `matches_case` | UNIT-43 |
-| `_enum_members` | `checker.py:175` | UNIT-27 `Checker._check_enums` | UNIT-27 |
-| `_match_brace` | `checker.py:223` | UNIT-139 `collect_struct_defs` | UNIT-139 |
-| `_split_top_level` | `checker.py:237` | UNIT-139 `collect_struct_defs` | UNIT-139 |
-| `_declarator_name` | `checker.py:252` | UNIT-139 `collect_struct_defs` | UNIT-139 |
-| `_struct_members` | `checker.py:270` | UNIT-139 `collect_struct_defs` | UNIT-139 |
+| `_enum_members` | `checker.py:177` | UNIT-27 `Checker._check_enums` | UNIT-27 |
+| `_match_brace` | `checker.py:225` | UNIT-139 `collect_struct_defs` | UNIT-139 |
+| `_split_top_level` | `checker.py:239` | UNIT-139 `collect_struct_defs` | UNIT-139 |
+| `_declarator_name` | `checker.py:254` | UNIT-139 `collect_struct_defs` | UNIT-139 |
+| `_struct_members` | `checker.py:272` | UNIT-139 `collect_struct_defs` | UNIT-139 |
+| `_pp_tokenize` | `checker.py:445` | UNIT-147 `eval_pp_condition` | UNIT-147 |
+| `_pp_expand` | `checker.py:465` | UNIT-147 `eval_pp_condition` | UNIT-147 |
+| `_PPExprParser` | `checker.py:534` | UNIT-147 `eval_pp_condition` | UNIT-147 |
+| `_resolve_conditionals` | `checker.py:679` | UNIT-148 `_members_with_conditionals` | UNIT-148 |
+| `_CondFrame` | `checker.py:749` | UNIT-148 `_members_with_conditionals` | UNIT-148 |
 
 ---
 
@@ -276,7 +296,13 @@ src/cstylecheck/
                      RE_VAR_DECL, RE_FUNCTION_DEF, RE_STRUCT_DEF_OPEN,
                      RE_STRUCT_TYPEDEF_ALIAS, …), all _check_* methods,
                      struct-definition table (collect_struct_defs,
-                     collect_struct_defs_from_source, struct_rules_enabled)
+                     collect_struct_defs_from_source, struct_rules_enabled,
+                     struct_definition_paths, clean_for_struct_scan,
+                     collect_typedef_names), #if evaluation for struct
+                     bodies (collect_macro_defs, MacroTable,
+                     collect_macros, _join_continuations,
+                     eval_pp_condition, _defined_value,
+                     _members_with_conditionals)
   sign_checker.py  — SignChecker, DeclaredNotDefinedChecker,
                      sign-analysis helpers (_classify_tokens,
                      _signedness_of_type, _classify_arg,
@@ -445,7 +471,8 @@ src/cstylecheck/
 7. Call `_build_brace_depths(self.clean)` → `self._brace_depths`
 8. Call `_comment_only_lines(source)` → `self._comment_only`
 9. Store `disabled_rules`, `alias_prefixes`, `spell_dict`
-10. Copy the `struct_defs` table passed by the CLI (default empty) into `self._struct_defs`, then merge this file's own definitions over it with `collect_struct_defs(self.clean)` (UNIT-139), so a local definition wins (#456)
+10. When either partial-struct rule is enabled (UNIT-141): copy the `struct_defs` table passed by the CLI (default empty) into `self._struct_defs`, then merge this file's own definitions over it with `collect_struct_defs(self.clean, macros)` (UNIT-139), so a local definition wins (#456); `macros` is the CLI's project-wide macro table that resolves `#if` blocks in struct bodies (#463). Copy `type_names` (every typedef name the CLI found) into `self._type_names` and add `collect_typedef_names(self.clean)` (UNIT-149), the names of `macros` and of this file's `collect_macros(self.clean)` (UNIT-146): a `#define`d type such as `#define U8 unsigned char` is a known type (#462)
+11. Set `self._sizeof_objects` to `None`; UNIT-154 builds it on first use (#460)
 
 ---
 
@@ -881,7 +908,7 @@ src/cstylecheck/
 
 **Purpose:** Construct and return the fully configured `ArgumentParser` for the tool.
 
-**Key argument groups:** help/version, positional files, config/output, include/exclude globs, defines/aliases/exclusions, copyright/banned-names, spell-check, baseline, logging, sign-compatibility, and diagnostics flags.
+**Key argument groups:** help/version, positional files, config/output, include/exclude globs, `--definitions GLOB` (repeatable, `append`; definition files for the partial-struct rules, #461), defines/aliases/exclusions, copyright/banned-names, spell-check, baseline, logging, sign-compatibility, and diagnostics flags.
 
 ---
 
@@ -1566,7 +1593,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 1. Fast path for `--version` / `--help`; expand `--options-file` (UNIT-02) and parse arguments
 2. Handle `--update-config` (UNIT-94), `--preset` and `--init` (UNIT-98/99), then exit
 3. Load the configuration, dictionaries, defines, banned names, copyright template, aliases and exclusions; create any missing parent folders of the `--log` file (`ensure_parent_dir()`, UNIT-137, #441) and open it; write the two-line startup banner (`_VERSION_STRING`, then `_COPYRIGHT`) to stderr, and to the log via `Tee.log_print()` only when `output_format` is `text` (a json / sarif / html log holds only the report document, #439), never to stdout; the write is unconditional (no TTY check, no suppression option) (SWE1-094)
-4. Discover files (UNIT-03). If `struct_rules_enabled(cfg)` (UNIT-141) or `--per-dir-config` is set, read every file once into `source_cache` (unreadable files skipped here and reported in the loop) and merge `collect_struct_defs_from_source(source, defines)` (UNIT-140) into one struct-definition table (#456). For each file, resolve the per-directory config (UNIT-100), run `Checker(..., struct_defs=table).run_all()` (UNIT-21, UNIT-22) and emit violations (with verbose progress when requested)
+4. Discover files (UNIT-03). If `struct_rules_enabled(cfg)` (UNIT-141) or `--per-dir-config` is set, run the struct-definition pre-pass (#456, #461, #463): (a) the definition globs are `struct_definition_paths(cfg)` (UNIT-151, root configuration only) followed by the `--definitions` globs; each glob is discovered with UNIT-03 without exclude globs (`--exclude` does not apply) and its files are taken in sorted order, skipping a file that is checked or already taken; with `--verbose` the definition-file count is printed to stderr. (b) The checked files, then the definition files, are read once each (unreadable files skipped here; a checked one is reported in the loop); only a checked file's text goes into `source_cache`. Each text is cleaned with `clean_for_struct_scan(source, defines)` (UNIT-150) and its `collect_macro_defs()` (UNIT-155) are added to one `MacroTable` (UNIT-156), whose `table` is the project-wide macro table. (c) In the same order, `collect_struct_defs(clean, macros)` (UNIT-139) of a checked file updates the struct-definition table, and that of a definition file only adds keys not yet present; `collect_typedef_names(clean)` (UNIT-149) is added to one type-name set. Otherwise, when `--definitions` was given, print `WARNING: --definitions is ignored: neither misc.partial_struct_assignment nor misc.partial_struct_initialiser is enabled` to stderr. For each checked file, resolve the per-directory config (UNIT-100), run `Checker(..., struct_defs=table, macros=macros, type_names=names).run_all()` (UNIT-21, UNIT-22) and emit violations (with verbose progress when requested). Definition files are never checked
 5. Run the cross-file checks (`SignChecker`, `DeclaredNotDefinedChecker`); apply `--fix` / `--dry-run` (UNIT-96). Without `--dry-run`, the `variable.pointer_prefix` header rename (UNIT-118) re-reads each companion `.h` file from disk, because it may already have been rewritten in this fix pass — the documented exception to SWE1-015
 6. `--write-baseline`: write (UNIT-36) and return 0. `--baseline-file`: filter with UNIT-35 and UNIT-119
 7. Apply `--warnings-as-errors`; emit JSON, SARIF or HTML output; print the summary (UNIT-40)
@@ -1686,7 +1713,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Enforce `misc.sizeof_type` (SWE1-114, Barr-C §5.7).
 
-**Algorithm:** Return if disabled; `enabled` defaults to `false` when the key is absent (opt-in, #418). Flag each `sizeof ( T [*…] )` where `T` is a primitive type (optionally `signed`/`unsigned`/`short`/`long`), a `*_t` typedef or a capitalised type name. Lower-case variable operands (`sizeof(buf)`, `sizeof(*p)`) do not match. Default severity `info`.
+**Algorithm:** Return if disabled; `enabled` defaults to `false` when the key is absent (opt-in, #418). Flag each `sizeof ( T [*…] )` where `T` is a primitive type (optionally `signed`/`unsigned`/`short`/`long`), a `*_t` typedef or a capitalised type name, unless the last identifier of `T` is in `_object_names()` (UNIT-154): a name declared as an object in this file is not a type (#460). Lower-case variable operands (`sizeof(buf)`, `sizeof(*p)`) do not match. Default severity `info`. An object declared only in another file is not known and is still reported.
 
 ---
 
@@ -1735,24 +1762,24 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 ---
 
-### UNIT-139 — `collect_struct_defs(clean: str) → dict`
+### UNIT-139 — `collect_struct_defs(clean: str, macros: dict | None = None) → dict`
 
 **Purpose:** Build the struct-definition table of one preprocessed source text for SWE1-118/SWE1-119 (SWE1-120, #456).
 
 **Algorithm:**
-1. For each `RE_STRUCT_DEF_OPEN` match (`[typedef] struct|union [tag] {`) whose keyword is `struct`, find the matching `}` with `_match_brace()`; skip an unbalanced body
-2. `_struct_members(body)` returns the member entries: preprocessor lines are blanked; the body is split on top-level `;` with `_split_top_level()`; each declarator name comes from `_declarator_name()` (function-pointer members `(*name)`, array suffixes removed, unnamed padding bit-fields skipped); later declarators of `int a, b;` are named too. A nested struct or union with a declarator name is one member; an anonymous union is one entry holding all its member names (assigning any one covers it); an anonymous struct is flattened into its members. Each entry is a tuple of alternative names. Both branches of a conditional (`#if` / `#else`) member are parsed, so an entry is kept only when none of its names appeared in an earlier entry (a member is counted once; PR #457 review)
+1. For each `RE_STRUCT_DEF_OPEN` match (`[typedef] struct|union [tag] {`) whose keyword is `struct`, find the matching `}` with `_match_brace()`; skip an unbalanced body. The first time a body contains `#`, build the macro mapping `ChainMap(macros, collect_macros(clean))` (UNIT-146): the project-wide table wins and this file's own `#define`s only fill names it lacks, so a project configuration header beats an SDK header's `#ifndef` default (#463)
+2. `_members_with_conditionals(body, table)` (UNIT-148) resolves the `#if` blocks of the body and calls `_struct_members()` on the compiled text. `_struct_members(text)` returns the member entries: preprocessor lines are blanked; the body is split on top-level `;` with `_split_top_level()`; each declarator name comes from `_declarator_name()` (function-pointer members `(*name)`, array suffixes removed, unnamed padding bit-fields skipped); later declarators of `int a, b;` are named too. A nested struct or union with a declarator name is one member; an anonymous union is one entry holding all its member names (assigning any one covers it); an anonymous struct is flattened into its members. Each entry is a tuple of alternative names. Members inside `#if` blocks count only as decided by UNIT-148 (#463; this replaces the PR #457 review rule that a member declared in both `#if` / `#else` branches is counted once)
 3. Record the entries under `struct <tag>` when there is a tag; for a `typedef`, also under each non-pointer alias name between `}` and `;`
 4. For each `RE_STRUCT_TYPEDEF_ALIAS` match (`typedef struct tag Alias;`) record `Alias → "struct tag"` (an alias key, resolved by UNIT-142) unless `Alias` is already defined
 5. Return the table
 
 ---
 
-### UNIT-140 — `collect_struct_defs_from_source(source: str, defines: list | None = None) → dict`
+### UNIT-140 — `collect_struct_defs_from_source(source: str, defines: list | None = None, macros: dict | None = None) → dict`
 
 **Purpose:** Collect the struct definitions of a raw source file for the CLI pre-pass (SWE1-120, #456).
 
-**Algorithm:** Normalise CRLF / CR to LF, `preprocess()` the text, apply `apply_defines()` when `defines` is given (as UNIT-21 does), and return `collect_struct_defs()` (UNIT-139) of the result.
+**Algorithm:** Clean the text with `clean_for_struct_scan(source, defines)` (UNIT-150) and return `collect_struct_defs(clean, macros)` (UNIT-139). Since #461 the CLI pre-pass calls UNIT-150 and UNIT-139 directly, because it uses each cleaned text twice (macros first, then struct definitions); this function remains the one-call form for a single source text.
 
 ---
 
@@ -1772,13 +1799,13 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 ---
 
-### UNIT-143 — `Checker._iter_local_struct_decls() → Iterator[tuple]`
+### UNIT-143 — `Checker._iter_local_struct_decls(include_unknown: bool = False) → Iterator[tuple]`
 
 **Purpose:** Find the struct-typed local declarations that SWE1-118 and SWE1-119 check (#456).
 
 **Algorithm:**
 1. For each function body from `_iter_function_bodies()`, match `_RE_LOCAL_STRUCT_DECL` after a `;`, `{` or `}`: optional `static` / `extern` / `register` / `const` / `volatile` qualifiers, then `struct <tag>` or a type name, followed by a declarator name and `=`, `;`, `,` or `[`
-2. Skip `extern` declarations, a type name that is a C keyword, and types whose entries UNIT-142 cannot resolve (definition not in a scanned file)
+2. Skip `extern` declarations, a type name that is a C keyword, and types whose entries UNIT-142 cannot resolve (definition not in a scanned or definition file). With `include_unknown=True` (#462), a type without entries for which `_is_unknown_struct_type()` (UNIT-152) is true is not skipped: it is yielded with `entries` `None`
 3. Find the statement end (first top-level `;`) and the scope end (the `}` closing the enclosing block)
 4. Split the declarator list on top-level `,`; for each plain identifier declarator (a pointer `*` or array `[...]` declarator does not match and is skipped) yield `(name_pos, name, type_label, entries, init, is_static, stmt_end, scope_end)`, where `init` is the initialiser text after `=` or `None`
 
@@ -1788,7 +1815,7 @@ The companion `blank_preprocessor_lines(code)` blanks `#` directives (including 
 
 **Purpose:** Enforce `misc.partial_struct_assignment` (SWE1-118; MISRA C:2012 Rule 9.1, partial; Barr-C §7.2).
 
-**Algorithm:** Return if disabled; `enabled` defaults to `false` when the key is absent (opt-in, #456). `fill_functions` defaults to `memset`, `memcpy`, `memmove`. For each declaration from UNIT-143 with no initialiser and not `static`, scan the occurrences of the name between the statement end and the scope end in lexical order:
+**Algorithm:** Return if disabled; `enabled` defaults to `false` when the key is absent (opt-in, #456). `fill_functions` defaults to `memset`, `memcpy`, `memmove`. `report_unknown_types` defaults to `false` and is passed to UNIT-143 as `include_unknown` (#462). For each declaration from UNIT-143 with no initialiser and not `static`: if its entries are `None` (unknown type), report it with UNIT-153 and go to the next; otherwise scan the occurrences of the name between the statement end and the scope end in lexical order:
 1. Skip an occurrence preceded by `.` or `->` (a member of another object) or by `sizeof` / `sizeof(`. An occurrence preceded at statement start by a type (`_RE_SHADOW_DECL`: a non-keyword type name or a basic type keyword, optional qualifiers and `*`) is a nested declaration of the same name; skip to the `}` closing its block (`_block_end()`), or, for a declaration in a `for` initialiser, to the end of that `for` statement's body (`_for_stmt_end()`; shadowing, PR #457 review)
 2. `name.member` (optionally followed by `.sub` or `[i]` parts) followed by `=` (not `==`), or preceded by `&`, adds the top-level member to the assigned set; any other `name.member` is a member read and is skipped
 3. `name = …` at the start of a statement is a whole-struct assignment: stop, no finding
@@ -1803,7 +1830,119 @@ If a use was recorded and at least one entry has none of its alternative names i
 
 **Purpose:** Enforce `misc.partial_struct_initialiser` (SWE1-119; cf. MISRA C:2012 Rule 9.3).
 
-**Algorithm:** Return if disabled; `enabled` defaults to `false` when the key is absent (opt-in, #456). For each declaration from UNIT-143 (including `static` locals) whose initialiser starts with `{`: skip an unbalanced initialiser, `{}`, and a single zero item (`_RE_ZERO_ITEM`: `0` with optional `U`/`L` suffixes, `0x0`, `0.0f`, `false`, `FALSE`, `NULL`, `(void *)0`; PR #457 review); split the inner text on top-level `,` (a trailing comma is ignored); skip a designated initialiser (any item starting with `.` or `[`). If fewer items than member entries remain, emit `misc.partial_struct_initialiser` (default severity `info`) at the declaration naming the listed / total counts and up to five implicitly zero-initialised members. File-scope objects are not visited (UNIT-143 only walks function bodies).
+**Algorithm:** Return if disabled; `enabled` defaults to `false` when the key is absent (opt-in, #456). For each declaration from UNIT-143 (including `static` locals) whose initialiser starts with `{`: skip an unbalanced initialiser, `{}`, and a single zero item (`_RE_ZERO_ITEM`: `0` with optional `U`/`L` suffixes, `0x0`, `0.0f`, `false`, `FALSE`, `NULL`, `(void *)0`; PR #457 review); split the inner text on top-level `,` (a trailing comma is ignored); skip a designated initialiser (any item starting with `.` or `[`). With `report_unknown_types: true` (passed to UNIT-143 as `include_unknown`, #462), a remaining declaration whose entries are `None` is reported with UNIT-153 and not counted. If fewer items than member entries remain, emit `misc.partial_struct_initialiser` (default severity `info`) at the declaration naming the listed / total counts and up to five implicitly zero-initialised members. File-scope objects are not visited (UNIT-143 only walks function bodies).
+
+---
+
+### UNIT-146 — `collect_macros(clean: str) → dict`
+
+**Purpose:** Collect the `#define`s of one preprocessed text for `#if` evaluation in struct bodies (SWE1-123, #463).
+
+**Algorithm:** Return `MacroTable()` (UNIT-156) filled with `collect_macro_defs(clean)` (UNIT-155): the one-file form of the project-wide table, `name → (params, body)`.
+
+---
+
+### UNIT-147 — `eval_pp_condition(expr: str, macros: Mapping) → bool | None`
+
+**Purpose:** Evaluate an `#if` / `#elif` expression with three-valued logic (SWE1-123, #463).
+
+**Algorithm:**
+1. `_pp_tokenize(expr)` splits the text into integer constants (decimal, octal, hex; `U` / `L` suffixes dropped), identifiers and operators; anything else (a string, a character literal, a floating constant) makes the result `None` (unknown)
+2. `_pp_expand(tokens, macros)` replaces `defined X` / `defined(X)` by `1` when `X` is in the macro table and by the unknown token otherwise, and expands object-like macros and function-like macros with a matching argument count (arguments substituted; bodies and arguments are spliced as-is, without added parentheses, as C does), recursively to at most 16 levels and never a macro inside its own expansion; a body that cannot be tokenised, a missing `)` or a wrong argument count becomes the unknown token. There is no token pasting or stringising
+3. `_PPExprParser(tokens).parse()` evaluates `?:`, `||`, `&&`, `|`, `^`, `&`, equality, relational, shift, additive and multiplicative operators and unary `!`, `~`, `-`, `+` on Python integers by recursive descent. An identifier left after expansion (no known `#define`) or the unknown token has the value `None`; an operator with a `None` operand gives `None`, except that `||` with a known non-zero side is 1 and `&&` with a known zero side is 0; `?:` with an unknown condition is known only when both arms are equal. Division or modulo by zero and a shift outside 0 to 63 give `None`
+4. A parse error, or a `RecursionError` from a deeply nested expression, gives `None`; otherwise return `None` or `bool(value)`
+
+---
+
+### UNIT-148 — `_members_with_conditionals(body: str, macros: Mapping | None) → tuple`
+
+**Purpose:** Return the member entries of a struct body with its `#if` blocks resolved (SWE1-123, #463).
+
+**Algorithm:**
+1. A body with no `#` is returned as `_struct_members(body)`. Otherwise `_resolve_conditionals(body, macros)` joins backslash-continued lines (UNIT-157) and walks the body line by line with a stack of `_CondFrame` objects, one per open `#if` group (value of the current arm, whether any arm was true or unknown, whether the group is exhaustive, whether every enclosing arm is true, and the line lists of the arms that may be compiled). `#if` / `#elif` are evaluated with UNIT-147; `#ifdef` / `#ifndef` / `#elifdef` / `#elifndef` with `_defined_value()` (UNIT-158). An `#elif` after a true arm is false, and after an unknown arm it is unknown unless it evaluates false; an `#elif` that is true by itself makes the group exhaustive. An `#else` is false after a true arm, unknown after an unknown arm and true otherwise, and makes the group exhaustive. A line is kept in the active text only when every enclosing arm is true; a line in an unknown arm (every arm inside it true) is added to that arm of the outermost unresolved group. At `#endif`, a group with an unknown arm whose enclosing arms are all true is recorded as `(exhaustive, branches)` and a group marker is left in the active text where it ends
+2. The entries of the active text come from `_struct_members()` (sub-unit of UNIT-139)
+3. The active text is split at the group markers: the entries of each text part come from `_struct_members()`, and at each marker an exhaustive group adds the entries of its first arm whose names are declared in every arm (the member exists whichever arm is compiled), so members keep their declaration order. A group that is not exhaustive adds nothing
+4. Drop an entry when one of its names already appeared in an earlier entry, and return the tuple
+
+---
+
+### UNIT-149 — `collect_typedef_names(clean: str) → set`
+
+**Purpose:** Collect every name declared by a `typedef` (SWE1-122 and SWE1-114; #462, #460).
+
+**Algorithm:** For each `typedef` keyword, find the `;` that ends the declaration at bracket depth 0 (skip an unterminated one). With a `{ … }` body, the names are the declarators after the last `}`; otherwise the first comma-separated chunk is a whole declaration (`typedef unsigned int u32_t`) and later chunks are further declarators. Each name comes from `_declarator_name()` (pointer, array and function-pointer forms handled). Return the set.
+
+---
+
+### UNIT-150 — `clean_for_struct_scan(source: str, defines: list | None = None) → str`
+
+**Purpose:** Prepare a raw source file for the struct pre-scan (SWE1-120, SWE1-121; #461).
+
+**Algorithm:** Normalise CRLF / CR to LF, `preprocess()` the text (comments and string contents blanked) and apply `apply_defines()` when `defines` is given (as UNIT-21 does). Return the cleaned text.
+
+---
+
+### UNIT-151 — `struct_definition_paths(cfg: dict) → list`
+
+**Purpose:** Return the definition-file globs of the root configuration (SWE1-121, #461).
+
+**Algorithm:** For `misc.partial_struct_assignment`, then `misc.partial_struct_initialiser`, append each entry of its `definition_paths` list (a missing or empty list adds none) that is not already in the result, whether or not the rule is enabled in this configuration (a per-directory configuration may enable it). Return the list in that order. Only the configuration passed in (the root configuration, from UNIT-46) is read; per-directory configurations are not consulted.
+
+---
+
+### UNIT-152 — `Checker._is_unknown_struct_type(label: str) → bool`
+
+**Purpose:** Decide whether a local's type is one the partial-struct rules could not check because no definition was found (SWE1-122, #462).
+
+**Algorithm:** Return true for a `struct <tag>` label (called only when the table has no entries for it). For a name that is a key of the struct-definition table (a typedef alias such as `typedef struct foo_s foo_t;`), return true when its alias chain does not resolve to member entries (UNIT-142), i.e. the struct itself is not defined. Otherwise return true unless the name is in `self._type_names` (typedef names and `#define` names from the CLI pre-scan and this file, UNIT-21 step 10), in `_STD_SCALAR_TYPES` (standard type names such as `uint8_t`, `size_t`, `bool`, `FILE`) or in the stdlib name list. A known typedef that is not a struct (an enum, scalar or pointer typedef) and a `#define`d type are therefore not reported.
+
+---
+
+### UNIT-153 — `Checker._report_unknown_type(rule: str, pos: int, name: str, label: str) → None`
+
+**Purpose:** Emit the `report_unknown_types` finding (SWE1-122, #462).
+
+**Algorithm:** Emit `rule` (the calling rule's own ID) at the declaration with severity `info` (fixed, not the rule's configured severity) and the message "Local '<name>' (<label>) not checked: no definition of '<label>' was found in the scanned files or the rule's definition_paths", with `idents=(name,)` so an `identifiers:` exclusion entry naming the local suppresses it.
+
+---
+
+### UNIT-154 — `Checker._object_names() → set`
+
+**Purpose:** Names declared as objects in this file, for `misc.sizeof_type` (SWE1-114, #460).
+
+**Algorithm:** On the first call, collect group 2 of every `_RE_OBJECT_DECL` match in `self.clean` (`<word> [*…] [const|volatile] NAME [[…]…]` followed by `=`, `;`, `,` or `)`: variables, parameters and arrays) whose leading word is not `const`, `volatile`, `struct`, `union`, `enum`, `sizeof`, `signed`, `unsigned` or `typedef` and whose name is not a C keyword (so `sizeof(long int)` does not make `int` an object name); remove every typedef name of the file (UNIT-149); cache the set in `self._sizeof_objects` and return it. Objects declared only in other files are not known.
+---
+
+### UNIT-155 — `collect_macro_defs(clean: str) → list`
+
+**Purpose:** Classify the `#define`s and `#undef`s of one preprocessed text for the project-wide macro table (SWE1-123, #463).
+
+**Algorithm:** Join backslash-continued lines (UNIT-157) and walk the non-blank lines with a stack of conditional frames. An `#if` / `#ifdef` / `#ifndef` pushes a frame that is a **guard** when it is `#ifndef X` and the next directive is `#define X`, otherwise a plain conditional; an `#elif` / `#elifdef` / `#elifndef` / `#else` turns the top frame into a plain conditional; `#endif` pops. A `#define` or `#undef` inside any frame that is not a guard is skipped (whether it applies is not known). Otherwise a `#define` gives `(name, params, body, kind)` — `kind` is `default` when the previous line is `#ifndef name`, else `plain` — and an `#undef` gives `(name, None, "", None)`. Return the list in file order.
+
+---
+
+### UNIT-156 — `MacroTable` (class: `add(defs)`, `table`)
+
+**Purpose:** Merge the `#define`s of several files into the project-wide macro table (SWE1-123, #463).
+
+**Algorithm:** `add(defs)` takes the list of UNIT-155 for one file: an `#undef` adds the name to an undefined set; a plain definition is kept only if no plain definition of the name was added before, and a default likewise among defaults (first file in precedence order wins within a kind). The `table` property returns the defaults overlaid with the plain definitions (a plain definition beats a default), minus every `#undef`-ed name, as `name → (params, body)`.
+
+---
+
+### UNIT-157 — `_join_continuations(text: str) → str`
+
+**Purpose:** Join backslash-continued lines before `#define` collection and `#if` evaluation (SWE1-123, #463).
+
+**Algorithm:** Replace each `\` followed by optional blanks and a newline with one space; return the text.
+
+---
+
+### UNIT-158 — `_defined_value(kind: str, arg: str, macros: Mapping) → bool | None`
+
+**Purpose:** Evaluate an `#ifdef` / `#ifndef` (or, with the `el` prefix removed, `#elifdef` / `#elifndef`) test (SWE1-123, #463).
+
+**Algorithm:** Take the first word of `arg`. If it is in `macros`, return true for `ifdef` and false for `ifndef`; otherwise return `None`: a name missing from the table is unknown, not undefined (it may be defined in a header that was not scanned).
+
 ---
 
 ## 6. Data Design
@@ -1851,6 +1990,8 @@ The top-level configuration keys and their types:
 | `misc.partial_struct_assignment.enabled` / `.severity` | `bool` / `str` | `false` / `warning` | Flag a local struct with only some members assigned before use as a whole (MISRA 9.1, Barr-C §7.2) (opt-in, #456) |
 | `misc.partial_struct_assignment.fill_functions` | `list[str]` | `[memset, memcpy, memmove]` | Functions that, called with `&s` as first argument, write every member of `s` (#456) |
 | `misc.partial_struct_initialiser.enabled` / `.severity` | `bool` / `str` | `false` / `info` | Flag a short positional local struct initialiser (cf. MISRA 9.3) (opt-in, #456) |
+| `misc.partial_struct_assignment.definition_paths`, `misc.partial_struct_initialiser.definition_paths` | `list[str]` | `[]` | Globs (relative to the working directory) of files read only for struct, typedef and `#define` definitions; the lists of both rules are joined, even when a rule is disabled; root configuration only; `--exclude` does not apply (UNIT-151, #461) |
+| `misc.partial_struct_assignment.report_unknown_types`, `misc.partial_struct_initialiser.report_unknown_types` | `bool` | `false` | One `info` finding per local whose struct type has no definition (UNIT-152, UNIT-153, #462) |
 | `sign_compatibility.enabled` | `bool` | `true` | Cross-file sign-compatibility check |
 | `sign_compatibility.plain_char_is_signed` | `bool` | `true` | Treat plain `char` as signed |
 | `spell_check.enabled` | `bool` | `false` | Enable comment spell-check |
@@ -1965,13 +2106,16 @@ Written by `write_baseline()` (UNIT-36) and read by `load_baseline()` (UNIT-35).
 | SWE1-111 | misc.multiple_statements_per_line | UNIT-130 |
 | SWE1-112 | misc.void_pointer | UNIT-131 |
 | SWE1-113 | misc.recursive_function | UNIT-132 |
-| SWE1-114 | misc.sizeof_type | UNIT-133 |
+| SWE1-114 | misc.sizeof_type (objects declared in the file not reported, #460) | UNIT-133, UNIT-149, UNIT-154 |
 | SWE1-115 | misc.boolean_comparison | UNIT-134 |
 | SWE1-116 | misc.empty_else | UNIT-135 |
 | SWE1-117 | Trend metrics — safety indicators and macro metrics | UNIT-125, UNIT-127 |
 | SWE1-118 | misc.partial_struct_assignment | UNIT-143, UNIT-144 |
 | SWE1-119 | misc.partial_struct_initialiser | UNIT-143, UNIT-145 |
-| SWE1-120 | Cross-file struct-definition table | UNIT-21, UNIT-46, UNIT-139, UNIT-140, UNIT-141, UNIT-142 |
+| SWE1-120 | Cross-file struct-definition table | UNIT-21, UNIT-46, UNIT-139, UNIT-140, UNIT-141, UNIT-142, UNIT-150 |
+| SWE1-121 | Definition files (`definition_paths`, `--definitions`; #461) | UNIT-46, UNIT-88, UNIT-150, UNIT-151 |
+| SWE1-122 | `report_unknown_types` (#462) | UNIT-21, UNIT-143, UNIT-144, UNIT-145, UNIT-149, UNIT-152, UNIT-153 |
+| SWE1-123 | `#if` members in struct definitions (#463) | UNIT-21, UNIT-46, UNIT-139, UNIT-146, UNIT-147, UNIT-148, UNIT-155, UNIT-156, UNIT-157, UNIT-158 |
 
 > **Note (UNIT-84):** `DeclaredNotDefinedChecker` (UNIT-84) is traced via the cross-file check requirement (SWE1-051 to SWE1-053 range). SWE1-071 maps exclusively to `_check_whitespace_ratio` (UNIT-90) as shown in the `SWE1-045 to SWE1-050, SWE1-071` row above; the duplicate mapping of SWE1-071 → UNIT-84 has been removed as a CSC-AUD-005 corrective action.
 

@@ -8,7 +8,7 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP9-001 | **Version** | 1.21 |
+| **Document ID** | CSC-SUP9-001 | **Version** | 1.23 |
 | **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
@@ -20,6 +20,8 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.23 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
+| 1.22 | 2026-11-19 | Claude | Issues #460 and #463: §6.2 problem classification rows (both SEV-3 Minor, rules added after v1.6.1 and not in a release; fixed on `develop` by the implementing PR for v2.0.0); referenced-document versions resynced |
 | 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
 | 1.20 | 2026-11-19 | Claude | Cross-reference version resync with #456 |
 | 1.19 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
@@ -55,10 +57,10 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.27 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.31 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.23 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.28 |
+| CSC-MAN3-001 | Project Management Plan | 1.29 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.33 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.25 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.30 |
 
 ---
 
@@ -187,6 +189,10 @@ SEV labels were confirmed by the owner (Dermot Murphy) on 2026-09-29 and applied
 | #423 | SEV-1 Critical | Last enum member not checked, so invalid names passed silently | 2026-09-29 | 2026-09-29 | Yes (target 48 h) | #429 (`2444036`) | v2.0.0 |
 | #424 | SEV-3 Minor | Unused `functions.case` key accepted without effect (CR-424) | 2026-09-29 | 2026-09-29 | Yes | #427 (`31acd91`) | v2.0.0 |
 | #425 | SEV-2 Major | Config and usage errors exit 1 instead of 2 from the installed `cstylecheck` command (CR-425) | 2026-09-29 | 2026-09-29 | Yes (target 1 week) | #428 (`7ddf732`) | v2.0.0 |
+| #460 | SEV-3 Minor | `misc.sizeof_type` reports `sizeof` of an upper-case array object (or an object ending in `_t`) as a type operand | 2026-11-19 | On merge of the implementing PR | Yes (target: next planned release) | Implementing PR (with CR-461, CR-462) | v2.0.0 |
+| #463 | SEV-3 Minor | `misc.partial_struct_*` count struct members inside inactive `#if` blocks, so members that are not in the build are named as unassigned | 2026-11-19 | On merge of the implementing PR | Yes (target: next planned release) | Implementing PR (with CR-461, CR-462) | v2.0.0 |
+
+#460 and #463 were found on 2026-11-19 while comparing v1.6.1 and `develop` on a downstream nRF52840 project. Both affect rules added after v1.6.1 (#418, #456), so no released version is affected; neither needed a hotfix.
 
 ---
 
