@@ -11,10 +11,53 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from .utils import config_error, ensure_parent_dir
+
 
 # ---------------------------------------------------------------------------
 # Preset configurations
 # ---------------------------------------------------------------------------
+
+# Opt-in (#418) rules each standard-specific preset / wizard answer enables
+# (#420).  Order is the order the keys are written to the generated YAML.
+# misc.boolean_comparison is a style rule and belongs to no preset.
+MISRA_OPT_IN_RULES: tuple[str, ...] = (   # 15.1, 13.4, 11.5, 17.2, 15.7, 9.1, 9.3
+    "goto_usage", "assignment_in_condition", "void_pointer",
+    "recursive_function", "empty_else",
+    "partial_struct_assignment", "partial_struct_initialiser",
+)
+BARR_C_OPT_IN_RULES: tuple[str, ...] = (  # §3.2, §5.7, §8.3, §7.2
+    "multiple_statements_per_line", "sizeof_type", "empty_else",
+    "partial_struct_assignment",
+)
+# Shipped rules.yml default severities (unchanged by presets / wizard).
+_OPT_IN_SEVERITY: dict[str, str] = {
+    "goto_usage":                   "error",
+    "assignment_in_condition":      "warning",
+    "multiple_statements_per_line": "warning",
+    "void_pointer":                 "warning",
+    "recursive_function":           "error",
+    "sizeof_type":                  "info",
+    "empty_else":                   "warning",
+    "partial_struct_assignment":    "warning",
+    "partial_struct_initialiser":   "info",
+}
+
+
+# --init wizard naming-convention choices: on-screen label -> canonical
+# case-style name written to the config (a key of utils._CASE_PATTERNS).
+# Label order is the prompt order (#422).
+WIZARD_CASE_CHOICES: dict[str, str] = {
+    "lower_snake": "lower_snake",
+    "camelCase":   "camel",
+    "PascalCase":  "pascal",
+}
+
+
+def _opt_in(rules: tuple[str, ...]) -> dict:
+    """Return ordered ``misc`` entries enabling *rules* at shipped severity."""
+    return {r: {"enabled": True, "severity": _OPT_IN_SEVERITY[r]} for r in rules}
+
 
 _PRESET_BARR_C = {
     "file_prefix":  {"enabled": True,  "severity": "error",
@@ -27,13 +70,21 @@ _PRESET_BARR_C = {
                      "static":    {"s_prefix": {"enabled": True, "prefix": "s_"}},
                      "pointer_prefix": {"enabled": True, "prefix": "p_"},
                      "bool_prefix":    {"enabled": True, "prefix": "b_"}},
-    "functions":    {"enabled": True,  "severity": "error", "case": "lower_snake",
+    "functions":    {"enabled": True,  "severity": "error",
                      "min_length": 3, "max_length": 40},
     "typedefs":     {"enabled": True,  "severity": "error",
-                     "case": "PascalCase", "suffix": "_t"},
+                     # Barr-C §5.1.a: type names are lower-case with an
+                     # _t suffix.  Canonical case names only (#422); the
+                     # old "PascalCase" was unknown (silently passed) and
+                     # is unsatisfiable together with the _t suffix.
+                     "case": "lower_snake",
+                     # nested {enabled, suffix} form per rules.yml; a bare
+                     # string crashed the checker (#420)
+                     "suffix": {"enabled": True, "suffix": "_t"}},
     "enums":        {"enabled": True,  "severity": "error",
-                     "type_case": "PascalCase", "type_suffix": "_t",
-                     "member_case": "UPPER_SNAKE"},
+                     "type_case": "lower_snake",   # Barr-C §5.1.a (#422)
+                     "type_suffix": {"enabled": True, "suffix": "_t"},
+                     "member_case": "upper_snake"},
     "misc": {
         "line_length":        {"enabled": True,  "severity": "warning", "max": 120},
         "magic_numbers":      {"enabled": True,  "severity": "warning",
@@ -42,6 +93,8 @@ _PRESET_BARR_C = {
                                "require_on_unsigned_constants": True},
         "lowercase_l_suffix": {"enabled": True,  "severity": "error"},
         "eof_comment":        {"enabled": False},
+        # Opt-in rules (#418) enabled by this preset (#420): §3.2, §5.7, §8.3.
+        **_opt_in(BARR_C_OPT_IN_RULES),
     },
     "sign_compatibility": {"enabled": True, "severity": "warning"},
 }
@@ -66,7 +119,7 @@ _PRESET_MISRA = {
     "file_prefix":  {"enabled": True,  "severity": "warning"},
     "variables":    {"enabled": True,  "severity": "warning", "case": "lower_snake",
                      "min_length": 2, "max_length": 31},
-    "functions":    {"enabled": True,  "severity": "warning", "case": "lower_snake"},
+    "functions":    {"enabled": True,  "severity": "warning"},
     "misc": {
         "magic_numbers":      {"enabled": True,  "severity": "warning",
                                "exempt_values": [0, 1]},
@@ -75,6 +128,9 @@ _PRESET_MISRA = {
         "lowercase_l_suffix": {"enabled": True,  "severity": "error"},
         "octal_constant":     {"enabled": True,  "severity": "error"},
         "trigraph":           {"enabled": True,  "severity": "error"},
+        # Opt-in rules (#418) enabled by this preset (#420): 15.1, 13.4,
+        # 11.5, 17.2 and empty else (related to 15.7).
+        **_opt_in(MISRA_OPT_IN_RULES),
     },
     "sign_compatibility": {"enabled": True, "severity": "error"},
 }
@@ -152,6 +208,16 @@ def _ask_choice(prompt: str, choices: list, default: str, prompt_fn=input) -> st
     return default
 
 
+def _write_config(output_file: Path, yaml_text: str) -> None:
+    """Write *yaml_text* to *output_file*, creating missing parent folders
+    (issue #441).  An unwritable path is a configuration error (exit 2)."""
+    try:
+        ensure_parent_dir(output_file)
+        output_file.write_text(yaml_text, encoding="utf-8")
+    except OSError as e:
+        config_error(f"Cannot write config file '{output_file}': {e}")
+
+
 def run_wizard(
     output_path: str | None = None,
     prompt_fn=input,
@@ -174,12 +240,15 @@ def run_wizard(
     print_fn("\nCStyleCheck config wizard - press Enter to accept defaults.\n")
 
     # ---- Naming convention ----
-    var_case = _ask_choice(
+    # Friendly labels on screen; the canonical _CASE_PATTERNS name is
+    # what gets written to the config (#422).
+    var_case_label = _ask_choice(
         "Variable naming convention?",
-        ["lower_snake", "camelCase", "PascalCase"],
+        list(WIZARD_CASE_CHOICES),
         "lower_snake",
         prompt_fn=prompt_fn,
     )
+    var_case = WIZARD_CASE_CHOICES[var_case_label]
 
     min_len_str = _ask("Minimum variable name length?", "2", prompt_fn=prompt_fn)
     try:
@@ -198,6 +267,19 @@ def run_wizard(
     copyright = _ask_bool("Require copyright header in every file?",  False, prompt_fn)
     misra     = _ask_bool("Enable MISRA-C checks (unsigned suffix, octal, trigraph)?", False, prompt_fn)
     sign      = _ask_bool("Enable sign-compatibility checks across TUs?",             False, prompt_fn)
+    # Opt-in standard-specific rules (#420).  Asked last so the order of the
+    # earlier questions (and any scripted stdin answering them) is unchanged;
+    # EOF / Enter keeps the default of No.
+    misra_rules = _ask_bool(
+        "Enable MISRA C:2012 rules (goto 15.1, assignment in condition 13.4, "
+        "void pointer 11.5, recursion 17.2, empty else 15.7, "
+        "partial struct assignment 9.1, short struct initialiser 9.3)?",
+        False, prompt_fn)
+    barr_rules = _ask_bool(
+        "Enable Barr-C rules (one statement per line §3.2, "
+        "sizeof on objects §5.7, empty else §8.3, "
+        "partial struct assignment §7.2)?",
+        False, prompt_fn)
 
     # ---- Build config ----
     cfg: dict = {}
@@ -220,7 +302,7 @@ def run_wizard(
     cfg["variables"] = var_cfg
 
     cfg["functions"] = {
-        "enabled": True, "severity": "warning", "case": var_case,
+        "enabled": True, "severity": "warning",
         "min_length": 3, "max_length": 40,
     }
 
@@ -239,12 +321,19 @@ def run_wizard(
         "trigraph":           {"enabled": misra, "severity": "error"},
         "copyright_header":   {"enabled": copyright, "severity": "error"},
     }
+    # Opt-in rules (#418/#420): always listed so they can be toggled later;
+    # enabled only when the matching question was answered yes.  empty_else
+    # and partial_struct_assignment are shared by both standards.
+    for rule in dict.fromkeys(MISRA_OPT_IN_RULES + BARR_C_OPT_IN_RULES):
+        on = ((misra_rules and rule in MISRA_OPT_IN_RULES)
+              or (barr_rules and rule in BARR_C_OPT_IN_RULES))
+        cfg["misc"][rule] = {"enabled": on, "severity": _OPT_IN_SEVERITY[rule]}
 
     cfg["sign_compatibility"] = {"enabled": sign, "severity": "warning"}
 
     yaml_text = _render_yaml(cfg)
 
-    output_file.write_text(yaml_text, encoding="utf-8")
+    _write_config(output_file, yaml_text)
     print_fn(f"\nWriting {output_file} ... done.")
     print_fn("Run `cstylecheck src/` to check your first files.")
     return 0
@@ -264,7 +353,7 @@ def run_preset(preset_name: str, output_path: str | None = None,
         return 1
 
     yaml_text = _render_yaml(PRESETS[preset_name], preset_name=preset_name)
-    output_file.write_text(yaml_text, encoding="utf-8")
+    _write_config(output_file, yaml_text)
     print_fn(f"Wrote {preset_name} preset to {output_file}")
     print_fn("Run `cstylecheck src/` to check your first files.")
     return 0

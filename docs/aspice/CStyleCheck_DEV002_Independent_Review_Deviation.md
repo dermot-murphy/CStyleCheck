@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-DEV-002 | **Version** | 1.1 |
-| **Project** | CStyleCheck | **Date** | 2026-06-18 |
+| **Document ID** | CSC-DEV-002 | **Version** | 1.22 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Approved | **Classification** | Internal |
 | **Author** | Dermot Murphy | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | PA 2.2, GP 2.2.3 |
@@ -20,6 +20,27 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
+| 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
+| 1.20 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 1.19 | 2026-11-19 | Claude | Cross-reference version resync with #456 |
+| 1.18 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
+| 1.17 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
+| 1.16 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
+| 1.15 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
+| 1.14 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
+| 1.13 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
+| 1.12 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-014: §5.2 pull-request control states that the owner's merge of the PR is the approval record (no separate GitHub review approval, no approval timestamp); approval-by-merge policy (CSC-DEV-002 §5.2) |
+| 1.11 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.10 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.9 | 2026-09-29 | Claude | Cross-reference resync with #424: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.8 | 2026-09-29 | Claude | Cross-reference resync with #422: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.7 | 2026-09-29 | Claude | Cross-reference resync with #420: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.6 | 2026-09-29 | Claude | Cross-reference resync with #418: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.5 | 2026-09-29 | Claude | Release-prep cross-reference resync: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.4 | 2026-09-29 | Claude | Release-prep cross-reference resync: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.3 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (DEV-001 1.3→1.4, PA2 1.23→1.24, SUP10 1.3→1.4, SUP8 1.13→1.14, SUP9 1.3→1.4) |
+| 1.2 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.1 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.0 | 2026-05-28 | Dermot Murphy | Initial deviation record — closes issue #61 |
 
@@ -95,9 +116,19 @@ Although the Reviewer and Approver are the same person, the following compensati
 |---|---|---|
 | **AI-assisted review** | Every document was drafted or reviewed with Claude, providing an independent analytical perspective before Dermot Murphy's human review | Commit history; CSC-DEV-001 |
 | **CI quality gates** | All source code and test changes pass automated CI (unit tests × 3 Python versions, mypy, ruff, CStyleCheck self-check) before any work product is approved | GitHub Actions CI log for each PR |
-| **Pull request review** | Every change to a controlled work product is submitted as a GitHub Pull Request. The PR mechanism creates a structured review record (diff, CI status, approval timestamp) | GitHub PR history |
+| **Pull request review** | Every change to a controlled work product is submitted as a GitHub Pull Request. The PR records the diff, the CI status and any review comments. For this solo-developer project the owner's (Dermot Murphy's) merge of the PR is the approval record; no separate GitHub review approval is given, because the author of the review and the approver would be the same person | GitHub PR history (merged-by, merge commit, merge date) |
 | **Version-controlled audit trail** | All work product changes are committed to Git with a descriptive message. The commit history is immutable and publicly auditable | GitHub repository |
 | **Systematic self-review** | Before approval, Dermot Murphy explicitly reads the document in the context of the standard clause it satisfies, comparing content against the corresponding ASPICE GP requirements | Issue-close evidence in each PR |
+
+**Approval by merge (owner policy, 2026-09-29).** Decided by the owner, Dermot Murphy: *"Rather than signing to authorise, merging by me is taken as authorisation."* The owner's merge of the pull request that introduces a work-product revision **is** the approval and authorisation of that revision; no separate signature is required. This replaces signatures for:
+
+- all Review & Approval tables in the ASPICE work products (Technical Reviewer, Quality Assurance, Approver);
+- peer review records (CSC-REVIEW-xxx) and their Review Owner sign-off;
+- internal audit record sign-offs (CSC-AUD-xxx);
+- change request approval and QA sign-off (CSC-SUP10-001);
+- Risk Owner confirmation of risk reviews (CSC-MAN5-001).
+
+An entry of "By merge (CSC-DEV-002 §5.2)" or "Authorised by owner merge" is resolved by the merge commit of the introducing PR: the merge commit, the merged-by user and the merge date in the git/GitHub history are the approval record, and the merge date is the approval date. An unmerged revision is not approved.
 
 ### 5.3 Risk Assessment
 
@@ -151,9 +182,9 @@ This deviation is accepted on the basis that CStyleCheck is a single-person proj
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-DEV-001 | Process Deviation — AI-Assisted Authorship | 1.2 |
-| CSC-PA2-001 | Process Capability Records | 1.23 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.11 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.2 |
-| CSC-SUP10-001 | Change Request Plan | 1.2 |
+| CSC-DEV-001 | Process Deviation — AI-Assisted Authorship | 1.22 |
+| CSC-PA2-001 | Process Capability Records | 1.45 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.24 |
+| CSC-SUP10-001 | Change Request Plan | 1.26 |
 | GitHub Issue #61 | Designate independent reviewer (not approver) for SWE1, SWE4, SWE6 work products | — |

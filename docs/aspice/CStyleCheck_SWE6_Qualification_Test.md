@@ -1,4 +1,4 @@
-﻿# Software Qualification Test Specification
+# Software Qualification Test Specification
 
 *Automotive SPICE® PAM v4.0 | SWE.6 Software Verification*
 
@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE6-001 | **Version** | 1.17 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SWE6-001 | **Version** | 1.40 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.6 |
@@ -22,12 +22,35 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.17 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: §3.2 configuration under test v1.6.1; §3.3 static-verification and open-bug criteria for v1.6.1; SWQ-003 output row covers the startup banner in the `--log` file for text output only (`test_cli.py` `TestStartupBannerLogFile`); §9 release-readiness gate for the v1.6.1 baseline (1281 tests; #439 resolved); §3.1 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
+| 1.40 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §3 scope v2.0.0; §3.2 configuration under test v2.0.0 (tag `v2.0.0` on the `main` merge commit of `release/2.0.0`), execution date 2026-11-20; §3.3 static-verification and open-bug criteria for v2.0.0; §5 v2.0.0 verdict; §9 release-readiness gate for the v2.0.0 baseline (1671 tests; no open bug Issue); §10 note; referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
+| 1.39 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): SWQ-003 partial-struct row — `test_partial_struct.py` 89 tests (UV-PSI-001 to UV-PSI-009); BP3 evidence — `test_misra_rules.py` 168 tests, suite total 1671 |
+| 1.38 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SWQ-003 covers SWE1-121 to SWE1-123 (partial-struct row: definition files, `report_unknown_types`, `#if` members; `test_partial_struct.py` 74 tests) and the #460 `misc.sizeof_type` tests; §3.3 / §6 coverage 116→119 in-scope requirements (SWE1 defines 127); BP3 evidence — `test_misra_rules.py` 167 tests, suite total 1655 after #460 to #463 |
+| 1.37 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 1.36 | 2026-11-19 | Claude | Issue #456 (CR-456): SWQ-003 → 83 rule IDs, new row for `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` (SWE1-118 to SWE1-120, `test_partial_struct.py`); §3.3 / §6 coverage 113→116 in-scope requirements (SWE1 defines 124); BP3 evidence — `test_misra_rules.py` 162 tests, Rule 9.1 (partial) and Barr-C §7.2, suite total 1630 after #456 |
+| 1.35 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
+| 1.34 | 2026-11-19 | Claude | Issue #449: BP3 evidence — suite total 1574 after #449 (workflow-configuration tests); referenced-document versions resynced |
+| 1.33 | 2026-10-06 | Claude | Issue #447: BP3 evidence — suite total 1559 after #439, #441 and the v1.6.1 back-merge, 1569 after #447 (`misc.constant_comparison` preprocessor and identifier-exclusion tests) |
+| 1.32 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): §3.2 execution date, §3.3 criteria and §9 release readiness gate brought in from the v1.6.1 release; duplicate approval note removed |
+| 1.31 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
+| 1.30 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
+| 1.29 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-018: §3.3 coverage criterion restated as all 113 in-scope requirements, listed explicitly (SWE1-001 to 101, SWE1-109 to 116, SWE1-MISRA-001 to 004; SWE1-102 to 108 and 117 out of SWQ scope). AUD10-F-028: §5 overall verdict states its v1.6.0 baseline; current `develop` run added (1545 passed, 58 modules, 2026-09-29); approval-by-merge policy (CSC-DEV-002 §5.2) |
+| 1.28 | 2026-09-29 | Claude | Issue #423: BP3 evidence — suite total 1532→1545 (last enum member tests); referenced-document versions resynced (4) |
+| 1.27 | 2026-09-29 | Claude | Issue #425: SWQ-008 — three config-error scenarios (unreadable baseline, unknown case style, config error via the wrapper) with a 2026-09-29 execution note (UV-EXIT-003); §6 SWE1-068 to 070 row cites SWQ-008 and UV-EXIT; BP3 evidence — suite total 1524→1532; referenced-document versions resynced (4) |
+| 1.26 | 2026-09-29 | Claude | Issue #424: SWQ-001 step 9 (`functions.case` → one `WARNING` on stderr, exit code unchanged) with a 2026-09-29 execution row; §6 SWE1-075 row cites UV-FCASE-001; BP3 evidence — suite total 1508→1524; referenced-document versions resynced (4) |
+| 1.25 | 2026-09-29 | Claude | Issue #422: SWQ-001 steps 7–8 (case-style aliases accepted and enforced; unknown case style → exit 2 naming the key) with a 2026-09-29 execution row; §6 SWE1-075 row cites UV-CASE-001 and UV-CASE-005; BP3 evidence — suite total 1481→1508; referenced-document versions resynced (4) |
+| 1.24 | 2026-09-29 | Claude | Issue #420: §6 SWE1-075 row cites UV-WIZ-001 to UV-WIZ-005 and SIT-016 (presets / `--init` enable the standard-specific opt-in rules); BP3 evidence — suite total 1463→1481; referenced-document versions resynced (4) |
+| 1.23 | 2026-09-29 | Claude | Issue #418 (CR-418): SWQ-003 post-v1.6.0 row — all 8 rules opt-in, UV-MSR-009 cited; BP3 evidence — `test_misra_rules.py` 149→160 test cases; suite total 1452→1463; referenced-document versions resynced (4) |
+| 1.22 | 2026-09-29 | Claude | Issue #412: BP3 evidence — `test_misra_rules.py` 141→149 test cases; suite total 1444→1452; referenced-document versions resynced (4) |
+| 1.21 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.20 | 2026-09-29 | Claude | Issue #413 (CR-413): SWE1-094 requirement aligned with the code; §6 SWE1-094/095 row Covered in full (partial `--quiet` note removed); BP3 note total 1444; referenced-document versions resynced (SWE1 2.9→2.10, SWE5 1.16→1.17) |
+| 1.19 | 2026-09-29 | Claude | #410: BP3 evidence no longer claims MISRA C:2012 Rule 14.4 coverage |
+| 1.18 | 2026-09-29 | Claude | Issue #407: §6 SWE1-094 row adds UV-CLI-017 to UV-CLI-019 (partial: `--quiet` clause not implemented); SWE1-096 row Covered by UV-CLI-020 to UV-CLI-022 (Windows `\` and POSIX `/`); output-behaviour row adds `test_cli_requirements.py`; BP3 note total 1439 (also records #408: `test_misra_rules.py` 140→141); referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE5 1.15→1.16, SYS5 1.9→1.10) |
+| 1.17 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SWQ-003 → 81 rule IDs; add the post-v1.6.0 MISRA/Barr-C rule row (SWE1-109 to SWE1-116); §6 rows for SWE1-094 to SWE1-117; coverage 113/113 in scope. AUD9-F-006: SWQ-007 step 4 → a moved violation stays suppressed (SWE1-100); add steps 6/7 (multiset, path normalisation); trace SWE1-100/101. AUD9-F-003: BP3 note `test_misra_rules.py` 64→140. AUD9-F-026: commit SHA / configuration under test; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.16 | 2026-07-06 | Claude | ASPICE audit — remove non-existent rule IDs `variable.local.prefix` and `variable.parameter.prefix` from SWQ-003 table; update §3.1 refs (SWE1 2.5→2.6, SWE5 1.12→1.14, SUP8 1.9→1.10); fix coverage gate note; add SWE1-094 to SWE1-099 to §3.3 criteria — closes #376 |
 | 1.15 | 2026-07-06 | Claude | v1.6.0 RC — update test count 1223→1279; §3.1 SWE5→1.13, SVD→1.22; add SWQ-003 row for constant_comparison/output behaviour improvements; update §8 execution results |
 | 1.14 | 2026-07-01 | Claude | Add misc.constant_comparison, unsigned_suffix signed-param, pointer_prefix fix to SWQ-003; update rule count 72→73; req coverage 91→94; §3.1 SWE1→2.5, SWE5→1.12; version under test 1.5.0→1.6.0 |
-| 1.13 | 2026-06-27 | Fix §3.1 cross-ref: SWE1 2.3→2.4 | Dermot Murphy |
-| 1.12 | 2026-06-27 | Fix §3.1 cross-ref: SWE1 2.1→2.3 | Dermot Murphy |
+| 1.13 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-ref: SWE1 2.3→2.4 |
+| 1.12 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-ref: SWE1 2.1→2.3 |
 | 1.11 | 2026-06-27 | Claude | ASPICE audit — populate SWQ-010 execution evidence; fill §7 coverage values; fix §8 issue #54 status; fix §9 branch coverage; fix §10 v1.0.0→v1.5.0; update Review & Approval dates — closes #318 #323 |
 | 1.10 | 2026-06-26 | Claude | ASPICE audit corrections: update §3.2 config under test to v1.5.0; fix §3.1/§3.3/§9/Appendix A stale references; populate execution results for SWQ-001/002/004/005/006/007 — closes #310 |
 | 1.9 | 2026-06-26 | Claude | Correct rule count 74→72 throughout (§3 SWQ-003, §7 RTM): 72 is the confirmed count from source-code analysis; macro.trailing_semicolon/multistatement_wrapper were already in the 71 base |
@@ -45,7 +68,7 @@
 
 ## 3. Purpose & Scope
 
-This Software Qualification Test Specification defines the qualification test cases that verify **CStyleCheck v1.6.0** against its software requirements (CSC-SWE1-001) as a complete software build. It satisfies **Automotive SPICE® PAM v4.0, SWE.6 — Software Verification**.
+This Software Qualification Test Specification defines the qualification test cases that verify **CStyleCheck v2.0.0** (v1.6.0 / v1.6.1 plus the post-v1.6.0 `develop` changes) against its software requirements (CSC-SWE1-001) as a complete software build. It satisfies **Automotive SPICE® PAM v4.0, SWE.6 — Software Verification**.
 
 Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they verify the software against its **specification**, not its internal architecture. They confirm that all SWE.1 requirements are met by the delivered software artefact and provide the final evidence gate before the software is released via SPL.2.
 
@@ -53,21 +76,21 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.15 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.8 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.11 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.37 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.31 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
 
 ### 3.2 Software Configuration Under Test
 
 | Attribute | Value |
 |---|---|
-| **Software Version** | 1.6.1 |
-| **Git Tag** | v1.6.1 |
-| **Commit SHA** | Merge commit of `hotfix/1.6.1` into `main` (tagged `v1.6.1`) |
+| **Software Version** | 2.0.0 |
+| **Git Tag** | v2.0.0 |
+| **Commit SHA** | Merge commit of `release/2.0.0` into `main` (tagged `v2.0.0`; release branch cut from `develop` `153d5d1`). Earlier executions: `a6102d6` (v1.6.0 release); post-v1.6.0 additions (SWQ-003 rules for SWE1-109 to SWE1-116, SWQ-007 steps 4/6/7): `develop` `296e91b`; SWQ-003 rules for SWE1-118 to SWE1-120 (#456): PR #457; SWE1-121 to SWE1-123 and the SWE1-114 change (#460 to #463): PR #464 |
 | **Python Version** | 3.11 (primary); 3.10 and 3.12 (regression) |
 | **OS** | Ubuntu 24.04 |
-| **Test Execution Date** | 2026-10-06 |
+| **Test Execution Date** | 2026-11-20 |
 | **Tester** | Claude (automated CI) / Dermot Murphy (review) |
 
 ### 3.3 Qualification Criteria
@@ -75,11 +98,11 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Criterion | Target | Pass Condition |
 |---|---|---|
 | All SWQ test cases | PASS | Zero FAIL results |
-| SW Requirements coverage | 100% | All SWE1-001 to SWE1-099 and SWE1-MISRA-004 traced to ≥ 1 SWQ test |
+| SW Requirements coverage | 100% | All 119 in-scope requirements traced to ≥ 1 SWQ test: SWE1-001 to SWE1-101 (101), SWE1-109 to SWE1-116 (8), SWE1-118 to SWE1-123 (6) and SWE1-MISRA-001 to SWE1-MISRA-004 (4). Out of SWQ scope: SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts, not part of the delivered package; see §6) |
 | Statement coverage | ≥ 90% | Coverage report at execution |
 | Branch coverage | ≥ 85% | Coverage report at execution |
-| Static verification | PASS | `rules.yml` CI job on v1.6.1 commit |
-| Open bug Issues targeting v1.6.1 | 0 | No unresolved bug-labelled Issues |
+| Static verification | PASS | `rules.yml` CI job on v2.0.0 commit |
+| Open bug Issues targeting v2.0.0 | 0 | No unresolved bug-labelled Issues |
 
 ---
 
@@ -103,10 +126,15 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | 4 | Run with `--defines defines.txt` | Valid defines file | Tool runs; defines applied (verify via known substitution) |
 | 5 | Run with `--aliases aliases.txt` | Valid aliases file | Tool runs; alias prefixes accepted |
 | 6 | Run with `--exclusions exclusions.yml` | Valid exclusions file | Tool runs; excluded rules suppressed for specified files |
+| 7 | Run with a config using case-style aliases (#422) | `typedefs.case: PascalCase`, `enums.member_case: UPPER_SNAKE` | Tool runs; aliases treated as `pascal` / `upper_snake` and enforced (`typedef.case`, `enum.member_case` reported for wrongly-cased names) |
+| 8 | Run with an unknown case style (#422) | `typedefs.case: PascalCaes` | Exit 2 before any file is checked; stderr names the file, `typedefs.case`, the value and the allowed values |
+| 9 | Run with a config that still contains `functions.case` (#424) | `functions.case: lower_snake` | Tool runs; exit code as without the key; one `WARNING` on stderr naming the file and `functions.case`, saying it is not used and to use `functions.style` |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
 | 2026-06-26 | GitHub Actions (automated) | 3.10 / 3.11 / 3.12 | PASS | |
+| 2026-09-29 | Claude (local pytest run, `tests/test_case_style_config.py` UV-CASE-003 and UV-CASE-005) | 3.11 | PASS (steps 7–8) | |
+| 2026-09-29 | Claude (local pytest run, `tests/test_functions_case_removed.py` UV-FCASE-003) | 3.11 | PASS (step 9) | |
 
 ---
 
@@ -134,13 +162,13 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 ---
 
-### SWQ-003 — All 73 Rule IDs Detected
+### SWQ-003 — All 83 Rule IDs Detected
 
 | Field | Value |
 |---|---|
 | **Test Case ID** | SWQ-003 |
-| **Objective** | Verify all 73 rule IDs are implemented and detect violations when triggered (SWE1-017 to SWE1-093) |
-| **SW-REQ** | SWE1-017 to SWE1-056, SWE1-MISRA-001 to SWE1-MISRA-004, SWE1-063, SWE1-071, SWE1-078 to SWE1-093 |
+| **Objective** | Verify all 83 rule IDs are implemented and detect violations when triggered (SWE1-017 to SWE1-093, SWE1-109 to SWE1-116, SWE1-118 to SWE1-123) |
+| **SW-REQ** | SWE1-017 to SWE1-056, SWE1-MISRA-001 to SWE1-MISRA-004, SWE1-063, SWE1-071, SWE1-078 to SWE1-093, SWE1-098, SWE1-099, SWE1-109 to SWE1-116, SWE1-118 to SWE1-123 |
 
 | Rule Category | Rule IDs | Test Module | Result |
 |---|---|---|---|
@@ -166,7 +194,9 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Misc — constant comparison (v1.6.0) | `misc.constant_comparison` | `test_constant_comparison.py` | PASS |
 | Misc — unsigned_suffix signed-param exemption (v1.6.0) | `misc.unsigned_suffix` false-positive fix for signed-typed parameters | `test_unsigned_suffix_signed_params.py` | PASS |
 | Variable — pointer_prefix auto-fix (v1.6.0) | `variable.pointer_prefix` auto-fix via `--fix` | `test_pointer_prefix_fix.py` | PASS |
-| Output — v1.6.0 output behaviour (startup banner, --summary restructure, OS path sep) | `print_summary` restructure; stderr startup banner; OS-native path in output; startup banner in the `--log` file for text output only, none in a json / sarif / html log file (v1.6.1, #439) | `test_cli.py`, `test_print_summary.py` | PASS |
+| Output — v1.6.0 output behaviour (startup banner, --summary restructure, OS path sep) | `print_summary` restructure; stderr startup banner; OS-native path in output | `test_cli.py`, `test_cli_requirements.py`, `test_print_summary.py` | PASS |
+| Misc — MISRA/Barr-C (post-v1.6.0, #391/#392) | `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` (all opt-in, #412, #418) | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-008, 76 tests; UV-MSR-009 opt-in policy, 13 tests since #456) | PASS (2026-09-29, develop `296e91b`, Python 3.11 local run) |
+| Misc — partially initialised local structs (post-v1.6.0, #456) | `misc.partial_struct_assignment`, `misc.partial_struct_initialiser` (both opt-in), with the cross-file struct-definition table; definition files (`definition_paths`, `--definitions`, #461), `report_unknown_types` (#462) and `#if` members (#463) | `test_partial_struct.py` (UV-PSI-001 to UV-PSI-009, 89 tests), `test_misra_rules.py` (UV-MSR-009) | PASS (2026-11-19, `claude/partial-struct-init-456`, Python 3.14 local run; #461 to #463: `claude/partial-struct-sdk-460-463`) |
 
 **SWQ-003 Overall Result:** PASS
 
@@ -247,20 +277,23 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | Field | Value |
 |---|---|
 | **Test Case ID** | SWQ-007 |
-| **Objective** | Verify baseline write, load, and filtering requirements (SWE1-065 to SWE1-067) |
-| **SW-REQ** | SWE1-065, SWE1-066, SWE1-067 |
+| **Objective** | Verify baseline write, load, and filtering requirements (SWE1-065 to SWE1-067, SWE1-100, SWE1-101) |
+| **SW-REQ** | SWE1-065, SWE1-066, SWE1-067, SWE1-100, SWE1-101 |
 
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
 | 1 | Write baseline | `--write-baseline b.json` with 2 violations | `b.json` is valid JSON; 2 entries; exit 0 |
 | 2 | Suppress all | Same source + `--baseline-file b.json` | 0 violations; exit 0 |
 | 3 | New violation added | Source v2 (3 violations) + `--baseline-file b.json` | 1 new violation reported; exit 1 |
-| 4 | Baseline key stability | Move violation to different line | Different line → not suppressed (line number in key) |
-| 5 | Plain JSON format | Inspect `b.json` | Human-readable; parseable with `jq` |
+| 4 | Baseline key stability | Move a baselined violation to a different line (unrelated edit above it) | Still suppressed: the line number is not part of the key (`file:rule:message`, SWE1-100) |
+| 5 | Plain JSON format | Inspect `b.json` | Human-readable JSON object `{"violations": [...]}`; `line` recorded for review; parseable with `jq` |
+| 6 | Duplicate of a baselined violation | Source with one extra copy of an accepted violation | The extra copy is reported as new; exit 1 (multiset matching) |
+| 7 | Cross-platform baseline | Baseline written with `\` separators, checked on Linux | Violations suppressed; `file` written with `/` separators (SWE1-101) |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
-| 2026-06-26 | GitHub Actions (automated) | 3.10 / 3.11 / 3.12 | PASS | |
+| 2026-06-26 | GitHub Actions (automated) | 3.10 / 3.11 / 3.12 | PASS | Steps 1–3, 5 (pre-#397 step 4 expectation) |
+| 2026-09-29 | Local pytest run, develop `296e91b` (`TestBaselineSuppression`, 22 tests) | 3.11 | PASS | Steps 1–7 against the #397 behaviour |
 
 ---
 
@@ -284,6 +317,11 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | `--help` | `cstylecheck --help` | 0 | |
 | `--exit-zero` + errors | `cstylecheck --exit-zero violating.c` | 0 | |
 | `--write-baseline` + errors | `cstylecheck --write-baseline b.json violating.c` | 0 | |
+| Unreadable baseline (#425) | `cstylecheck --baseline-file bad.json clean.c` | 2 | PASS |
+| Unknown case style (#425) | `cstylecheck --config bad_case.yml clean.c` | 2 | PASS |
+| Config error via the wrapper (#425) | `python src/cstylecheck.py --config missing.yaml clean.c` | 2 (same message on stderr as `cstylecheck`) | PASS |
+
+The #425 rows were executed on 2026-09-29 by `tests/test_exit_code_entry_points.py` (UV-EXIT-003, local pytest run, Python 3.11), which runs nine config/usage error paths through the console-script target in `pyproject.toml` and through `python src/cstylecheck.py`. Before #425 the installed `cstylecheck` command exited 1 on these errors.
 
 **SWQ-008 Overall Result:** PASS
 
@@ -367,18 +405,22 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 |---|---|---|---|---|
 | SWQ-001 | Configuration loading | SWE1-001 to SWE1-006 | PASS | |
 | SWQ-002 | File discovery and CLI | SWE1-068 to SWE1-070 | PASS | |
-| SWQ-003 | All 73 rule IDs | SWE1-017 to SWE1-056, SWE1-MISRA-001–004, SWE1-063, SWE1-071, SWE1-078–093 | PASS | |
+| SWQ-003 | All 83 rule IDs | SWE1-017 to SWE1-056, SWE1-MISRA-001–004, SWE1-063, SWE1-071, SWE1-078–093, SWE1-098, SWE1-099, SWE1-109–116, SWE1-118–123 | PASS | |
 | SWQ-004 | Output format qualification | SWE1-057 to SWE1-064 | PASS | |
 | SWQ-005 | Dictionary and spell check | SWE1-007 to SWE1-010, SWE1-056 | PASS | |
 | SWQ-006 | Cross-file sign compatibility | SWE1-051 to SWE1-053 | PASS | |
-| SWQ-007 | Baseline suppression | SWE1-065 to SWE1-067 | PASS | |
+| SWQ-007 | Baseline suppression | SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | PASS | |
 | SWQ-008 | Exit code qualification | SWE1-069 | PASS | |
 | SWQ-009 | Source cache single read | SWE1-015 | PASS | |
 | SWQ-010 | Multi-token typedef detection | SWE1-040 | PASS | |
 | SWQ-011 | Naming convention self-verification | SWE1-017 to SWE1-056 | PASS | |
 | SWQ-012 | Python portability | SWE1-069 | PASS | |
 
-**Overall Software Qualification Verdict:** PASS
+**Overall Software Qualification Verdict — v1.6.0 baseline:** PASS (applies to the v1.6.0 release baseline — 1279 tests, 0 failures, Python 3.10 / 3.11 / 3.12; see §9)
+
+**Overall Software Qualification Verdict — v2.0.0 release baseline:** PASS (2026-11-20, CR #443 — 1671 tests, 0 failures; SWQ-003 covers all 83 rule IDs; 119/119 in-scope requirements; see §9)
+
+**Current `develop` run (not a release verdict):** 1545 passed, 58 test modules, 2026-09-29 (`develop` after #423, local run, Python 3.11). The qualification verdict for the next release (v2.0.0) is issued at release, including the CI matrix (Python 3.10 / 3.11 / 3.12).
 
 ---
 
@@ -398,13 +440,13 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | SWE1-051 to SWE1-053 | Sign compatibility | SWQ-006 | Covered |
 | SWE1-054 to SWE1-056 | Reserved names / spell check | SWQ-003, SWQ-005 | Covered |
 | SWE1-057 to SWE1-064 | Output formats | SWQ-004 | Covered |
-| SWE1-065 to SWE1-067 | Baseline suppression | SWQ-007 | Covered |
-| SWE1-068 to SWE1-070 | CLI and entry point | SWQ-002 | Covered |
+| SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline suppression (incl. line-independent, multiset, path-normalised matching) | SWQ-007 | Covered |
+| SWE1-068 to SWE1-070 | CLI and entry point | SWQ-002; SWE1-069 exit codes: SWQ-008, `test_exit_code_entry_points.py` (UV-EXIT-001 to UV-EXIT-003, #425) | Covered |
 | SWE1-071 | Whitespace ratio check | SWQ-003 (via pytest) | Covered |
 | SWE1-MISRA-001 to SWE1-MISRA-004 | MISRA C lexical rules (lowercase_l, octal, trigraph, non_ascii) | SWQ-003 | Covered |
 | SWE1-072 to SWE1-073 | Inline suppression comments | `test_inline_suppression.py` (via pytest) | Covered |
 | SWE1-074 | Auto-fix mode | `test_fix_mode.py` (via pytest) | Covered |
-| SWE1-075 | Config wizard and presets | `test_init_wizard.py` (via pytest) | Covered |
+| SWE1-075 | Config wizard and presets (incl. preset / `--init` opt-in rules, #420; canonical case names, #422; no `functions.case`, #424) | `test_init_wizard.py` (via pytest; UV-WIZ-001 to UV-WIZ-005, SIT-016); `test_case_style_config.py` (UV-CASE-001, UV-CASE-005); `test_functions_case_removed.py` (UV-FCASE-001) | Covered |
 | SWE1-076 | Per-directory config | `test_per_dir_config.py` (via pytest) | Covered |
 | SWE1-077 | HTML report output | `test_html_report.py` (via pytest) | Covered |
 | SWE1-078 to SWE1-088 | v1.4.0 rules (function quality, macro safety, naming) | SWQ-003 | Covered |
@@ -414,8 +456,16 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 | SWE1-091 | `misc.constant_comparison` — flag constant==constant comparisons | SWQ-003 | Covered |
 | SWE1-092 | `misc.unsigned_suffix` signed-parameter argument exemption | SWQ-003 | Covered |
 | SWE1-093 | `variable.pointer_prefix` auto-fix via `--fix` | SWQ-003 | Covered |
+| SWE1-094, SWE1-095 | Startup banner (two lines on stderr, unconditional); copyright in `--version` | SIT-024 (integration level); SWE1-094 unit tests UV-CLI-017 to UV-CLI-019 (#407, #413) | Covered |
+| SWE1-096 | OS-native path separator in output | SWQ-004 step 1 (POSIX runner); Windows `\` and POSIX `/` rendering verified by unit tests UV-CLI-020 to UV-CLI-022 (#407) | Covered |
+| SWE1-097 | `print_summary()` restructure | SIT-026, SWQ-004 | Covered |
+| SWE1-098, SWE1-099 | `fn_start` line correction; function-pointer typedef exemption | SWQ-003 | Covered |
+| SWE1-102 to SWE1-108, SWE1-117 | Trend-analysis metrics (CI scripts, COMP-13) | Outside SWE.6 scope (not part of the delivered `cstylecheck` package); verified by SWE.4 UV-MET-001 to UV-MET-010 | N/A |
+| SWE1-109 to SWE1-116 | Post-v1.6.0 MISRA/Barr-C rules (#391/#392) | SWQ-003, SIT-027 | Covered |
+| SWE1-118 to SWE1-120 | Partially initialised local struct rules and cross-file struct-definition table (#456) | SWQ-003, SIT-028 | Covered |
+| SWE1-121 to SWE1-123 | Definition files, `report_unknown_types` and `#if` members in struct definitions (#461 to #463) | SWQ-003, SIT-028 | Covered |
 
-**Requirements Coverage:** 94 / 94 requirements covered (100%)
+**Requirements Coverage:** 119 / 119 in-scope requirements covered (100%). SWE1 defines 127 requirements (SWE1-001 to SWE1-123 plus SWE1-MISRA-001 to 004); the 8 trend-metrics requirements (SWE1-102 to SWE1-108, SWE1-117) are outside SWE.6 scope.
 
 ---
 
@@ -442,17 +492,18 @@ Qualification tests (SWE.6) differ from integration tests (SWE.5) in that they v
 
 ## 9. Release Readiness Gate
 
-The following conditions were assessed for the **v1.6.1** release baseline (2026-10-06; v1.6.0 baseline 2026-07-01 plus the #439 hotfix):
+The following conditions were assessed for the **v2.0.0** release baseline (2026-11-20, CR #443; the v1.6.1 release baseline was assessed on 2026-10-06 with 1281 tests, #439 resolved):
 
-- [x] All SWQ test cases: PASS — 1281 tests, 0 failures (Python 3.10 / 3.11 / 3.12)
-- [x] Statement coverage ≥ 85% combined CI gate: PASS — 89.8% statement (v1.2.0 historical baseline; v1.6.0 CI measurement pending), 87.31% combined (`--cov-fail-under=85 --cov-branch`)
+- [x] All SWQ test cases: PASS — SWQ-001 to SWQ-012; 1671 tests, 0 failures (local run on `release/2.0.0`, Python 3.14, 2026-11-20)
+- [x] Statement coverage ≥ 85% combined CI gate: PASS — 89.8% statement (v1.2.0 historical baseline), 87.31% combined (`--cov-fail-under=85 --cov-branch`, enforced by `cstylecheck_tests.yml` on every pull request)
 - [x] Branch coverage ≥ 85% combined: PASS — 87.31% combined stmt+branch ≥ 85% gate ✅
-- [x] `rules.yml` CI job: PASS on v1.6.1 commit
-- [x] `cstylecheck_tests.yml` CI: PASS on Python 3.10, 3.11, 3.12
-- [x] `docker_publish.yml` CI: PASS; image available on GHCR and Docker Hub (`cstylecheck:1.6.1`, `:latest`)
-- [x] Zero open functional bug Issues: PASS — issues #339, #340, #341 resolved and merged in v1.6.0; #439 (startup banner in a json / sarif / html `--log` file) resolved in v1.6.1
-- [x] This document approved and placed under CM baseline (SUP.8)
+- [x] SW requirements coverage: 119/119 in-scope requirements (§6)
+- [x] `cstylecheck_tests.yml` (Python 3.10, 3.11, 3.12), `rules.yml` naming-convention check and `aspice_consistency.yml`: PASS on the release PR #465 `release/2.0.0` → `main` at `0c99dad` (runs 44714166810, 44714167028, 44714167031; CSC-SUP8-001 §8.2 step 1). The Docker build (`docker_publish.yml`) does not run on pull requests; it is checked after the merge, on the `v2.0.0` tag push (CR #443)
+- [x] Zero open functional bug Issues: PASS — no open `bug` Issue on 2026-11-20; #460 and #463 resolved by PR #464 (merge `153d5d1`); all post-v1.6.1 problem reports closed (CSC-SUP9-001 §6.2)
+- [x] This document approved and placed under CM baseline (SUP.8) — by the owner's merge of the release PR
 - [x] All TBD items in SYS.5 requirements coverage resolved or formally accepted — 6 of 9 resolved; SYS-NF-010/011/012 formally deferred (see CSC-SYS5-001 §7)
+
+After the tag (CSC-SUP8-001 §8.2 steps 4–7, §11.2 PCA; tracked in CR #443): `docker_publish.yml` publishes `cstylecheck:2.0.0`, `:2.0`, `:2` and `:latest` to GHCR and Docker Hub, and the GitHub Release is created from the CHANGELOG.
 
 ---
 
@@ -460,14 +511,14 @@ The following conditions were assessed for the **v1.6.1** release baseline (2026
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-10-06 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 
 > Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
-> **Note:** Software qualification is the final gate before release. This document must be approved and all release readiness conditions in §9 satisfied before the v1.6.1 release baseline is created and the product is released via SPL.2.
+> **Note:** Software qualification is the final gate before release. This document must be approved and all release readiness conditions in §9 satisfied before the v2.0.0 release baseline is created and the product is released via SPL.2.
 
 ---
 
@@ -490,5 +541,5 @@ That appendix contains:
 | MISRA C:2012 | 130 Required + 16 Advisory applicable | 9 Required, 8 Advisory | 121 Required | 100% Required |
 | MISRA C:2023 | 143 Required + 18 Advisory applicable | 9 Required, 7 Advisory | 134 Required | 100% Required |
 
-> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (64 test cases) provides direct verification evidence for MISRA Rules 4.2, 7.1, and 7.3. All other CStyleCheck-enforced rules are covered by the existing test suite (1279 total passing tests as of v1.6.0).
+> **SWE.6 BP3 Evidence:** The test suite in `tests/test_misra_rules.py` (168 test cases) provides direct verification evidence for MISRA Rules 4.1, 4.2, 7.1 and 7.3, and, since PRs #391/#392, for Rules 11.5, 13.4, 15.1 and 17.2 (direct recursion) and Barr-C §3.2, §5.7 and §8.3; `tests/test_partial_struct.py` (89 test cases, #456, #461 to #463) does so for Rule 9.1 (partial: partly assigned local structs), the struct analogue of Rule 9.3 and Barr-C §7.2. Rule 14.4 is not covered (`misc.boolean_comparison` is a style rule, #410). All other CStyleCheck-enforced rules are covered by the existing test suite (1279 tests at v1.6.0; 1422 on `develop` `296e91b`; 1439 after #408 and #407; 1444 after #413; 1452 after #412; 1463 after #418; 1481 after #420; 1508 after #422; 1524 after #424; 1532 after #425; 1545 after #423; 1559 after #439, #441 and the v1.6.1 back-merge; 1569 after #447; 1574 after #449; 1630 after #456; 1655 after #460 to #463; 1671 after the #460 to #463 review fixes).
 

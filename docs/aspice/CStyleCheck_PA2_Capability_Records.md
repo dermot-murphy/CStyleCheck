@@ -1,4 +1,4 @@
-# Process Capability Records
+﻿# Process Capability Records
 
 *Automotive SPICE® PAM v4.0 | PA 2.1 Process Performance Management & PA 2.2 Work Product Management*
 
@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-PA2-001 | **Version** | 1.23 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-PA2-001 | **Version** | 1.45 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | PA 2.1, PA 2.2 |
@@ -20,7 +20,29 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.23 | 2026-10-06 | Claude | v1.6.1 hotfix (#439) — §4.1 SWE.4 tests 1279→1281; §5.4 baseline note and document versions for the v1.6.1 baseline (SYS2 2.3, SYS4 1.12, SWE1 2.7, SWE2 1.13, SWE3 1.17, SWE4 1.21, SWE5 1.15, SWE6 1.17, MAN3 1.8, SVD 1.24, PA2 1.23; DEV-001 1.2, DEV-002 1.1 resynced); CI-001 and CI-017 to v1.6.1 (1281 tests); §6 SWE.4 1281 tests and v1.6.1 update note; approval by merge (CSC-DEV-002 §5.2) |
+| 1.45 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §5.4 release note and document versions for the v2.0.0 baseline (SWE4 1.48, SWE5 1.37, SWE6 1.40, SYS4 1.34, SYS5 1.31, MAN3 1.30, SUP8 1.34, SUP9 1.24, SUP10 1.26, SVD 1.35, PA2 1.45); CI-045 and CI-017 released at v2.0.0 (1671 tests); §6 MAN.3 and SUP.10 evidence and v2.0.0 release note (no process rating changed); approval by merge (CSC-DEV-002 §5.2) |
+| 1.44 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): SWE.3 158 units (UNIT-155 to UNIT-158 added); SWE.4 1671 tests (60 modules); referenced-document versions resynced |
+| 1.43 | 2026-11-19 | Claude | #460 to #463: work-product counts — SWE.1 127 requirements (119 with a SYS.2 parent; SWE1-121 to SWE1-123 added); SWE.3 154 units (UNIT-146 to UNIT-154 added); SWE.4 1655 tests (60 modules); SWE.6 119/119; SUP.9 #460 and #463 classified; SUP.10 CR-461 and CR-462 recorded; referenced-document versions resynced |
+| 1.42 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 1.41 | 2026-11-19 | Claude | #456: work-product counts for the two opt-in partially-initialised local struct rules — SYS.4 18 SITC; SWE.1 124 requirements (116 with a SYS.2 parent); SWE.3 145 units; SWE.4 1630 tests (60 modules); SWE.5 28 SIT, 11 SWA interfaces; SWE.6 116/116; 83 rule IDs; referenced-document versions resynced |
+| 1.40 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
+| 1.39 | 2026-11-19 | Claude | #449: SWE.4 evidence — test total 1569→1574 (5 workflow-configuration tests in `tests/test_workflow_config.py`); referenced-document versions resynced |
+| 1.38 | 2026-10-06 | Claude | #447: SWE.4 evidence — test total 1545→1569, 58→59 modules (1559 after #439, #441 and the v1.6.1 back-merge; 10 new tests in `tests/test_constant_comparison.py`) |
+| 1.37 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
+| 1.36 | 2026-09-30 | Claude | Merge-time process controls (#437): §4.1 SUP.8 objective 64 CIs; §4.2 SUP.1/SUP.9/SUP.10 strategies name GATE-04, the PR-template checklist and the issue forms; §4.5 CI system enforces GATE-01 to GATE-04; §5.3 source-change review evidence includes the PR checklist; §6 SUP.1, SUP.8, SUP.9 and SUP.10 evidence cells mention the new controls (ratings unchanged); referenced-document versions resynced |
+| 1.35 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change; §5.4 register: audit-record versions corrected (CSC-AUD-002 1.1, -007 1.2, -008 1.1, -009 1.2) and CSC-AUD-010 added; §6 ratings, verdict and history updated to CSC-AUD-010 (4 F / 13 L) |
+| 1.34 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-017: §6 SWE.3 135→136 units; §5.4 CM-baseline column cites the post-v1.6.0 changes (#408–#425) per work product and #430, with a note; CI-017 and CI-045 baseline → `develop` `2444036`. AUD10-F-021: §5.4 records that CSC-AUD-009 residuals RR-003-004/005 are tracked under #430. AUD10-F-002: §6 MAN.3 next release v2.0.0. AUD10-F-012: §6 MAN.5 9 risks. AUD10-F-030: §6 ACQ.4 9 suppliers. AUD10-F-014: §5.3 approval record = owner's PR merge; approval-by-merge policy (CSC-DEV-002 §5.2); RR-003-004/005 closed |
+| 1.33 | 2026-09-29 | Claude | #423: SWE.4 evidence — test total 1532→1545 (last enum member checked with and without trailing comma, `tests/test_enums.py`); referenced-document versions resynced (21) |
+| 1.32 | 2026-09-29 | Claude | #425: SWE.4 evidence — test total 1524→1532, 57→58 modules (config/usage errors exit 2 from the console script and the wrapper, `tests/test_exit_code_entry_points.py`); SWE.3 objective 136 units (UNIT-136 `config_error`); referenced-document versions resynced (21) |
+| 1.31 | 2026-09-29 | Claude | #424: SWE.4 evidence — test total 1508→1524, 56→57 modules (`functions.case` removed: not generated, deprecated with a warning, `tests/test_functions_case_removed.py`); referenced-document versions resynced (21) |
+| 1.30 | 2026-09-29 | Claude | #422: SWE.4 evidence — test total 1481→1508, 55→56 modules (case-style names, alias normalisation and unknown-style config error, `tests/test_case_style_config.py`); referenced-document versions resynced (21) |
+| 1.29 | 2026-09-29 | Claude | #420: SWE.4 evidence — test total 1463→1481 (presets / `--init` enable the standard-specific opt-in rules); referenced-document versions resynced (21) |
+| 1.28 | 2026-09-29 | Claude | #418 (CR-418): SWE.4 evidence — test total 1452→1463 (the 7 remaining post-v1.6.0 rules opt-in; policy tests); referenced-document versions resynced (21) |
+| 1.27 | 2026-09-29 | Claude | #412: SWE.4 evidence — test total 1444→1452 (`misc.boolean_comparison` opt-in, lowercase only); referenced-document versions resynced (21) |
+| 1.26 | 2026-09-29 | Claude | Release-prep cross-reference resync: 21 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.25 | 2026-09-29 | Claude | #413: SWE.4 evidence — test total 1439→1444; SWE1-094 fully verified after CR-413 |
+| 1.24 | 2026-09-29 | Claude | Issue #407: §4.1 SWE.4 criterion and CI-017 → 1439 tests; §6 SWE.4 evidence (55 modules, RR-003-001 closed, SWE1-094 `--quiet` gap); §5.4 register CSC-AUD-009 1.0→1.1 and CSC-REVIEW-003 1.0→1.1; referenced-document versions resynced (ACQ4 1.4→1.5, DEV-001 1.3→1.4, DEV-002 1.2→1.3, MAN3 1.8→1.9, MAN5 1.5→1.6, PA2 1.23→1.24, STD 1.3→1.4, SUP1 1.10→1.11, SUP10 1.3→1.4, SUP8 1.13→1.14, SUP9 1.3→1.4, SWE1 2.8→2.9, SWE2 1.13→1.14, SWE3 1.18→1.19, SWE4 1.22→1.24, SWE5 1.15→1.16, SWE6 1.17→1.18, SYS2 2.3→2.4, SYS3 1.7→1.8, SYS4 1.12→1.13, SYS5 1.9→1.10) |
+| 1.23 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-021: §6 ratings per CSC-AUD-009 (3 F / 14 L), verdict and history note (no standalone v1.6.0 audit record); §4.1 counts (121 SW req, 135 units, 1422 tests, 27 SIT, 17 SITC, 60 CIs); §5.4 versions for all corrected WPs plus CSC-REVIEW-003, CSC-STD-001 and CSC-AUD-009; CI-045 package row. AUD9-F-013: SWE.3 wording (135 units, all specified). AUD9-F-009: §5.3 WP storage CI-027 → CI-055 |
 | 1.22 | 2026-07-06 | Claude | ASPICE audit — §4.1 SYS.4 15→16 SITC, SUP.8 34→37 CIs; §5.4 SYS2→2.2, SYS3→1.6, SYS4→1.11, SYS5→1.8, SUP8→1.11, SUP1→1.9, MAN3→1.7; §6 SYS.4/SUP.8 counts — closes #379 |
 | 1.21 | 2026-07-06 | Claude | ASPICE audit — §5.4 cross-refs updated: SWE1 2.4→2.6, SWE2 1.11→1.12, SWE3 1.15→1.16, SWE4 1.19→1.20, SWE5 1.13→1.14, SWE6 1.15→1.16, SUP8 1.9→1.10, SVD 1.20→1.22, PA2 self 1.19→1.20; §4.1 SWE.1 count 91→99; §6 fix SYS.5/SWE.6 rule count 72→73, SWE.5/SWE.6 counts; self-ref fixed — closes #377 |
 | 1.20 | 2026-07-06 | Claude | v1.6.0 RC — update §4.1 SWE.4 tests 1183→1279; §5.4 doc versions updated (SVD 1.22, SWE4 1.19, SWE5 1.13, SWE6 1.15, SYS4 1.10); §6 counts updated (73 rules, 1279 tests, 21 SIT); CI-001/CI-017 to v1.6.0; full ASPICE audit pending before release |
@@ -66,18 +88,18 @@ For each assessed process, performance objectives are defined in the table below
 |---|---|---|---|
 | SYS.2 | System requirements complete, reviewed, and approved before architecture begins | CSC-MAN3-001 §5.1 (PH-01 exit criteria) | ✅ Defined |
 | SYS.3 | Architecture reviewed and approved; all SYS.2 requirements traced to architecture elements | CSC-SYS3-001 §9 traceability matrix | ✅ Defined |
-| SYS.4 | All 16 SITC integration test cases PASS before SYS.5 begins | CSC-SYS4-001 §5 verification criteria | ✅ Defined |
+| SYS.4 | All 18 SITC integration test cases PASS before SYS.5 begins | CSC-SYS4-001 §5 verification criteria | ✅ Defined |
 | SYS.5 | All SYS-VTC test cases PASS; 100% requirements coverage; no open critical Issues | CSC-SYS5-001 §3.4 verification criteria | ✅ Defined |
-| SWE.1 | 99 software requirements defined, reviewed, approved; 100% traceable to SYS.2 | CSC-SWE1-001 §4.15 verification criteria | ✅ Defined |
+| SWE.1 | 127 software requirements defined, reviewed, approved; 119 traceable to a SYS.2 parent, and the 8 trend-metrics requirements (SWE1-102 to SWE1-108, SWE1-117) traceable to CSC-MAN3-001 §10.3 | CSC-SWE1-001 §4.18 verification criteria | ✅ Defined |
 | SWE.2 | Architecture reviewed; all SWE.1 requirements mapped to components; interfaces defined | CSC-SWE2-001 §10 traceability | ✅ Defined |
-| SWE.3 | All 90 units designed; algorithmic specification complete; resource usage documented | CSC-SWE3-001 §4 unit catalogue | ✅ Defined |
-| SWE.4 | ≥ 85% combined statement + branch coverage (CI gate); ≥ 90% statement / ≥ 85% branch (long-term target); all 1281 unit tests PASS on Python 3.10/11/12 | CSC-SWE4-001 §4.2 coverage criteria | ✅ Defined |
-| SWE.5 | All 24 SIT integration test cases PASS; all 10 SWA interfaces covered | CSC-SWE5-001 §3.3 verification criteria | ✅ Defined |
+| SWE.3 | All 158 units designed (UNIT-01 to UNIT-158, each with a §5 specification); resource usage documented | CSC-SWE3-001 §4 unit catalogue | ✅ Defined |
+| SWE.4 | ≥ 85% combined statement + branch coverage (CI gate); ≥ 90% statement / ≥ 85% branch (long-term target); all 1671 unit tests PASS on Python 3.10/11/12 | CSC-SWE4-001 §4.2 coverage criteria | ✅ Defined |
+| SWE.5 | All 28 SIT integration test cases PASS; all 11 SWA interfaces covered | CSC-SWE5-001 §3.3 verification criteria | ✅ Defined |
 | SWE.6 | All 12 SWQ qualification test cases PASS; 100% SW requirements coverage; release gate met | CSC-SWE6-001 §3.3 qualification criteria | ✅ Defined |
 | MAN.3 | All WBS work packages completed; milestones achieved within schedule | CSC-MAN3-001 §8 schedule | ✅ Defined |
 | MAN.5 | All risks identified, scored, and treated; no High residual risks at release | CSC-MAN5-001 §6 risk summary | ✅ Defined |
 | SUP.1 | All QA gates pass; pre-release checklist complete; zero open bug Issues | CSC-SUP1-001 §4 quality objectives | ✅ Defined |
-| SUP.8 | All 37 CIs identified, version-controlled, and baselined per release | CSC-SUP8-001 §6 CI list | ✅ Defined |
+| SUP.8 | All 64 CIs identified, version-controlled, and baselined per release | CSC-SUP8-001 §6 CI list | ✅ Defined |
 | SUP.9 | All SEV-1 problems resolved before release; regression tests added for SEV-1/2 | CSC-SUP9-001 §5.5 closure criteria | ✅ Defined |
 | SUP.10 | All approved CRs implemented with PR, CI passing, and document updates | CSC-SUP10-001 §5.5 closure criteria | ✅ Defined |
 | ACQ.4 | All supplier acceptance criteria met; no unresolved supplier non-conformances at release | CSC-ACQ4-001 §5 monitoring activities | ✅ Defined |
@@ -90,10 +112,10 @@ For each assessed process, performance objectives are defined in the table below
 | SWE.1–SWE.6 | V-model lifecycle; SW requirements → architecture → detailed design → unit → integration → qualification | CSC-MAN3-001 §5 lifecycle |
 | MAN.3 | Git Flow branching; WBS with effort estimates; milestone-based schedule | CSC-MAN3-001 §6–8 |
 | MAN.5 | Risk scoring (Likelihood × Impact = RPN); treatment and monitoring per risk | CSC-MAN5-001 §4 strategy |
-| SUP.1 | Automated CI gates + manual pre-release checklist | CSC-SUP1-001 §5 QA activities |
+| SUP.1 | Automated CI gates (incl. GATE-04 ASPICE consistency check, #437) + per-PR template checklist + manual pre-release checklist | CSC-SUP1-001 §5 QA activities |
 | SUP.8 | Git-based version control; annotated tags for baselines; dual-registry Docker | CSC-SUP8-001 §7–8 |
-| SUP.9 | GitHub Issues (bug label); severity-driven resolution time targets | CSC-SUP9-001 §4–5 |
-| SUP.10 | GitHub Issues (CR labels); impact-based approval; Git Flow implementation | CSC-SUP10-001 §4–5 |
+| SUP.9 | GitHub Issues raised with the bug issue form (`.github/ISSUE_TEMPLATE/bug.yml`, bug label, SEV label at triage); severity-driven resolution time targets | CSC-SUP9-001 §4–5 |
+| SUP.10 | GitHub Issues raised with the CR issue form (`.github/ISSUE_TEMPLATE/change_request.yml`); impact-based approval; Git Flow implementation | CSC-SUP10-001 §4–5 |
 | ACQ.4 | Per-supplier monitoring activities; acceptance criteria; non-conformance handling | CSC-ACQ4-001 §5–7 |
 
 ### 4.3 GP 2.1.3 to GP 2.1.5 — Plan, Monitor, and Adjust Process Performance
@@ -119,7 +141,7 @@ For each assessed process, performance objectives are defined in the table below
 | Lead Developer | Claude | Dermot Murphy | SWE.1, SWE.2, SWE.3, SWE.4 implementation |
 | Test Lead | Claude | Dermot Murphy | SWE.4, SWE.5, SWE.6, SYS.4, SYS.5 execution |
 | Quality Assurance | — | Dermot Murphy | Document reviews; PR reviews; pre-release checklist |
-| CI System | — | GitHub Actions | Automated enforcement of GATE-01, GATE-02, GATE-03 |
+| CI System | — | GitHub Actions | Automated enforcement of GATE-01 to GATE-04 |
 
 ### 4.5 GP 2.1.7 — Manage Interfaces
 
@@ -127,7 +149,7 @@ For each assessed process, performance objectives are defined in the table below
 |---|---|---|---|
 | CI → Developer | GitHub Actions ↔ Claude | CI must pass before merge to `develop`/`main` | GitHub Actions status checks; email notification |
 | Developer → Reviewer | Claude ↔ Reviewer | PR requires at least 1 approval for Medium/High impact | GitHub PR review mechanism |
-| Developer → QA | Claude ↔ QA role | Pre-release checklist must be signed before release | CSC-SUP1-001 §5.4 checklist |
+| Developer → QA | Claude ↔ QA role | Pre-release checklist must be completed and authorised (owner merge of the release PR, CSC-DEV-002 §5.2) before release | CSC-SUP1-001 §5.4 checklist |
 | Project → Suppliers | CStyleCheck ↔ SUP-01 to SUP-06 | Acceptance criteria per CSC-ACQ4-001 §5 | CI jobs; advisory monitoring; PR review gate |
 | Project → Assessor | CStyleCheck ↔ ASPICE Assessor | Full documentation set; CI evidence; GitHub repository access | Document delivery; GitHub access grant |
 
@@ -141,25 +163,25 @@ All work products are defined with content requirements in their respective docu
 
 | Work Product | WP ID (PAM v4.0) | Content Requirements Defined In | CI Reference |
 |---|---|---|---|
-| System Requirements Specification | 17-10 | CSC-SYS2-001 §5 requirements tables | CI-027 (documents) |
-| System Architecture Description | 04-04 (adapted) | CSC-SYS3-001 §5 subsystem descriptions | CI-027 |
-| System Integration Test Spec | 13-12 | CSC-SYS4-001 §4 test cases | CI-027 |
-| System Verification Report | 13-13 | CSC-SYS5-001 §5 results table | CI-027 |
-| Software Requirements Specification | 17-10 | CSC-SWE1-001 §4 requirements tables | CI-027 |
-| Software Architecture Description | 04-04 | CSC-SWE2-001 §5 component descriptions | CI-027 |
-| Software Detailed Design | 04-05 | CSC-SWE3-001 §5 unit designs | CI-027 |
-| Unit Verification Specification | 13-12 | CSC-SWE4-001 §5 test catalogue | CI-027 |
-| Integration Test Specification | 13-12 | CSC-SWE5-001 §4 test cases | CI-027 |
-| Qualification Test Specification | 13-12 | CSC-SWE6-001 §4 test cases | CI-027 |
+| System Requirements Specification | 17-10 | CSC-SYS2-001 §5 requirements tables | CI-055 (ASPICE work products) |
+| System Architecture Description | 04-04 (adapted) | CSC-SYS3-001 §5 subsystem descriptions | CI-055 |
+| System Integration Test Spec | 13-12 | CSC-SYS4-001 §4 test cases | CI-055 |
+| System Verification Report | 13-13 | CSC-SYS5-001 §5 results table | CI-055 |
+| Software Requirements Specification | 17-10 | CSC-SWE1-001 §4 requirements tables | CI-055 |
+| Software Architecture Description | 04-04 | CSC-SWE2-001 §5 component descriptions | CI-055 |
+| Software Detailed Design | 04-05 | CSC-SWE3-001 §5 unit designs | CI-055 |
+| Unit Verification Specification | 13-12 | CSC-SWE4-001 §5 test catalogue | CI-055 |
+| Integration Test Specification | 13-12 | CSC-SWE5-001 §4 test cases | CI-055 |
+| Qualification Test Specification | 13-12 | CSC-SWE6-001 §4 test cases | CI-055 |
 | Source code (`cstylecheck.py`) | 20-04 | CSC-SWE3-001 unit specifications | CI-001 |
 | Test suite | 13-12 | CSC-SWE4-001 test catalogue | CI-017 |
-| Configuration Management Plan | 08-27 | CSC-SUP8-001 — this document is the plan | CI-027 |
-| Project Management Plan | 08-14 | CSC-MAN3-001 | CI-027 |
-| Risk Register | 08-26 | CSC-MAN5-001 §5 risk register | CI-027 |
-| Quality Assurance Plan | 08-15 | CSC-SUP1-001 | CI-027 |
+| Configuration Management Plan | 08-27 | CSC-SUP8-001 — this document is the plan | CI-055 |
+| Project Management Plan | 08-14 | CSC-MAN3-001 | CI-055 |
+| Risk Register | 08-26 | CSC-MAN5-001 §5 risk register | CI-055 |
+| Quality Assurance Plan | 08-15 | CSC-SUP1-001 | CI-055 |
 | Problem Resolution Records | 13-07 | CSC-SUP9-001 §6 register; GitHub Issues | GitHub |
 | Change Requests | 13-01 | CSC-SUP10-001 §7 register; GitHub Issues | GitHub |
-| Supplier Monitoring Records | 08-16 | CSC-ACQ4-001 §5 monitoring tables | CI-027 |
+| Supplier Monitoring Records | 08-16 | CSC-ACQ4-001 §5 monitoring tables | CI-055 |
 
 ### 5.2 GP 2.2.2 — Store and Control Work Products
 
@@ -178,103 +200,112 @@ All work products are defined with content requirements in their respective docu
 
 > **Note — Single-Person Reviewer Deviation (CSC-DEV-002):** CStyleCheck has one human team member (Dermot Murphy). All ASPICE work products carry `Reviewer: Dermot Murphy` and `Approver: Dermot Murphy` — the same individual. This deviates from the GP 2.2.3 expectation of an independent reviewer. The deviation is formally accepted under **CSC-DEV-002** (`docs/aspice/CStyleCheck_DEV002_Independent_Review_Deviation.md`), which documents the justification, compensating controls (AI-assisted review, CI quality gates, PR audit trail), and residual risk. Assessors may rate this practice as Largely Achieved rather than Fully Achieved on the independence criterion.
 
+> **Approval by merge (owner policy, 2026-09-29):** the owner's merge of the PR that introduces a work-product revision is its approval and authorisation; no separate signature is required. This applies to approval tables, review records, audit sign-offs, CR approval / QA sign-off and Risk Owner confirmations; the merge commit is the approval record (CSC-DEV-002 §5.2).
+
 All work products are reviewed before approval according to the following schedule:
 
 | Work Product | Review Type | Reviewer | Review Evidence |
 |---|---|---|---|
-| Source code changes | Pull request review | Dermot Murphy (see CSC-DEV-002) | GitHub PR approval record |
-| ASPICE documents | Formal document review | Dermot Murphy (see CSC-DEV-002) | Reviewer/Approver table in each document |
-| Test suite additions | Pull request review | Dermot Murphy (see CSC-DEV-002) | GitHub PR approval record |
-| CI workflow changes | Pull request review | Dermot Murphy (see CSC-DEV-002) | GitHub PR approval record |
-| Release baseline | Pre-release checklist | Dermot Murphy / QA role | CSC-SUP1-001 §5.4 signed checklist |
+| Source code changes | Pull request review | Dermot Murphy (see CSC-DEV-002) | Completed PR-template ASPICE checklist (per-PR review record, CSC-SUP1-001 §5.3) and owner's PR merge (approval record, CSC-DEV-002 §5.2) |
+| ASPICE documents | Formal document review | Dermot Murphy (see CSC-DEV-002) | Reviewer/Approver table in each document; authorised by the owner's merge of the introducing PR (CSC-DEV-002 §5.2) |
+| Test suite additions | Pull request review | Dermot Murphy (see CSC-DEV-002) | Owner's PR merge (approval record, CSC-DEV-002 §5.2) |
+| CI workflow changes | Pull request review | Dermot Murphy (see CSC-DEV-002) | Owner's PR merge (approval record, CSC-DEV-002 §5.2) |
+| Release baseline | Pre-release checklist | Dermot Murphy / QA role | CSC-SUP1-001 §5.4 checklist; authorised by the owner's merge of the release PR (CSC-DEV-002 §5.2) |
 
 **Adjustment mechanism:** Any non-conformance found during review is raised as a GitHub Issue (SUP.9) or change request (SUP.10) and tracked to resolution before the work product is approved.
 
 ### 5.4 Work Product Baseline Status
 
-*Updated 2026-10-06 (v1.6.1 hotfix). Document versions reflect the v1.6.0 ASPICE audit baseline (issues #371–#379) plus the v1.6.1 hotfix updates (issue #439).*
+*Updated 2026-11-20 (v2.0.0 release, CR #443). The work products revised for the release baseline are marked "v2.0.0 release (#443)" in the CM Baseline column; the other versions are unchanged from the `develop` baseline (resyncs up to #464). The v2.0.0 release baseline is the annotated tag `v2.0.0` on the `main` merge commit of `release/2.0.0` (CSC-SUP8-001 §8.4).*
+
+*Updated 2026-09-30. The Version column lists the current version of every controlled work product after the batched cross-reference resync of #435 (each work product bumped once; all current-state citations synchronised). CSC-SVD-001 is synchronised to the current `develop` baseline and is re-baselined at the next release, v2.0.0.*
+
+*Change notes (CSC-AUD-010 AUD10-F-017, #430): the CM Baseline column lists, per work product, the post-v1.6.0 issues that changed its content (#408 to #425) and the issues for which only cross-references were resynced ("resync"). "CSC-AUD-010 (#430)" marks the documents revised by the CSC-AUD-010 corrective actions; the Version column was resynced for #430 by the batched cross-reference resync #435 (CSC-SUP8-001 §9). The CSC-AUD-009 residuals tracked under #430 (AUD10-F-021) are closed: RR-003-004 by the post-v1.6.0 CI matrix (GitHub Actions run 36612676061 on commit 6bdc592, PR #431: Unit Tests Python 3.10, 3.11, 3.12 all success, 2026-09-29); RR-003-005 by the owner's merge of PR #431, which is the Risk Owner confirmation of the RISK-003/005 reviews (approval-by-merge policy of 2026-09-29, CSC-DEV-002 §5.2).*
 
 | Document ID | Work Product | Version | Baseline Status | CM Baseline |
 |---|---|---|---|---|
-| CSC-SYS2-001 | System Requirements Spec | 2.3 | Released | v1.6.1 hotfix (#439) |
-| CSC-SYS3-001 | System Architecture Description | 1.6 | Released | ASPICE audit #379 |
-| CSC-SYS4-001 | System Integration Test Spec | 1.12 | Released | v1.6.1 hotfix (#439) |
-| CSC-SYS5-001 | System Verification Report | 1.8 | Released | ASPICE audit #379 |
-| CSC-SWE1-001 | SW Requirements Spec | 2.7 | Released | v1.6.1 hotfix (#439) |
-| CSC-SWE2-001 | SW Architecture Description | 1.13 | Released | v1.6.1 hotfix (#439) |
-| CSC-SWE3-001 | SW Detailed Design | 1.17 | Released | v1.6.1 hotfix (#439) |
-| CSC-SWE4-001 | Unit Verification Spec | 1.21 | Released | v1.6.1 hotfix (#439) |
-| CSC-SWE5-001 | Integration Test Spec | 1.15 | Released | v1.6.1 hotfix (#439) |
-| CSC-SWE6-001 | Qualification Test Spec | 1.17 | Released | v1.6.1 hotfix (#439) |
-| CSC-MAN3-001 | Project Management Plan | 1.8 | Released | v1.6.1 hotfix (#439) |
-| CSC-MAN5-001 | Risk Management Plan | 1.4 | Released | PR D (issues #267) |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.9 | Released | ASPICE audit #379 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.11 | Released | ASPICE audit #379 |
-| CSC-SUP9-001 | Problem Resolution Plan | 1.2 | Released | CSC-AUD-007 |
-| CSC-SUP10-001 | Change Request Plan | 1.2 | Released | CSC-AUD-007 |
-| CSC-ACQ4-001 | Supplier Monitoring Plan | 1.3 | Released | PR D (issue #269) |
-| CSC-PA2-001 | PA 2.1 / PA 2.2 Records | 1.23 | Released | v1.6.1 hotfix (#439) |
-| CSC-REVIEW-001 | ASPICE Peer Review Record (v1.2.1 baseline) | 1.0 | Released | issue #169 |
-| CSC-REVIEW-002 | ASPICE Peer Review Record (v1.4.1 baseline) | 1.0 | Released | PR (issue #268) |
-| CSC-DEV-001 | AI Authorship Deviation Record | 1.2 | Released | v1.1.0 tag |
-| CSC-DEV-002 | Independent Review Deviation Record | 1.1 | Released | v1.1.0 tag |
-| CSC-SVD-001 | Software Version Description | 1.24 | Released | v1.6.1 hotfix (#439) |
+| CSC-SYS2-001 | System Requirements Spec | 2.25 | Released | CSC-AUD-009 corrective actions (#405); #407; #410, #413, #418; resync #418–#425; resync #435 |
+| CSC-SYS3-001 | System Architecture Description | 1.27 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; resync #435 |
+| CSC-SYS4-001 | System Integration Test Spec | 1.34 | Released | CSC-AUD-009 corrective actions (#405); #407; #408, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435; v2.0.0 release (#443) |
+| CSC-SYS5-001 | System Verification Report | 1.31 | Released | CSC-AUD-009 corrective actions (#405); #407; #408, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435; v2.0.0 release (#443) |
+| CSC-SWE1-001 | SW Requirements Spec | 2.32 | Released | CSC-AUD-009 corrective actions (#405); #407; #410, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435 |
+| CSC-SWE2-001 | SW Architecture Description | 1.36 | Released | CSC-AUD-009 corrective actions (#405); #407; #410, #412, #413, #418, #420, #422, #425; resync #418–#425; resync #435 |
+| CSC-SWE3-001 | SW Detailed Design | 1.42 | Released | CSC-AUD-009 corrective actions (#405); #407; #410, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435 |
+| CSC-SWE4-001 | Unit Verification Spec | 1.48 | Released | CSC-AUD-009 corrective actions (#405); #407; #408, #410, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435; v2.0.0 release (#443) |
+| CSC-SWE5-001 | Integration Test Spec | 1.37 | Released | CSC-AUD-009 corrective actions (#405); #407; #408, #412, #413, #418, #420; resync #418–#425; resync #435; v2.0.0 release (#443) |
+| CSC-SWE6-001 | Qualification Test Spec | 1.40 | Released | CSC-AUD-009 corrective actions (#405); #407; #408, #410, #412, #413, #418, #420, #422–#425; resync #418–#425; resync #435; v2.0.0 release (#443) |
+| CSC-MAN3-001 | Project Management Plan | 1.30 | Released | CSC-AUD-009 corrective actions (#405); #407; #412, #413, #418, #420, #422–#425; resync #418–#425; CSC-AUD-010 (#430); resync #435; v2.0.0 release (#443) |
+| CSC-MAN5-001 | Risk Management Plan | 1.25 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.30 | Released | CSC-AUD-009 corrective actions (#405); #407; #413, #418; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.34 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; CSC-AUD-010 (#430); resync #435; v2.0.0 release (#443) |
+| CSC-SUP9-001 | Problem Resolution Plan | 1.24 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; CSC-AUD-010 (#430); resync #435; v2.0.0 release (#443) |
+| CSC-SUP10-001 | Change Request Plan | 1.26 | Released | CSC-AUD-009 corrective actions (#405); #407; #413, #418; resync #418–#425; CSC-AUD-010 (#430); resync #435; v2.0.0 release (#443) |
+| CSC-ACQ4-001 | Supplier Monitoring Plan | 1.24 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
+| CSC-PA2-001 | PA 2.1 / PA 2.2 Records | 1.45 | Released | CSC-AUD-009 corrective actions (#405); #407; #412, #413, #418, #420, #422–#425; resync #418–#425; CSC-AUD-010 (#430); resync #435; v2.0.0 release (#443) |
+| CSC-REVIEW-001 | ASPICE Peer Review Record (v1.2.1 baseline) | 1.1 | Released | issue #169 |
+| CSC-REVIEW-002 | ASPICE Peer Review Record (v1.4.1 baseline) | 1.1 | Released | PR (issue #268) |
+| CSC-REVIEW-003 | ASPICE Peer Review Record (v1.6.0 / post-v1.6.0 `develop`; retrospective for v1.5.x–v1.6.0; self-review under CSC-DEV-002) | 1.2 | Released (Review Owner authorisation by merge, CSC-DEV-002 §5.2) | CSC-AUD-009 corrective actions (#405); RR-003-003 closed (#408), RR-003-001 closed (#407) |
+| CSC-STD-001 | Industry Standards Comparison | 1.24 | Released | CSC-AUD-009 corrective actions (#405); #407; #410; resync #418–#425; resync #435 |
+| CSC-DEV-001 | AI Authorship Deviation Record | 1.22 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; resync #435 |
+| CSC-DEV-002 | Independent Review Deviation Record | 1.22 | Released | CSC-AUD-009 corrective actions (#405); #407; resync #418–#425; CSC-AUD-010 (#430); resync #435 |
+| CSC-SVD-001 | Software Version Description | 1.35 | Released | ASPICE audit #379; resync #435; v2.0.0 release (#443) |
 | CSC-AUD-001 | ASPICE Internal Audit Report | 1.0 | Released | v1.2.0 tag |
-| CSC-AUD-002 | ASPICE Internal Audit — CL2 Re-assessment (2026-05-29) | 1.0 | Released | v1.2.1 tag |
+| CSC-AUD-002 | ASPICE Internal Audit — CL2 Re-assessment (2026-05-29) | 1.1 | Released | v1.2.1 tag |
 | CSC-AUD-003 | ASPICE Internal Audit — Accuracy (2026-06-04) | 1.0 | Released | issue #163 audit |
 | CSC-AUD-004 | ASPICE Internal Audit — Deep Accuracy (2026-06-04) | 1.0 | Released | issue #163 deep audit |
 | CSC-AUD-005 | ASPICE Internal Audit — Post-release accuracy (2026-06-05) | 1.0 | Released | issue #163 / v1.3.0 |
 | CSC-AUD-006 | ASPICE Internal Audit — Test/module-count drift (2026-06-18) | — | Released (issue #254 only; no standalone report) | issue #254 |
-| CSC-AUD-007 | ASPICE Internal Audit — CL2 Re-assessment (2026-06-18) | 1.1 | Released | v1.4.0 tag |
-| CSC-AUD-008 | ASPICE Internal Audit — CL2 Assessment (2026-06-28) | 1.0 | Released | v1.5.1 tag |
-| CI-001 | `src/cstylecheck/` package | 1.6.1 | Released | v1.6.1 tag |
-| CI-017 | Test suite (1281 tests) | 1.6.1 | Released | v1.6.1 tag |
+| CSC-AUD-007 | ASPICE Internal Audit — CL2 Re-assessment (2026-06-18) | 1.2 | Released | v1.4.0 tag |
+| CSC-AUD-008 | ASPICE Internal Audit — CL2 Assessment (2026-06-28) | 1.1 | Released | v1.5.1 tag |
+| CSC-AUD-009 | ASPICE Internal Audit — CL2 Re-assessment, post-v1.6.0 `develop` (2026-09-29) | 1.2 | Released | #405; AUD9-F-027 residual (#408) and AUD9-F-004 closure (#407) |
+| CSC-AUD-010 | ASPICE Internal Audit — CL2 Re-assessment, `develop` `2444036` (2026-09-29) | 1.2 | Released (authorised by owner merge, CSC-DEV-002 §5.2) | #430 (#431); approval-by-merge closure (#432) |
+| CI-045 | `src/cstylecheck/` package (12 modules) | 2.0.0 | Released | v2.0.0 tag |
+| CI-017 | Test suite (1671 tests, 60 modules) | 2.0.0 | Released | v2.0.0 tag |
 
 ---
 
 ## 6. ASPICE CL2 Coverage Summary
 
-*Updated 2026-07-06. All 17 processes assessed at F (Fully Achieved) at v1.5.1 baseline (CSC-AUD-008). ASPICE audit issues #371–#379 resolved for v1.6.0; CL2 maintained.*
+*Updated 2026-09-30. Ratings from internal audit CSC-AUD-010 (`develop`, commit `2444036`, 2026-09-29): 4 F, 13 L, 0 P/N. CL2 is maintained. Corrective actions for all 32 findings were applied under #430 (merged in #431 and #432). Re-rating is due at the v2.0.0 release audit.*
 
-The table below summarises all assessed processes and their CL2 PA achievement evidence, current as of v1.5.1.
+The table below summarises all assessed processes and their CL2 PA achievement evidence as rated by CSC-AUD-010. The evidence column reflects the state after the #430 corrective actions, the #435 version resync and the #437 merge-time process controls.
 
 | Process | PA 1.1 (Performed) | PA 2.1 (Perf. Mgmt) | PA 2.2 (WP Mgmt) | Assessment Verdict | Open Issue(s) |
 |---|---|---|---|---|---|
-| SYS.2 | 46 SYS REQ-IDs defined and traced to SWE.1 (§6 RTM); all placeholder IDs resolved | Objectives: §4.1; strategy: §4.2 | CSC-SYS2-001 v2.3 reviewed; in CM | **F** | — |
-| SYS.3 | Architecture with subsystems and interfaces | Objectives: §4.1; monitoring: §4.3 | CSC-SYS3-001 reviewed; in CM | **F** | — |
-| SYS.4 | 16 SITC test cases defined and executed; all 73 rules covered | Objectives: §4.1 | CSC-SYS4-001 reviewed; in CM | **F** | — |
-| SYS.5 | SYS-VTC test cases defined and executed; SYS-VTC-003 covers all 73 rule IDs | Objectives: §4.1 | CSC-SYS5-001 reviewed; in CM | **F** | — |
-| SWE.1 | 99 SW requirements defined | Objectives: §4.1; strategy: §4.2 | CSC-SWE1-001 reviewed; in CM | **F** | — |
-| SWE.2 | 10 components, 10 interfaces defined | Objectives: §4.1 | CSC-SWE2-001 reviewed; in CM | **F** | — |
-| SWE.3 | 118 units with algorithmic specs | Objectives: §4.1 | CSC-SWE3-001 reviewed; in CM | **F** | — |
-| SWE.4 | 1281 unit tests; self-check CI; 85% cov. | Objectives: §4.1; coverage targets | CSC-SWE4-001 reviewed; CI evidence | **F** | — |
-| SWE.5 | 24 SIT tests; all 73 rules covered; SIT-021/022/023/024/025/026 cover v1.6.0 features | Objectives: §4.1 | CSC-SWE5-001 reviewed; in CM | **F** | — |
-| SWE.6 | 12 SWQ tests; SWQ-003 covers all 73 rule IDs; 100% SW requirements coverage (99/99) | Objectives: §4.1; release gate | CSC-SWE6-001 reviewed; CI evidence | **F** | — |
-| MAN.3 | WBS, schedule, monitoring defined | Objectives: §4.1; §4.3 monitoring | CSC-MAN3-001 reviewed; in CM | **F** | — |
-| MAN.5 | 8 risks identified and treated; RISK-003 (Dependabot) and RISK-005 (CONTRIBUTING.md) treatments fully implemented | Objectives: §4.1; risk monitoring | CSC-MAN5-001 reviewed; in CM | **F** | — |
-| SUP.1 | QA gates, checklist, and recurring per-release peer-review record defined and produced (CSC-REVIEW-002) | Objectives: §4.1; CI evidence | CSC-SUP1-001 reviewed; in CM | **F** | — |
-| SUP.8 | 37 CIs; Git Flow; dual-registry | Objectives: §4.1; CM monitoring | CSC-SUP8-001 reviewed; in CM | **F** | — |
-| SUP.9 | Problem process with SLAs and register | Objectives: §4.1; Issue metrics | CSC-SUP9-001 reviewed; in CM | **F** | DEV-002 |
-| SUP.10 | CR process with impact levels and approval | Objectives: §4.1; CR metrics | CSC-SUP10-001 reviewed; in CM | **F** | DEV-002 |
-| ACQ.4 | 6 suppliers monitored with criteria (SUP-06 Anthropic/Claude added; CSC-DEV-001 formally linked) | Objectives: §4.1; monitoring schedule | CSC-ACQ4-001 reviewed; in CM | **F** | — |
+| SYS.2 | 58 SYS REQ-IDs; SYS-F-011 83 rule IDs; SYS-F-046 → SWE1-094 corrected; bidirectional RTM (AUD9-F-005/F-008) | Objectives: §4.1; strategy: §4.2 | CSC-SYS2-001 v2.25; in CM | **L** | #430 (closed) |
+| SYS.3 | Architecture with subsystems and interfaces; §9 covers 83 rule IDs | Objectives: §4.1; monitoring: §4.3 | CSC-SYS3-001 v1.27; in CM | **L** | #430 (closed) |
+| SYS.4 | 18 SITC test cases (SITC-017 adds the 8 post-v1.6.0 rules, SITC-018 the 2 #456 rules); all 83 rules covered | Objectives: §4.1 | CSC-SYS4-001 v1.34; in CM | **F** | #430 (closed) |
+| SYS.5 | SYS-VTC-003 covers all 83 rule IDs; SYS-VTC-007 updated for #394 | Objectives: §4.1 | CSC-SYS5-001 v1.31; in CM | **L** | #430 (closed) |
+| SWE.1 | 127 SW requirements (SWE1-109 to SWE1-117 added; SWE1-118 to SWE1-120 by #456; SWE1-121 to SWE1-123 by #461 to #463); SWE1-102 to 108/117 parent = CSC-MAN3-001 §10.3 | Objectives: §4.1; strategy: §4.2 | CSC-SWE1-001 v2.32; in CM | **L** | #430 (closed) |
+| SWE.2 | 13 components (COMP-13 trend scripts added), 11 interfaces (SWA-IF-11 struct-definition table, #456; also the macro table and typedef names, #461 to #463); COMP-05f and run_all() include the 8 new checks and the 2 #456 checks | Objectives: §4.1 | CSC-SWE2-001 v1.36; in CM | **L** | #430 (closed) |
+| SWE.3 | 158 units (UNIT-139 to UNIT-145 by #456, UNIT-146 to UNIT-158 by #460 to #463), all with §5 specs; line references regenerated; §6.3 baseline format corrected | Objectives: §4.1 | CSC-SWE3-001 v1.42; in CM | **L** | #430 (closed) |
+| SWE.4 | 1671 unit tests (60 modules); §7 traces all SW requirements; SWE1-015/094/096 unit tests added by #407 (RR-003-001 closed; SWE1-094 aligned with the implementation by CR-413 (#413), fully verified) | Objectives: §4.1; coverage targets | CSC-SWE4-001 v1.48; CI evidence | **F** | #430 (closed) |
+| SWE.5 | 28 SIT tests (SIT-027 for the 8 new rules, SIT-028 for the 2 #456 rules); SIT-012 updated for #394/#395 | Objectives: §4.1 | CSC-SWE5-001 v1.37; in CM | **L** | #430 (closed) |
+| SWE.6 | 12 SWQ tests; SWQ-003 covers 83 rule IDs; SWQ-007 aligned with SWE1-100; 119/119 in-scope requirements | Objectives: §4.1; release gate | CSC-SWE6-001 v1.40; CI evidence | **F** | #430 (closed) |
+| MAN.3 | WBS, schedule (actuals to v2.0.0, released 2026-11-20; classification decision §8) and trend-metrics monitoring (§10.3) | Objectives: §4.1; §4.3 monitoring | CSC-MAN3-001 v1.30; in CM | **L** | #430 (closed) |
+| MAN.5 | 9 risks (RISK-009 upgrade compatibility added by #430); RISK-003/005 reviewed 2026-09-29 (next 2026-12-29); Dependabot target branch recorded | Objectives: §4.1; risk monitoring | CSC-MAN5-001 v1.25; in CM | **L** | #430 (closed) |
+| SUP.1 | QA gates and checklist; gate compliance record added; CSC-REVIEW-003 produced retrospectively for v1.5.x–v1.6.0; GATE-04 ASPICE consistency check (`aspice_consistency.yml`) and PR-template checklist as per-PR review record (#437) | Objectives: §4.1; CI evidence | CSC-SUP1-001 v1.30; in CM | **L** | #430 (closed) |
+| SUP.8 | 64 CIs (package, dependabot.yml, docs added; consistency check, workflow and PR/issue templates added by #437); hotfix versioning/tagging policy §7.6; citation resync automated (`aspice_check.py --fix-citations`, §9) | Objectives: §4.1; CM monitoring | CSC-SUP8-001 v1.34; in CM | **L** | #430 (closed) |
+| SUP.9 | Problem process with SLAs and register; bug issue form enforces the §5.1 fields (#437); §6.2 classification record extended with #460 and #463 | Objectives: §4.1; Issue metrics | CSC-SUP9-001 v1.24; in CM | **L** | #430 (closed) |
+| SUP.10 | CR process with impact levels and approval; CR issue form enforces the §5.1 fields (#437); CR-461 and CR-462 recorded and closed; release CR-443 (v2.0.0) recorded | Objectives: §4.1; CR metrics | CSC-SUP10-001 v1.26; in CM | **L** | #430 (closed) |
+| ACQ.4 | 9 suppliers (SUP-07 Docker actions, SUP-08 third-party actions added; SUP-09 development/CI tools added by #430); Actions versions current; SHA-pinning policy | Objectives: §4.1; monitoring schedule | CSC-ACQ4-001 v1.24; in CM | **F** | #430 (closed) |
 
 > **📋 Rating scale:** N = Not achieved (0–15%), P = Partially achieved (15–50%), L = Largely achieved (50–85%), F = Fully achieved (85–100%). All processes must achieve **L or F** at PA 2.1 and PA 2.2 for CL2 to be awarded.
 >
-> **✅ CL2 Verdict: ACHIEVED (v1.5.1 baseline).** All 17 processes rate **F** (17 F, 0 L, 0 P/N) at v1.5.1 baseline. Five processes improved from v1.4.1: SYS.4 and SYS.5 (72 rule coverage confirmed; SITC-015/SIT-019 extended + SIT-020 added for SWE1-MISRA-004/089/090); SWE.1 (requirements 88→91); SWE.4 (tests 1152→1183); SWE.5 (SIT 19→20); SWE.6 (SWQ-003 covers 72 rule IDs). Zero processes regressed. Full detail: `docs/aspice/audits/CStyleCheck_ASPICE_Internal_Audit_2026-06-28.md` (CSC-AUD-008).
+> **✅ CL2 Verdict: ACHIEVED (`develop` baseline `2444036`, CSC-AUD-010).** 4 F (SYS.4, SWE.4, SWE.6, ACQ.4), 13 L, 0 P/N (was 3 F / 14 L at CSC-AUD-009). SYS.3, SUP.9 and SUP.10 moved from F to L; SYS.4, SWE.4, SWE.6 and ACQ.4 moved from L to F. All 32 findings were corrected under #430 (see CSC-AUD-010 §6.2). The ratings above are the audit ratings and are re-assessed at the v2.0.0 release audit.
 >
-> **v1.6.0 ASPICE audit update (2026-07-06):** 73 rule IDs; 1279 tests; 16 SITC; 37 CIs. Documents: SWE1 v2.6, SWE2 v1.12, SWE3 v1.16, SWE4 v1.20, SWE5 v1.14, SWE6 v1.16, SYS2 v2.2, SYS3 v1.6, SYS4 v1.11, SYS5 v1.8, SUP8 v1.11, SUP1 v1.9, MAN3 v1.7 — issues #371–#379 resolved.
+> **v2.0.0 release update (2026-11-20, CR #443):** 83 rule IDs; 1671 tests (60 modules); 18 SITC, 28 SIT, 12 SWQ; release records in SVD v1.35, SWE4 v1.48, SWE5 v1.37, SWE6 v1.40, SYS4 v1.34, SYS5 v1.31, MAN3 v1.30, SUP8 v1.34, SUP9 v1.24 and SUP10 v1.26. No process rating changed in the release revision; the ratings remain those of CSC-AUD-010.
 >
-> **v1.6.1 hotfix update (2026-10-06):** issue #439 fixed (startup banner kept out of a json / sarif / html `--log` file); 73 rule IDs; 1281 tests (2 new in `test_cli.py`); SITC-006 and SIT-024 extended. Documents: SYS2 v2.3, SYS4 v1.12, SWE1 v2.7, SWE2 v1.13, SWE3 v1.17, SWE4 v1.21, SWE5 v1.15, SWE6 v1.17, MAN3 v1.8, SVD v1.24. No process rating changed.
+> **Previous verdicts:** CSC-AUD-009 (2026-09-29, post-v1.6.0 `develop` `296e91b`): 3 F (SYS.3, SUP.9, SUP.10), 14 L. CSC-AUD-008 (2026-06-28, v1.5.1): 17 F. The v1.6.0 release (2026-07-06) was not assessed by a standalone audit record (AUD9-F-021).
 >
-> **Ratings assigned by internal audit CSC-AUD-008, 2026-06-28 (supersedes CSC-AUD-007 2026-06-18 for this table).**
-
+> **Ratings assigned by internal audit CSC-AUD-010, 2026-09-29 (supersedes CSC-AUD-009 for this table).**
 ---
 
 ## 7. Review & Approval
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-10-06 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

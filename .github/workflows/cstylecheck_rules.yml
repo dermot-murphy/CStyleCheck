@@ -9,12 +9,18 @@
 #   1. Appends a JSON record to gh-pages/cstylecheck/trend.jsonl.
 #   2. Regenerates gh-pages/cstylecheck/index.html (Chart.js trend graph).
 #   3. Regenerates gh-pages/cstylecheck/badge.json (shields.io endpoint).
-#   4. Updates the naming-convention badge line in README.md.
 #
-# Required repository settings
-# -----------------------------
-#   Settings -> Actions -> General -> Workflow permissions:
-#     "Read and write permissions"
+# The README Naming Convention badge is a fixed shields.io endpoint URL that
+# reads gh-pages/cstylecheck/badge.json, so no commit to the source branch is
+# needed per run (#449). The workflow never pushes to main or develop, so
+# both branches can require a pull request.
+#
+# Permissions
+# -----------
+#   The default GITHUB_TOKEN is read-only (Settings -> Actions -> General ->
+#   Workflow permissions: "Read repository contents and packages
+#   permissions"). Only the Update Trend job is granted contents: write, to
+#   push gh-pages.
 #
 # The gh-pages branch is created automatically on the first trend run.
 # Enable GitHub Pages (Settings -> Pages -> Source: gh-pages branch / root)
@@ -37,6 +43,9 @@ on:
       - "src/**"
 
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 # Serialise runs on the same branch so concurrent pushes cannot race to
 # append trend records, causing data loss or a non-fast-forward gh-pages push.
@@ -66,7 +75,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
 
@@ -168,7 +177,7 @@ jobs:
           exit 1
 
   # ---------------------------------------------------------------------------
-  # Job 2: Update trend data and README badge (default branch push only)
+  # Job 2: Update trend data and badge JSON on gh-pages (default branch push only)
   # ---------------------------------------------------------------------------
   trend:
     name: Update Trend
@@ -178,9 +187,11 @@ jobs:
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # push trend data to gh-pages
 
     steps:
-      - name: Checkout source repo (for README)
+      - name: Checkout source repo
         uses: actions/checkout@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -228,34 +239,3 @@ jobs:
           git commit -m \
             "trend: run #${{ github.run_number }} E=${{ needs.stylecheck.outputs.errors }} W=${{ needs.stylecheck.outputs.warnings }}"
           git push origin gh-pages
-
-      - name: Update README badge and push to source branch
-        run: |
-          # -----------------------------------------------------------------------
-          # HEAD is on gh-pages here. Branch-switching back to main in the same
-          # working tree is unreliable when gh-pages is an orphan (no shared
-          # ancestor). Instead, add a git worktree at /tmp/main-wt pointing at
-          # the latest remote tip of the source branch. This gives us a fully
-          # independent working directory for main without touching gh-pages HEAD.
-          # -----------------------------------------------------------------------
-          git fetch origin ${{ github.ref_name }}
-          git worktree add /tmp/main-wt origin/${{ github.ref_name }}
-
-          python scripts/ci/update_readme_badge.py /tmp/main-wt
-
-          cd /tmp/main-wt
-          git add README.md
-          if git diff --staged --quiet; then
-            echo "No README change — nothing to push"
-          else
-            git config user.name  "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git commit -m "ci: update naming convention badge [skip ci]"
-            # Push the worktree's branch (main) directly — HEAD never touched gh-pages.
-            git push origin HEAD:${{ github.ref_name }}
-          fi
-
-          cd -
-          git worktree remove /tmp/main-wt
-        env:
-          REPO: ${{ github.repository }}

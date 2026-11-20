@@ -6,13 +6,13 @@
 #
 # Minimal usage:
 #
-#   - uses: dermot-murphy/CStyleCheck@v1
+#   - uses: dermot-murphy/CStyleCheck@v2.0.0
 #     with:
 #       config: src/rules.yml
 #
 # Full example:
 #
-#   - uses: dermot-murphy/CStyleCheck@v1
+#   - uses: dermot-murphy/CStyleCheck@v2.0.0
 #     id: cstylecheck
 #     with:
 #       config:      src/rules.yml
@@ -196,7 +196,7 @@ runs:
 
     # ── 1. Python environment ────────────────────────────────────────────────
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: '3.11'
 

@@ -14,6 +14,7 @@ and `info`.
 
 ## Table of contents
 
+- [Case-style values](#case-style-values)
 1. [File-level module prefix](#1-file-level-module-prefix)
 2. [Variables](#2-variables)
    - [2.1 Scope-level case and length](#21-scope-level-case-and-length)
@@ -58,6 +59,21 @@ and `info`.
    - [9.13 Declaration spacing](#913-declaration-spacing)
    - [9.14 File length](#914-file-length)
    - [9.15 Reserved header name](#915-reserved-header-name)
+   - [9.16 Comment ratio](#916-comment-ratio)
+   - [9.17 Whitespace ratio](#917-whitespace-ratio)
+   - [9.18 Declared but not defined](#918-declared-but-not-defined)
+   - [9.19 Non-ASCII source characters (MISRA C Rule 4.1)](#919-non-ascii-source-characters-misra-c-rule-41)
+   - [9.20 Constant comparison](#920-constant-comparison)
+   - [9.21 `goto` usage (MISRA C Rule 15.1)](#921-goto-usage-misra-c-rule-151)
+   - [9.22 Assignment in condition (MISRA C Rule 13.4)](#922-assignment-in-condition-misra-c-rule-134)
+   - [9.23 Multiple statements per line (Barr-C §3.2)](#923-multiple-statements-per-line-barr-c-32)
+   - [9.24 `void` pointer (MISRA C Rule 11.5)](#924-void-pointer-misra-c-rule-115)
+   - [9.25 Recursive function (MISRA C Rule 17.2)](#925-recursive-function-misra-c-rule-172)
+   - [9.26 `sizeof` with a type operand (Barr-C §5.7)](#926-sizeof-with-a-type-operand-barr-c-57)
+   - [9.27 Boolean comparison](#927-boolean-comparison)
+   - [9.28 Empty `else` (Barr-C §8.3)](#928-empty-else-barr-c-83)
+   - [9.29 Partially assigned local struct (MISRA C Rule 9.1, Barr-C §7.2)](#929-partially-assigned-local-struct-misra-c-rule-91-barr-c-72)
+   - [9.30 Short positional struct initialiser (cf. MISRA C Rule 9.3)](#930-short-positional-struct-initialiser-cf-misra-c-rule-93)
 10. [Reserved names](#10-reserved-names)
 11. [Spell check](#11-spell-check)
 12. [Sign compatibility](#12-sign-compatibility)
@@ -67,6 +83,68 @@ and `info`.
 14. [Inline suppression comments](#14-inline-suppression-comments)
 15. [Quick reference table](#15-quick-reference-table)
 16. [MISRA C:2012/2023 coverage matrix](#16-misra-c20122023-coverage-matrix)
+
+---
+
+## Case-style values
+
+Every key that selects a naming case style takes one of these canonical
+names:
+
+| Name | Matches | Example |
+|---|---|---|
+| `lower_snake` | lower-case letters, digits, `_` | `uart_rx_count` |
+| `upper_snake` | upper-case letters, digits, `_` | `UART_RX_COUNT` |
+| `camel` | starts lower-case, letters and digits, no `_` | `uartRxCount` |
+| `pascal` | starts upper-case, letters and digits, no `_` | `UartRxCount` |
+| `lower` | lower-case letters and digits, no `_` | `uartrxcount` |
+| `upper` | upper-case letters and digits, no `_` | `UARTRXCOUNT` |
+| `any` | anything (turns the case check off for that key) | — |
+
+Keys that take these values: `variables.case`, `variables.global.case`,
+`variables.static.case`, `variables.local.case`, `variables.parameter.case`,
+`constants.case`, `macros.case`, `typedefs.case`, `enums.type_case`,
+`enums.member_case`, `structs.tag_case`, `structs.member_case`,
+`functions.object_case` and `functions.verb_case`.
+
+`functions.case` is not a setting: the checker never read it, so it was
+removed in #424.  Function-name casing is set by `functions.style`
+(`object_verb`, `verb_object`, `lower_snake` or `any`).  A config that still
+contains `functions.case` loads normally but prints a warning on stderr.
+
+These aliases are also accepted and are converted to the canonical name when
+the config is loaded.  Matching ignores letter case, so `PASCALCASE` and
+`pascalcase` also work.
+
+| Alias | Canonical name |
+|---|---|
+| `PascalCase`, `Pascal`, `pascal_case` | `pascal` |
+| `camelCase`, `camel_case` | `camel` |
+| `UPPER_SNAKE`, `UPPER_SNAKE_CASE`, `SCREAMING_SNAKE`, `SCREAMING_SNAKE_CASE` | `upper_snake` |
+| `snake_case`, `lower_snake_case`, `snake` | `lower_snake` |
+
+`lower` and `upper` are separate styles, not aliases of `lower_snake` and
+`upper_snake`: they reject underscores.
+
+Three other keys have their own value sets, also matched ignoring letter case:
+
+| Key | Values |
+|---|---|
+| `functions.style` | `object_verb`, `verb_object`, `lower_snake` (or any `lower_snake` alias), `any` |
+| `file_prefix.case` | `lower`, `upper`, `as_is` |
+| `misc.eof_comment.filename_case` | `lower`, `upper`, `preserve` |
+
+**An unknown value is a config error.**  CStyleCheck stops before checking any
+file and exits with code `2`.  The message names the config file, the key, the
+value and the allowed values:
+
+```text
+ERROR: rules.yml: invalid case style 'PascalCaes' for 'typedefs.case' (allowed: lower_snake, upper_snake, camel, pascal, lower, upper, any; aliases such as PascalCase, camelCase, UPPER_SNAKE and snake_case are accepted)
+```
+
+The same check applies to per-directory `.cstylecheck.yml` overrides
+(`--per-dir-config`).  Before #422 an unknown name was ignored and
+the check always passed.
 
 ---
 
@@ -146,7 +224,7 @@ variables:
     # ... (add project-specific acronyms)
 ```
 
-**`case`** values: `lower_snake` · `upper_snake` · `camel` · `pascal`.
+**`case`** values: `lower_snake` · `upper_snake` · `camel` · `pascal` · `lower` · `upper` · `any` (see [Case-style values](#case-style-values) for the accepted aliases).
 
 **`allow_single_char_loop_vars`** — when `true`, a bare `i`, `j`, or `k` used
 as a `for`-loop counter is exempt from `min_length`.
@@ -827,6 +905,9 @@ enums:
 
 Enum type names use `lower_snake_t`; member names use `UPPER_SNAKE` and must be
 prefixed with the enum type name (stripped of `_t`, converted to upper snake).
+Every member is checked, including the last one whether or not it is followed
+by a trailing comma; names used in an initialiser (`= OTHER_VALUE`) are values,
+not members, and are not checked.
 
 ```c
 /* ✓ PASS */
@@ -1533,6 +1614,600 @@ POSIX.1-2017 header set (e.g. `stdio.h`, `stdlib.h`, `pthread.h`).
 
 ---
 
+### 9.16 Comment ratio
+
+**Rule ID:** `misc.comment_ratio`
+
+```yaml
+misc:
+  comment_ratio:
+    enabled: false
+    severity: warning
+    warning_threshold: 0.15   # ratio below this → warning
+    error_threshold: 0.05     # ratio below this → error
+    min_code_lines: 10        # files with fewer code lines are not checked
+```
+
+The ratio is explanatory comment lines to code lines, measured after the file
+header. Leading comment and blank lines (copyright and licence blocks) and
+Doxygen `/** … */` blocks are excluded. A code line with a trailing `//`
+comment counts as code. One violation is reported per file.
+
+---
+
+### 9.17 Whitespace ratio
+
+**Rule ID:** `misc.whitespace_ratio`
+
+```yaml
+misc:
+  whitespace_ratio:
+    enabled: false
+    severity: warning
+    warning_threshold: 0.10   # blank/code ratio below this → warning
+    error_threshold: 0.01     # blank/code ratio below this → error
+    min_lines: 20             # files with fewer code lines are not checked
+```
+
+Flags dense code with too few blank lines. The ratio is blank lines to code
+lines, measured after the file header. Comment-only lines count as neither.
+
+---
+
+### 9.18 Declared but not defined
+
+**Rule ID:** `misc.declared_not_defined`
+
+```yaml
+misc:
+  declared_not_defined:
+    enabled: false
+    severity: warning
+    extern_macros: []   # project macros that expand to 'extern'
+```
+
+A cross-file check: an object declared `extern` (or through a macro listed in
+`extern_macros`) must have a definition in one of the files checked in the same
+invocation. A single-file run never reports this rule, because the definition
+may live in an unscanned translation unit.
+
+---
+
+### 9.19 Non-ASCII source characters (MISRA C Rule 4.1)
+
+**Rule ID:** `misc.non_ascii_source`
+
+```yaml
+misc:
+  non_ascii_source:
+    enabled: true
+    severity: error
+    exempt_string_literals: false
+```
+
+Only TAB, LF, CR and printable ASCII (0x20–0x7E) are allowed in source files.
+Any other character, including a UTF-8 BOM or a non-ASCII character in a
+comment, is flagged. Set `exempt_string_literals: true` to allow non-ASCII
+text inside `"…"` string literals.
+
+---
+
+### 9.20 Constant comparison
+
+**Rule ID:** `misc.constant_comparison`
+
+```yaml
+misc:
+  constant_comparison:
+    enabled: true
+    severity: warning
+```
+
+Flags `==` / `!=` where **both** operands are compile-time constants (numeric
+or char literals, `true`/`false`/`TRUE`/`FALSE`/`NULL`/`nullptr`, or ALL_CAPS
+identifiers). `#define` bodies and `return` statements are exempt.
+
+`#if` and `#elif` conditions are not checked, including their backslash-continuation
+lines: a preprocessor condition compares constants at compile time by design, for
+example `#if (BOARD_I2C_INSTANCE == 0U)` (#447). Comparisons in the code below the
+directive are still checked.
+
+To suppress these findings with an `--exclusions` file, add an `identifiers:` entry
+that names either operand, for example `BOARD_I2C_INSTANCE` or `0U`, with
+`misc.constant_comparison` in its `disabled_rules`. The entry suppresses every
+`misc.constant_comparison` finding in the matching files where that name is one of
+the two operands.
+
+```c
+if (MAX_RETRIES == 3U) { … }   /* ✗ misc.constant_comparison */
+if (retries == MAX_RETRIES)    /* ✓ one side is a variable   */
+```
+
+---
+
+### 9.21 `goto` usage (MISRA C Rule 15.1)
+
+**Rule ID:** `misc.goto_usage` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. `--preset misra` enables it, as does answering yes to the MISRA C:2012 question in `--init` (#420). To enable it by hand:
+
+```yaml
+misc:
+  goto_usage:
+    enabled: true        # default: false
+    severity: error
+```
+
+Every `goto` statement is flagged. `goto` inside comments or strings, and
+identifiers that merely contain `goto`, are ignored.
+
+```c
+    goto cleanup;               /* ✗ misc.goto_usage */
+
+    if (err != 0) { return err; }   /* ✓ early return instead */
+```
+
+---
+
+### 9.22 Assignment in condition (MISRA C Rule 13.4)
+
+**Rule ID:** `misc.assignment_in_condition` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. `--preset misra` enables it, as does answering yes to the MISRA C:2012 question in `--init` (#420). To enable it by hand:
+
+```yaml
+misc:
+  assignment_in_condition:
+    enabled: true        # default: false
+    severity: warning
+```
+
+Flags a plain `=` inside the controlling expression of `if` and `while`, and
+inside the condition clause of `for`. `==`, `!=`, `<=`, `>=`, compound
+assignments (`+=` etc.) and the `for` init/increment clauses are not flagged.
+
+```c
+if (status = uart_Read())          /* ✗ misc.assignment_in_condition */
+while (p_node = list_Next(p_node)) /* ✗ */
+
+status = uart_Read();              /* ✓ */
+if (status != 0) { … }
+```
+
+---
+
+### 9.23 Multiple statements per line (Barr-C §3.2)
+
+**Rule ID:** `misc.multiple_statements_per_line` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. `--preset barr-c` enables it, as does answering yes to the Barr-C question in `--init` (#420). To enable it by hand:
+
+```yaml
+misc:
+  multiple_statements_per_line:
+    enabled: true        # default: false
+    severity: warning
+```
+
+Each statement must be on its own line. A `;` followed on the same line by
+another statement is flagged. Lines containing a `for (…; …; …)` header are
+exempt.
+
+```c
+x = 1; y = 2;                   /* ✗ misc.multiple_statements_per_line */
+for (i = 0U; i < n; i++)        /* ✓ for-header semicolons are separators */
+```
+
+---
+
+### 9.24 `void` pointer (MISRA C Rule 11.5)
+
+**Rule ID:** `misc.void_pointer` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. `--preset misra` enables it, as does answering yes to the MISRA C:2012 question in `--init` (#420). To enable it by hand:
+
+```yaml
+misc:
+  void_pointer:
+    enabled: true        # default: false
+    severity: warning
+```
+
+Every `void *` in code (declarations, parameters, casts) is flagged, because it
+removes compile-time type checking. A `void` return type or `(void)` parameter
+list is not flagged.
+
+```c
+void *p_buf = pool_Get();       /* ✗ misc.void_pointer */
+uint8_t *p_buf = pool_Get();    /* ✓ */
+```
+
+---
+
+### 9.25 Recursive function (MISRA C Rule 17.2)
+
+**Rule ID:** `misc.recursive_function` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. `--preset misra` enables it, as does answering yes to the MISRA C:2012 question in `--init` (#420). To enable it by hand:
+
+```yaml
+misc:
+  recursive_function:
+    enabled: true        # default: false
+    severity: error
+```
+
+Flags a function whose body calls itself (**direct** recursion only; indirect
+recursion A → B → A is not detected). Recursion makes worst-case stack usage
+unbounded on fixed-size RTOS stacks.
+
+```c
+uint32_t math_Factorial(uint32_t n)
+{
+    return (n <= 1U) ? 1U : n * math_Factorial(n - 1U);   /* ✗ misc.recursive_function */
+}
+```
+
+---
+
+### 9.26 `sizeof` with a type operand (Barr-C §5.7)
+
+**Rule ID:** `misc.sizeof_type` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. `--preset barr-c` enables it, as does answering yes to the Barr-C question in `--init` (#420). To enable it by hand:
+
+```yaml
+misc:
+  sizeof_type:
+    enabled: true        # default: false
+    severity: info
+```
+
+`sizeof(type)` silently becomes wrong when the variable's type changes. Use
+`sizeof(var)` or `sizeof(*p_var)`. Flags primitive types, `*_t` typedefs and
+capitalised type names.
+
+A name declared as an object in the same file (a variable, parameter or array) is
+not taken for a type (a C keyword such as `long` in `sizeof(long int)` never counts
+as an object name), even when it is upper case or ends in `_t`, so
+`sizeof(STAGE_TABLE) / sizeof(STAGE_TABLE[0])` on a `const` lookup table is not
+reported (#460). A name declared by `typedef` is still reported. An object
+declared only in another file (for example an `extern` in a header) is not known,
+so `sizeof` of such an upper-case or `_t` name is still reported.
+
+```c
+memset(p_buf, 0, sizeof(uint32_t) * N);   /* ✗ misc.sizeof_type */
+memset(p_buf, 0, sizeof(*p_buf) * N);     /* ✓ */
+
+static const stage_t STAGE_TABLE[] = { … };
+#define STAGE_COUNT (sizeof(STAGE_TABLE) / sizeof(STAGE_TABLE[0]))   /* ✓ object, not a type */
+```
+
+---
+
+### 9.27 Boolean comparison
+
+**Rule ID:** `misc.boolean_comparison` — **disabled by default (opt-in, #412)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. No preset enables it, and `--init` does not ask about it (#420): it is a style rule, not part of MISRA C or Barr-C. To enable it by hand:
+
+```yaml
+misc:
+  boolean_comparison:
+    enabled: true        # default: false
+    severity: warning
+```
+
+Comparing with the `<stdbool.h>` literals `true`/`false` using `==` or `!=` is
+redundant and can hide type-coercion bugs.
+
+Only the lowercase `true`/`false` are matched. Project `TRUE`/`FALSE` macros
+are not: comparing an integer flag against `TRUE` is not redundant
+(`if (flag)` and `if (TRUE == flag)` differ when `flag == 2`), so rewriting it
+would change behaviour.
+
+This is a style rule. It does not enforce MISRA C:2012 Rule 14.4 (the
+controlling expression shall be essentially Boolean): `if (b_ready == true)`
+is compliant with Rule 14.4. Use cppcheck with the MISRA addon for Rule 14.4.
+
+```c
+if (b_ready == true)   /* ✗ misc.boolean_comparison */
+if (b_ready)           /* ✓ */
+if (!b_done)           /* ✓ */
+if (TRUE == u8_flag)   /* ✓ not checked: macro, not a <stdbool.h> literal */
+```
+
+---
+
+### 9.28 Empty `else` (Barr-C §8.3)
+
+**Rule ID:** `misc.empty_else` — **disabled by default (opt-in, #418)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. `--preset misra` (related to MISRA C:2012 Rule 15.7) and `--preset barr-c` both enable it, as does answering yes to either the MISRA C:2012 or the Barr-C question in `--init` (#420). To enable it by hand:
+
+```yaml
+misc:
+  empty_else:
+    enabled: true        # default: false
+    severity: warning
+```
+
+An `else { }` with an empty body is either a forgotten placeholder or dead
+code. A block that contains a comment is accepted as intentional.
+
+```c
+} else { }                           /* ✗ misc.empty_else */
+} else { /* intentionally empty */ } /* ✓ */
+```
+
+---
+
+### 9.29 Partially assigned local struct (MISRA C Rule 9.1, Barr-C §7.2)
+
+**Rule ID:** `misc.partial_struct_assignment` — **disabled by default (opt-in, #456)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. `--preset misra` (related to MISRA C:2012 Rule 9.1) and `--preset barr-c`
+(Barr-C §7.2) both enable it, as does answering yes to either the MISRA C:2012 or the
+Barr-C question in `--init`. To enable it by hand:
+
+```yaml
+misc:
+  partial_struct_assignment:
+    enabled: true        # default: false
+    severity: warning
+    fill_functions:      # functions that write every member of '&s'
+      - memset
+      - memcpy
+      - memmove
+    definition_paths: [] # files read only for struct / typedef / #define definitions (#461)
+    report_unknown_types: false  # info per local whose struct type is unknown (#462)
+```
+
+A non-static local struct declared without an initialiser holds indeterminate
+stack data in every member. The rule flags such a struct when, before its first
+use as a whole, the function assigns some but not all of its members. A use as a
+whole is passing the struct by value or by address to a function, returning it,
+or copying it (`x = s`). The violation is reported at the declaration; the
+message names the line of the use and the members that were not assigned.
+
+Member lists come from the struct definitions in **all scanned files**, so a type
+defined in a header is known when the header is in the scan. Both `struct tag`
+and typedef names (including `typedef struct tag Alias;`) are recognised.
+
+#### Struct definitions from files that are not checked (`definition_paths`, `--definitions`)
+
+Vendor SDK code is normally excluded from checking (`--exclude "src/cots/**"`), but
+the structs most often set member by member are SDK configuration structs
+(`nrfx_spim_config_t`, `*_InitTypeDef` and so on). To give the rules their member
+lists, name the SDK headers as **definition files** (#461):
+
+```yaml
+misc:
+  partial_struct_assignment:
+    enabled: true
+    definition_paths:
+      - "software/config/sdk_config.h"                       # project config first
+      - "software/source/cots/nrfx/drivers/include/*.h"
+      - "software/source/cots/nrfx/mdk/*.h"
+```
+
+or on the command line with `--definitions GLOB` (repeatable). Globs are relative to
+the working directory, as for `--include`.
+
+- Definition files are read **only** for struct, typedef and `#define` definitions.
+  They are never checked and never reported on, and `--exclude` does not apply to
+  them: an excluded SDK folder can still be named here.
+- The two rules share one list: the `definition_paths` of both
+  `misc.partial_struct_*` entries are joined (in order, without duplicates), and
+  `--definitions` globs are added after them. A rule's list is read even when that
+  rule is disabled in the root config, so the root config can name the paths for a
+  rule that per-directory configs enable.
+- Precedence: the checked files come first, then the definition files in the order
+  their globs are listed (files matched by one glob are taken in sorted order). A
+  struct definition from a definition file never replaces one from a checked file or
+  from an earlier definition file. For `#define`s, see *How `#define`s are
+  collected* below.
+- Only the root configuration's `definition_paths` are used. A per-directory
+  `.cstylecheck.yml` (`--per-dir-config`) does not add any; put them in the root
+  config or use `--definitions`.
+- The pre-scan runs only when a partial-struct rule is enabled (or
+  `--per-dir-config` is used). Otherwise `--definitions` is ignored and a `WARNING`
+  is printed on stderr.
+
+> **Tip:** list the project's own configuration headers (for example
+> `sdk_config.h`) **first**, then keep the SDK globs narrow (the driver and MDK
+> include folders, not the whole SDK). SDK example folders contain their own
+> `sdk_config.h` files with different values; if one of them is read first, its
+> `#define`s win and `#if` blocks in struct bodies are resolved against the wrong
+> configuration. A broad glob also costs time: every matched file is read once per
+> run (on a downstream project, 228 checked files plus 1002 SDK headers take about
+> 26 s for the pre-scan).
+
+#### How `#define`s are collected
+
+The `#define`s of the checked files and the definition files form one project-wide
+macro table (#463):
+
+- A **plain** `#define` is one at the top level of a file, or inside an include
+  guard only (an `#ifndef X` whose next directive is `#define X`, as in
+  `#ifndef DRV_H` / `#define DRV_H`).
+- A **default** is an `#ifndef X` immediately followed by `#define X …`, the usual
+  form of an SDK's configuration default.
+- A `#define` under any other `#if` / `#ifdef` / `#else` arm is **not used**:
+  whether it applies is not known.
+- A plain `#define` beats a default. Among `#define`s of the same kind, the first
+  file in precedence order wins (checked files, then definition files in glob
+  order).
+- An `#undef` at the top level (or inside a guard only) of any file drops the name:
+  it becomes unknown.
+- The project-wide table beats a file's own `#define`s, which only fill names the
+  table does not have. So a checked `sdk_config.h` that sets `NRFX_SPIM_EXTENDED_ENABLED 1`
+  beats the SDK header's own `#ifndef` default of `0`.
+
+#### `#if` blocks inside struct definitions
+
+A member inside `#if` / `#ifdef` / `#ifndef` / `#elif` / `#elifdef` / `#elifndef` /
+`#else` in a struct body counts only when the condition evaluates true from the
+macro table (#463). The evaluator handles object-like and simple function-like
+macros (expanded as C does, with no parentheses added), `defined`, integer
+arithmetic, comparison and logical operators; backslash-continued conditions are
+joined. An identifier with no known `#define` is **unknown**, not 0: a condition
+whose value depends on it is unknown, and so is `#ifdef X` / `#ifndef X` when `X`
+is not in the table. Members under an unknown condition are left out of the
+count. The exception is a group in which one arm must be compiled (it has an
+`#else`, or an `#elif` that is true by itself) and every arm that may be compiled
+declares the member: that member is counted, in its declaration position. A
+condition too deeply nested to evaluate is unknown.
+
+```c
+#define EXTENDED_ENABLED 0
+typedef struct
+{
+    uint8_t a;
+    uint8_t b;
+#if EXTENDED_ENABLED
+    uint8_t c;          /* not counted: condition is false */
+#endif
+} cfg_t;                /* 2 members: assigning a and b is complete */
+```
+
+#### Locals whose struct type is unknown (`report_unknown_types`)
+
+A local whose struct type has no definition in the checked files or definition
+files is skipped silently, so a clean run cannot tell "fully initialised" from "not
+checked". Set `report_unknown_types: true` on either rule to get one `info` finding
+(under that rule's ID) for each such local (#462):
+
+```
+hal_acc.c:438:22: INFO [misc.partial_struct_assignment] Local 'spi_config' (nrfx_spim_config_t) not checked: no definition of 'nrfx_spim_config_t' was found in the scanned files or the rule's definition_paths
+```
+
+A type counts as unknown when it is written `struct tag`, when it is a typedef
+alias of a struct that has no definition (`typedef struct foo_s foo_t;`, an opaque
+handle), or when it is a name that is neither a typedef, nor a `#define` (such as
+`#define U8 unsigned char`), found in the scanned or definition files, nor a
+standard type (`uint8_t`, `size_t`, `bool`, …). `misc.partial_struct_assignment` reports
+non-static locals with no initialiser; `misc.partial_struct_initialiser` reports
+locals with a positional brace initialiser (not `{0}`, `{}` or a designated
+initialiser). The default is `false`, so existing output does not change.
+
+```c
+void Uart_Setup(void)
+{
+    uart_cfg_t cfg;                  /* ✗ misc.partial_struct_assignment */
+    cfg.baud = 9600U;                /*   (parity and stop_bits unassigned) */
+    Uart_Init(&cfg);
+}
+
+void Uart_Setup(void)
+{
+    uart_cfg_t cfg = {0};            /* ✓ initialiser */
+    cfg.baud = 9600U;
+    Uart_Init(&cfg);
+}
+
+void Uart_Setup(void)
+{
+    uart_cfg_t cfg;
+    (void)memset(&cfg, 0, sizeof(cfg)); /* ✓ fill function before the member writes */
+    cfg.baud = 9600U;
+    Uart_Init(&cfg);
+}
+```
+
+**Not flagged:**
+
+- any initialiser (`= {0}`, `= {}`, designated or positional, or a function result);
+- `static` locals (zero-initialised) and pointers or arrays of structs;
+- struct types whose definition is not in a scanned file or a definition file
+  (reported as `info` only with `report_unknown_types: true`);
+- a whole-struct assignment (`s = other;`), or a call to one of `fill_functions`
+  with `&s` as its first argument, before the member writes. A fill function is
+  recognised only when called as `name(&s, ...)`: a macro or function that takes
+  the struct by name (`INIT(s)`) counts as a use of the struct as a whole;
+- `&s` passed to any other function before any member is assigned (treated as an
+  out-parameter that fills the struct);
+- a struct whose members are only read and which is never used as a whole;
+- `sizeof(s)`;
+- uses of another object of the same name declared in a nested block or a `for`
+  initialiser (shadowing): the rest of that block, or that `for` statement, is
+  skipped.
+
+**Details and limitations:**
+
+- `&s.x` counts member `x` as assigned. A nested member write (`s.inner.a = 1`)
+  or an array-element write (`s.buf[0] = 1`) counts the top-level member as assigned.
+- An anonymous union member is covered when any one of its members is assigned;
+  the members of an anonymous struct member are counted individually.
+- Order is lexical: there is no control-flow analysis, so an assignment inside an
+  `if` branch counts as made, even when another branch does not make it.
+- A compound assignment (`s.x |= 1`) reads the indeterminate value; it is neither
+  reported nor counted as an assignment.
+- A struct declared in a `for` initialiser is not checked.
+- A member inside `#if` / `#ifdef` / `#elif` / `#else` counts only when its condition
+  evaluates true; an unknown condition leaves it out, unless one arm must compile and
+  every arm declares it (see *`#if` blocks inside struct definitions* above). Token
+  pasting and stringising are not evaluated, and a `#define` under a conditional is
+  not used.
+- Only the root configuration's `definition_paths` are used; per-directory configs
+  do not add any (see above).
+- A function whose return type is written `struct tag` (not a typedef name) is not
+  recognised as a function definition, so its body is not checked.
+
+---
+
+### 9.30 Short positional struct initialiser (cf. MISRA C Rule 9.3)
+
+**Rule ID:** `misc.partial_struct_initialiser` — **disabled by default (opt-in, #456)**
+
+The rule is off unless enabled. A project config that omits the key does not
+enable it. `--preset misra` enables it (MISRA C:2012 Rule 9.3 is the same rule for
+arrays), as does answering yes to the MISRA C:2012 question in `--init`. To enable it
+by hand:
+
+```yaml
+misc:
+  partial_struct_initialiser:
+    enabled: true        # default: false
+    severity: info
+    definition_paths: [] # shared with partial_struct_assignment (#461)
+    report_unknown_types: false  # info per positional initialiser of an unknown type (#462)
+```
+
+Member lists, `definition_paths`, `--definitions`, `#if` handling and
+`report_unknown_types` work as described for `misc.partial_struct_assignment`
+(§9.29).
+
+Flags a local struct (including a `static` local) whose positional brace
+initialiser lists fewer top-level values than the struct has members. The code is
+well-defined C — unlisted members are zero (C11 §6.7.9 ¶21) — so the rule is about
+explicit intent only: it is not clear whether the missing values were forgotten.
+
+```c
+uart_cfg_t cfg = { 9600U };              /* ✗ misc.partial_struct_initialiser */
+uart_cfg_t cfg = { 9600U, PARITY_NONE, 1U }; /* ✓ every member listed */
+uart_cfg_t cfg = { .baud = 9600U };      /* ✓ designated initialiser */
+uart_cfg_t cfg = {0};                    /* ✓ zero idiom */
+```
+
+**Not flagged:** `{}`, a single zero value (`{0}`, `{0U}`, `{0UL}`, `{0x0}`,
+`{0.0f}`, `{false}`, `{FALSE}`, `{NULL}`), designated initialisers (`.x =` or
+`[n] =`), non-brace initialisers, file-scope objects, and struct types whose
+definition is not in a scanned file or a definition file. A character literal
+such as `{'\0'}` is not recognised as zero. The member count leaves out members
+under an `#if` whose condition is false or unknown, as for §9.29 (#463).
+
+---
+
 ## 10. Reserved names
 
 **Rule ID:** `reserved_name`
@@ -1868,6 +2543,23 @@ comma-separated lists.
 | `misc.reserved_header_name` | error | `misc.reserved_header_name.enabled` | `true` |
 | `naming.identifier_length` | warning | `naming.identifier_length.enabled` | `false` |
 | `naming.no_single_char_identifiers` | warning | `naming.no_single_char_identifiers.enabled` | `false` |
+| `variable.local.prefix` | error | `variables.local.require_module_prefix` | `false` |
+| `variable.parameter.prefix` | warning | `variables.parameter.require_module_prefix` | `false` |
+| `misc.comment_ratio` | warning | `misc.comment_ratio.enabled` | `false` |
+| `misc.whitespace_ratio` | warning | `misc.whitespace_ratio.enabled` | `false` |
+| `misc.declared_not_defined` | warning | `misc.declared_not_defined.enabled` | `false` |
+| `misc.non_ascii_source` | error | `misc.non_ascii_source.enabled` | `true` |
+| `misc.constant_comparison` | warning | `misc.constant_comparison.enabled` | `true` |
+| `misc.goto_usage` | error | `misc.goto_usage.enabled` | `false` |
+| `misc.assignment_in_condition` | warning | `misc.assignment_in_condition.enabled` | `false` |
+| `misc.multiple_statements_per_line` | warning | `misc.multiple_statements_per_line.enabled` | `false` |
+| `misc.void_pointer` | warning | `misc.void_pointer.enabled` | `false` |
+| `misc.recursive_function` | error | `misc.recursive_function.enabled` | `false` |
+| `misc.sizeof_type` | info | `misc.sizeof_type.enabled` | `false` |
+| `misc.boolean_comparison` | warning | `misc.boolean_comparison.enabled` | `false` |
+| `misc.empty_else` | warning | `misc.empty_else.enabled` | `false` |
+| `misc.partial_struct_assignment` | warning | `misc.partial_struct_assignment.enabled` | `false` |
+| `misc.partial_struct_initialiser` | info | `misc.partial_struct_initialiser.enabled` | `false` |
 
 ---
 
@@ -1879,6 +2571,7 @@ are implemented, which are partially addressed, and which are explicitly out of 
 
 | MISRA C:2012 Rule | Topic | CStyleCheck Support | Rule ID |
 |---|---|---|---|
+| Rule 4.1 (as mapped in CSC-SWE1-001 SWE1-MISRA-004) | Source character set — characters outside printable ASCII, TAB, LF and CR | Partial | `misc.non_ascii_source` |
 | Rule 4.2 | Trigraphs shall not be used | **Implemented** | `misc.trigraph` |
 | Rule 5.1 | External identifiers shall be distinct | Partial — naming rules reduce collision risk | `variable.*`, `function.*` |
 | Rule 5.2 | Identifiers declared in the same scope shall be distinct | Partial — naming convention enforcement | `variable.*` |
@@ -1886,9 +2579,17 @@ are implemented, which are partially addressed, and which are explicitly out of 
 | Rule 7.1 | Octal constants shall not be used | **Implemented** | `misc.octal_constant` |
 | Rule 7.3 | The lowercase character 'l' shall not be used in a literal suffix | **Implemented** | `misc.lowercase_l_suffix` |
 | Rule 7.4 | A string literal shall not be assigned to an object unless the type is `const char *` | Out of scope | — |
+| Rule 9.1 | The value of an object with automatic storage duration shall not be read before it has been set | Partial — local structs with only some members assigned before use as a whole | `misc.partial_struct_assignment` |
+| Rule 9.3 | Arrays shall not be partially initialised | Related — the struct analogue: short positional initialisers of local structs (intent only) | `misc.partial_struct_initialiser` |
 | Rule 10.x | Essential type model (implicit conversions, composite expressions) | Out of scope | — |
-| Rule 14.x / 15.x | Control flow (unreachable code, goto, switch) | Out of scope | — |
-| Rule 17.x | Function usage (recursion, variable-argument functions) | Out of scope | — |
+| Rule 11.5 | A conversion should not be performed from pointer to void into pointer to object | Partial — every `void *` use flagged | `misc.void_pointer` |
+| Rule 13.4 | The result of an assignment operator should not be used | Partial — assignments in `if`/`while`/`for` conditions | `misc.assignment_in_condition` |
+| Rule 14.4 | The controlling expression shall be essentially Boolean | Out of scope — use cppcheck MISRA addon (`misc.boolean_comparison` is a style rule and does not check Rule 14.4) | — |
+| Rule 15.1 | The `goto` statement should not be used | **Implemented** | `misc.goto_usage` |
+| Rule 15.7 | All `if … else if` constructs shall be terminated with an `else` | Partial — empty `else` blocks flagged | `misc.empty_else` |
+| Rule 17.2 | Functions shall not call themselves, directly or indirectly | Partial — direct recursion only | `misc.recursive_function` |
+| Rule 14.x / 15.x (others) | Control flow (unreachable code, switch) | Out of scope | — |
+| Rule 17.x (others) | Function usage (variable-argument functions, return values) | Out of scope | — |
 | Rule 18.x | Pointer type conversion and arithmetic | Out of scope | — |
 | Rule 20.7 | Expressions resulting from the expansion of macro parameters shall be enclosed in parentheses | Partial — `macro.multistatement_wrapper` enforces do-while wrapper | `macro.multistatement_wrapper` |
 | Rule 20.10 | The `#` and `##` preprocessor operators should not be used | Out of scope | — |

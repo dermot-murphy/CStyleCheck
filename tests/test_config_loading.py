@@ -18,11 +18,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 sys.path.insert(0, os.path.dirname(__file__))
 
-# We test load_config by importing it directly.  sys.exit() is patched so
-# the tests can capture the error message without actually exiting.
+# We test load_config by importing it directly.  config_error() (which prints
+# the message and exits with code 2, issue #425) is patched so the tests can
+# capture the error message without actually exiting.
 from unittest.mock import patch
 
 from cstylecheck.config import load_config
+
+_CONFIG_ERROR = "cstylecheck.config.config_error"
 
 
 # ---------------------------------------------------------------------------
@@ -30,7 +33,7 @@ from cstylecheck.config import load_config
 # ---------------------------------------------------------------------------
 
 class _Exit(Exception):
-    """Raised instead of sys.exit() so tests can capture the message."""
+    """Raised instead of config_error() so tests can capture the message."""
     pass
 
 
@@ -39,7 +42,7 @@ def _exit_raise(msg=""):
 
 
 def _make_exit():
-    """Return a fresh side_effect function for patching sys.exit."""
+    """Return a fresh side_effect function for patching config_error."""
     return _exit_raise
 
 
@@ -97,8 +100,8 @@ class TestLoadConfigUTF8(unittest.TestCase):
 class TestLoadConfigMissingFile(unittest.TestCase):
 
     def test_missing_file_exits(self):
-        """Non-existent path → sys.exit with 'not found' message."""
-        with patch("sys.exit", side_effect=_exit_raise):
+        """Non-existent path → config_error with 'not found' message."""
+        with patch(_CONFIG_ERROR, side_effect=_exit_raise):
             with self.assertRaises(_Exit) as ctx:
                 load_config("/nonexistent/path/rules.yml")
         self.assertIn("not found", str(ctx.exception).lower())
@@ -106,7 +109,7 @@ class TestLoadConfigMissingFile(unittest.TestCase):
     def test_missing_file_message_contains_path(self):
         """Error message contains the offending path."""
         bad_path = "/no/such/rules.yml"
-        with patch("sys.exit", side_effect=_exit_raise):
+        with patch(_CONFIG_ERROR, side_effect=_exit_raise):
             with self.assertRaises(_Exit) as ctx:
                 load_config(bad_path)
         self.assertIn(bad_path, str(ctx.exception))
@@ -125,10 +128,10 @@ class TestLoadConfigNonUTF8(unittest.TestCase):
         return fh.name
 
     def _assert_non_utf8_exit(self, raw: bytes):
-        """Helper: write raw bytes, call load_config, expect sys.exit with clear msg."""
+        """Helper: write raw bytes, call load_config, expect config_error with clear msg."""
         path = self._write(raw)
         try:
-            with patch("sys.exit", side_effect=_exit_raise):
+            with patch(_CONFIG_ERROR, side_effect=_exit_raise):
                 with self.assertRaises(_Exit) as ctx:
                     load_config(path)
             msg = str(ctx.exception)
@@ -157,7 +160,7 @@ class TestLoadConfigNonUTF8(unittest.TestCase):
         raw = b"key: value\x85\n"
         path = self._write(raw)
         try:
-            with patch("sys.exit", side_effect=_exit_raise):
+            with patch(_CONFIG_ERROR, side_effect=_exit_raise):
                 with self.assertRaises(_Exit) as ctx:
                     load_config(path)
             self.assertIn(path, str(ctx.exception))
@@ -171,7 +174,7 @@ class TestLoadConfigNonUTF8(unittest.TestCase):
         expected_offset = len(prefix)
         path = self._write(raw)
         try:
-            with patch("sys.exit", side_effect=_exit_raise):
+            with patch(_CONFIG_ERROR, side_effect=_exit_raise):
                 with self.assertRaises(_Exit) as ctx:
                     load_config(path)
             msg = str(ctx.exception)
@@ -205,11 +208,11 @@ class TestLoadConfigBadYAML(unittest.TestCase):
         return fh.name
 
     def test_bad_yaml_exits(self):
-        """Malformed YAML → sys.exit with 'parse' or 'Cannot parse' message."""
+        """Malformed YAML → config_error with 'parse' or 'Cannot parse' message."""
         raw = b"key: [unclosed\n"
         path = self._write(raw)
         try:
-            with patch("sys.exit", side_effect=_exit_raise):
+            with patch(_CONFIG_ERROR, side_effect=_exit_raise):
                 with self.assertRaises(_Exit) as ctx:
                     load_config(path)
             msg = str(ctx.exception).lower()
@@ -222,7 +225,7 @@ class TestLoadConfigBadYAML(unittest.TestCase):
         raw = b"bad: [yaml\n"
         path = self._write(raw)
         try:
-            with patch("sys.exit", side_effect=_exit_raise):
+            with patch(_CONFIG_ERROR, side_effect=_exit_raise):
                 with self.assertRaises(_Exit) as ctx:
                     load_config(path)
             self.assertIn(path, str(ctx.exception))

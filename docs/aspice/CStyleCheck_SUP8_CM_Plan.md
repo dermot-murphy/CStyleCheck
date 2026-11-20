@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.11 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.34 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.8 |
@@ -20,9 +20,32 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.34 | 2026-11-20 | Claude | v2.0.0 release (CR #443): new §8.4 release baseline record (v1.6.0, v1.6.1, v2.0.0 — branch flow, tag and change record per release baseline); §7.6 record — hotfix #399 recorded in CSC-SVD-001 §6.7.4; referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
+| 1.33 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
+| 1.32 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
+| 1.31 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 1.30 | 2026-11-19 | Claude | Cross-reference version resync with #456 |
+| 1.29 | 2026-11-19 | Claude | Issue #453: §7.1 and §7.5 match the live rulesets — `Do_Not_Delete_Main_Develop` (`develop`, `main`: pull request required, merge commits only, no deletion or force-push) has no required status check; the new `Develop_Required_Checks` ruleset (`develop` only) requires *All Checks Passed* and *ASPICE work-product consistency*; `main` is added to it after v2.0.0 (#443) so hotfix PRs into `main` are not blocked before then |
+| 1.28 | 2026-11-19 | Claude | Issue #449 (repository protection): §6.1 CI-031 `scripts/ci/update_readme_badge.py` retired — the README Naming Convention badge is a fixed shields.io endpoint URL, so `cstylecheck_rules.yml` no longer pushes a commit to the source branch (63 CIs in use); §7.1 protection rules state the `Do_Not_Delete_Main_Develop` ruleset (pull request required, merge commits only, no deletion, required check *All Checks Passed*) and the `Protect release tags` ruleset; §7.5 required status check and read-only default `GITHUB_TOKEN` (only jobs that write declare `contents: write`); referenced-document versions resynced |
+| 1.27 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
+| 1.26 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
+| 1.25 | 2026-09-30 | Claude | Merge-time process controls (#437): §6.1 CI-061 (`scripts/aspice_check.py`), CI-062 (`aspice_consistency.yml`), CI-063 (PR template) and CI-064 (issue forms) added (64 CIs); §7.5 consistency workflow; §9 issue forms and PR template in the change-control steps, `python scripts/aspice_check.py --fix-citations` performs the cross-reference resync; referenced-document versions resynced |
+| 1.24 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
+| 1.23 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-015: §7.1–7.3 aligned with §7.6 (CI-only hotfixes merge to `main` untagged) and allow `claude/<topic>-<id>` branches for feature and bug-fix work into `develop`; §9 approval step matches CSC-DEV-002 §5.2 (owner's merge is the approval record). AUD10-F-029: `logo/cstylecheck.jpg` added to CI-026 and `docs/templates/ASPICE_CL2_Test_Case_Template_1.md` to CI-055 (CI count unchanged at 60). AUD10-F-032: §9 note — cross-reference resyncs batched into one revision per document per change set; approval-by-merge policy (CSC-DEV-002 §5.2) |
+| 1.22 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.21 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.20 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.19 | 2026-09-29 | Claude | Cross-reference resync with #422: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.18 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.17 | 2026-09-29 | Claude | Cross-reference resync with #418: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.16 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.15 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.14 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP10 1.3→1.4, SUP9 1.3→1.4, SWE1 2.8→2.9) |
+| 1.13 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-009: add CI-045 to CI-060 (checker package `src/cstylecheck/*.py`, `.github/dependabot.yml`, CHANGELOG, CONTRIBUTING, Rules-and-Configuration, `src/project.defines`, `scripts/build.bat`/`test.bat`, `tests/__init__.py`, LICENSE, ASPICE WPs, audit records, repository configuration, CLAUDE.md, examples, draft standards); fix the CI-027 path; clarify CI-001/CI-002/CI-044. AUD9-F-019: §7.5 Dependabot target-branch rule. AUD9-F-028: add §7.6 hotfix versioning/tagging policy and record hotfix #399. AUD9-F-015: header date. AUD9-F-024: Author and Description columns swapped back in the v1.9 row. AUD9-F-014: referenced-document versions resynced to current revisions |
+| 1.12 | 2026-09-29 | Claude | Add trend-analysis metrics workflow, scripts, threshold config and unit tests to CI list (CI-038 to CI-044) — issue #388 |
 | 1.11 | 2026-07-06 | Claude | ASPICE audit — add prerelease_check.sh, check_my_project.bat, DOCKERHUB_README.md to CI list — closes #379 |
 | 1.10 | 2026-07-01 | Claude | v1.6.0 release — update §3.1 scope to v1.6.0; update §3.3 SWE1 ref 2.4→2.5 |
-| 1.9 | 2026-06-27 | Fix §3.3 cross-ref: SWE1 2.2→2.4 (+ any other stale refs fixed) | Dermot Murphy |
+| 1.9 | 2026-06-27 | Dermot Murphy | Fix §3.3 cross-ref: SWE1 2.2→2.4 (+ any other stale refs fixed) |
 | 1.8 | 2026-06-27 | Claude | ASPICE audit — §3.1 scope v1.2.0→v1.5.0; §3.3 SWE1 ref 1.9→2.2; update Review & Approval dates — closes #321 #323 |
 | 1.7 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.6 | 2026-06-04 | Claude | Deep accuracy audit: fix CI-024 workflow filename (rules.yml→cstylecheck_rules.yml), fix §7.5 reference, update SWE1-001 version in §3.3 — resolves issue #163 |
@@ -59,9 +82,9 @@ This plan applies to all configuration items produced by the CStyleCheck project
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.2 |
-| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.2 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
+| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.24 |
+| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.26 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
 
 ---
 
@@ -119,8 +142,8 @@ All items in the following table are placed under configuration control.
 
 | CI ID | Item | Path in Repository | Type |
 |---|---|---|---|
-| CI-001 | Main linter source | `src/cstylecheck.py` | Source code |
-| CI-002 | Version file | `src/_version.py` | Generated / version |
+| CI-001 | CLI entry-point shim (backward-compatible) | `src/cstylecheck.py` | Source code |
+| CI-002 | Version file (generated at build time from `git describe`; git-ignored, not stored in the repository) | `src/_version.py` | Generated / version |
 | CI-003 | Production naming convention config | `src/rules.yml` | Configuration |
 | CI-004 | CLI options defaults file | `src/options.txt` | Configuration |
 | CI-005 | Exclusions configuration | `src/exclusions.yml` | Configuration |
@@ -144,18 +167,45 @@ All items in the following table are placed under configuration control.
 | CI-023 | CI — test workflow | `.github/workflows/cstylecheck_tests.yml` | CI/CD |
 | CI-024 | CI — naming convention workflow | `.github/workflows/cstylecheck_rules.yml` | CI/CD |
 | CI-025 | CI — Docker publish workflow | `.github/workflows/docker_publish.yml` | CI/CD |
-| CI-026 | Project README | `README.md` | Documentation |
-| CI-027 | This CM Plan | `CStyleCheck_SUP8_CM_Plan.md` | Documentation |
+| CI-026 | Project README (with the logo image it embeds) | `README.md`, `logo/cstylecheck.jpg` | Documentation |
+| CI-027 | This CM Plan | `docs/aspice/CStyleCheck_SUP8_CM_Plan.md` | Documentation |
 | CI-028 | AI Authorship Deviation Record | `docs/aspice/CStyleCheck_DEV001_AI_Authorship_Deviation.md` | Documentation |
 | CI-029 | CI trend-record append script | `scripts/ci/append_trend_record.py` | CI script |
 | CI-030 | CI trend HTML and badge generation script | `scripts/ci/generate_trend.py` | CI script |
-| CI-031 | CI README badge update script | `scripts/ci/update_readme_badge.py` | CI script |
+| CI-031 | *Retired (#449).* CI README badge update script (scripts/ci/update_readme_badge.py, deleted): the README badge is a fixed shields.io endpoint URL and needs no per-run commit | — | CI script (retired) |
 | CI-032 | Independent Review Deviation Record | `docs/aspice/CStyleCheck_DEV002_Independent_Review_Deviation.md` | Documentation |
 | CI-033 | Software Version Description | `docs/aspice/CStyleCheck_SVD_Software_Version_Description.md` | Documentation |
 | CI-034 | CI — wiki publish workflow | `.github/workflows/wiki_publish.yml` | CI/CD |
 | CI-035 | Pre-release validation script | `scripts/prerelease_check.sh` | CI/CD script |
 | CI-036 | Pre-release validation script (Windows) | `scripts/check_my_project.bat` | CI/CD script |
 | CI-037 | DockerHub repository description | `DOCKERHUB_README.md` | Documentation |
+| CI-038 | CI — trend-analysis metrics workflow | `.github/workflows/metrics.yml` | CI/CD |
+| CI-039 | Trend metrics collection script (C source metrics) | `scripts/collect_metrics.py` | CI script |
+| CI-040 | Trend chart (SVG) generation script | `scripts/generate_charts.py` | CI script |
+| CI-041 | Trend-Analysis wiki page generation script | `scripts/update_wiki_metrics.py` | CI script |
+| CI-042 | PR metrics comparison report script | `scripts/compare_metrics.py` | CI script |
+| CI-043 | Trend metrics CStyleCheck config and threshold documentation | `scripts/metrics_rules.yml` | CI config |
+| CI-044 | Trend metrics unit tests (subset of CI-017, listed separately because it verifies COMP-13 rather than the package) | `tests/test_collect_metrics.py` | Test |
+| CI-045 | Checker package source (12 modules: `__init__`, `baseline`, `checker`, `cli`, `config`, `fixer`, `models`, `output`, `preprocessor`, `sign_checker`, `utils`, `wizard`) | `src/cstylecheck/*.py` | Source code |
+| CI-046 | Dependabot configuration (`pip` and `github-actions`, `target-branch: develop`) | `.github/dependabot.yml` | CI/CD configuration |
+| CI-047 | Change log | `CHANGELOG.md` | Documentation |
+| CI-048 | Contribution guide | `CONTRIBUTING.md` | Documentation |
+| CI-049 | Rules and configuration reference (wiki source) | `Rules-and-Configuration.md` | Documentation |
+| CI-050 | Example project preprocessor defines | `src/project.defines` | Configuration |
+| CI-051 | Windows build helper script | `scripts/build.bat` | Build script |
+| CI-052 | Windows test helper script | `scripts/test.bat` | Build script |
+| CI-053 | Test package marker | `tests/__init__.py` | Test |
+| CI-054 | Licence | `LICENSE` | Documentation |
+| CI-055 | ASPICE work products (each identified by its CSC document ID and version, e.g. CSC-SWE1-001; includes review records and the review template) | `docs/aspice/CStyleCheck_*.md`, `docs/templates/ASPICE_CL2_Test_Case_Template_1.md` | Documentation |
+| CI-056 | ASPICE internal audit records (CSC-AUD-nnn) | `docs/aspice/audits/*.md` | Documentation |
+| CI-057 | Repository configuration | `.gitignore`, `.gitattributes`, `.codespellrc` | Repository configuration |
+| CI-058 | AI assistant standing instructions (see CSC-DEV-001) | `CLAUDE.md` | Documentation |
+| CI-059 | Example C sources (trend-metrics input, CI-038 to CI-043) and example project | `examples/**` | Example / test data |
+| CI-060 | Draft companion standards documents | `embedded_c_style_guide.md`, `embedded_c_coding_standard.md`, `external_standards_analysis.md` | Documentation (draft) |
+| CI-061 | ASPICE work-product consistency check script (citations, SYS2/SWE1 RTM, SWE4 counts, README rule IDs, SWE3 line references, CI coverage; `--fix-citations` performs the §9 resync) | `scripts/aspice_check.py` | CI script |
+| CI-062 | CI — ASPICE consistency workflow (CSC-SUP1-001 GATE-04) | `.github/workflows/aspice_consistency.yml` | CI/CD |
+| CI-063 | Pull request template (ASPICE checklist; per-PR review record, CSC-SUP1-001 §5.3) | `.github/pull_request_template.md` | Process template |
+| CI-064 | Issue forms: bug report (CSC-SUP9-001 §5.1), change request (CSC-SUP10-001 §5.1) and chooser configuration | `.github/ISSUE_TEMPLATE/*` | Process template |
 
 ### 6.2 Identification Scheme
 
@@ -177,8 +227,8 @@ CStyleCheck uses the **Git Flow** branching model. The following branches are de
 
 | Branch | Purpose | Protection Rules |
 |---|---|---|
-| `main` | Production-ready code only; reflects the latest release baseline | Direct push prohibited; merged from `release/*` or `hotfix/*` only; every merge creates a version tag |
-| `develop` | Integration branch for completed features; always buildable | Direct push restricted; merged from `feature/*` and `bugfix/*` via pull request; CI must pass |
+| `main` | Production-ready code only; reflects the latest release baseline | Direct push prohibited and deletion blocked (ruleset `Do_Not_Delete_Main_Develop`: pull request required, merge commits only, no force-push, #449); no required status check until v2.0.0 (#443), when `main` is added to ruleset `Develop_Required_Checks` (#453); merged from `release/*` or `hotfix/*` only; every release merge and every hotfix that changes the delivered software creates a version tag; CI/repository-configuration-only hotfixes are not tagged (§7.6) |
+| `develop` | Integration branch for completed features; always buildable | Direct push prohibited and deletion blocked (same ruleset as `main`, #449); required status checks *All Checks Passed* and *ASPICE work-product consistency* (ruleset `Develop_Required_Checks`, #453); merged from `feature/*`, `bugfix/*` and `claude/<topic>-<id>` (AI-authored feature or bug-fix work, see CLAUDE.md) via pull request; CI must pass |
 
 ### 7.2 Supporting Branches
 
@@ -186,8 +236,9 @@ CStyleCheck uses the **Git Flow** branching model. The following branches are de
 |---|---|---|---|
 | `feature/<issue-id>-<short-description>` | `develop` | `develop` | New feature or enhancement; one branch per GitHub Issue |
 | `bugfix/<issue-id>-<short-description>` | `develop` | `develop` | Non-critical bug fix targeting the next release |
+| `claude/<topic>-<id>` | `develop` | `develop` | AI-authored feature or bug-fix work (equivalent to `feature/*` / `bugfix/*`); the PR references the GitHub Issue. May also be used for a hotfix targeting `main` under §7.6 |
 | `release/<version>` | `develop` | `main` and `develop` | Release preparation; version bump, final testing, and docs only — no new features |
-| `hotfix/<issue-id>-<short-description>` | `main` | `main` and `develop` | Critical production defect requiring immediate patch release |
+| `hotfix/<issue-id>-<short-description>` | `main` | `main` and `develop` | Critical production defect requiring immediate patch release, or a CI/repository-configuration-only fix (no version bump or tag, §7.6) |
 
 ### 7.3 Branch Naming Convention
 
@@ -197,6 +248,7 @@ Supporting branches shall be named using the following scheme:
 - `bugfix/67-fix-typedef-false-positive` — bug fix for GitHub Issue #67
 - `release/1.1.0` — release preparation for version 1.1.0
 - `hotfix/89-null-pointer-crash` — hotfix for critical Issue #89
+- `claude/boolean-optin-412` — AI-authored work for Issue #412 (`claude/<topic>-<id>`, where `<id>` is the Issue number or a session suffix)
 
 ### 7.4 Git Flow Lifecycle
 
@@ -214,11 +266,25 @@ main ──► hotfix/* ──► main ──► tag v1.0.1
 
 ### 7.5 CI Enforcement
 
-- All merges to `develop` and `main` require CI (`cstylecheck_tests.yml`) to pass
+- All merges to `develop` and `main` require CI (`cstylecheck_tests.yml`) to pass. Its *All Checks Passed* job runs on every pull request (no `paths:` filter on `pull_request`; the unit tests run only when a test-relevant path changed) and, with *ASPICE work-product consistency* (`aspice_consistency.yml`), is a required status check of ruleset `Develop_Required_Checks` on `develop` (branches need not be up to date; #449, #453). `main` is added to that ruleset after v2.0.0 (#443), because until then `main` does not carry these workflows
+- The default `GITHUB_TOKEN` is read-only. A workflow or job that writes declares its own `permissions:` (`cstylecheck_rules.yml` *Update Trend* and `metrics.yml`: `contents: write` for `gh-pages`; `docker_publish.yml`: `packages: write`, and `contents: write` for the release). No workflow pushes to `develop` or `main` (#449); version tags `v*` / `V*` cannot be updated or deleted (ruleset `Protect release tags`)
 - The `cstylecheck_rules.yml` workflow runs the linter against the project's own source on every commit touching C files, enforcing self-hosting of the tool's own rules
+- The `aspice_consistency.yml` workflow (CI-062) runs `python scripts/aspice_check.py` on every pull request and on pushes to `develop` and `main`, without a path filter, so no merge can leave a work product inconsistent with the code, the tests or another work product (#437)
 - Supporting branches are deleted after merge
+- Dependabot (CI-046) opens dependency-update pull requests against `develop` (`target-branch: develop`, #399/#403). Dependabot PRs follow the normal feature-PR rules and reach `main` only through a release
 
 > **📋 Note:** The `release/*` branch is the only branch where version-bump commits (`_version.py`, `pyproject.toml`) and release notes updates are permitted outside of `develop`. No new features may be introduced on a `release/*` branch.
+
+### 7.6 Hotfix Versioning and Tagging Policy
+
+| Hotfix content | Version bump | Tag | Records |
+|---|---|---|---|
+| Change to the delivered software (`src/`, `pyproject.toml`, `Dockerfile/`, `action.yml`, `.pre-commit-hooks.yml`) | Mandatory PATCH bump (e.g. 1.6.0 → 1.6.1) in `pyproject.toml` | Annotated tag `vX.Y.Z` on the `main` merge commit (pushed manually by the repository owner; tag pushes are not possible from the AI environment) | CHANGELOG entry, SVD update, GitHub Release |
+| CI / repository-configuration only (`.github/`, `scripts/ci/`, documentation), no change to the delivered software | No version bump | No tag. The `main` HEAD remains a development baseline (§8.1) of the last release | CHANGELOG `[Unreleased]` / next SVD "CI and repository changes" entry; the hotfix PR is referenced in the next release notes |
+
+Every hotfix is back-merged into `develop` immediately. Hotfix branches may use the `claude/<topic>-<id>` naming used for AI-authored work (see CLAUDE.md) in place of `hotfix/<issue-id>-…`, provided the PR is labelled as a hotfix and targets `main`.
+
+> **Record (AUD9-F-028):** Hotfix #399 (commits `8da22b9`/`945dd02`, Dependabot `target-branch: develop`) was a CI-configuration-only change. Under this policy it needed no patch version or tag. It was back-merged into `develop` by #403 and is to be recorded in the next SVD. `main` therefore holds `v1.6.0` plus #399 with no new tag. It is recorded in CSC-SVD-001 v1.35 §6.7.4 (P-002) for the v2.0.0 release.
 
 ---
 
@@ -250,18 +316,34 @@ main ──► hotfix/* ──► main ──► tag v1.0.1
 - The `build-and-push` job prints the image digest to the Actions log as an audit record
 - Layer caching uses a dedicated `:buildcache` tag in GHCR to speed incremental builds without affecting release tags
 
+### 8.4 Release Baseline Record
+
+Release baselines created under §8.2 (and §7.6 for hotfixes) since v1.6.0. Each release is described in CSC-SVD-001; the tag is the release baseline.
+
+| Release | Date | Type | Branch flow | Release baseline tag | Change record |
+|---|---|---|---|---|---|
+| v1.6.0 | 2026-07-06 | Minor | `develop` → `main` (PR #381) | `v1.6.0` on `a6102d6` | CSC-SVD-001 §6.5 |
+| v1.6.1 | 2026-10-06 | Patch (hotfix) | `hotfix/1.6.1` → `main` (PR #444); back-merged to `develop` (PR #445) | `v1.6.1` on `be797a5` | #439; CSC-SVD-001 §6.6 |
+| v2.0.0 | 2026-11-20 | Major (CSC-SUP10-001 §7.2) | `release/2.0.0` cut from `develop` `153d5d1` → `main` (release PR); back-merged to `develop`; `release/2.0.0` deleted after the back-merge | Annotated tag `v2.0.0` on the `main` merge commit of `release/2.0.0`, created and pushed after the owner's merge (§8.2 steps 4–5) | CR #443 (CSC-SUP10-001 CR-443); CSC-SVD-001 §6.7 |
+
+The v2.0.0 release baseline contains 83 rule IDs and 1671 tests (60 modules). After the tag, `docker_publish.yml` publishes the container baseline (`2.0.0`, `2.0`, `2`, `latest`) and the Physical Configuration Audit (§11.2) is performed; both are tracked in CR #443. `main` is then added to ruleset `Develop_Required_Checks` (#455, §7.1).
+
 ---
 
 ## 9. Change Control
 
 Changes to controlled configuration items shall follow the change control process defined in **CSC-SUP10-001 (Change Request Management Plan)**. In summary:
 
-1. A change request (CR) or problem resolution record is raised as a **GitHub Issue**, labelled appropriately (`bug`, `enhancement`, `change-request`)
+1. A change request (CR) or problem resolution record is raised as a **GitHub Issue** with the change request or bug issue form (CI-064), labelled appropriately (`bug`, `enhancement`, `change-request`)
 2. The Issue is linked in all related branch names and commit messages (e.g., `Closes #42`)
-3. The change is implemented on the appropriate Git Flow branch (`feature/*`, `bugfix/*`, or `hotfix/*`) per §7
-4. A pull request is opened targeting `develop` (or `main` for hotfixes); CI must pass and at least one review approval is required before merge
+3. The change is implemented on the appropriate Git Flow branch (`feature/*`, `bugfix/*`, `claude/<topic>-<id>` or `hotfix/*`) per §7
+4. A pull request is opened targeting `develop` (or `main` for hotfixes) using the pull request template (CI-063), whose completed ASPICE checklist is the per-PR review record (CSC-SUP1-001 §5.3); CI must pass before merge. The owner's merge of the PR is the approval and authorisation of every work-product revision it introduces; no separate signature is required, and the merge commit is the approval record (solo-developer project; CSC-DEV-002 §5.2)
 5. The merged commit SHA is recorded in the GitHub Issue closure comment
 6. If the change affects a release, a `release/*` branch is created and a new version tag applied per §8.2
+
+> **Revision-history practice (AUD10-F-032):** When a change set only resyncs cross-referenced document versions in a work product, the resync is recorded as one revision of that document per change set (one PR, or one release preparation), not as one revision per upstream change.
+>
+> **Resync tool (#437):** `python scripts/aspice_check.py --fix-citations` (CI-061) performs the resync: it rewrites every current-state document-version citation in `docs/aspice/CStyleCheck_*.md` to the version in the cited document's header (revision-history rows, review records, the review template, the analysis report and audit records are left unchanged). Run it after the version bumps of a change set, add the batched revision rows, and repeat until it reports no change. The same script runs without `--fix-citations` as CI gate GATE-04 (`aspice_consistency.yml`, CI-062) on every pull request, together with the other consistency checks, including that every tracked file is covered by a §6.1 CI.
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.
 
@@ -351,9 +433,11 @@ Performed after tagging to verify:
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-27 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-06-27 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-06-27 |
-| Approver | Dermot Murphy | Approved | 2026-06-27 |
+| Author | Claude | Approved | 2026-11-20 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

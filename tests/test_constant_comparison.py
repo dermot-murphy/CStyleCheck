@@ -8,7 +8,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 import unittest
-from harness import cfg_only, run, has, clean, count, messages
+from harness import Checker, cfg_only, run, has, clean, count, messages
 
 RULE = "misc.constant_comparison"
 CC_CFG = cfg_only(misc={"constant_comparison": {"enabled": True,
@@ -172,6 +172,71 @@ class TestConstantComparisonArraySubscript(unittest.TestCase):
                "    }\n"
                "}\n")
         self.assertFalse(has(src, CC_CFG, RULE))
+
+
+class TestConstantComparisonPreprocessor(unittest.TestCase):
+    """#if / #elif conditions are compile-time by design (#447)."""
+
+    def test_if_not_flagged(self):
+        """Reproduces the pattern reported in issue #447."""
+        src = ("#if (BOARD_I2C_INSTANCE == 0U)\n"
+               "#define HAL_I2C_PORT\t\ti2c0\n"
+               "#else\n"
+               "#define HAL_I2C_PORT\t\ti2c1\n"
+               "#endif\n")
+        self.assertFalse(has(src, CC_CFG, RULE))
+
+    def test_elif_not_flagged(self):
+        src = ("#if (BOARD_REV == 1)\n"
+               "#elif (BOARD_REV != 2)\n"
+               "#endif\n")
+        self.assertFalse(has(src, CC_CFG, RULE))
+
+    def test_indented_hash_not_flagged(self):
+        src = "  #  if BOARD_REV == 1\n  #  endif\n"
+        self.assertFalse(has(src, CC_CFG, RULE))
+
+    def test_continuation_line_not_flagged(self):
+        src = ("#if (BOARD_REV == 1) || \\\n"
+               "    (BOARD_VARIANT == 2U)\n"
+               "#endif\n")
+        self.assertFalse(has(src, CC_CFG, RULE))
+
+    def test_line_after_if_still_checked(self):
+        """The skip ends with the directive; code below it is checked."""
+        src = ("#if (BOARD_REV == 1)\n"
+               "void f(void){ if (ERROR == SUCCESS) {} }\n"
+               "#endif\n")
+        self.assertEqual(count(src, CC_CFG, RULE), 1)
+
+
+class TestConstantComparisonIdentifierExclusion(unittest.TestCase):
+    """An identifiers: exclusion entry names either operand (#447)."""
+
+    SRC = "void f(void){ if (BOARD_I2C_INSTANCE == 0U) {} }\n"
+
+    def _flagged(self, ident_disabled):
+        c = Checker("test_module.c", self.SRC, CC_CFG,
+                    ident_disabled_rules=ident_disabled)
+        return any(v.rule == RULE for v in c.run_all().violations)
+
+    def test_lhs_identifier_suppresses(self):
+        self.assertFalse(self._flagged(
+            {"BOARD_I2C_INSTANCE": frozenset({RULE})}))
+
+    def test_rhs_literal_suppresses(self):
+        self.assertFalse(self._flagged({"0U": frozenset({RULE})}))
+
+    def test_operator_no_longer_matches(self):
+        """The old key was the operator text; it must not suppress."""
+        self.assertTrue(self._flagged({"==": frozenset({RULE})}))
+
+    def test_other_identifier_does_not_suppress(self):
+        self.assertTrue(self._flagged({"OTHER_MACRO": frozenset({RULE})}))
+
+    def test_other_rule_does_not_suppress(self):
+        self.assertTrue(self._flagged(
+            {"BOARD_I2C_INSTANCE": frozenset({"misc.yoda_condition"})}))
 
 
 if __name__ == "__main__":

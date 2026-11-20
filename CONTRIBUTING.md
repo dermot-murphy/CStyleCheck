@@ -6,8 +6,8 @@ Thank you for your interest in contributing to CStyleCheck.
 
 Use the [GitHub Issues](https://github.com/dermot-murphy/CStyleCheck/issues) tracker:
 
-- **Bug reports**: label `bug` — include a minimal reproducing C file, your `.cstylecheck.yml`, and the version (`cstylecheck --version`).
-- **Feature requests**: label `enhancement` — describe the Barr-C:2018 or MISRA-C rule being targeted and the expected behaviour.
+- **Bug reports**: use the *Bug report* form (label `bug`) — include a minimal reproducing C file, your `.cstylecheck.yml`, and the version (`cstylecheck --version`).
+- **Feature requests**: use the *Change request* form (label `enhancement`) — describe the Barr-C:2018 or MISRA-C rule being targeted and the expected behaviour.
 - **Documentation issues**: label `documentation`.
 
 ## Pull Requests
@@ -19,9 +19,52 @@ Use the [GitHub Issues](https://github.com/dermot-murphy/CStyleCheck/issues) tra
 4. Ensure CI passes: `pytest tests/ --tb=short`.
 5. Open the PR against `develop`; include a reference to the relevant GitHub Issue.
 
+### PR checklist and ASPICE consistency check
+
+Issues are raised with the **bug** or **change request** issue form, and every PR uses the
+pull request template. Complete its *ASPICE checklist* (tick each item or mark it N/A): the
+completed checklist together with the owner's merge is the review record for the PR
+(CSC-SUP1-001 §5.3, CSC-DEV-002 §5.2).
+
+Before pushing, run the consistency check that CI runs on every PR (`aspice_consistency.yml`):
+
+```bash
+python scripts/aspice_check.py                  # all checks; exit 1 on any FAIL
+python scripts/aspice_check.py --skip-tests     # skip the SWE4 test-count check
+python scripts/aspice_check.py --fix-citations  # resync stale document-version citations
+```
+
+After bumping a work-product version, run `--fix-citations` and add one batched revision
+row to each document it changed (CSC-SUP8-001 §9).
+
 ## Code Style
 
 CStyleCheck applies Barr-C:2018 and MISRA-C complementary naming conventions to its own source. The project's rule configuration is `src/rules.yml`. Any contribution must pass the self-check CI job (`cstylecheck_rules.yml`).
+
+## New Rule Policy (opt-in)
+
+New rules ship `enabled: false` and default to disabled when the key is absent; they may be enabled in presets.
+
+In practice (issue #418):
+
+- Add the rule to `src/rules.yml` **and** `tests/rules.yml` with `enabled: false`.
+- Read the flag in the checker as `cfg.get("enabled", False)`, so a project config that
+  predates the rule (or omits its key) keeps it off. `--update-config` then adds the key
+  as `enabled: false`.
+- Add an "off when key absent" test and an explicit-enable test. The policy tests in
+  `tests/test_misra_rules.py` check that every `misc` rule shipped `enabled: false`
+  also defaults to off in code.
+- A rule may be switched on in a preset or a sample profile such as
+  `examples/embedded_project/config/strict.yml`.
+- A standard-specific opt-in rule (one that enforces a MISRA C or Barr-C rule) should
+  also be added to the matching preset in `src/cstylecheck/wizard.py` (`misra` or
+  `barr-c`, via `MISRA_OPT_IN_RULES` / `BARR_C_OPT_IN_RULES`) with its shipped default
+  severity, so `--preset` and the `--init` wizard question for that standard enable it
+  (issue #420). Style rules that belong to no standard (e.g. `misc.boolean_comparison`)
+  stay out of the presets.
+
+Upgrading CStyleCheck therefore never adds new findings to an existing project.
+Users opt in to each new rule.
 
 ## AI Assistance Policy
 

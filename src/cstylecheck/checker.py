@@ -8,6 +8,8 @@ Imports from: models, preprocessor, utils, config.
 from __future__ import annotations
 
 import re
+from collections import ChainMap
+from collections.abc import Mapping
 from pathlib import Path
 
 from .models import (
@@ -164,7 +166,750 @@ RE_PRAGMA_ONCE          = re.compile(r"^\s*#\s*pragma\s+once", re.MULTILINE)
 RE_MAGIC_NUMBER = re.compile(r"(?<![.\w])(\d{2,})(?![.\w])")
 RE_ARRAY_INDEX  = re.compile(r"\[\s*\d+\s*\]")   # matches  [2]  or  [ 10 ]
 
-RE_ENUM_MEMBER  = re.compile(r"\b([A-Za-z_]\w*)\s*(?:=|,|\})")
+# Leading identifier of one comma-separated enumerator item (issue #423).
+# Applied to each top-level item of the enum body by _enum_members(), so the
+# last member is found whether or not it has a trailing comma, and names used
+# inside an initialiser (``A = OTHER_VALUE``) are never mistaken for members.
+RE_ENUM_MEMBER  = re.compile(r"\s*([A-Za-z_]\w*)")
+RE_PP_LINE      = re.compile(r"^[ \t]*#[^\n]*", re.MULTILINE)
+
+
+def _enum_members(body: str) -> list:
+    """Return ``(name, offset)`` for every enumerator in an enum body.
+
+    *body* is the text between the braces (comments already blanked).  The
+    body is split on top-level commas (commas nested in parentheses inside
+    an initialiser are ignored) and the leading identifier of each non-empty
+    item is taken as the member name.  Preprocessor lines are blanked first,
+    preserving offsets.  The final item is included whether or not it is
+    followed by a trailing comma (issue #423).
+    """
+    text = RE_PP_LINE.sub(lambda pm: " " * len(pm.group(0)), body)
+    members = []
+    depth = 0
+    start = 0
+    for idx, ch in enumerate(text + ","):
+        if ch in "([":
+            depth += 1
+        elif ch in ")]":
+            depth = max(depth - 1, 0)
+        elif ch == "," and depth == 0:
+            im = RE_ENUM_MEMBER.match(text, start, idx)
+            if im:
+                members.append((im.group(1), im.start(1)))
+            start = idx + 1
+    return members
+
+
+# ---------------------------------------------------------------------------
+# Struct definition table (#456) — used by misc.partial_struct_assignment and
+# misc.partial_struct_initialiser.  Keys are "struct <tag>" for tagged
+# definitions and the alias name for typedefs.  A value is either a tuple of
+# member entries or, for "typedef struct tag Alias;", the key it aliases.
+# Each member entry is a tuple of alternative names: a named member is
+# ("name",); an anonymous union contributes one entry holding all of its
+# member names (assigning any one of them covers it); an anonymous struct
+# contributes one entry per member.
+# ---------------------------------------------------------------------------
+
+RE_STRUCT_DEF_OPEN = re.compile(
+    r"\b(typedef\s+)?(struct|union)\s+(?:([A-Za-z_]\w*)\s*)?\{")
+RE_STRUCT_TYPEDEF_ALIAS = re.compile(
+    r"\btypedef\s+struct\s+([A-Za-z_]\w*)\s+([A-Za-z_]\w*)\s*;")
+_RE_FUNC_PTR_MEMBER = re.compile(r"\(\s*\*\s*([A-Za-z_]\w*)\s*\)")
+_UNNAMED_BITFIELD_TYPES = frozenset((
+    "int", "signed", "unsigned", "char", "short", "long", "_Bool", "bool",
+))
+
+
+def _match_brace(text: str, open_pos: int) -> int:
+    """Return the index of the '}' matching the '{' at *open_pos* (or -1)."""
+    depth = 0
+    for i in range(open_pos, len(text)):
+        ch = text[i]
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return i
+    return -1
+
+
+def _split_top_level(text: str, sep: str) -> list:
+    """Split *text* on *sep* outside (), [] and {}."""
+    parts, depth, start = [], 0, 0
+    for i, ch in enumerate(text):
+        if ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth = max(depth - 1, 0)
+        elif ch == sep and depth == 0:
+            parts.append(text[start:i])
+            start = i + 1
+    parts.append(text[start:])
+    return parts
+
+
+def _declarator_name(chunk: str) -> str | None:
+    """Return the member name declared by one declarator chunk, or None."""
+    fp = _RE_FUNC_PTR_MEMBER.search(chunk)
+    if fp:
+        return fp.group(1)
+    bitfield = ":" in chunk
+    chunk = chunk.split(":", 1)[0]
+    chunk = re.sub(r"\[[^\]]*\]", " ", chunk)
+    words = re.findall(r"[A-Za-z_]\w*", chunk)
+    if not words:
+        return None
+    name = words[-1]
+    if bitfield and (name in _UNNAMED_BITFIELD_TYPES
+                     or re.search(r"_[tT]$", name)):
+        return None   # unnamed bit-field (padding)
+    return name
+
+
+def _struct_members(body: str) -> tuple:
+    """Return the member entries of a struct body (text between braces)."""
+    text = RE_PP_LINE.sub(lambda pm: " " * len(pm.group(0)), body)
+    entries: list = []
+    for decl in _split_top_level(text, ";"):
+        decl = decl.strip()
+        if not decl:
+            continue
+        brace = decl.find("{")
+        if brace >= 0:
+            close = _match_brace(decl, brace)
+            if close < 0:
+                continue
+            after = decl[close + 1:].strip()
+            if after:
+                for chunk in _split_top_level(after, ","):
+                    name = _declarator_name(chunk)
+                    if name:
+                        entries.append((name,))
+                continue
+            inner = _struct_members(decl[brace + 1:close])
+            if re.match(r"union\b", decl):
+                names = tuple(n for e in inner for n in e)
+                if names:
+                    entries.append(names)
+            else:
+                entries.extend(inner)
+            continue
+        for idx, chunk in enumerate(_split_top_level(decl, ",")):
+            if idx > 0:
+                # Later declarators carry no type: "int a, b;" -> "b".
+                chunk = "int " + chunk
+            name = _declarator_name(chunk)
+            if name:
+                entries.append((name,))
+    # Both branches of a conditional (#if / #else) member are parsed; keep
+    # the first entry for each name so a member is counted once.
+    seen: set = set()
+    unique: list = []
+    for entry in entries:
+        if not seen.intersection(entry):
+            unique.append(entry)
+        seen.update(entry)
+    return tuple(unique)
+
+
+# ---------------------------------------------------------------------------
+# Preprocessor conditionals in struct bodies (#463).  A member declared inside
+# #if / #ifdef / #ifndef / #elif / #else is counted only when the condition
+# can be evaluated as true from the macro table (object-like and simple
+# function-like #defines collected from the scanned and definition files).
+# A member under a condition that cannot be evaluated is left out of the
+# count, unless it is declared in every possible branch of a conditional
+# that has an #else.  Evaluation is three-valued: True, False or None
+# (unknown).  An identifier the table does not define is unknown, not 0,
+# because the table may be incomplete (compiler -D flags, unscanned headers).
+# ---------------------------------------------------------------------------
+
+_RE_DEFINE_LINE = re.compile(
+    r"[ \t]*#[ \t]*define[ \t]+([A-Za-z_]\w*)(\([^)\n]*\))?[ \t]*(.*)$")
+_RE_UNDEF_LINE = re.compile(r"[ \t]*#[ \t]*undef[ \t]+([A-Za-z_]\w*)")
+_RE_PP_COND = re.compile(
+    r"^[ \t]*#[ \t]*(if|ifdef|ifndef|elif|elifdef|elifndef|else|endif)\b(.*)$")
+_RE_PP_TOKEN = re.compile(
+    r"\s*(?:((?:0[xX][0-9a-fA-F]+|\d+)[uUlL]*)(?![\w.])"
+    r"|([A-Za-z_]\w*)"
+    r"|(&&|\|\||==|!=|<=|>=|<<|>>|[-+*/%()!<>&|^~?:,]))")
+_UNKNOWN_TOKEN = "\0unknown"
+
+# Kinds of #define (#463 review):
+#   plain        outside any #if, or inside a guard (below) only
+#   default      "#ifndef X" immediately followed by "#define X": a
+#                configuration default or an include guard's own name
+#   conditional  under any other #if: whether it applies is not known, so
+#                it is not used
+# A guard is an "#ifndef X" whose next directive is "#define X"; the lines
+# inside it are treated as unconditional (an include guard, or a default).
+MACRO_PLAIN, MACRO_DEFAULT = "plain", "default"
+
+
+def _join_continuations(text: str) -> str:
+    """Join backslash-continued lines (the newline is removed)."""
+    return re.sub(r"\\[ \t]*\n", " ", text)
+
+
+def collect_macro_defs(clean: str) -> list:
+    """Return ``(name, params, body, kind)`` for every usable ``#define``
+    in *clean*, in file order; *kind* is MACRO_PLAIN or MACRO_DEFAULT.
+
+    Defines under a non-guard conditional are omitted.  A name that is
+    ``#undef``-ed outside any conditional is returned with *kind* None.
+    """
+    found: list = []
+    lines = [ln for ln in _join_continuations(clean).split("\n")
+             if ln.strip()]
+    stack: list = []          # True = guard frame, False = other conditional
+    for idx, line in enumerate(lines):
+        cm = _RE_PP_COND.match(line)
+        if cm:
+            kind = cm.group(1)
+            if kind in ("if", "ifdef", "ifndef"):
+                guard = False
+                if kind == "ifndef" and idx + 1 < len(lines):
+                    name = (cm.group(2).split() or [""])[0]
+                    dm = _RE_DEFINE_LINE.match(lines[idx + 1])
+                    guard = bool(dm and dm.group(1) == name)
+                stack.append(guard)
+            elif kind == "endif":
+                if stack:
+                    stack.pop()
+            elif stack:
+                stack[-1] = False      # #elif / #else arm: conditional
+            continue
+        if not all(stack):
+            continue
+        dm = _RE_DEFINE_LINE.match(line)
+        if dm:
+            params = None
+            if dm.group(2) is not None:
+                params = tuple(p.strip() for p in dm.group(2)[1:-1].split(",")
+                               if p.strip())
+            prev = lines[idx - 1] if idx else ""
+            pm = _RE_PP_COND.match(prev)
+            kind = (MACRO_DEFAULT if pm and pm.group(1) == "ifndef"
+                    and (pm.group(2).split() or [""])[0] == dm.group(1)
+                    else MACRO_PLAIN)
+            found.append((dm.group(1), params, dm.group(3).strip(), kind))
+            continue
+        um = _RE_UNDEF_LINE.match(line)
+        if um:
+            found.append((um.group(1), None, "", None))
+    return found
+
+
+class MacroTable:
+    """Merge #defines from several files (#463).
+
+    A plain definition beats a default; among the same kind the first file
+    added wins.  A name ``#undef``-ed outside a conditional anywhere is
+    dropped (unknown).  :attr:`table` maps a name to ``(params, body)``.
+    """
+
+    def __init__(self):
+        self._plain: dict = {}
+        self._default: dict = {}
+        self._undef: set = set()
+
+    def add(self, defs: list) -> None:
+        for name, params, body, kind in defs:
+            if kind is None:
+                self._undef.add(name)
+            elif kind == MACRO_PLAIN:
+                self._plain.setdefault(name, (params, body))
+            else:
+                self._default.setdefault(name, (params, body))
+
+    @property
+    def table(self) -> dict:
+        merged = dict(self._default)
+        merged.update(self._plain)
+        for name in self._undef:
+            merged.pop(name, None)
+        return merged
+
+
+def collect_macros(clean: str) -> dict:
+    """Return ``{name: (params, body)}`` for the usable ``#define``s of one
+    preprocessed source text (see :func:`collect_macro_defs`)."""
+    table = MacroTable()
+    table.add(collect_macro_defs(clean))
+    return table.table
+
+
+def _pp_tokenize(text: str) -> list | None:
+    """Split a #if expression into tokens, or return None if it has
+    anything the evaluator does not handle (strings, character literals,
+    floating constants)."""
+    tokens, pos = [], 0
+    text = text.rstrip()
+    while pos < len(text):
+        m = _RE_PP_TOKEN.match(text, pos)
+        if not m or m.end() == pos:
+            if text[pos:].strip():
+                return None
+            break
+        tok = m.group(1) or m.group(2) or m.group(3)
+        if m.group(1):
+            tok = re.sub(r"[uUlL]+$", "", tok)
+        tokens.append(tok)
+        pos = m.end()
+    return tokens
+
+
+def _pp_expand(tokens: list, macros: Mapping, depth: int = 0,
+               active: frozenset = frozenset()) -> list:
+    """Expand ``defined`` and macros in *tokens* (no token pasting or
+    stringising).  Undefinable parts become the unknown token."""
+    out: list = []
+    i, n = 0, len(tokens)
+    while i < n:
+        tok = tokens[i]
+        if tok == "defined":
+            j = i + 1
+            paren = j < n and tokens[j] == "("
+            if paren:
+                j += 1
+            name = tokens[j] if j < n else ""
+            if paren:
+                j += 1
+            out.append("1" if name in macros else _UNKNOWN_TOKEN)
+            i = j + 1
+            continue
+        if tok in macros and tok not in active and depth < 16:
+            params, body = macros[tok]
+            body_tokens = _pp_tokenize(body) if body else []
+            if body_tokens is None:
+                body_tokens = [_UNKNOWN_TOKEN]
+            if params is None:
+                # Spliced as-is, like C (no parentheses are added).
+                out += _pp_expand(body_tokens, macros, depth + 1,
+                                  active | {tok})
+                i += 1
+                continue
+            if i + 1 < n and tokens[i + 1] == "(":
+                args: list = [[]]
+                level, j = 0, i + 2
+                while j < n:
+                    t = tokens[j]
+                    if t == "(":
+                        level += 1
+                    elif t == ")":
+                        if level == 0:
+                            break
+                        level -= 1
+                    elif t == "," and level == 0:
+                        args.append([])
+                        j += 1
+                        continue
+                    args[-1].append(t)
+                    j += 1
+                if j >= n:
+                    out.append(_UNKNOWN_TOKEN)
+                    break
+                if args == [[]]:
+                    args = []
+                if len(args) != len(params):
+                    out.append(_UNKNOWN_TOKEN)
+                    i = j + 1
+                    continue
+                sub = dict(zip(params, args))
+                expanded: list = []
+                for t in body_tokens:
+                    expanded += sub[t] if t in sub else [t]
+                out += _pp_expand(expanded, macros, depth + 1,
+                                  active | {tok})
+                i = j + 1
+                continue
+        out.append(tok)
+        i += 1
+    return out
+
+
+class _PPExprParser:
+    """Three-valued C preprocessor expression evaluator (int or None)."""
+
+    _BINARY = (
+        ("|",), ("^",), ("&",), ("==", "!="), ("<", ">", "<=", ">="),
+        ("<<", ">>"), ("+", "-"), ("*", "/", "%"),
+    )
+
+    def __init__(self, tokens: list):
+        self.tokens, self.pos = tokens, 0
+
+    def _peek(self):
+        return self.tokens[self.pos] if self.pos < len(self.tokens) else None
+
+    def _take(self):
+        tok = self._peek()
+        self.pos += 1
+        return tok
+
+    def parse(self):
+        value = self._ternary()
+        if self.pos != len(self.tokens):
+            raise ValueError("trailing tokens")
+        return value
+
+    def _ternary(self):
+        cond = self._logical_or()
+        if self._peek() != "?":
+            return cond
+        self._take()
+        a = self._ternary()
+        if self._take() != ":":
+            raise ValueError("expected ':'")
+        b = self._ternary()
+        if cond is None:
+            return a if a == b else None
+        return a if cond else b
+
+    def _logical_or(self):
+        left = self._logical_and()
+        while self._peek() == "||":
+            self._take()
+            right = self._logical_and()
+            if left or right:          # a known non-zero side decides it
+                left = 1
+            elif left is None or right is None:
+                left = None
+            else:
+                left = 0
+        return left
+
+    def _logical_and(self):
+        left = self._binary(0)
+        while self._peek() == "&&":
+            self._take()
+            right = self._binary(0)
+            if left == 0 or right == 0:   # a known zero side decides it
+                left = 0
+            elif left is None or right is None:
+                left = None
+            else:
+                left = 1
+        return left
+
+    def _binary(self, level: int):
+        if level == len(self._BINARY):
+            return self._unary()
+        left = self._binary(level + 1)
+        while self._peek() in self._BINARY[level]:
+            op = self._take()
+            right = self._binary(level + 1)
+            left = self._apply(op, left, right)
+        return left
+
+    @staticmethod
+    def _apply(op: str, a, b):
+        if a is None or b is None:
+            return None
+        if op in ("/", "%"):
+            if b == 0:
+                return None
+            q = abs(a) // abs(b) * (1 if (a < 0) == (b < 0) else -1)
+            return q if op == "/" else a - q * b
+        if op in ("<<", ">>") and not 0 <= b < 64:
+            return None
+        return int({
+            "|": lambda: a | b, "^": lambda: a ^ b, "&": lambda: a & b,
+            "==": lambda: a == b, "!=": lambda: a != b,
+            "<": lambda: a < b, ">": lambda: a > b,
+            "<=": lambda: a <= b, ">=": lambda: a >= b,
+            "<<": lambda: a << b, ">>": lambda: a >> b,
+            "+": lambda: a + b, "-": lambda: a - b, "*": lambda: a * b,
+        }[op]())
+
+    def _unary(self):
+        tok = self._peek()
+        if tok in ("!", "~", "-", "+"):
+            self._take()
+            v = self._unary()
+            if v is None:
+                return None
+            return {"!": int(not v), "~": ~v, "-": -v, "+": v}[tok]
+        return self._primary()
+
+    def _primary(self):
+        tok = self._take()
+        if tok is None:
+            raise ValueError("unexpected end")
+        if tok == "(":
+            v = self._ternary()
+            if self._take() != ")":
+                raise ValueError("expected ')'")
+            return v
+        if tok[0].isdigit():
+            return int(tok, 0) if not re.fullmatch(r"0\d+", tok) \
+                else int(tok, 8)
+        if tok == _UNKNOWN_TOKEN or re.match(r"[A-Za-z_]", tok):
+            return None                # not defined in the macro table
+        raise ValueError(f"unexpected token {tok!r}")
+
+
+def eval_pp_condition(expr: str, macros: Mapping) -> bool | None:
+    """Evaluate a ``#if`` / ``#elif`` expression: True, False or None."""
+    tokens = _pp_tokenize(expr)
+    if tokens is None:
+        return None
+    try:
+        value = _PPExprParser(_pp_expand(tokens, macros)).parse()
+    except (ValueError, KeyError, IndexError, RecursionError):
+        return None
+    return None if value is None else bool(value)
+
+
+def _defined_value(kind: str, arg: str, macros: Mapping) -> bool | None:
+    """Value of an #ifdef / #ifndef (or #elifdef / #elifndef) test.  A
+    name missing from the table is unknown, not undefined."""
+    name = (arg.split() or [""])[0]
+    if name in macros:
+        return kind.endswith("ifdef")
+    return None
+
+
+_GROUP_MARK = "\0group"
+
+
+def _resolve_conditionals(body: str, macros: Mapping) -> tuple:
+    """Split a struct body into the text that is certainly compiled and the
+    unresolved conditional groups.
+
+    Returns ``(active_text, groups)``.  *active_text* keeps lines whose
+    enclosing conditions are all true, blanks the rest, and holds a
+    ``_GROUP_MARK<n>`` line where unresolved group *n* ends, so members
+    credited from it keep their declaration order.  Each group is
+    ``(exhaustive, branches)`` for a conditional whose outcome is unknown:
+    *exhaustive* is true when one of its arms must be compiled (it has an
+    #else, or an #elif that is true by itself); a branch is the text of one
+    arm that may be compiled.
+    """
+    active: list = []
+    groups: list = []
+    stack: list = []
+
+    def outer_state() -> bool:
+        return all(f.current is True for f in stack)
+
+    for line in _join_continuations(body).split("\n"):
+        m = _RE_PP_COND.match(line)
+        if m:
+            kind, arg = m.group(1), m.group(2).strip()
+            v: bool | None
+            if kind in ("if", "ifdef", "ifndef"):
+                v = (eval_pp_condition(arg, macros) if kind == "if"
+                     else _defined_value(kind, arg, macros))
+                stack.append(_CondFrame(v, outer_state()))
+            elif stack:
+                frame = stack[-1]
+                if kind in ("elif", "elifdef", "elifndef"):
+                    if frame.any_true:
+                        v = False
+                    else:
+                        v = (eval_pp_condition(arg, macros) if kind == "elif"
+                             else _defined_value(kind[2:], arg, macros))
+                        if v is True:
+                            frame.has_else = True    # an arm must compile
+                        if frame.any_unknown and v is not False:
+                            v = None      # taken only if an earlier arm is not
+                    frame.enter(v)
+                elif kind == "else":
+                    frame.has_else = True
+                    frame.enter(False if frame.any_true
+                                else (None if frame.any_unknown else True))
+                else:                       # endif
+                    stack.pop()
+                    if frame.any_unknown and frame.outer_on:
+                        active.append(f"{_GROUP_MARK}{len(groups)}")
+                        groups.append((frame.has_else, frame.branches))
+                        continue
+            active.append("")
+            continue
+        if outer_state():
+            active.append(line)
+            continue
+        active.append("")
+        # Attribute the line to the outermost unresolved frame when every
+        # frame inside it is in a true branch.
+        for idx, frame in enumerate(stack):
+            if frame.current is True:
+                continue
+            if frame.current is None and frame.outer_on and all(
+                    f.current is True for f in stack[idx + 1:]):
+                frame.branches[-1].append(line)
+            break
+    return "\n".join(active), groups
+
+
+class _CondFrame:
+    """One open #if group while resolving a struct body (#463)."""
+
+    def __init__(self, value: bool | None, outer_on: bool):
+        self.current: bool | None = None
+        self.any_true = False
+        self.any_unknown = False
+        self.has_else = False
+        self.outer_on = outer_on        # every enclosing arm is true
+        self.branches: list = []        # line lists of arms that may compile
+        self.enter(value)
+
+    def enter(self, value: bool | None) -> None:
+        """Start a new arm whose condition is *value*."""
+        self.current = value
+        self.any_true = self.any_true or value is True
+        self.any_unknown = self.any_unknown or value is None
+        if value is not False:
+            self.branches.append([])
+
+
+def _members_with_conditionals(body: str, macros: Mapping | None) -> tuple:
+    """Return the member entries of *body*, resolving #if blocks (#463).
+
+    A member of an unresolved group is counted only when the group is
+    exhaustive and every arm that may compile declares it; it is placed
+    where the group ends, keeping declaration order.
+    """
+    if "#" not in body:
+        return _struct_members(body)
+    active, groups = _resolve_conditionals(body, macros or {})
+    entries: list = []
+    parts = re.split(re.escape(_GROUP_MARK) + r"(\d+)", active)
+    for idx, part in enumerate(parts):
+        if idx % 2 == 0:
+            entries.extend(_struct_members(part))
+            continue
+        exhaustive, branches = groups[int(part)]
+        if not exhaustive or not branches:
+            continue
+        per_branch = [_struct_members("\n".join(b)) for b in branches]
+        common = set.intersection(
+            *({n for e in entries_b for n in e} for entries_b in per_branch))
+        entries.extend(e for e in per_branch[0] if set(e) <= common)
+    seen: set = set()
+    unique: list = []
+    for entry in entries:
+        if not seen.intersection(entry):
+            unique.append(entry)
+        seen.update(entry)
+    return tuple(unique)
+
+
+def collect_typedef_names(clean: str) -> set:
+    """Return every name declared by a ``typedef`` in *clean* (#462).
+
+    Used to tell a local of a known non-struct type (an enum, a scalar or a
+    pointer typedef) from one whose type is not known at all.
+    """
+    names: set = set()
+    for m in re.finditer(r"\btypedef\b", clean):
+        depth, end = 0, -1
+        for i in range(m.end(), len(clean)):
+            ch = clean[i]
+            if ch in "({[":
+                depth += 1
+            elif ch in ")}]":
+                depth -= 1
+            elif ch == ";" and depth == 0:
+                end = i
+                break
+        if end < 0:
+            continue
+        stmt = clean[m.end():end]
+        brace = stmt.rfind("}")
+        tail = stmt[brace + 1:] if brace >= 0 else stmt
+        for idx, chunk in enumerate(_split_top_level(tail, ",")):
+            if brace < 0 and idx == 0:
+                name = _declarator_name(chunk)
+            else:
+                name = _declarator_name("int " + chunk)
+            if name:
+                names.add(name)
+    return names
+
+
+def collect_struct_defs(clean: str, macros: dict | None = None) -> dict:
+    """Return the struct definition table of one preprocessed source text.
+
+    *macros* (the project-wide table) resolves #if blocks inside struct
+    bodies (#463) and wins over this file's own #defines, which only fill
+    names the table lacks: a project configuration header must beat an
+    SDK header's ``#ifndef`` default.  The file's own table is built only
+    when a struct body contains a preprocessor line.
+    """
+    table: Mapping | None = None
+    defs: dict = {}
+    for m in RE_STRUCT_DEF_OPEN.finditer(clean):
+        if m.group(2) != "struct":
+            continue
+        open_pos = m.end() - 1
+        close = _match_brace(clean, open_pos)
+        if close < 0:
+            continue
+        body = clean[open_pos + 1:close]
+        if table is None and "#" in body:
+            table = ChainMap(macros or {}, collect_macros(clean))
+        members = _members_with_conditionals(body, table)
+        if m.group(3):
+            defs[f"struct {m.group(3)}"] = members
+        if m.group(1):
+            semi = clean.find(";", close)
+            if semi > 0:
+                for chunk in _split_top_level(clean[close + 1:semi], ","):
+                    if "*" in chunk:
+                        continue
+                    nm = re.match(r"\s*([A-Za-z_]\w*)\s*$", chunk)
+                    if nm:
+                        defs[nm.group(1)] = members
+    for m in RE_STRUCT_TYPEDEF_ALIAS.finditer(clean):
+        defs.setdefault(m.group(2), f"struct {m.group(1)}")
+    return defs
+
+
+def clean_for_struct_scan(source: str, defines: list | None = None) -> str:
+    """Preprocess *source* (and apply *defines*) for the struct pre-scan."""
+    clean = preprocess(source.replace("\r\n", "\n").replace("\r", "\n"))
+    if defines:
+        clean = apply_defines(clean, defines)
+    return clean
+
+
+def collect_struct_defs_from_source(source: str,
+                                    defines: list | None = None,
+                                    macros: dict | None = None) -> dict:
+    """Preprocess *source* (and apply *defines*) then collect struct defs."""
+    return collect_struct_defs(clean_for_struct_scan(source, defines), macros)
+
+
+_STRUCT_RULE_KEYS = ("partial_struct_assignment", "partial_struct_initialiser")
+
+
+def struct_rules_enabled(cfg: dict) -> bool:
+    """True when either #456 rule is enabled in *cfg*."""
+    misc = cfg.get("misc", {}) or {}
+    return any(
+        (misc.get(k, {}) or {}).get("enabled", False)
+        for k in _STRUCT_RULE_KEYS
+    )
+
+
+def struct_definition_paths(cfg: dict) -> list:
+    """Return the ``definition_paths`` globs of both #456 rules (#461),
+    in order and without duplicates.  A rule contributes its list even when
+    it is disabled here, so a root config can name the paths for rules that
+    per-directory configs enable."""
+    misc = cfg.get("misc", {}) or {}
+    paths: list = []
+    for key in _STRUCT_RULE_KEYS:
+        rule = misc.get(key, {}) or {}
+        for p in rule.get("definition_paths", []) or []:
+            if p not in paths:
+                paths.append(p)
+    return paths
 
 RE_COMMENT_WORD = re.compile(r"[A-Za-z][A-Za-z']{2,}")
 
@@ -185,6 +930,9 @@ class Checker:
         copyright_header=None,
         c_keywords: frozenset | None = None,
         c_stdlib_names: frozenset | None = None,
+        struct_defs: dict | None = None,
+        macros: dict | None = None,
+        type_names: set | frozenset | None = None,
     ):
         self.filepath      = filepath
         # Normalise line endings once at construction time so all check
@@ -242,6 +990,24 @@ class Checker:
         self._c_stdlib_names: frozenset = (
             c_stdlib_names if c_stdlib_names is not None else C_STDLIB_NAMES
         )
+        # Struct definition table (#456): this file's definitions merged
+        # over *struct_defs*, the table the CLI collects from every scanned
+        # file (so struct types defined in headers are known).
+        # Built only when either rule is enabled for this file.
+        # *macros* (#463) resolves #if blocks in struct bodies; *type_names*
+        # (#462) lists every typedef name known to the CLI pre-scan.
+        self._struct_defs: dict = {}
+        self._type_names: set = set()
+        if struct_rules_enabled(cfg):
+            self._struct_defs.update(struct_defs or {})
+            self._struct_defs.update(collect_struct_defs(self.clean, macros))
+            self._type_names.update(type_names or ())
+            self._type_names.update(collect_typedef_names(self.clean))
+            # A #define used as a type (e.g. "#define U8 unsigned char")
+            # is not an unknown struct type (#462).
+            self._type_names.update(macros or ())
+            self._type_names.update(collect_macros(self.clean))
+        self._sizeof_objects: set | None = None   # lazily built (#460)
 
     # -----------------------------------------------------------------------
     # Internal helpers
@@ -251,11 +1017,17 @@ class Checker:
         line, col = offset_to_line_col(self._line_map, pos)
         return Violation(self.filepath, line, col, sev, rule, msg)
 
-    def _v(self, pos: int, sev: str, rule: str, msg: str) -> None:
+    def _v(self, pos: int, sev: str, rule: str, msg: str,
+           idents: tuple = None) -> None:
+        # An identifiers: exclusion entry is keyed on *idents* when the rule
+        # passes them, else on the first quoted text in the message.
         if self._ident_disabled:
-            _m = re.search(r"'([^']+)'", msg)
-            if _m and rule in self._ident_disabled.get(_m.group(1), frozenset()):
-                return
+            if idents is None:
+                _m = re.search(r"'([^']+)'", msg)
+                idents = (_m.group(1),) if _m else ()
+            for _id in idents:
+                if rule in self._ident_disabled.get(_id, frozenset()):
+                    return
         self.result.add(self._violation(pos, sev, rule, msg))
 
     def _prefix(self) -> str:
@@ -347,10 +1119,20 @@ class Checker:
         self._check_yoda()
         self._check_constant_comparison()
         self._check_reserved_names()
-        self._check_lowercase_l_suffix()   # MISRA C:2012/2023 Rule 7.3
-        self._check_octal_constants()      # MISRA C:2012/2023 Rule 7.1
-        self._check_trigraphs()            # MISRA C:2012/2023 Rule 4.2
-        self._check_non_ascii_source()     # MISRA C:2012/2023 Rule 4.1
+        self._check_lowercase_l_suffix()        # MISRA C:2012/2023 Rule 7.3
+        self._check_octal_constants()           # MISRA C:2012/2023 Rule 7.1
+        self._check_trigraphs()                 # MISRA C:2012/2023 Rule 4.2
+        self._check_non_ascii_source()          # MISRA C:2012/2023 Rule 4.1
+        self._check_goto_usage()                    # MISRA C:2012 Rule 15.1
+        self._check_assignment_in_condition()       # MISRA C:2012 Rule 13.4
+        self._check_multiple_statements_per_line()  # Barr-C §3.2
+        self._check_void_pointer()                  # MISRA C:2012 Rule 11.5
+        self._check_recursive_function()            # MISRA C:2012 Rule 17.2
+        self._check_sizeof_type()                   # Barr-C §5.7
+        self._check_boolean_comparison()            # style: redundant == true/false
+        self._check_empty_else()                    # Barr-C §8.3
+        self._check_partial_struct_assignment()     # MISRA 9.1 / Barr-C §7.2 (#456)
+        self._check_partial_struct_initialiser()    # cf. MISRA 9.3 (#456)
         if self._spell_dict is not None:
             self._check_spelling()
         # Remove violations for rules that are disabled for this file
@@ -1126,15 +1908,14 @@ class Checker:
 
             # --- member checks ---
             body_offset = m.start(1)
-            for mm in RE_ENUM_MEMBER.finditer(body_str):
-                mname = mm.group(1)
+            for mname, moff in _enum_members(body_str):
                 if not matches_case(mname, member_case):
-                    self._v(body_offset + mm.start(), type_sev, "enum.member_case",
+                    self._v(body_offset + moff, type_sev, "enum.member_case",
                             f"Enum member '{mname}' must be {member_case}")
                 if (member_pfx_cfg.get("enabled")
                         and not mname.upper().startswith(
                             member_pfx.upper() + "_")):
-                    self._v(body_offset + mm.start(),
+                    self._v(body_offset + moff,
                             member_pfx_cfg.get("severity", "warning"),
                             "enum.member_prefix",
                             f"Enum member '{mname}' should start with "
@@ -2176,6 +2957,10 @@ class Checker:
             if (NULL == NULL)       ← always true
             if (ERROR == SUCCESS)   ← always the same value
             if (true == false)      ← always false
+
+        Not checked: ``#if`` / ``#elif`` conditions, which compare constants
+        at compile time by design (#447).  An ``identifiers:`` exclusion
+        entry for either operand suppresses the finding.
         """
         cc_cfg = self.cfg.get("misc", {}).get("constant_comparison", {})
         if not cc_cfg.get("enabled", True):
@@ -2188,6 +2973,11 @@ class Checker:
                               self.clean, re.MULTILINE):
             skip.update(range(m.start(), m.end()))
         for m in re.finditer(r"\breturn\b[^;]*;", self.clean, re.MULTILINE):
+            skip.update(range(m.start(), m.end()))
+        # #if / #elif conditions (with any continuation lines) compare
+        # constants at compile time by design (#447).
+        for m in re.finditer(r"^[ \t]*#[ \t]*(?:if|elif)\b(?:[^\n]*\\\n)*[^\n]*",
+                              self.clean, re.MULTILINE):
             skip.update(range(m.start(), m.end()))
 
         _RE_CMP = re.compile(r"(?<![<>=!])([=!]=)(?!=)")
@@ -2236,7 +3026,8 @@ class Checker:
             if self._is_constant_token(lhs) and self._is_constant_token(rhs):
                 self._v(m.start(), sev, "misc.constant_comparison",
                         f"Both sides of '{op}' are constants: "
-                        f"'{lhs} {op} {rhs_display}'")
+                        f"'{lhs} {op} {rhs_display}'",
+                        idents=(lhs, rhs))
 
     # -----------------------------------------------------------------------
     # 11. MISRA C:2012/2023 Rule 7.3 — lowercase 'l' suffix forbidden
@@ -2397,6 +3188,691 @@ class Checker:
                 f"line {line}, col {col}; source files must use only "
                 f"printable ASCII characters (MISRA C:2012/2023 Rule 4.1)"
             ))
+
+    # -----------------------------------------------------------------------
+    # Opt-in policy (#418): the MISRA / Barr-C rules added after v1.6.0
+    # (the sections that follow: goto_usage, assignment_in_condition,
+    # multiple_statements_per_line, void_pointer, recursive_function,
+    # sizeof_type, boolean_comparison, empty_else; partial_struct_assignment
+    # and partial_struct_initialiser, #456) ship 'enabled: false' in
+    # rules.yml and are disabled when their key is absent from the config
+    # (cfg.get("enabled", False)).  See CONTRIBUTING.md.
+    # -----------------------------------------------------------------------
+    # 15. MISRA C:2012 Rule 15.1 — goto forbidden
+    #
+    # The goto statement transfers control unconditionally to a labelled
+    # statement elsewhere in the same function.  It can bypass
+    # initialisations, obscure control flow, and make static analysis
+    # significantly harder.  MISRA C:2012 Rule 15.1 is Advisory; many
+    # safety-critical coding standards treat it as Required.
+    #
+    #   Violation:  goto cleanup;
+    #   Correct:    Restructure using break, continue, a flag variable,
+    #               or an early-return pattern.
+    # -----------------------------------------------------------------------
+
+    _RE_GOTO = re.compile(r'\bgoto\b')
+
+    def _check_goto_usage(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("goto_usage", {})
+        if not cfg.get("enabled", False):   # opt-in (#418)
+            return
+        sev = cfg.get("severity", "error")
+
+        for m in self._RE_GOTO.finditer(self.clean):
+            self._v(
+                m.start(), sev, "misc.goto_usage",
+                "Use of 'goto' is forbidden; restructure the control flow "
+                "using break, continue, or an early-return pattern instead "
+                "(MISRA C:2012 Rule 15.1)"
+            )
+
+    # -----------------------------------------------------------------------
+    # 16. MISRA C:2012 Rule 13.4 — assignment in condition
+    #
+    # Using an assignment operator inside a conditional expression (the
+    # test of an if, while, or for statement) is almost always a typo for
+    # '==', and the C compiler silently accepts it.  Even when intentional
+    # (e.g. while ((c = getchar()) != EOF)), it makes the code harder to
+    # read and violates MISRA C:2012 Rule 13.4.
+    #
+    #   Violation:  if (x = foo()) { … }
+    #   Violation:  while (ptr = next_node(ptr)) { … }
+    #   Correct:    x = foo(); if (x) { … }
+    # -----------------------------------------------------------------------
+
+    _RE_COND_KW   = re.compile(r'\b(if|while|for)\s*\(')
+    _RE_ASSIGN_IN_COND = re.compile(r'(?<![!<>=+\-*/%&|^~])=(?!=)')
+
+    def _check_assignment_in_condition(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("assignment_in_condition", {})
+        if not cfg.get("enabled", False):   # opt-in (#418)
+            return
+        sev = cfg.get("severity", "warning")
+
+        for m in self._RE_COND_KW.finditer(self.clean):
+            keyword  = m.group(1)
+            open_pos = m.end() - 1   # index of the '(' in self.clean
+
+            # Walk forward to find the matching closing ')'
+            depth     = 0
+            close_pos = open_pos
+            for i in range(open_pos, len(self.clean)):
+                if self.clean[i] == '(':
+                    depth += 1
+                elif self.clean[i] == ')':
+                    depth -= 1
+                    if depth == 0:
+                        close_pos = i
+                        break
+
+            inner = self.clean[open_pos + 1:close_pos]
+            cond_base = open_pos + 1  # absolute offset of inner[0] in self.clean
+
+            if keyword == 'for':
+                # Extract the condition part: between the first and second
+                # top-level semicolons, ignoring semicolons inside nested ().
+                depth2      = 0
+                semi_count  = 0
+                cond_start  = 0
+                cond_end    = len(inner)
+                for i, ch in enumerate(inner):
+                    if ch in '(':
+                        depth2 += 1
+                    elif ch in ')':
+                        depth2 -= 1
+                    elif ch == ';' and depth2 == 0:
+                        semi_count += 1
+                        if semi_count == 1:
+                            cond_start = i + 1
+                        elif semi_count == 2:
+                            cond_end = i
+                            break
+                condition  = inner[cond_start:cond_end]
+                cond_base += cond_start
+            else:
+                condition = inner
+
+            for am in self._RE_ASSIGN_IN_COND.finditer(condition):
+                self._v(
+                    cond_base + am.start(), sev,
+                    "misc.assignment_in_condition",
+                    f"Assignment operator '=' used inside {keyword!r} "
+                    f"condition; use '==' for comparison or extract the "
+                    f"assignment to a separate statement "
+                    f"(MISRA C:2012 Rule 13.4)"
+                )
+
+    # -----------------------------------------------------------------------
+    # Barr-C §3.2 — multiple statements per line (no direct MISRA C:2012 rule)
+    # -----------------------------------------------------------------------
+    # Each statement shall appear on its own line.  Multiple statements on
+    # one line hide control-flow structure, complicate diffs, and make it
+    # harder to set precise breakpoints in a debugger.
+    #
+    #   Violation:  x = 1; y = 2;
+    #   Correct:    x = 1;
+    #               y = 2;
+    # -----------------------------------------------------------------------
+
+    _RE_MULTI_STMT = re.compile(r';\s*(?=[a-zA-Z_*(])')
+    _RE_FOR_LINE   = re.compile(r'\bfor\s*\(')
+
+    def _check_multiple_statements_per_line(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("multiple_statements_per_line", {})
+        if not cfg.get("enabled", False):   # opt-in (#418)
+            return
+        sev = cfg.get("severity", "warning")
+        offset = 0
+        for line in self.clean.splitlines(keepends=True):
+            stripped = line.rstrip()
+            if not self._RE_FOR_LINE.search(stripped):
+                for m in self._RE_MULTI_STMT.finditer(stripped):
+                    self._v(
+                        offset + m.start(), sev,
+                        "misc.multiple_statements_per_line",
+                        "Multiple statements on one line; each statement should be "
+                        "on its own line for readability and debuggability "
+                        "(Barr-C §3.2)"
+                    )
+            offset += len(line)
+
+    # -----------------------------------------------------------------------
+    # MISRA C:2012 Rule 11.5 (Advisory) — void pointer usage
+    # -----------------------------------------------------------------------
+    # A conversion should not be performed from pointer to void into pointer
+    # to object.  void * reduces compile-time type checking and can hide
+    # mismatched pointer arithmetic or object sizes.  Use a typed pointer or
+    # a discriminated-union approach instead.
+    #
+    #   Violation:  void *buf = get_buffer();
+    #   Correct:    uint8_t *buf = get_buffer();
+    # -----------------------------------------------------------------------
+
+    _RE_VOID_PTR = re.compile(r'\bvoid\s*\*')
+
+    def _check_void_pointer(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("void_pointer", {})
+        if not cfg.get("enabled", False):   # opt-in (#418)
+            return
+        sev = cfg.get("severity", "warning")
+        for m in self._RE_VOID_PTR.finditer(self.clean):
+            self._v(
+                m.start(), sev, "misc.void_pointer",
+                "Use of 'void *' reduces type safety; prefer a typed pointer "
+                "or a type-safe union (MISRA C:2012 Rule 11.5)"
+            )
+
+    # -----------------------------------------------------------------------
+    # MISRA C:2012 Rule 17.2 (Required) — recursive functions forbidden
+    # -----------------------------------------------------------------------
+    # Functions shall not call themselves, either directly or indirectly.
+    # Recursion makes stack-depth analysis intractable and can overflow the
+    # fixed-size stacks typical of embedded RTOS tasks.
+    #
+    #   Violation:  int factorial(int n) { return n * factorial(n-1); }
+    #   Correct:    Use an iterative loop instead.
+    # -----------------------------------------------------------------------
+
+    _RE_FUNC_DEF_REC = re.compile(
+        r'\b([a-zA-Z_]\w*)\s*\([^;{]*\)\s*\{',
+        re.MULTILINE,
+    )
+    _C_KW_SET = frozenset([
+        'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break',
+        'continue', 'return', 'goto', 'typedef', 'struct', 'union', 'enum',
+        'sizeof', 'alignof', 'typeof', 'static', 'extern', 'inline',
+    ])
+
+    def _check_recursive_function(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("recursive_function", {})
+        if not cfg.get("enabled", False):   # opt-in (#418)
+            return
+        sev = cfg.get("severity", "error")
+        for m in self._RE_FUNC_DEF_REC.finditer(self.clean):
+            name = m.group(1)
+            if name in self._C_KW_SET:
+                continue
+            open_brace = m.end() - 1
+            depth = 0
+            body_end = open_brace
+            for i in range(open_brace, len(self.clean)):
+                if self.clean[i] == '{':
+                    depth += 1
+                elif self.clean[i] == '}':
+                    depth -= 1
+                    if depth == 0:
+                        body_end = i
+                        break
+            body = self.clean[open_brace + 1:body_end]
+            call_m = re.search(r'\b' + re.escape(name) + r'\s*\(', body)
+            if call_m:
+                self._v(
+                    open_brace + 1 + call_m.start(), sev,
+                    "misc.recursive_function",
+                    f"Function '{name}' calls itself directly; recursion is "
+                    f"forbidden in safety-critical embedded code "
+                    f"(MISRA C:2012 Rule 17.2)"
+                )
+
+    # -----------------------------------------------------------------------
+    # sizeof with type operand — best practice (Barr-C §5.7)
+    # -----------------------------------------------------------------------
+    # sizeof(type_name) is fragile: if the variable's type changes, the
+    # sizeof expression silently becomes wrong.  sizeof(*var) or sizeof(var)
+    # are preferred because they always match the actual object.
+    #
+    #   Violation:  memset(buf, 0, sizeof(uint32_t) * N);
+    #   Correct:    memset(buf, 0, sizeof(*buf) * N);
+    # -----------------------------------------------------------------------
+
+    _RE_SIZEOF_TYPE = re.compile(
+        r'\bsizeof\s*\(\s*'
+        r'(?:'
+        r'(?:unsigned\s+|signed\s+)?(?:short\s+|long\s+)?'
+        r'(?:int|char|short|long|float|double|bool)\b'
+        r'|[a-zA-Z_]\w*_t\b'
+        r'|[A-Z][A-Za-z0-9_]*\b'
+        r')'
+        r'(?:\s*\*+)?\s*\)'
+    )
+
+    # A name declared as an object in this file (#460): "<word> [*] NAME"
+    # followed by '=', ';', ',', ')' or an array suffix.  Used to exempt
+    # sizeof(NAME) when NAME only looks like a type (upper case or '_t').
+    _RE_OBJECT_DECL = re.compile(
+        r"\b([A-Za-z_]\w*)(?:\s*\*+\s*|\s+)"
+        r"(?:(?:const|volatile)\s+)*([A-Za-z_]\w*)\s*"
+        r"(?:\[[^\]\n]*\]\s*)*(?=[=;,)])"
+    )
+    _NOT_A_TYPE_WORD = frozenset((
+        "const", "volatile", "struct", "union", "enum", "sizeof",
+        "signed", "unsigned", "typedef",
+    ))
+
+    def _object_names(self) -> set:
+        """Names declared as objects (variables, parameters, arrays) in this
+        file, excluding every typedef name (#460)."""
+        if self._sizeof_objects is None:
+            # "long int)" or "unsigned long long)" must not make a C
+            # keyword an object name.
+            names = {
+                m.group(2) for m in self._RE_OBJECT_DECL.finditer(self.clean)
+                if m.group(1) not in self._NOT_A_TYPE_WORD
+                and m.group(2) not in self._c_keywords
+            }
+            names -= collect_typedef_names(self.clean)
+            self._sizeof_objects = names
+        return self._sizeof_objects
+
+    def _check_sizeof_type(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("sizeof_type", {})
+        if not cfg.get("enabled", False):   # opt-in (#418)
+            return
+        sev = cfg.get("severity", "info")
+        for m in self._RE_SIZEOF_TYPE.finditer(self.clean):
+            operand = re.findall(r"[A-Za-z_]\w*", m.group())[-1]
+            if operand in self._object_names():
+                continue      # an upper-case or '_t' object, not a type
+            self._v(
+                m.start(), sev, "misc.sizeof_type",
+                "sizeof with a type operand is fragile; prefer sizeof(*var) "
+                "or sizeof(var) so the size always tracks the variable's type "
+                "(Barr-C §5.7)"
+            )
+
+    # -----------------------------------------------------------------------
+    # Boolean comparison with true/false (style rule)
+    # -----------------------------------------------------------------------
+    # Comparing a boolean expression to 'true' or 'false' with == / != is
+    # redundant and may hide type coercion bugs.  Use the boolean expression
+    # directly or negate it.  This is a style rule only: MISRA C:2012
+    # Rule 14.4 (essentially Boolean controlling expressions) is NOT enforced
+    # here -- 'if (flag == true)' is compliant with it (see #410).
+    #
+    # Opt-in (#412): disabled by default, including when the key is absent
+    # from the project config.  Only the lowercase <stdbool.h> literals
+    # 'true' / 'false' are matched.  Project TRUE / FALSE macros are NOT
+    # matched: comparing an integer flag against TRUE is not redundant
+    # ('if (flag)' differs from 'if (TRUE == flag)' when flag == 2), so the
+    # suggested rewrite would change behaviour.
+    #
+    #   Violation:  if (flag == true)   { … }
+    #   Violation:  while (done == false) { … }
+    #   Correct:    if (flag)            { … }
+    #   Correct:    while (!done)        { … }
+    # -----------------------------------------------------------------------
+
+    _RE_BOOL_CMP = re.compile(
+        r'(?:'
+        r'[!=]=\s*\b(?:true|false)\b'
+        r'|\b(?:true|false)\b\s*[!=]='
+        r')'
+    )
+
+    def _check_boolean_comparison(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("boolean_comparison", {})
+        if not cfg.get("enabled", False):   # opt-in (#412)
+            return
+        sev = cfg.get("severity", "warning")
+        for m in self._RE_BOOL_CMP.finditer(self.clean):
+            self._v(
+                m.start(), sev, "misc.boolean_comparison",
+                "Comparing a boolean expression to true/false with == or != "
+                "is redundant; use the expression directly or negate it with ! "
+                "(redundant comparison with a Boolean literal)"
+            )
+
+    # -----------------------------------------------------------------------
+    # Empty else clause — Barr-C §8.3 / MISRA C:2012 Rule 15.7
+    # -----------------------------------------------------------------------
+    # Every if-else chain should have a meaningful else.  An else with an
+    # empty body is either a placeholder that was forgotten or dead code.
+    # Remove it or add a comment explaining why no action is required.
+    #
+    #   Violation:  } else {}
+    #   Correct:    } else { /* intentionally empty */ }   (or omit the else)
+    # -----------------------------------------------------------------------
+
+    _RE_EMPTY_ELSE       = re.compile(r'\belse\s*\{(\s*)\}', re.DOTALL)
+    _RE_ELSE_OPEN_BRACE  = re.compile(r'\belse\s*\{')
+
+    def _check_empty_else(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("empty_else", {})
+        if not cfg.get("enabled", False):   # opt-in (#418)
+            return
+        sev = cfg.get("severity", "warning")
+        for m in self._RE_EMPTY_ELSE.finditer(self.clean):
+            # self.clean replaces comment/string content with spaces but
+            # preserves offsets.  Check self.source at the same positions:
+            # if the original block contains anything non-whitespace (e.g. a
+            # deliberate "/* intentionally empty */" comment), do not flag it.
+            ob_m = self._RE_ELSE_OPEN_BRACE.search(self.source, m.start(),
+                                                    m.end())
+            if ob_m is None:
+                continue
+            inner_orig = self.source[ob_m.end():m.end() - 1]  # between { and }
+            if inner_orig.strip():
+                continue  # block has content in original (e.g. a comment)
+            self._v(
+                m.start(), sev, "misc.empty_else",
+                "Empty else clause; remove it or add a comment explaining "
+                "why no action is required here (Barr-C §8.3)"
+            )
+
+    # -----------------------------------------------------------------------
+    # Partially initialised local structs (#456)
+    # -----------------------------------------------------------------------
+    # misc.partial_struct_assignment: a non-static local struct declared
+    # without an initialiser holds indeterminate stack data in every member.
+    # When only some members are assigned before the struct is used as a
+    # whole (passed by value or address, returned, copied), the remaining
+    # members carry that stack data along.  Related: MISRA C:2012 Rule 9.1,
+    # Barr-C §7.2.
+    #
+    #   Violation:  uart_cfg_t cfg;  cfg.baud = 9600U;  Uart_Init(&cfg);
+    #   Correct:    uart_cfg_t cfg = {0};  cfg.baud = 9600U;  Uart_Init(&cfg);
+    #
+    # misc.partial_struct_initialiser: a positional brace initialiser that
+    # lists fewer values than the struct has members.  Well-defined (the
+    # rest are zero, C11 §6.7.9 p21); flagged only to make intent explicit.
+    # {0}, {} and designated initialisers are not flagged.  Related:
+    # MISRA C:2012 Rule 9.3 (the same rule for arrays).
+    #
+    # Member lists come from the struct definition table: definitions in
+    # this file plus, from the CLI, those of every scanned file.  A struct
+    # whose definition is not known is not checked.  Both rules are opt-in.
+    # -----------------------------------------------------------------------
+
+    _RE_LOCAL_STRUCT_DECL = re.compile(
+        r"(?<=[;{}])\s*"
+        r"((?:(?:static|extern|register|const|volatile)\s+)*)"
+        r"(?:struct\s+([A-Za-z_]\w*)|([A-Za-z_]\w*))"
+        r"(?=\s+(?:(?:const|volatile)\s+)*[A-Za-z_]\w*\s*[=;,\[])"
+    )
+    _DEFAULT_FILL_FUNCTIONS = ("memset", "memcpy", "memmove")
+    # "<type> [*]" immediately before a name at statement start: a nested
+    # declaration that shadows the local struct.
+    _RE_SHADOW_DECL = re.compile(
+        r"(?:[;{}]|\b(for)\s*\()\s*(?:(?:const|volatile|static|register"
+        r"|unsigned|signed"
+        r"|struct|union|enum)\s+)*([A-Za-z_]\w*)\s*\**\s*$")
+    _SHADOW_TYPE_KW = frozenset((
+        "int", "char", "short", "long", "float", "double", "void",
+        "_Bool", "signed", "unsigned",
+    ))
+    # Single-item brace initialisers that zero the whole struct.
+    _RE_ZERO_ITEM = re.compile(
+        r"(?:0+[uUlL]*|0[xX]0+[uUlL]*|0*\.0*[fFlL]?|0\.?[fF]"
+        r"|false|FALSE|NULL|\(\s*void\s*\*\s*\)\s*0)")
+
+    def _block_end(self, pos: int, limit: int) -> int:
+        """Return the index of the '}' closing the block containing *pos*."""
+        depth = 0
+        for i in range(pos, limit):
+            ch = self.clean[i]
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                if depth == 0:
+                    return i
+                depth -= 1
+        return limit
+
+    def _for_stmt_end(self, pos: int, limit: int) -> int:
+        """Return the end of the for statement whose header contains *pos*:
+        the '}' closing its braced body, or the ';' ending a single-statement
+        body."""
+        clean = self.clean
+        depth, i = 0, pos
+        while i < limit:                      # find the header's ')'
+            ch = clean[i]
+            if ch == "(":
+                depth += 1
+            elif ch == ")":
+                if depth == 0:
+                    break
+                depth -= 1
+            i += 1
+        j = i + 1
+        while j < limit and clean[j].isspace():
+            j += 1
+        if j < limit and clean[j] == "{":
+            end = _match_brace(clean, j)
+            return end if 0 <= end < limit else limit
+        semi = clean.find(";", j, limit)
+        return semi if semi >= 0 else limit
+
+    def _struct_entries(self, key: str):
+        """Resolve *key* in the struct table to its member entries, or None."""
+        for _ in range(8):
+            val = self._struct_defs.get(key)
+            if val is None or isinstance(val, tuple):
+                return val
+            key = val
+        return None
+
+    # Standard-library type names that are never structs the rule could
+    # check (#462): a local of one of these is not an "unknown type".
+    _STD_SCALAR_TYPES = frozenset((
+        "int8_t", "int16_t", "int32_t", "int64_t",
+        "uint8_t", "uint16_t", "uint32_t", "uint64_t",
+        "int_least8_t", "int_least16_t", "int_least32_t", "int_least64_t",
+        "uint_least8_t", "uint_least16_t", "uint_least32_t",
+        "uint_least64_t", "int_fast8_t", "int_fast16_t", "int_fast32_t",
+        "int_fast64_t", "uint_fast8_t", "uint_fast16_t", "uint_fast32_t",
+        "uint_fast64_t", "intptr_t", "uintptr_t", "intmax_t", "uintmax_t",
+        "size_t", "ssize_t", "ptrdiff_t", "wchar_t", "wint_t", "char16_t",
+        "char32_t", "bool", "_Bool", "float_t", "double_t", "sig_atomic_t",
+        "clock_t", "time_t", "off_t", "va_list", "max_align_t", "errno_t",
+        "rsize_t", "FILE", "fpos_t", "mbstate_t", "jmp_buf",
+    ))
+
+    def _is_unknown_struct_type(self, label: str) -> bool:
+        """True when *label* names a type the rule cannot check because no
+        definition was found: an explicit 'struct tag', or a name that is
+        neither a known typedef nor a standard type (#462)."""
+        if label.startswith("struct "):
+            return True
+        if label in self._struct_defs:
+            # A typedef alias of a struct with no definition, e.g.
+            # "typedef struct foo_s foo_t;" (an opaque handle).
+            return self._struct_entries(label) is None
+        return not (label in self._type_names
+                    or label in self._STD_SCALAR_TYPES
+                    or label in self._c_stdlib_names)
+
+    def _report_unknown_type(self, rule: str, pos: int, name: str,
+                             label: str) -> None:
+        self._v(
+            pos, "info", rule,
+            f"Local '{name}' ({label}) not checked: no definition of "
+            f"'{label}' was found in the scanned files or the rule's "
+            f"definition_paths",
+            idents=(name,),
+        )
+
+    def _iter_local_struct_decls(self, include_unknown: bool = False):
+        """Yield (name_pos, name, type_label, entries, init, is_static,
+        stmt_end, scope_end) for each struct declarator inside a function.
+
+        *init* is the initialiser text, or None when there is none.  Pointer
+        and array declarators are not yielded.  With *include_unknown*,
+        declarators whose type has no known definition and is not a known
+        non-struct type are yielded too, with *entries* None (#462).
+        """
+        clean = self.clean
+        for _fpos, _fname, b_start, b_end in self._iter_function_bodies():
+            for m in self._RE_LOCAL_STRUCT_DECL.finditer(clean, b_start + 1,
+                                                          b_end - 1):
+                quals = m.group(1)
+                if "extern" in quals:
+                    continue
+                if m.group(2):
+                    label = f"struct {m.group(2)}"
+                elif m.group(3) in self._c_keywords:
+                    continue
+                else:
+                    label = m.group(3)
+                entries = self._struct_entries(label)
+                if entries is None and include_unknown \
+                        and self._is_unknown_struct_type(label):
+                    pass              # yielded with entries None (#462)
+                elif not entries:
+                    continue
+                # Statement end: first ';' outside (), [] and {}.
+                depth, semi = 0, -1
+                for i in range(m.end(), b_end):
+                    ch = clean[i]
+                    if ch in "([{":
+                        depth += 1
+                    elif ch in ")]}":
+                        depth -= 1
+                        if depth < 0:
+                            break
+                    elif ch == ";" and depth == 0:
+                        semi = i
+                        break
+                if semi < 0:
+                    continue
+                # Scope end: the '}' closing the enclosing block.
+                depth, scope_end = 0, b_end - 1
+                for i in range(semi, b_end):
+                    ch = clean[i]
+                    if ch == "{":
+                        depth += 1
+                    elif ch == "}":
+                        if depth == 0:
+                            scope_end = i
+                            break
+                        depth -= 1
+                decl_text = clean[m.end():semi]
+                offset = m.end()
+                for chunk in _split_top_level(decl_text, ","):
+                    head, eq, init = chunk.partition("=")
+                    nm = re.match(r"\s*(?:(?:const|volatile)\s+)*"
+                                  r"([A-Za-z_]\w*)\s*$", head)
+                    if nm:
+                        yield (offset + nm.start(1), nm.group(1), label,
+                               entries, init.strip() if eq else None,
+                               "static" in quals, semi, scope_end)
+                    offset += len(chunk) + 1
+
+    def _check_partial_struct_assignment(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("partial_struct_assignment", {})
+        if not cfg.get("enabled", False):   # opt-in (#456)
+            return
+        sev = cfg.get("severity", "warning")
+        fills = frozenset(cfg.get("fill_functions",
+                                  self._DEFAULT_FILL_FUNCTIONS))
+        report_unknown = bool(cfg.get("report_unknown_types", False))
+        clean = self.clean
+        for (pos, name, label, entries, init, is_static,
+             semi, scope_end) in self._iter_local_struct_decls(report_unknown):
+            if init is not None or is_static:
+                continue
+            if entries is None:
+                self._report_unknown_type(
+                    "misc.partial_struct_assignment", pos, name, label)
+                continue
+            assigned: set = set()
+            use_pos = None
+            word = re.compile(r"\b" + re.escape(name) + r"\b")
+            skip_until = -1
+            for um in word.finditer(clean, semi + 1, scope_end):
+                q = um.start()
+                if q < skip_until:
+                    continue          # inside a block that shadows the name
+                before = clean[max(0, q - 120):q]
+                if re.search(r"(?:\.|->)\s*$", before):
+                    continue          # member of another object
+                dm = self._RE_SHADOW_DECL.search(before)
+                if dm and (dm.group(2) not in self._c_keywords
+                           or dm.group(2) in self._SHADOW_TYPE_KW):
+                    # A nested declaration of the same name: skip to the
+                    # end of the block (or for statement) that declares it.
+                    skip_until = (self._for_stmt_end(q, scope_end)
+                                  if dm.group(1)
+                                  else self._block_end(q, scope_end))
+                    continue
+                if re.search(r"\bsizeof\s*\(?\s*$", before):
+                    continue          # sizeof does not read the value
+                rest = clean[um.end():scope_end]
+                mm = re.match(r"\s*\.\s*([A-Za-z_]\w*)", rest)
+                if mm:
+                    tail = rest[mm.end():]
+                    tm = re.match(r"(?:\s*\[[^\]]*\]|\s*\.\s*[A-Za-z_]\w*)*"
+                                  r"\s*=(?!=)", tail)
+                    if tm or re.search(r"&\s*\(?\s*$", before):
+                        assigned.add(mm.group(1))
+                    continue          # member read: not a whole use
+                if re.match(r"\s*=(?!=)", rest) and \
+                        re.search(r"[;{}]\s*$", before):
+                    break             # whole-struct assignment
+                fm = re.search(r"\b([A-Za-z_]\w*)\s*\(\s*&\s*\(?\s*$", before)
+                if fm and fm.group(1) in fills:
+                    break             # fill function writes every member
+                if assigned:
+                    use_pos = q
+                break                 # first use as a whole
+            if use_pos is None:
+                continue
+            missing = [e[0] if len(e) == 1 else "/".join(e)
+                       for e in entries if not assigned.intersection(e)]
+            if not missing:
+                continue
+            shown = ", ".join(missing[:5]) + (", ..." if len(missing) > 5
+                                              else "")
+            use_line, _ = offset_to_line_col(self._line_map, use_pos)
+            self._v(
+                pos, sev, "misc.partial_struct_assignment",
+                f"Local struct '{name}' ({label}) has no initialiser and "
+                f"only {len(entries) - len(missing)} of {len(entries)} "
+                f"members are assigned before its use at line {use_line}; "
+                f"unassigned members hold indeterminate stack data: {shown}. "
+                f"Initialise it with '= {{0}}' or assign every member "
+                f"(MISRA C:2012 Rule 9.1, Barr-C §7.2)",
+                idents=(name,),
+            )
+
+    def _check_partial_struct_initialiser(self) -> None:
+        cfg = self.cfg.get("misc", {}).get("partial_struct_initialiser", {})
+        if not cfg.get("enabled", False):   # opt-in (#456)
+            return
+        sev = cfg.get("severity", "info")
+        report_unknown = bool(cfg.get("report_unknown_types", False))
+        for (pos, name, label, entries, init, _static,
+             _semi, _scope) in self._iter_local_struct_decls(report_unknown):
+            if not init or not init.startswith("{"):
+                continue
+            close = _match_brace(init, 0)
+            if close < 0:
+                continue
+            inner = init[1:close].strip()
+            if not inner or self._RE_ZERO_ITEM.fullmatch(inner.rstrip(", ")):
+                continue          # {} / {0} / {0U} ...: zero initialisation
+            items = [s.strip() for s in _split_top_level(inner, ",")]
+            if items and not items[-1]:
+                items.pop()       # trailing comma
+            if any(s.startswith((".", "[")) for s in items):
+                continue          # designated initialiser names its members
+            if entries is None:
+                self._report_unknown_type(
+                    "misc.partial_struct_initialiser", pos, name, label)
+                continue
+            if len(items) >= len(entries):
+                continue
+            rest = [e[0] for e in entries[len(items):]]
+            shown = ", ".join(rest[:5]) + (", ..." if len(rest) > 5 else "")
+            self._v(
+                pos, sev, "misc.partial_struct_initialiser",
+                f"Initialiser of local struct '{name}' ({label}) lists "
+                f"{len(items)} of {len(entries)} members; members "
+                f"zero-initialised implicitly: {shown}. List every member, use "
+                f"designated initialisers or '{{0}}' (cf. MISRA C:2012 "
+                f"Rule 9.3)",
+                idents=(name,),
+            )
 
     # -----------------------------------------------------------------------
     # 10. Reserved / banned name check

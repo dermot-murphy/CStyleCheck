@@ -28,10 +28,15 @@ from .config import (
 )
 from .fixer import (apply_fixes, unified_diff, FIXABLE_RULES, SAFE_RULES,
                     get_fn_name_for_fix, fix_pointer_prefix_in_header)
-from .utils import module_name, _cfg
-from .checker import Checker
+from .utils import (module_name, _cfg, config_error, EXIT_CONFIG_ERROR,
+                    ensure_parent_dir)
+from .checker import (
+    Checker, MacroTable, clean_for_struct_scan, collect_macro_defs,
+    collect_struct_defs, collect_typedef_names, struct_definition_paths,
+    struct_rules_enabled,
+)
 from .sign_checker import SignChecker, DeclaredNotDefinedChecker
-from .baseline import load_baseline, write_baseline, _baseline_key
+from .baseline import load_baseline, write_baseline, apply_baseline
 from .output import Tee, _violations_to_json, _violations_to_sarif, _violations_to_html, print_summary
 from .wizard import run_wizard, run_preset, PRESETS
 from . import _TOOL_NAME, _VERSION, _VERSION_STRING, _COPYRIGHT
@@ -246,7 +251,8 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--write-baseline", metavar="FILE",
                    help="Write all current violations to FILE as a JSON "
                         "baseline and exit 0. Use once on an existing "
-                        "codebase to silence legacy noise.")
+                        "codebase to silence legacy noise. Missing "
+                        "folders in the path are created.")
     p.add_argument("--exit-zero", action="store_true",
                    help="Always exit 0 (useful for warning-only CI steps)")
     p.add_argument("--include", action="append", default=[],
@@ -255,8 +261,15 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--exclude", action="append", default=[],
                    metavar="GLOB",
                    help="Glob pattern(s) to exclude (repeatable)")
+    p.add_argument("--definitions", action="append", default=[],
+                   metavar="GLOB",
+                   help="Glob pattern(s) of files read only for struct, "
+                        "typedef and #define definitions used by the "
+                        "misc.partial_struct_* rules; never checked, and "
+                        "--exclude does not apply (repeatable)")
     p.add_argument("--log", metavar="FILE",
-                   help="Write all output to FILE in addition to stdout")
+                   help="Write all output to FILE in addition to stdout. "
+                        "Missing folders in the path are created.")
     p.add_argument("--spell-words", metavar="FILE",
                    help="Plain-text file of project-specific words exempt from "
                         "spell-checking (one word per line, # = comment)")
@@ -345,7 +358,8 @@ def _build_parser() -> argparse.ArgumentParser:
              "Writes .cstylecheck.yml in the current directory.")
     init_group.add_argument(
         "--init-output", metavar="FILE", default=None,
-        help="Output path for --init / --preset (default: .cstylecheck.yml).")
+        help="Output path for --init / --preset (default: .cstylecheck.yml). "
+             "Missing folders in the path are created.")
     init_group.add_argument(
         "--overwrite", action="store_true",
         help="Overwrite existing config file when using --init or --preset.")
@@ -365,6 +379,26 @@ def _build_parser() -> argparse.ArgumentParser:
 # ---------------------------------------------------------------------------
 
 def main() -> int:
+    """CLI entry point (console script ``cstylecheck = "cstylecheck:main"``).
+
+    Returns the exit code: 0 clean, 1 violations, 2 config/usage error.
+
+    Config/usage errors exit via :func:`config_error` (code 2).  As a safety
+    net, any ``SystemExit`` carrying a string message (``sys.exit("...")``,
+    which Python maps to exit code 1) is reported on stderr and re-raised
+    as code 2, so the installed console script and ``python
+    src/cstylecheck.py`` behave identically (issue #425).
+    """
+    try:
+        return _main()
+    except SystemExit as exc:
+        if isinstance(exc.code, str):
+            print(exc.code, file=sys.stderr)
+            raise SystemExit(EXIT_CONFIG_ERROR) from None
+        raise
+
+
+def _main() -> int:
     # Fast-path: --version and --help must work even if every other arg is
     # broken, so check for them before options-file expansion or config loading.
     raw_argv = sys.argv[1:]
@@ -476,9 +510,10 @@ def main() -> int:
     log_fh = None
     if args.log:
         try:
+            ensure_parent_dir(args.log)
             log_fh = open(args.log, "w", encoding="utf-8")
         except OSError as e:
-            sys.exit(f"Cannot open log file '{args.log}': {e}")
+            config_error(f"Cannot open log file '{args.log}': {e}")
 
     tee = Tee(log_fh)
     # Always announce version/copyright to stderr (visible in terminal but not
@@ -541,6 +576,68 @@ def main() -> int:
         # Per-directory config cache: {dir_path -> effective_cfg}
         _per_dir_cache: dict = {}
 
+        # Cross-file struct definition table (#456): the partial-struct rules
+        # need the member list of struct types defined in headers, so every
+        # file is scanned for struct definitions before any file is checked.
+        # Files named by definition_paths / --definitions (#461) are read for
+        # struct, typedef and #define definitions only: they are never
+        # checked, and --exclude does not apply to them (vendor SDK headers
+        # are normally excluded from checking).  #defines from every file
+        # resolve #if blocks inside struct bodies (#463).
+        struct_defs: dict | None = None
+        struct_macros: dict | None = None
+        type_names: set | None = None
+        if struct_rules_enabled(cfg) or getattr(args, "per_dir_config", False):
+            struct_defs, type_names = {}, set()
+            def_globs = (struct_definition_paths(cfg)
+                         + list(getattr(args, "definitions", None) or []))
+            checked = set(files)
+            # Files are sorted within each glob so the result does not
+            # depend on directory listing order; globs keep their order.
+            def_files: list = []
+            seen_defs: set = set(checked)
+            for pattern in def_globs:
+                for f in sorted(discover_files([], [pattern], [], {})):
+                    if f not in seen_defs:
+                        seen_defs.add(f)
+                        def_files.append(f)
+            if getattr(args, "verbose", False) and def_globs:
+                print(f"Definition files: {len(def_files)}",
+                      file=sys.stderr, flush=True)
+            cleaned: list = []
+            macro_table = MacroTable()
+            for filepath in files + def_files:
+                try:
+                    source = Path(filepath).read_text(encoding="utf-8",
+                                                      errors="replace")
+                except OSError:
+                    continue
+                if filepath in checked:
+                    source_cache[filepath] = source
+                clean = clean_for_struct_scan(source, defines)
+                cleaned.append((clean, filepath in checked))
+                macro_table.add(collect_macro_defs(clean))
+            struct_macros = macro_table.table
+            # Precedence: checked files first, then definition files in the
+            # order their globs are listed.  For #defines a plain definition
+            # beats an #ifndef default, and within a kind the first wins
+            # (MacroTable).  A struct definition from a definition file never
+            # replaces one from a checked file or an earlier definition file.
+            for clean, is_checked in cleaned:
+                found = collect_struct_defs(clean, struct_macros)
+                if is_checked:
+                    struct_defs.update(found)
+                else:
+                    for key, val in found.items():
+                        struct_defs.setdefault(key, val)
+                type_names.update(collect_typedef_names(clean))
+            del cleaned
+        elif getattr(args, "definitions", None):
+            print("WARNING: --definitions is ignored: neither "
+                  "misc.partial_struct_assignment nor "
+                  "misc.partial_struct_initialiser is enabled",
+                  file=sys.stderr)
+
         for filepath in files:
             if getattr(args, "verbose", False):
                 if _verbose_tty:
@@ -548,8 +645,12 @@ def main() -> int:
                 else:
                     print(f"Scanning: {filepath}", file=sys.stderr, flush=True)
             try:
-                source = Path(filepath).read_text(encoding="utf-8", errors="replace")
-                source_cache[filepath] = source
+                if filepath in source_cache:
+                    source = source_cache[filepath]
+                else:
+                    source = Path(filepath).read_text(encoding="utf-8",
+                                                      errors="replace")
+                    source_cache[filepath] = source
             except OSError as e:
                 tee.print(f"ERROR: Cannot read {filepath}: {e}")
                 continue
@@ -585,6 +686,9 @@ def main() -> int:
                 copyright_header=copyright_header,
                 c_keywords=keywords_set,
                 c_stdlib_names=stdlib_set,
+                struct_defs=struct_defs,
+                macros=struct_macros,
+                type_names=type_names,
             )
             result  = checker.run_all()
             all_violations.extend(result.violations)
@@ -743,10 +847,7 @@ def main() -> int:
         if getattr(args, "baseline_file", None):
             baseline = load_baseline(args.baseline_file)
             before   = len(all_violations)
-            all_violations = [
-                v for v in all_violations
-                if _baseline_key(v) not in baseline
-            ]
+            all_violations = apply_baseline(all_violations, baseline)
             suppressed = before - len(all_violations)
             if suppressed and output_format == "text":
                 tee.print(f"(Baseline suppressed {suppressed} known violation(s))")
@@ -782,13 +883,5 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    try:
-        sys.exit(main())
-    except SystemExit as _e:
-        # sys.exit("message") uses a string code → exit 1 by default.
-        # Re-emit as exit 2 so callers can distinguish config errors (2)
-        # from naming violations (1) and clean runs (0).
-        if isinstance(_e.code, str):
-            print(_e.code, file=sys.stderr)
-            sys.exit(2)
-        raise
+    # main() itself maps config/usage errors to exit code 2 (#425).
+    sys.exit(main())

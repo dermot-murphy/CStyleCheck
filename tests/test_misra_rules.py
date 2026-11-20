@@ -2,10 +2,12 @@
 =====================
 Unit tests for the MISRA C:2012/2023 checks:
 
-  NR-001  misc.lowercase_l_suffix  — MISRA C Rule 7.3 (Required)
-  NR-002  misc.octal_constant      — MISRA C Rule 7.1 (Required)
-  NR-003  misc.trigraph            — MISRA C Rule 4.2 (Advisory/Required)
-  NR-004  misc.non_ascii_source    — MISRA C Rule 4.1 (Required)
+  NR-001  misc.lowercase_l_suffix      — MISRA C Rule 7.3 (Required)
+  NR-002  misc.octal_constant          — MISRA C Rule 7.1 (Required)
+  NR-003  misc.trigraph                — MISRA C Rule 4.2 (Advisory/Required)
+  NR-004  misc.non_ascii_source        — MISRA C Rule 4.1 (Required)
+  NR-005  misc.goto_usage              — MISRA C Rule 15.1 (Advisory)
+  NR-006  misc.assignment_in_condition — MISRA C Rule 13.4 (Required)
 
 Each class documents the rule it covers, lists positive (should flag) and
 negative (should not flag) cases, and verifies the violation message text.
@@ -23,7 +25,7 @@ import os
 import unittest
 
 sys.path.insert(0, os.path.dirname(__file__))
-from harness import cfg_only, run, has, clean, count
+from harness import cfg_only, run, rules, has, clean, count
 
 # ---------------------------------------------------------------------------
 # Shared config builders
@@ -552,6 +554,683 @@ class TestNonAsciiSource(unittest.TestCase):
         """DEL (0x7F) must be flagged."""
         src = "void foo(void) {\x7f}\n"
         self.assertTrue(has(src, _na_cfg(), RULE_NA))
+
+
+# ---------------------------------------------------------------------------
+# NR-005  misc.goto_usage — MISRA C:2012 Rule 15.1 (Advisory)
+# ---------------------------------------------------------------------------
+
+def _goto_cfg(enabled=True, severity="error"):
+    return cfg_only(misc={"goto_usage": {
+        "enabled": enabled,
+        "severity": severity,
+    }})
+
+
+RULE_GOTO = "misc.goto_usage"
+
+
+class TestGotoUsage(unittest.TestCase):
+    """misc.goto_usage — any use of the goto keyword is forbidden."""
+
+    # --- Positive: should flag ---
+
+    def test_simple_goto_flagged(self):
+        src = "void f(void){ goto end; end: return; }\n"
+        self.assertTrue(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_goto_at_start_of_line_flagged(self):
+        src = "void f(void){\n    goto cleanup;\ncleanup:\n    return;\n}\n"
+        self.assertTrue(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_goto_inside_if_flagged(self):
+        src = "void f(int x){\n    if (x < 0) goto err;\nerr: return;\n}\n"
+        self.assertTrue(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_violation_count_one_per_goto(self):
+        src = (
+            "void f(void){\n"
+            "    goto a;\n"
+            "    goto b;\n"
+            "a:b: return;\n"
+            "}\n"
+        )
+        self.assertEqual(count(src, _goto_cfg(), RULE_GOTO), 2)
+
+    def test_violation_message_contains_rule_ref(self):
+        src = "void f(void){ goto end; end: return; }\n"
+        viols = [v for v in run(src, _goto_cfg()) if v.rule == RULE_GOTO]
+        self.assertTrue(viols)
+        self.assertIn("15.1", viols[0].message)
+
+    # --- Negative: should NOT flag ---
+
+    def test_rule_disabled(self):
+        src = "void f(void){ goto end; end: return; }\n"
+        self.assertFalse(has(src, _goto_cfg(enabled=False), RULE_GOTO))
+
+    def test_goto_in_comment_not_flagged(self):
+        # 'goto' inside a comment must not be flagged (self.clean strips comments)
+        src = "/* goto end; */\nvoid f(void){ return; }\n"
+        self.assertFalse(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_goto_in_string_not_flagged(self):
+        src = 'void f(void){ const char *p = "goto end"; (void)p; }\n'
+        self.assertFalse(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_identifier_containing_goto_not_flagged(self):
+        # e.g. "goto_state" must not match
+        src = "static int goto_state = 0;\n"
+        self.assertFalse(has(src, _goto_cfg(), RULE_GOTO))
+
+    def test_severity_configurable(self):
+        src = "void f(void){ goto end; end: return; }\n"
+        viols = [v for v in run(src, _goto_cfg(severity="warning")) if v.rule == RULE_GOTO]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "warning")
+
+
+# ---------------------------------------------------------------------------
+# NR-006  misc.assignment_in_condition — MISRA C:2012 Rule 13.4 (Required)
+# ---------------------------------------------------------------------------
+
+def _aic_cfg(enabled=True, severity="warning"):
+    return cfg_only(misc={"assignment_in_condition": {
+        "enabled": enabled,
+        "severity": severity,
+    }})
+
+
+RULE_AIC = "misc.assignment_in_condition"
+
+
+class TestAssignmentInCondition(unittest.TestCase):
+    """misc.assignment_in_condition — '=' inside if/while/for condition."""
+
+    # --- Positive: should flag ---
+
+    def test_if_assignment_flagged(self):
+        src = "void f(int *p){ int x; if (x = *p) { (void)x; } }\n"
+        self.assertTrue(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_while_assignment_flagged(self):
+        src = "int getc(void); void f(void){ int c; while (c = getc()) { (void)c; } }\n"
+        self.assertTrue(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_for_condition_assignment_flagged(self):
+        # Assignment in the condition part (middle segment) of a for loop
+        src = (
+            "int next(int x); "
+            "void f(void){ int x = 0; "
+            "for (; x = next(x); ) { (void)x; } }\n"
+        )
+        self.assertTrue(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_violation_message_contains_rule_ref(self):
+        src = "void f(int *p){ int x; if (x = *p) { (void)x; } }\n"
+        viols = [v for v in run(src, _aic_cfg()) if v.rule == RULE_AIC]
+        self.assertTrue(viols)
+        self.assertIn("13.4", viols[0].message)
+
+    def test_nested_assignment_in_if_flagged(self):
+        src = "int foo(void); void f(void){ int a; if ((a = foo()) > 0) { (void)a; } }\n"
+        self.assertTrue(has(src, _aic_cfg(), RULE_AIC))
+
+    # --- Negative: should NOT flag ---
+
+    def test_rule_disabled(self):
+        src = "void f(int *p){ int x; if (x = *p) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(enabled=False), RULE_AIC))
+
+    def test_equality_comparison_not_flagged(self):
+        src = "void f(int x){ if (x == 0) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_not_equal_not_flagged(self):
+        src = "void f(int x){ if (x != 0) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_less_equal_not_flagged(self):
+        src = "void f(int x){ if (x <= 10) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_greater_equal_not_flagged(self):
+        src = "void f(int x){ if (x >= 0) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_for_init_assignment_not_flagged(self):
+        # Assignment in the init part of for() must NOT be flagged
+        src = "void f(void){ int i; for (i = 0; i < 10; i++) { (void)i; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_for_increment_not_flagged(self):
+        # Compound assignment in the increment part must NOT be flagged
+        src = "void f(void){ int i; for (i = 0; i < 10; i += 2) { (void)i; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_compound_assign_in_condition_not_flagged(self):
+        # += in a condition would be very unusual but the character before
+        # '=' is '+', which is excluded by the lookbehind
+        src = "void f(int x){ if (x >= 0) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_assignment_before_condition_not_flagged(self):
+        # Assignment as a statement before an if must NOT be flagged
+        src = "void f(void){ int x; x = 5; if (x > 0) { (void)x; } }\n"
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_assignment_in_string_not_flagged(self):
+        src = 'void f(void){ if (1) { const char *s = "if (x = 0)"; (void)s; } }\n'
+        self.assertFalse(has(src, _aic_cfg(), RULE_AIC))
+
+    def test_severity_configurable(self):
+        src = "void f(int *p){ int x; if (x = *p) { (void)x; } }\n"
+        viols = [v for v in run(src, _aic_cfg(severity="error")) if v.rule == RULE_AIC]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "error")
+
+
+# ---------------------------------------------------------------------------
+# NR-007  misc.multiple_statements_per_line
+# NR-008  misc.void_pointer
+# NR-009  misc.recursive_function
+# NR-010  misc.sizeof_type
+# NR-011  misc.boolean_comparison
+# NR-012  misc.empty_else
+# ---------------------------------------------------------------------------
+
+RULE_MULTI  = "misc.multiple_statements_per_line"
+RULE_VOIDP  = "misc.void_pointer"
+RULE_REC    = "misc.recursive_function"
+RULE_SIZEOF = "misc.sizeof_type"
+RULE_BOOL   = "misc.boolean_comparison"
+RULE_EELSE  = "misc.empty_else"
+
+
+def _multi_cfg(enabled=True, severity="warning"):
+    return cfg_only(misc={"multiple_statements_per_line": {"enabled": enabled, "severity": severity}})
+
+
+def _voidp_cfg(enabled=True, severity="warning"):
+    return cfg_only(misc={"void_pointer": {"enabled": enabled, "severity": severity}})
+
+
+def _rec_cfg(enabled=True, severity="error"):
+    return cfg_only(misc={"recursive_function": {"enabled": enabled, "severity": severity}})
+
+
+def _sizeof_cfg(enabled=True, severity="info"):
+    return cfg_only(misc={"sizeof_type": {"enabled": enabled, "severity": severity}})
+
+
+def _bool_cfg(enabled=True, severity="warning"):
+    return cfg_only(misc={"boolean_comparison": {"enabled": enabled, "severity": severity}})
+
+
+def _eelse_cfg(enabled=True, severity="warning"):
+    return cfg_only(misc={"empty_else": {"enabled": enabled, "severity": severity}})
+
+
+class TestMultipleStatementsPerLine(unittest.TestCase):
+    def test_two_statements_flagged(self):
+        src = "void f(void){ int x; x = 1; x = 2; }\n"
+        self.assertIn(RULE_MULTI, rules(src, _multi_cfg()))
+
+    def test_single_statement_clean(self):
+        src = "void f(void){ int x;\nx = 1;\n}\n"
+        self.assertNotIn(RULE_MULTI, rules(src, _multi_cfg()))
+
+    def test_for_loop_not_flagged(self):
+        src = "void f(void){ int i; for (i = 0; i < 10; i++) { (void)i; } }\n"
+        self.assertNotIn(RULE_MULTI, rules(src, _multi_cfg()))
+
+    def test_struct_member_semicolons_flagged(self):
+        # Two members on same line should be flagged
+        src = "typedef struct { int a; int b; } Foo;\n"
+        self.assertIn(RULE_MULTI, rules(src, _multi_cfg()))
+
+    def test_disabled(self):
+        src = "void f(void){ int x; x = 1; x = 2; }\n"
+        self.assertNotIn(RULE_MULTI, rules(src, _multi_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "void f(void){ int x; x = 1; x = 2; }\n"
+        viols = [v for v in run(src, _multi_cfg(severity="error")) if v.rule == RULE_MULTI]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "error")
+
+    def test_message_cites_barr_c_only(self):
+        # Issue #408: MISRA C:2012 Rule 15.5 (single exit point) is unrelated.
+        src = "void f(void){ int x; x = 1; x = 2; }\n"
+        viols = [v for v in run(src, _multi_cfg()) if v.rule == RULE_MULTI]
+        self.assertTrue(viols)
+        self.assertIn("Barr-C §3.2", viols[0].message)
+        self.assertNotIn("MISRA", viols[0].message)
+
+    def test_comment_not_flagged(self):
+        # Semicolons only in a comment must not fire
+        src = "void f(void){ /* x = 1; y = 2; */ int z;\n}\n"
+        self.assertNotIn(RULE_MULTI, rules(src, _multi_cfg()))
+
+    def test_message_content(self):
+        src = "void f(void){ int x; x = 1; x = 2; }\n"
+        msgs = [v.message for v in run(src, _multi_cfg()) if v.rule == RULE_MULTI]
+        self.assertTrue(msgs)
+        self.assertIn("Multiple statements", msgs[0])
+
+
+class TestVoidPointer(unittest.TestCase):
+    def test_void_ptr_flagged(self):
+        src = "void f(void *buf){ (void)buf; }\n"
+        self.assertIn(RULE_VOIDP, rules(src, _voidp_cfg()))
+
+    def test_typed_ptr_clean(self):
+        src = "void f(uint8_t *buf){ (void)buf; }\n"
+        self.assertNotIn(RULE_VOIDP, rules(src, _voidp_cfg()))
+
+    def test_void_star_in_var_decl(self):
+        src = "void f(void){ void *p = (void*)0;\n(void)p; }\n"
+        count_v = sum(1 for r in rules(src, _voidp_cfg()) if r == RULE_VOIDP)
+        self.assertGreaterEqual(count_v, 1)
+
+    def test_disabled(self):
+        src = "void f(void *buf){ (void)buf; }\n"
+        self.assertNotIn(RULE_VOIDP, rules(src, _voidp_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "void f(void *buf){ (void)buf; }\n"
+        viols = [v for v in run(src, _voidp_cfg(severity="error")) if v.rule == RULE_VOIDP]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "error")
+
+    def test_message_content(self):
+        src = "void f(void *buf){ (void)buf; }\n"
+        msgs = [v.message for v in run(src, _voidp_cfg()) if v.rule == RULE_VOIDP]
+        self.assertTrue(msgs)
+        self.assertIn("11.5", msgs[0])
+
+    def test_void_return_type_not_flagged(self):
+        # 'void f(void)' — void is a return type, not a void pointer
+        src = "void f(void){ return; }\n"
+        self.assertNotIn(RULE_VOIDP, rules(src, _voidp_cfg()))
+
+    def test_in_comment_not_flagged(self):
+        src = "void f(void){ /* void *ptr */ return; }\n"
+        self.assertNotIn(RULE_VOIDP, rules(src, _voidp_cfg()))
+
+
+class TestRecursiveFunction(unittest.TestCase):
+    def test_direct_recursion_flagged(self):
+        src = "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n"
+        self.assertIn(RULE_REC, rules(src, _rec_cfg()))
+
+    def test_non_recursive_clean(self):
+        src = "int add(int a, int b){ return a + b; }\n"
+        self.assertNotIn(RULE_REC, rules(src, _rec_cfg()))
+
+    def test_disabled(self):
+        src = "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n"
+        self.assertNotIn(RULE_REC, rules(src, _rec_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n"
+        viols = [v for v in run(src, _rec_cfg(severity="warning")) if v.rule == RULE_REC]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "warning")
+
+    def test_message_contains_17_2(self):
+        src = "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n"
+        msgs = [v.message for v in run(src, _rec_cfg()) if v.rule == RULE_REC]
+        self.assertTrue(msgs)
+        self.assertIn("17.2", msgs[0])
+
+    def test_function_name_in_message(self):
+        src = "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n"
+        msgs = [v.message for v in run(src, _rec_cfg()) if v.rule == RULE_REC]
+        self.assertTrue(msgs)
+        self.assertIn("fact", msgs[0])
+
+    def test_if_keyword_not_matched(self):
+        # 'if' followed by '{' must not be treated as a function definition
+        src = "void f(int x){ if (x > 0) { (void)x; } }\n"
+        self.assertNotIn(RULE_REC, rules(src, _rec_cfg()))
+
+    def test_recursive_in_comment_not_flagged(self):
+        src = "int f(int n){ /* f(n-1) */ return n; }\n"
+        self.assertNotIn(RULE_REC, rules(src, _rec_cfg()))
+
+
+class TestSizeofType(unittest.TestCase):
+    def test_sizeof_primitive_flagged(self):
+        src = "void f(void){ int n = sizeof(int);\n(void)n; }\n"
+        self.assertIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_sizeof_typedef_t_flagged(self):
+        src = "void f(void){ int n = sizeof(uint32_t);\n(void)n; }\n"
+        self.assertIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_sizeof_var_clean(self):
+        src = "void f(void){ uint32_t x; int n = sizeof(x);\n(void)n; }\n"
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_sizeof_ptr_deref_clean(self):
+        src = "void f(uint32_t *p){ int n = sizeof(*p);\n(void)n; }\n"
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_disabled(self):
+        src = "void f(void){ int n = sizeof(int);\n(void)n; }\n"
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "void f(void){ int n = sizeof(uint8_t);\n(void)n; }\n"
+        viols = [v for v in run(src, _sizeof_cfg(severity="warning")) if v.rule == RULE_SIZEOF]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "warning")
+
+    def test_message_content(self):
+        src = "void f(void){ int n = sizeof(int);\n(void)n; }\n"
+        msgs = [v.message for v in run(src, _sizeof_cfg()) if v.rule == RULE_SIZEOF]
+        self.assertTrue(msgs)
+        self.assertIn("sizeof", msgs[0])
+
+    # #460: an upper-case or '_t' name declared as an object is not a type.
+    def test_upper_case_array_object_clean(self):
+        src = ("typedef struct { int id; } stage_t;\n"
+               "static const stage_t STAGE_TABLE[] = { { 1 }, { 2 } };\n"
+               "#define STAGE_COUNT (sizeof (STAGE_TABLE) / "
+               "sizeof (STAGE_TABLE[0]))\n"
+               "int f(void){ return (int) STAGE_COUNT; }\n")
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_upper_case_local_and_parameter_clean(self):
+        src = ("void f(int MODE_T, char *BUF){ int BLOCK[4];\n"
+               "int n = sizeof(BLOCK) + sizeof(MODE_T) + sizeof(BUF);\n"
+               "(void)n; }\n")
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_object_name_ending_t_clean(self):
+        src = "void f(void){ int count_t = 0;\nint n = sizeof(count_t);\n(void)n; }\n"
+        self.assertNotIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_upper_case_typedef_still_flagged(self):
+        src = ("typedef unsigned char BYTE;\n"
+               "void f(void){ BYTE b = 0U;\nint n = sizeof(BYTE);\n"
+               "(void)n; (void)b; }\n")
+        self.assertIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+    def test_two_word_builtin_does_not_hide_keyword_finding(self):
+        src = ("void g(long int v);\n#define CAST(x) ((long int)(x))\n"
+               "void f(void){ int n = sizeof(int) + sizeof(double);\n"
+               "(void)n; }\n")
+        self.assertEqual(
+            sum(1 for r in rules(src, _sizeof_cfg()) if r == RULE_SIZEOF), 2)
+
+    def test_upper_case_name_not_declared_still_flagged(self):
+        src = "void f(void){ int n = sizeof(MY_TYPE);\n(void)n; }\n"
+        self.assertIn(RULE_SIZEOF, rules(src, _sizeof_cfg()))
+
+
+class TestBooleanComparison(unittest.TestCase):
+    def test_eq_true_flagged(self):
+        src = "void f(int flag){ if (flag == true) { (void)flag; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_eq_false_flagged(self):
+        src = "void f(int done){ while (done == false) { done = 1; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_ne_true_flagged(self):
+        src = "void f(int ok){ if (ok != true) { (void)ok; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_direct_use_clean(self):
+        src = "void f(int flag){ if (flag) { (void)flag; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_negation_clean(self):
+        src = "void f(int done){ while (!done) { done = 1; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_disabled(self):
+        src = "void f(int flag){ if (flag == true) { (void)flag; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "void f(int flag){ if (flag == true) { (void)flag; } }\n"
+        viols = [v for v in run(src, _bool_cfg(severity="error")) if v.rule == RULE_BOOL]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "error")
+
+    def test_message_content(self):
+        src = "void f(int flag){ if (flag == true) { (void)flag; } }\n"
+        msgs = [v.message for v in run(src, _bool_cfg()) if v.rule == RULE_BOOL]
+        self.assertTrue(msgs)
+        self.assertIn("(redundant comparison with a Boolean literal)", msgs[0])
+        # #410: MISRA C:2012 Rule 14.4 is not enforced by this rule.
+        self.assertNotIn("MISRA", msgs[0])
+        self.assertNotIn("14.4", msgs[0])
+
+    def test_in_comment_not_flagged(self):
+        src = "void f(void){ /* if (flag == true) */ return; }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_uppercase_true_not_flagged(self):
+        # #412: expectation changed (was test_uppercase_true_flagged).  TRUE /
+        # FALSE are project macros, not <stdbool.h> literals; comparing an
+        # integer flag against TRUE is not redundant ('if (flag)' differs from
+        # 'if (flag == TRUE)' when flag == 2), so it must not be reported.
+        src = "void f(int flag){ if (flag == TRUE) { (void)flag; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_yoda_uppercase_true_not_flagged(self):
+        # #412: 'TRUE == flag' is not a redundant comparison.
+        src = "void f(int flag){ if (TRUE == flag) { (void)flag; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_ne_uppercase_false_not_flagged(self):
+        # #412: 'flag != FALSE' is not a redundant comparison.
+        src = "void f(int flag){ if (flag != FALSE) { (void)flag; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_yoda_lowercase_true_flagged(self):
+        # #412: lowercase <stdbool.h> literal on the left is still reported.
+        src = "void f(bool x){ if (true == x) { (void)x; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_eq_lowercase_false_flagged(self):
+        src = "void f(bool x){ if (x == false) { (void)x; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, _bool_cfg()))
+
+    def test_not_reported_when_key_absent(self):
+        # #412: opt-in -- a config without misc.boolean_comparison must not
+        # enable the rule.
+        cfg = cfg_only()
+        cfg["misc"].pop("boolean_comparison", None)
+        src = "void f(bool x){ if (x == true) { (void)x; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, cfg))
+
+    def test_not_reported_when_misc_absent(self):
+        cfg = cfg_only()
+        cfg.pop("misc", None)
+        src = "void f(bool x){ if (x == true) { (void)x; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, cfg))
+
+    def test_shipped_default_disabled(self):
+        # #412: the bundled src/rules.yml ships the rule disabled.
+        from cstylecheck.config import _find_default_rules, load_config
+        cfg = load_config(str(_find_default_rules()))
+        self.assertFalse(cfg["misc"]["boolean_comparison"]["enabled"])
+        src = "void f(bool x){ if (x == true) { (void)x; } }\n"
+        self.assertNotIn(RULE_BOOL, rules(src, cfg))
+
+    def test_reported_when_enabled_explicitly(self):
+        cfg = cfg_only(misc={"boolean_comparison": {"enabled": True}})
+        src = "void f(bool x){ if (x == true) { (void)x; } }\n"
+        self.assertIn(RULE_BOOL, rules(src, cfg))
+
+
+class TestEmptyElse(unittest.TestCase):
+    def test_empty_else_flagged(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else {} }\n"
+        self.assertIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
+    def test_non_empty_else_clean(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else { x = 0; } }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
+    def test_else_if_clean(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else if (x < 0) { x = 0; } }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
+    def test_no_else_clean(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
+    def test_disabled(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else {} }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg(enabled=False)))
+
+    def test_severity_configurable(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else {} }\n"
+        viols = [v for v in run(src, _eelse_cfg(severity="error")) if v.rule == RULE_EELSE]
+        self.assertTrue(viols)
+        self.assertEqual(viols[0].severity, "error")
+
+    def test_message_content(self):
+        src = "void f(int x){ if (x > 0) { (void)x; } else {} }\n"
+        msgs = [v.message for v in run(src, _eelse_cfg()) if v.rule == RULE_EELSE]
+        self.assertTrue(msgs)
+        self.assertIn("Empty else", msgs[0])
+
+    def test_in_comment_not_flagged(self):
+        src = "void f(void){ /* else {} */ return; }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
+    def test_else_with_comment_not_flagged(self):
+        # An else block containing only a comment is intentionally documented
+        # and must NOT be flagged — this is the recommended "correct" form.
+        src = "void f(int x){ if (x > 0) { (void)x; } else { /* intentionally empty */ } }\n"
+        self.assertNotIn(RULE_EELSE, rules(src, _eelse_cfg()))
+
+
+# ===========================================================================
+# #418 -- opt-in policy for the MISRA / Barr-C rules added after v1.6.0
+#
+# New rules ship 'enabled: false' in src/rules.yml and default to disabled
+# when their key is absent from the project config.  Each snippet below
+# triggers exactly the rule it is keyed by when that rule is enabled.
+# ===========================================================================
+
+import pytest  # noqa: E402
+import re as _re  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+
+import yaml as _yaml  # noqa: E402
+
+_REPO = _Path(__file__).resolve().parent.parent
+
+_OPTIN_SNIPPETS = {
+    "goto_usage":
+        "void f(void){ goto end; end: return; }\n",
+    "assignment_in_condition":
+        "void f(int *p){ int x; if (x = *p) { (void)x; } }\n",
+    "multiple_statements_per_line":
+        "void f(void){ int x; x = 1; x = 2; }\n",
+    "void_pointer":
+        "void f(void *buf){ (void)buf; }\n",
+    "recursive_function":
+        "int fact(int n){ if (n <= 1) return 1; return n * fact(n - 1); }\n",
+    "sizeof_type":
+        "void f(void){ int n = sizeof(int);\n(void)n; }\n",
+    "boolean_comparison":
+        "void f(bool x){ if (x == true) { (void)x; } }\n",
+    "empty_else":
+        "void f(int x){ if (x > 0) { (void)x; } else {} }\n",
+    # #456: opt-in from the start, same policy.
+    "partial_struct_assignment":
+        "struct pt { int x; int y; };\n"
+        "void f(void){ struct pt p; p.x = 1; g(&p); }\n",
+    "partial_struct_initialiser":
+        "struct pq { int x; int y; };\n"
+        "void h(void){ struct pq q = { 1 }; g(&q); }\n",
+}
+
+# The 7 rules made opt-in by #418 (boolean_comparison was already opt-in,
+# #412) and the 2 rules added opt-in by #456.
+_OPTIN_418 = sorted(k for k in _OPTIN_SNIPPETS if k != "boolean_comparison")
+
+
+@pytest.mark.parametrize("key", _OPTIN_418)
+def test_optin_rule_off_when_key_absent(key):
+    """#418: with the rule's key absent from misc, the rule does not fire."""
+    src = _OPTIN_SNIPPETS[key]
+    rule_id = f"misc.{key}"
+    # Sanity: the snippet does trigger the rule when it is enabled explicitly.
+    assert rule_id in rules(src, cfg_only(misc={key: {"enabled": True}}))
+    cfg = cfg_only()
+    cfg["misc"].pop(key, None)
+    assert rule_id not in rules(src, cfg)
+    # Also off when the key is present without an 'enabled' flag.
+    assert rule_id not in rules(src, cfg_only(misc={key: {"severity": "error"}}))
+
+
+def _shipped_disabled_misc_keys(path):
+    data = _yaml.safe_load(path.read_text(encoding="utf-8"))
+    return sorted(k for k, v in data.get("misc", {}).items()
+                  if isinstance(v, dict) and v.get("enabled") is False)
+
+
+def test_optin_policy_all_shipped_disabled():
+    """#418/#456: all 10 opt-in rules ship 'enabled: false' in both rules.yml files."""
+    for path in (_REPO / "src" / "rules.yml", _REPO / "tests" / "rules.yml"):
+        shipped_off = set(_shipped_disabled_misc_keys(path))
+        missing = sorted(set(_OPTIN_SNIPPETS) - shipped_off)
+        assert not missing, f"{path}: not shipped disabled: {missing}"
+
+
+def test_optin_policy_none_fire_with_empty_misc_config():
+    """#418 policy: every opt-in rule shipped 'enabled: false' in src/rules.yml
+    stays off when the whole misc section of the config is empty."""
+    shipped_off = set(_shipped_disabled_misc_keys(_REPO / "src" / "rules.yml"))
+    keys = sorted(k for k in _OPTIN_SNIPPETS if k in shipped_off)
+    assert len(keys) == 10
+    src = "".join(_OPTIN_SNIPPETS[k] for k in keys)
+    # Non-vacuous: with every rule enabled, each one fires on the snippet.
+    on = set(rules(src, cfg_only(misc={k: {"enabled": True} for k in keys})))
+    assert {f"misc.{k}" for k in keys} <= on
+    cfg = cfg_only()
+    cfg["misc"] = {}
+    fired = set(rules(src, cfg))
+    assert not fired & {f"misc.{k}" for k in keys}, sorted(fired)
+
+
+def test_optin_policy_code_default_matches_shipped_default():
+    """#418 policy: every misc rule shipped 'enabled: false' in src/rules.yml
+    reads its flag in code as .get("enabled", False), so a config without the
+    key keeps the rule disabled."""
+    code = "".join(
+        p.read_text(encoding="utf-8")
+        for p in sorted((_REPO / "src" / "cstylecheck").glob("*.py"))
+    )
+    bad = []
+    for key in _shipped_disabled_misc_keys(_REPO / "src" / "rules.yml"):
+        m = _re.search(r'get\("' + key + r'",\s*\{\}\)(.{0,200}?)'
+                       r'\.get\("enabled",\s*(True|False)\)', code, _re.S)
+        if m is None or m.group(2) != "False":
+            bad.append(key)
+    assert not bad, f"code defaults these shipped-off rules to on: {bad}"
+
+
+def test_optin_update_config_adds_rules_disabled(tmp_path, capsys):
+    """#418: --update-config adds the missing opt-in rule keys as disabled."""
+    from cstylecheck.config import update_config
+    cfg_file = tmp_path / "project.yml"
+    cfg_file.write_text("misc:\n  line_length:\n    enabled: true\n",
+                        encoding="utf-8")
+    assert update_config(str(cfg_file)) == 0
+    merged = _yaml.safe_load(cfg_file.read_text(encoding="utf-8"))
+    for key in _OPTIN_SNIPPETS:
+        assert merged["misc"][key]["enabled"] is False, key
 
 
 if __name__ == "__main__":

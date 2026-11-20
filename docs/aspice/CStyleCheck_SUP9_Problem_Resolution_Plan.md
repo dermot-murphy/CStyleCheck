@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP9-001 | **Version** | 1.2 |
-| **Project** | CStyleCheck | **Date** | 2026-06-18 |
+| **Document ID** | CSC-SUP9-001 | **Version** | 1.24 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.9 |
@@ -20,6 +20,28 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §6.2 — #460 and #463 closed 2026-11-20 by PR #464 (merge `153d5d1`); every problem in §6.2 ships in the v2.0.0 release baseline; referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
+| 1.23 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
+| 1.22 | 2026-11-19 | Claude | Issues #460 and #463: §6.2 problem classification rows (both SEV-3 Minor, rules added after v1.6.1 and not in a release; fixed on `develop` by the implementing PR for v2.0.0); referenced-document versions resynced |
+| 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 1.20 | 2026-11-19 | Claude | Cross-reference version resync with #456 |
+| 1.19 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
+| 1.18 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
+| 1.17 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
+| 1.16 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
+| 1.15 | 2026-09-30 | Claude | Merge-time process controls (#437): §5.1 problems raised with the bug issue form (`.github/ISSUE_TEMPLATE/bug.yml`), SEV-4 added to the severity field, SEV label applied at triage; §5.2 step 2 applies the SEV label; referenced-document versions resynced |
+| 1.14 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
+| 1.13 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-011: new §6.2 post-v1.6.0 problem classification record (SEV label, dates, SLA outcome, fix PR for #408, #410, #412, #413, #422, #423, #424, #425); §5.1 workflow name `rules.yml` → `cstylecheck_rules.yml`; approval-by-merge policy (CSC-DEV-002 §5.2) |
+| 1.12 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.11 | 2026-09-29 | Claude | Cross-reference resync with #425: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.10 | 2026-09-29 | Claude | Cross-reference resync with #424: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.9 | 2026-09-29 | Claude | Cross-reference resync with #422: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.8 | 2026-09-29 | Claude | Cross-reference resync with #420: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.7 | 2026-09-29 | Claude | Cross-reference resync with #418: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.5 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (MAN3 1.8→1.9, SUP1 1.10→1.11, SUP10 1.3→1.4, SUP8 1.13→1.14) |
+| 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.2 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.1 | 2026-05-28 | Claude | Reviewed and updated for v1.1.0 release; revision history maintained per ASPICE GP 2.2.4 |
 | 1.0 | 2026-04-12 | Claude | Initial release |
@@ -36,10 +58,10 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.8 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.11 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.2 |
-| CSC-SUP1-001 | Quality Assurance Plan | 1.9 |
+| CSC-MAN3-001 | Project Management Plan | 1.30 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.26 |
+| CSC-SUP1-001 | Quality Assurance Plan | 1.30 |
 
 ---
 
@@ -74,20 +96,20 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 
 Problems may be identified by:
 
-- Automated CI failures (`cstylecheck_tests.yml`, `rules.yml`, `docker_publish.yml`)
+- Automated CI failures (`cstylecheck_tests.yml`, `cstylecheck_rules.yml`, `docker_publish.yml`)
 - Manual testing during development or qualification
 - User reports via GitHub Issues
 - ASPICE assessment findings
 - Internal code review observations
 
-**All problems are recorded as GitHub Issues** with the `bug` label.
+**All problems are recorded as GitHub Issues** with the `bug` label, raised with the bug issue form `.github/ISSUE_TEMPLATE/bug.yml` (CSC-SUP8-001 CI-064, #437). The form applies the `[BUG] ` title prefix and the `bug` label and makes the fields below mandatory, except *Affected work products*, which the maintainer completes at triage when the reporter cannot. Issue forms cannot set a label from a dropdown, so the reporter's severity choice is recorded in the issue body and the maintainer applies the matching `SEV-n` label at triage (§5.2).
 
 Minimum required fields when raising an Issue:
 
 | Field | Required Content |
 |---|---|
 | **Title** | Short description: `[BUG] <what is wrong>` |
-| **Severity** | One of: `SEV-1 Critical`, `SEV-2 Major`, `SEV-3 Minor` (label applied) |
+| **Severity** | One of: `SEV-1 Critical`, `SEV-2 Major`, `SEV-3 Minor`, `SEV-4 Enhancement` (§4.1; chosen in the form, label applied at triage) |
 | **Affected version** | Version tag or commit SHA where problem was observed |
 | **Environment** | Python version, OS, invocation command |
 | **Steps to reproduce** | Minimal source file or command that triggers the problem |
@@ -98,7 +120,7 @@ Minimum required fields when raising an Issue:
 ### 5.2 Triage and Investigation
 
 1. Issue is assigned to Claude (sole maintainer for v1.0.0)
-2. Severity label is confirmed or revised
+2. Severity is confirmed or revised and the `SEV-n` label is applied
 3. Root cause is investigated:
    - For code defects: identify affected unit(s) from CSC-SWE3-001
    - For test defects: identify affected test case from CSC-SWE4-001
@@ -154,6 +176,27 @@ The following problems were identified and resolved during v1.0.0 development:
 | `RE_TYPEDEF_SIMPLE` missed multi-token base types | Regex only matched single-word base types | Regex updated to require trailing whitespace on each base-type word | `test_typedefs.py` |
 | `function.min_length` undocumented but unimplemented | Rule config key parsed but check never invoked | Implemented check in `_check_functions()` | `test_improvements.py` |
 
+### 6.2 Problem Classification Record (post-v1.6.0)
+
+SEV labels were confirmed by the owner (Dermot Murphy) on 2026-09-29 and applied to the GitHub Issues retroactively (CSC-AUD-010 AUD10-F-011, #430). All eight problems were raised and closed on 2026-09-29, so each met the §4.1 target resolution time. Fixes were merged to `develop` (not hotfixed to `main`) and ship in v2.0.0 (see CSC-SUP10-001 §7.2); the state moves to **Verified** when v2.0.0 is tagged.
+
+| Issue # | Severity | Problem | Raised | Closed | SLA met | Fix PR (merge) | Resolved in |
+|---|---|---|---|---|---|---|---|
+| #408 | SEV-3 Minor | Wrong MISRA 15.5 citation in the `multiple_statements_per_line` message | 2026-09-29 | 2026-09-29 | Yes | #409 (`0d55bab`) | v2.0.0 |
+| #410 | SEV-3 Minor | Wrong MISRA 14.4 citation for `misc.boolean_comparison` | 2026-09-29 | 2026-09-29 | Yes | #414 (`b768af0`) | v2.0.0 |
+| #412 | SEV-2 Major | `misc.boolean_comparison` false positives (on by default; `TRUE`/`FALSE` macros) | 2026-09-29 | 2026-09-29 | Yes (target 1 week) | #417 (`eaa4b87`) | v2.0.0 |
+| #413 | SEV-3 Minor | Startup-banner requirements contradict the implementation (CR-413) | 2026-09-29 | 2026-09-29 | Yes | #415 (`5533d16`) | v2.0.0 |
+| #422 | SEV-1 Critical | Unknown case-style names silently accepted, so naming checks passed invalid code (CR-422) | 2026-09-29 | 2026-09-29 | Yes (target 48 h) | #426 (`e2555f0`) | v2.0.0 |
+| #423 | SEV-1 Critical | Last enum member not checked, so invalid names passed silently | 2026-09-29 | 2026-09-29 | Yes (target 48 h) | #429 (`2444036`) | v2.0.0 |
+| #424 | SEV-3 Minor | Unused `functions.case` key accepted without effect (CR-424) | 2026-09-29 | 2026-09-29 | Yes | #427 (`31acd91`) | v2.0.0 |
+| #425 | SEV-2 Major | Config and usage errors exit 1 instead of 2 from the installed `cstylecheck` command (CR-425) | 2026-09-29 | 2026-09-29 | Yes (target 1 week) | #428 (`7ddf732`) | v2.0.0 |
+| #460 | SEV-3 Minor | `misc.sizeof_type` reports `sizeof` of an upper-case array object (or an object ending in `_t`) as a type operand | 2026-11-19 | 2026-11-20 | Yes (target: next planned release) | #464 (`153d5d1`, with CR-461, CR-462) | v2.0.0 |
+| #463 | SEV-3 Minor | `misc.partial_struct_*` count struct members inside inactive `#if` blocks, so members that are not in the build are named as unassigned | 2026-11-19 | 2026-11-20 | Yes (target: next planned release) | #464 (`153d5d1`, with CR-461, CR-462) | v2.0.0 |
+
+#460 and #463 were found on 2026-11-19 while comparing v1.6.1 and `develop` on a downstream nRF52840 project. Both affect rules added after v1.6.1 (#418, #456), so no released version is affected; neither needed a hotfix. Both were fixed by PR #464 (merge `153d5d1`, 2026-11-20).
+
+**v2.0.0 release (2026-11-20, CR #443):** every problem in this table is closed and its fix is in the v2.0.0 release baseline (tag `v2.0.0`); no bug Issue was open when `release/2.0.0` was cut.
+
 ---
 
 ## 7. Metrics and Reporting
@@ -171,9 +214,11 @@ The following problems were identified and resolved during v1.0.0 development:
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-04-15 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-04-15 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-04-15 |
-| Approver | Dermot Murphy | Approved | 2026-04-15 |
+| Author | Claude | Approved | 2026-11-20 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-DEV-001 | **Version** | 1.2 |
-| **Project** | CStyleCheck | **Date** | 2026-06-18 |
+| **Document ID** | CSC-DEV-001 | **Version** | 1.22 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Approved | **Classification** | Internal |
 | **Author** | Dermot Murphy | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | PA 2.1, GP 2.1.6 |
@@ -20,6 +20,26 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.22 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
+| 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
+| 1.20 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 1.19 | 2026-11-19 | Claude | Cross-reference version resync with #456 |
+| 1.18 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
+| 1.17 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
+| 1.16 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
+| 1.15 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
+| 1.14 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
+| 1.13 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
+| 1.12 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.11 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.10 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.9 | 2026-09-29 | Claude | Cross-reference resync with #422: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.8 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.7 | 2026-09-29 | Claude | Cross-reference resync with #418: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.5 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (PA2 1.23→1.24, SUP8 1.13→1.14, SUP9 1.3→1.4) |
+| 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.2 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.0 | 2026-05-28 | Dermot Murphy | Initial deviation record — closes issue #52 |
 
@@ -132,7 +152,7 @@ This deviation is accepted on the basis that Dermot Murphy is the sole accountab
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-PA2-001 | Process Capability Records | 1.23 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.11 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.2 |
+| CSC-PA2-001 | Process Capability Records | 1.45 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.24 |
 | GitHub Issue #52 | AI listed as Author across all 18 ASPICE work products | — |

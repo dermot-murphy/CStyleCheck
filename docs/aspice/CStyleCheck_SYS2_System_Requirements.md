@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS2-001 | **Version** | 2.3 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SYS2-001 | **Version** | 2.25 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.2 |
@@ -20,9 +20,31 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 2.3 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: SYS-F-046 — the startup banner is written to the `--log` file for text output only, so a json / sarif / html log file holds only the report document; SYS-F-046 also corrected to the implemented banner (two lines on stderr: tool name and version, then copyright; written whether or not stdout is a terminal; never on stdout); §6 design reference updated; §3.3 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
+| 2.25 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
+| 2.24 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SYS-F-020 — the partial-struct rules may read struct definitions from files that are not checked (#461), resolve `#if` blocks in struct definitions (#463) and optionally report locals of unknown struct type (#462); `sizeof` of an object is not reported as a type operand (#460); §6 RTM SYS-F-011 to SYS-F-026 adds SWE1-121 to SWE1-123 |
+| 2.23 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 2.22 | 2026-11-19 | Claude | Issue #456 (CR-456): SYS-F-011 81→83 rule IDs; SYS-F-020 adds the opt-in partially-initialised local struct rules (`misc.partial_struct_assignment`, MISRA 9.1 / Barr-C §7.2; `misc.partial_struct_initialiser`, cf. MISRA 9.3) and their preset membership; §6 RTM SYS-F-011 to SYS-F-026 adds SWE1-118 to SWE1-120; scope text |
+| 2.21 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
+| 2.20 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
+| 2.19 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
+| 2.18 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
+| 2.17 | 2026-10-05 | Claude | Issue #439: SYS-F-046 design reference — banner written to the `--log` file for text output only |
+| 2.16 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
+| 2.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
+| 2.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-004: §6 RTM rebuilt by script from the CSC-SWE1-001 §4 parent columns — each row lists exactly the SWE1 requirements citing a SYS ID in that row (SWE1-001, 002, 006, 013, 014, 016, 075, 076 added to their parents' rows; SWE1-002/013/014/015/016/069 removed from SYS-F-001 to 010; SWE1-089 removed from SYS-F-011 to 026; SYS-NF-003 to 006 no longer cites SWE1-069); bidirectional-trace note restated. AUD10-F-022: SYS-F-020 marks all eight post-v1.6.0 rules opt-in (disabled by default; enabled by the `misra` / `barr-c` presets and `--init` since #420); approval-by-merge policy (CSC-DEV-002 §5.2) |
+| 2.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 2.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 2.11 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 2.10 | 2026-09-29 | Claude | Cross-reference resync with #422: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 2.9 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 2.8 | 2026-09-29 | Claude | #418 / #410 residual: SYS-F-020 no longer cites MISRA 14.4 for the boolean comparison rule (style rule, opt-in); cross-reference resync with #418 (3 referenced-document versions) |
+| 2.7 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 2.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 2.5 | 2026-09-29 | Claude | Issue #413 (CR-413, CSC-SUP10-001 §7.1): SYS-F-046 rewritten to match the implementation — two-line banner (`CStyleCheck <version>`, copyright) on stderr before checking, written even when stdout is piped, not suppressible, never on stdout (date-time, file count and non-TTY suppression removed); RTM row updated; trace SYS-F-046 → SWE1-094 unchanged; referenced-document versions resynced (SWE1 2.9→2.10) |
+| 2.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SYS3 1.7→1.8) |
+| 2.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: SYS-F-011 73→81 rule IDs; SYS-F-020 lists the 8 post-v1.6.0 MISRA/Barr-C rules; scope text. AUD9-F-006: RTM SYS-F-034 to 036 → add SWE1-100/101. AUD9-F-008: SYS-F-046 → SWE1-094 (was SWE1-091); add SWE1-072/073, 074, 077, 091 to 093, 095 to 099 and 109 to 116 to the RTM; add bidirectional-trace note. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 2.2 | 2026-07-06 | Claude | ASPICE audit — SYS-F-011 73 rule IDs; scope v1.5.0→v1.6.0; add SYS-F-046 startup banner requirement — closes #379 |
-| 2.1 | 2026-06-27 | Fix §3.3 cross-refs: SUP8 1.7→1.9, SWE1 2.2→2.4 | Dermot Murphy |
+| 2.1 | 2026-06-27 | Dermot Murphy | Fix §3.3 cross-refs: SUP8 1.7→1.9, SWE1 2.2→2.4 |
 | 2.0 | 2026-06-27 | Claude | ASPICE audit — §3.1 scope v1.4.1→v1.5.0 and 71→72 rule IDs; §3.3 SWE1 ref 1.9→2.2; SYS-F-011 71→72; §6 RTM add SWE1-MISRA-004/SWE1-089/SWE1-090 traceability; update Review & Approval dates — closes #319 #323 |
 | 1.9 | 2026-06-26 | Claude | §6 RTM: replace all `\<SWE.1-REQ-xxx\>` placeholders with actual SWE1-xxx IDs; add CSC-SWE1-001 to §3.3; update §3.1 scope to v1.4.1 — closes issue #292 |
 | 1.8 | 2026-06-26 | Claude | Update SYS-F-020 to include v1.4.0 misc and macro-safety rules — closes issue #261 |
@@ -41,7 +63,7 @@
 
 ### 3.1 Purpose
 
-This System Requirements Specification (SRS) defines the complete, structured set of system-level requirements for **CStyleCheck v1.6.0** — an embedded C naming-convention linter implementing Barr-C:2018 and MISRA-C complementary rules across 73 rule IDs.
+This System Requirements Specification (SRS) defines the complete, structured set of system-level requirements for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline** — an embedded C naming-convention linter implementing Barr-C:2018 and MISRA-C complementary rules across 83 rule IDs (73 at v1.6.0).
 
 This document satisfies the requirements of **Automotive SPICE® PAM v4.0, SYS.2 — System Requirements Analysis**.
 
@@ -62,9 +84,9 @@ The system is deployed in four integration modes:
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 | Barr-C:2018 | Barr Group Embedded C Coding Standard | 2018 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.11 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.6 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.7 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.27 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Analysis | 2.32 |
 
 ### 3.4 Glossary
 
@@ -117,7 +139,7 @@ The following table summarises the stakeholder needs from which the system requi
 
 | REQ-ID | Requirement | Priority | Verification Method | Derived From |
 |---|---|---|---|---|
-| SYS-F-011 | The system shall enforce naming rules across 73 rule IDs covering: constants/macros, variables (by scope), functions, types (typedef/enum/struct), include guards, and miscellaneous rules (including MISRA C:2012/2023 Rule 4.1 non-ASCII source checking) | Mandatory | Test | STK-001, STK-002 |
+| SYS-F-011 | The system shall enforce naming rules across 83 rule IDs covering: constants/macros, variables (by scope), functions, types (typedef/enum/struct), include guards, and miscellaneous rules (including MISRA C:2012/2023 Rule 4.1 non-ASCII source checking and the MISRA/Barr-C control-flow and type-safety rules listed in SYS-F-020) | Mandatory | Test | STK-001, STK-002 |
 | SYS-F-012 | The system shall enforce module-prefix requirements on global variables, file-scope static variables, public functions, macros, and constants | Mandatory | Test | STK-001 |
 | SYS-F-013 | The system shall enforce scope-aware variable rules: global (`g_` prefix), file-static (`s_` prefix), local, and parameter — each independently configurable | Mandatory | Test | STK-001 |
 | SYS-F-014 | The system shall enforce pointer-prefix rules: single pointer (`p_`), double pointer (`pp_`), boolean (`b_`), and handle variables (`h_`) | Mandatory | Test | STK-001 |
@@ -126,7 +148,7 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-017 | The system shall enforce min-length and max-length constraints on variable, function, constant, and macro identifiers | Mandatory | Test | STK-001 |
 | SYS-F-018 | The system shall enforce case rules (`lower_snake`, `UPPER_SNAKE`, `UpperCamelCase`) per identifier category | Mandatory | Test | STK-001 |
 | SYS-F-019 | The system shall enforce include guard presence and format rules | Mandatory | Test | STK-001 |
-| SYS-F-020 | The system shall enforce miscellaneous and macro-safety rules: line length, indentation, magic number detection, unsigned integer suffix (`U`/`UL`), yoda conditions, block comment spacing, function length, function documentation header, assert density, null statement commenting, declaration spacing, file length, reserved header name, macro trailing semicolon, and macro multistatement wrapper | Mandatory | Test | STK-001 |
+| SYS-F-020 | The system shall enforce miscellaneous and macro-safety rules: line length, indentation, magic number detection, unsigned integer suffix (`U`/`UL`), yoda conditions, block comment spacing, function length, function documentation header, assert density, null statement commenting, declaration spacing, file length, reserved header name, macro trailing semicolon, macro multistatement wrapper, and (post-v1.6.0) `goto` usage (MISRA 15.1), assignment in a condition (MISRA 13.4), multiple statements per line (Barr-C §3.2), `void *` usage (MISRA 11.5), direct recursion (MISRA 17.2), `sizeof` with a type operand (Barr-C §5.7), comparison with `true`/`false` (style rule), empty `else` (Barr-C §8.3), a local struct with only some members assigned before it is used as a whole (MISRA 9.1, Barr-C §7.2) and a short positional local struct initialiser (cf. MISRA 9.3) (#456), whose struct member lists may also come from files named for definitions only and never checked (#461), count members inside `#if` blocks only when the condition is known to be true (#463), and on request report locals whose struct type is unknown (#462); `sizeof` applied to an object declared in the same file is not a type operand (#460); all ten post-v1.6.0 rules are opt-in — disabled by default, including when the configuration key is absent (#412, #418) — and, since #420, the MISRA rules are enabled by `--preset misra`, the Barr-C rules by `--preset barr-c` and both sets by `--init` on request (`misc.partial_struct_assignment` is in both sets, `misc.partial_struct_initialiser` in the MISRA set; `misc.boolean_comparison` is in no preset) | Mandatory | Test | STK-001 |
 | SYS-F-021 | The system shall perform cross-file sign-compatibility checking between related `.c` and `.h` files | Mandatory | Test | STK-001 |
 | SYS-F-022 | The system shall perform spell-checking on identifier tokens against a configurable dictionary | Mandatory | Test | STK-001 |
 | SYS-F-023 | The system shall detect reserved C/C++ keyword and stdlib name usage as identifiers | Mandatory | Test | STK-001 |
@@ -196,7 +218,7 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-043 | The system shall provide an interactive configuration wizard (`--init`) that generates `.cstylecheck.yml` through a Q&A session; `--preset barr-c\|minimal\|misra` shall write a pre-built config without wizard interaction; `--init-output FILE` shall set the output path; `--overwrite` shall allow replacing an existing config file | Mandatory | Test | STK-002 |
 | SYS-F-044 | The system shall support per-directory configuration overrides when `--per-dir-config` is specified; the system shall walk upward from each source file's directory, deep-merging any `.cstylecheck.yml` found along the path; the nearest config wins; a `root: true` entry shall stop the upward search; per-directory resolution results shall be cached | Mandatory | Test | STK-002 |
 | SYS-F-045 | The system shall produce a self-contained HTML report when `--output-format html` is specified; the report shall include inline CSS, summary cards (errors/warnings/info/total/files checked), and per-file violation tables; the HTML shall be written to `--log FILE` if provided, otherwise to stdout | Mandatory | Test | STK-007 |
-| SYS-F-046 | The system shall print a two-line startup banner to stderr — the tool name and version, then the copyright notice — on every checking run, whether or not stdout is a terminal (i.e., also when piped or redirected); the banner shall not be written to stdout. When a log file is requested (`--log`), the banner shall also be written to it for text output only; for machine-readable output formats (json, sarif, html) the log file shall hold only the report document | Mandatory | Test | STK-001 |
+| SYS-F-046 | The system shall write a two-line startup banner to stderr before any source file is checked: the first line shall give the tool name and version (`CStyleCheck <version>`) and the second line the copyright notice (`(C) <year> <holder>`); the banner shall be written on every checking run, including when stdout is piped or redirected, shall not be suppressible by any option, and shall not be written to stdout | Mandatory | Test | STK-001 |
 
 ### 5.9 Non-Functional Requirements — Integration
 
@@ -212,13 +234,13 @@ The following table summarises the stakeholder needs from which the system requi
 
 | REQ-ID | Category | Stakeholder Need | SYS.3 Architecture Element | SWE.1 SW Requirement |
 |---|---|---|---|---|
-| SYS-F-001 to SYS-F-010 | Input handling | STK-001, STK-002 | SS-01 (CLI), SS-02 (Config Loader), SS-04 (Source Parser) | SWE1-001 to SWE1-016, SWE1-068 to SWE1-070 |
-| SYS-F-011 to SYS-F-026 | Rule engine | STK-001, STK-002 | SS-05 (Rule Engine) | SWE1-017 to SWE1-056, SWE1-MISRA-001 to SWE1-MISRA-004, SWE1-071, SWE1-078 to SWE1-090 |
-| SYS-F-027 to SYS-F-033 | Output / reporting | STK-003, STK-005, STK-007 | SS-06 (Output Formatter) | SWE1-057 to SWE1-064, SWE1-089 |
-| SYS-F-034 to SYS-F-036 | Baseline suppression | STK-004 | SS-01 (CLI), SS-05 (Rule Engine) | SWE1-065 to SWE1-067 |
-| SYS-F-037 to SYS-F-040 | Exit codes | STK-003 | SS-01 (CLI / Entry Point) | SWE1-069 |
-| SYS-NF-001 to SYS-NF-002 | Performance | STK-003 | SS-04 (Source Cache) | SWE1-015 |
-| SYS-NF-003 to SYS-NF-006 | Portability | STK-001, STK-006 | Build / packaging (`pyproject.toml`, `Dockerfile`) | Verified at system level by CI matrix (SWE1-069 entry point exercised on Python 3.10 / 3.11 / 3.12) |
+| SYS-F-001 to SYS-F-010 | Input handling | STK-001, STK-002 | SS-01 (CLI), SS-02 (Config Loader), SS-04 (Source Parser) | SWE1-001, SWE1-003 to SWE1-012, SWE1-068, SWE1-070, SWE1-072, SWE1-073, SWE1-075, SWE1-076 |
+| SYS-F-011 to SYS-F-026 | Rule engine | STK-001, STK-002 | SS-05 (Rule Engine) | SWE1-001, SWE1-006, SWE1-016 to SWE1-056, SWE1-071, SWE1-074, SWE1-078 to SWE1-088, SWE1-090 to SWE1-093, SWE1-098, SWE1-099, SWE1-109 to SWE1-116, SWE1-118 to SWE1-123, SWE1-MISRA-001 to SWE1-MISRA-004 |
+| SYS-F-027 to SYS-F-033 | Output / reporting | STK-003, STK-005, STK-007 | SS-06 (Output Formatter) | SWE1-013, SWE1-057 to SWE1-064, SWE1-077, SWE1-089, SWE1-095 to SWE1-097 |
+| SYS-F-034 to SYS-F-036 | Baseline suppression | STK-004 | SS-01 (CLI), SS-05 (Rule Engine) | SWE1-065 to SWE1-067, SWE1-100, SWE1-101 |
+| SYS-F-037 to SYS-F-040 | Exit codes | STK-003 | SS-01 (CLI / Entry Point) | SWE1-002, SWE1-069 |
+| SYS-NF-001 to SYS-NF-002 | Performance | STK-003 | SS-04 (Source Cache) | SWE1-014, SWE1-015 |
+| SYS-NF-003 to SYS-NF-006 | Portability | STK-001, STK-006 | Build / packaging (`pyproject.toml`, `Dockerfile`) | None (no SWE1 requirement cites these as parent); verified at system level by the CI matrix (Python 3.10 / 3.11 / 3.12) and the Docker build |
 | SYS-NF-007 to SYS-NF-009 | Configurability | STK-002 | SS-02 (Config Loader) | SWE1-001, SWE1-005, SWE1-068 |
 | SYS-NF-010 | Integration (pre-commit) | STK-001 | `.pre-commit-hooks.yml` | Deferred v2.0 |
 | SYS-NF-011 | Integration (GitHub Marketplace) | STK-005 | `action.yml` | Out of Scope v1.x |
@@ -228,7 +250,9 @@ The following table summarises the stakeholder needs from which the system requi
 | SYS-F-043 | Config wizard and presets | STK-002 | `wizard.py` Wizard module | SWE1-075 |
 | SYS-F-044 | Per-directory config | STK-002 | `config.resolve_per_dir_config()` | SWE1-076 |
 | SYS-F-045 | HTML report output | STK-007 | `output._violations_to_html()` | SWE1-077 |
-| SYS-F-046 | Startup banner | STK-001 | `cli.py` `main()` — banner written to stderr (and `--log` for text output only), never stdout | SWE1-091 |
+| SYS-F-046 | Startup banner (two lines on stderr, unconditional) | STK-001 | `cli.py` `main()` — banner written to stderr (and `--log` for text output only), never stdout | SWE1-094 |
+
+> **Bidirectional-trace note (AUD9-F-008, AUD10-F-004):** Each row lists exactly the SWE1 requirements whose CSC-SWE1-001 §4 parent column cites a SYS requirement in that row; a SWE1 requirement with several parents appears in each of its parents' rows (e.g. SWE1-001 under SYS-F-002, SYS-F-026 and SYS-NF-007). The matrix was rebuilt by script from the CSC-SWE1-001 v2.20 §4 parent columns. SWE1-102 to SWE1-108 and SWE1-117 (trend-analysis CI scripts) have no SYS parent; they derive from CSC-MAN3-001 §10.3 process monitoring. SYS-NF-003 to SYS-NF-006 are verified at system level (CI matrix, Docker build), and SYS-NF-010 to SYS-NF-012 are deferred or out of scope.
 
 ---
 
@@ -236,7 +260,7 @@ The following table summarises the stakeholder needs from which the system requi
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-10-06 |
+| Author | Claude | Approved | 2026-09-29 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

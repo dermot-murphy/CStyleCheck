@@ -9,6 +9,11 @@ from harness import (
     _build_spell_dict, _BUILTIN_DICT,
 )
 import cstylecheck as _mod
+from collections import Counter
+from cstylecheck import (
+    Violation, _baseline_key, _normalise_path, apply_baseline,
+    load_baseline, write_baseline,
+)
 
 _HERE    = Path(__file__).resolve().parent
 _SRC_DIR = _HERE.parent / "src"
@@ -566,6 +571,107 @@ class TestBaselineSuppression(unittest.TestCase):
             _, out = _cli("--output-format", "json", "--baseline-file", bl, files=[src])
         data = json.loads(out)
         self.assertEqual(data["summary"]["total"], 0)
+
+    # --- Issue #394: line number excluded from matching -------------------
+
+    def test_moved_violation_still_suppressed(self):
+        """A baselined violation that moves down the file stays suppressed."""
+        with tempfile.TemporaryDirectory() as td:
+            src = _write(td, "mod.c", _DIRTY_SRC)
+            bl  = str(Path(td) / "baseline.json")
+            _cli("--write-baseline", bl, files=[src])
+            _write(td, "mod.c", "\n\n\n" + _DIRTY_SRC)
+            rc, out = _cli("--baseline-file", bl, files=[src])
+        self.assertEqual(rc, 0, f"Got: {out!r}")
+
+    def test_baseline_still_records_line(self):
+        """The line field is kept in the file for human review."""
+        with tempfile.TemporaryDirectory() as td:
+            src = _write(td, "mod.c", _DIRTY_SRC)
+            bl  = str(Path(td) / "baseline.json")
+            _cli("--write-baseline", bl, files=[src])
+            data = json.loads(Path(bl).read_text(encoding="utf-8"))
+        self.assertTrue(all("line" in e for e in data["violations"]))
+
+    def test_extra_copy_of_baselined_violation_reported(self):
+        """Each baseline entry suppresses at most one violation."""
+        v1 = Violation("mod.c", 1, 1, "error", "misc.x", "msg")
+        v2 = Violation("mod.c", 9, 1, "error", "misc.x", "msg")
+        with tempfile.TemporaryDirectory() as td:
+            bl = str(Path(td) / "baseline.json")
+            write_baseline([v1], bl)
+            kept = apply_baseline([v1, v2], load_baseline(bl))
+        self.assertEqual(len(kept), 1)
+
+    def test_duplicate_entries_suppress_duplicates(self):
+        v1 = Violation("mod.c", 1, 1, "error", "misc.x", "msg")
+        v2 = Violation("mod.c", 9, 1, "error", "misc.x", "msg")
+        with tempfile.TemporaryDirectory() as td:
+            bl = str(Path(td) / "baseline.json")
+            write_baseline([v1, v2], bl)
+            kept = apply_baseline([v2, v1], load_baseline(bl))
+        self.assertEqual(kept, [])
+
+    def test_different_message_not_suppressed(self):
+        v1 = Violation("mod.c", 1, 1, "error", "misc.x", "'A' bad")
+        v2 = Violation("mod.c", 1, 1, "error", "misc.x", "'B' bad")
+        with tempfile.TemporaryDirectory() as td:
+            bl = str(Path(td) / "baseline.json")
+            write_baseline([v1], bl)
+            kept = apply_baseline([v2], load_baseline(bl))
+        self.assertEqual(kept, [v2])
+
+    def test_apply_baseline_does_not_mutate(self):
+        v1 = Violation("mod.c", 1, 1, "error", "misc.x", "msg")
+        baseline = Counter({_baseline_key(v1): 1})
+        apply_baseline([v1], baseline)
+        self.assertEqual(baseline[_baseline_key(v1)], 1)
+
+    def test_key_excludes_line(self):
+        v1 = Violation("mod.c", 1, 1, "error", "misc.x", "msg")
+        v2 = Violation("mod.c", 42, 1, "error", "misc.x", "msg")
+        self.assertEqual(_baseline_key(v1), _baseline_key(v2))
+
+    # --- Issue #395: portable path separators ------------------------------
+
+    def test_normalise_backslashes(self):
+        self.assertEqual(_normalise_path("src\\sub\\mod.c"), "src/sub/mod.c")
+
+    def test_normalise_mixed_and_dot(self):
+        self.assertEqual(_normalise_path("./src/sub\\mod.c"), "src/sub/mod.c")
+
+    def test_normalise_empty(self):
+        self.assertEqual(_normalise_path(""), "")
+
+    def test_write_uses_forward_slashes(self):
+        v = Violation("src\\mod.c", 1, 1, "error", "misc.x", "msg")
+        with tempfile.TemporaryDirectory() as td:
+            bl = str(Path(td) / "baseline.json")
+            write_baseline([v], bl)
+            data = json.loads(Path(bl).read_text(encoding="utf-8"))
+        self.assertEqual(data["violations"][0]["file"], "src/mod.c")
+
+    def test_windows_baseline_matches_posix_path(self):
+        """A baseline written with backslashes suppresses on Linux."""
+        v = Violation("src/mod.c", 3, 1, "error", "misc.x", "msg")
+        with tempfile.TemporaryDirectory() as td:
+            bl = str(Path(td) / "baseline.json")
+            Path(bl).write_text(json.dumps({"violations": [
+                {"file": "src\\mod.c", "line": 7,
+                 "rule": "misc.x", "message": "msg"}]}), encoding="utf-8")
+            kept = apply_baseline([v], load_baseline(bl))
+        self.assertEqual(kept, [])
+
+    def test_posix_baseline_matches_windows_path(self):
+        """A Linux baseline suppresses violations reported with backslashes."""
+        v = Violation("src\\mod.c", 3, 1, "error", "misc.x", "msg")
+        with tempfile.TemporaryDirectory() as td:
+            bl = str(Path(td) / "baseline.json")
+            Path(bl).write_text(json.dumps({"violations": [
+                {"file": "src/mod.c", "line": 3,
+                 "rule": "misc.x", "message": "msg"}]}), encoding="utf-8")
+            kept = apply_baseline([v], load_baseline(bl))
+        self.assertEqual(kept, [])
 
 
 # ===========================================================================

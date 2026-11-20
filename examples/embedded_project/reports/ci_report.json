@@ -1,0 +1,35 @@
+{
+  "summary": {
+    "files_checked": 6,
+    "errors": 0,
+    "warnings": 0,
+    "info": 3,
+    "total": 3
+  },
+  "violations": [
+    {
+      "file": "src/task_scheduler.c",
+      "line": 1,
+      "col": 1,
+      "severity": "info",
+      "rule": "misc.comment_ratio",
+      "message": "comment ratio 0.12 is below warning threshold 0.15 (6 comment lines / 48 code lines)"
+    },
+    {
+      "file": "include/led_control.h",
+      "line": 22,
+      "col": 1,
+      "severity": "info",
+      "rule": "enum.type_case",
+      "message": "Enum type 'led_id_t' must be upper_snake"
+    },
+    {
+      "file": "include/led_control.h",
+      "line": 29,
+      "col": 1,
+      "severity": "info",
+      "rule": "enum.type_case",
+      "message": "Enum type 'led_mode_t' must be upper_snake"
+    }
+  ]
+}

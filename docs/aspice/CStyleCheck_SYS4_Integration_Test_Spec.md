@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS4-001 | **Version** | 1.12 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SYS4-001 | **Version** | 1.34 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.4 |
@@ -20,10 +20,32 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.12 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: SITC-006 adds step 4 — with `--output-format json` / `sarif` / `html` the `--log` file holds only the report document (no startup banner) and parses; requirement reference adds SYS-F-046; v1.6.1 execution record; §5 overall result 1279→1281; §6 SITC-006 row adds SYS-F-046 and SIT-024; §3.3 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
+| 1.34 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §3.2 scope v2.0.0; §3.4 CM baseline adds the v2.0.0 release baseline; §5 overall result for v2.0.0 (SITC-001 to SITC-018, 1671 tests); referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
+| 1.33 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): SITC-018 step 6 — a plain `#define` in a checked configuration header beats an SDK `#ifndef` default; step 5 — `--definitions` warning when no partial-struct rule is enabled; evidence 89 tests; test total 1655→1671 |
+| 1.32 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SITC-018 steps 5 to 7 (definition files read but not checked, `#if` members resolved from the collected `#define`s, `report_unknown_types`) and #460 evidence for SITC-017; execution record; test total 1630→1655 |
+| 1.31 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 1.30 | 2026-11-19 | Claude | Issue #456 (CR-456): new SITC-018 for the 2 opt-in partially-initialised local struct rules (struct definitions collected from every scanned file; all 83 rule IDs covered), with §5 and §6 rows; test total 1574→1630 |
+| 1.29 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
+| 1.28 | 2026-11-19 | Claude | #449: test total 1569→1574 (5 workflow-configuration tests); referenced-document versions resynced |
+| 1.27 | 2026-10-06 | Claude | #447: test total 1559 (#439, #441, v1.6.1 back-merge) →1569 (`misc.constant_comparison` preprocessor and identifier-exclusion tests) |
+| 1.26 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): SITC-006 step 4 (no startup banner in a json / sarif / html `--log` file), SYS-F-046 reference, v1.6.1 execution record and overall result brought in from the v1.6.1 release |
+| 1.25 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
+| 1.24 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
+| 1.23 | 2026-09-29 | Claude | Approval-by-merge policy (CSC-DEV-002 §5.2), #430: Review & Approval table entries set to approval by the owner's merge of the introducing PR |
+| 1.22 | 2026-09-29 | Claude | #423: test total 1532→1545 (last enum member tests); referenced-document versions resynced (3) |
+| 1.21 | 2026-09-29 | Claude | #425: test total 1524→1532 (config-error exit-code tests for both entry points); referenced-document versions resynced (3) |
+| 1.20 | 2026-09-29 | Claude | #424: test total 1508→1524 (`functions.case` removal tests); referenced-document versions resynced (3) |
+| 1.19 | 2026-09-29 | Claude | #422: test total 1481→1508 (case-style names, alias normalisation and unknown-style config error tests); referenced-document versions resynced (3) |
+| 1.18 | 2026-09-29 | Claude | #420: test total 1463→1481 (preset / `--init` opt-in rule tests); referenced-document versions resynced (3) |
+| 1.17 | 2026-09-29 | Claude | #418 (CR-418): SITC-017 step 1 enables all 8 post-v1.6.0 rules explicitly (all opt-in); with the default config none is reported; evidence cites UV-MSR-009; test total 1452→1463; referenced-document versions resynced (3) |
+| 1.16 | 2026-09-29 | Claude | #412: SITC-017 step 1 enables `misc.boolean_comparison` explicitly (opt-in); test total 1444→1452; referenced-document versions resynced (3) |
+| 1.15 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.14 | 2026-09-29 | Claude | #413: test total 1439→1444 |
+| 1.13 | 2026-09-29 | Claude | Issue #407: post-v1.6.0 note records 1439 tests after #408 and #407; referenced-document versions resynced (SYS2 2.3→2.4, SYS3 1.7→1.8, SYS5 1.9→1.10) |
+| 1.12 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SITC-017 for the 8 post-v1.6.0 MISRA/Barr-C rules (all 81 rule IDs covered), with §5 and §6 rows. AUD9-F-006: SITC-007 step 2 baseline format; add step 6 (line-independent matching). AUD9-F-026: CM baseline ID per test-case group; scope text v1.5.0→v1.6.0/develop. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.11 | 2026-07-06 | Claude | ASPICE audit — add SITC-016 for v1.6.0 block-comment inline suppression — closes #379 |
 | 1.10 | 2026-07-06 | Claude | v1.6.0 RC — update §5 overall result 1183→1279; update §3.3 SWE5→1.13, SVD→1.22 |
-| 1.9 | 2026-06-27 | Fix §3.3 cross-ref: SYS2 1.9→2.0 | Dermot Murphy |
+| 1.9 | 2026-06-27 | Dermot Murphy | Fix §3.3 cross-ref: SYS2 1.9→2.0 |
 | 1.8 | 2026-06-27 | Claude | ASPICE audit — replace §6 SWE5 traceability placeholders with actual SIT-001–SIT-014 test case IDs; update Review & Approval dates — closes #320 #323 |
 | 1.7 | 2026-06-26 | Claude | ASPICE audit — update §3.3 SYS2 ref (1.8→1.9); update §5 overall result test count (965→1183) — closes #306 #311 |
 | 1.6 | 2026-06-26 | Claude | v1.5.0 release — update product version reference in §3.1 scope |
@@ -40,7 +62,7 @@
 
 ### 3.1 Purpose
 
-This System Integration Test Specification defines the integration test cases that verify the correct assembly, interface behaviour, and end-to-end operation of the **CStyleCheck v1.5.0** system across its six subsystems and five deployment modes. It satisfies **Automotive SPICE® PAM v4.0, SYS.4 — System Integration and Integration Verification**.
+This System Integration Test Specification defines the integration test cases that verify the correct assembly, interface behaviour, and end-to-end operation of the **CStyleCheck v2.0.0 (v1.6.0 / v1.6.1 plus the post-v1.6.0 `develop` changes)** system across its six subsystems and five deployment modes. It satisfies **Automotive SPICE® PAM v4.0, SYS.4 — System Integration and Integration Verification**.
 
 ### 3.2 Scope
 
@@ -58,9 +80,9 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.3 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.6 |
-| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.8 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.25 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.27 |
+| CSC-SYS5-001 | CStyleCheck System Verification Report | 1.31 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
 
 ### 3.4 Test Environment
@@ -71,7 +93,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | **Python Versions** | 3.10, 3.11, 3.12 (matrix) |
 | **Test Framework** | pytest + subprocess (for integration tests) |
 | **Docker Runtime** | Docker CLI on GitHub Actions runner |
-| **CM Baseline ID** | 93178cd (develop HEAD after PR #158 merge, 2026-05-28) |
+| **CM Baseline ID** | SITC-001 to SITC-014: `93178cd` (2026-05-28); SITC-015/016: v1.6.0 (`a6102d6`); SITC-007 re-run and SITC-017: `develop` `296e91b` (2026-09-29); v2.0.0 release baseline: tag `v2.0.0` on the `main` merge commit of `release/2.0.0` (2026-11-20, CR #443) |
 
 ### 3.5 Verification Criteria
 
@@ -244,14 +266,16 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
 | 1 | Invoke: `python cstylecheck.py --write-baseline baseline.json violating_v1.c` | File with 1 violation | baseline.json created; exit code = 0 |
-| 2 | Inspect baseline.json | JSON file | Valid JSON; contains the 1 violation entry |
+| 2 | Inspect baseline.json | JSON file | Valid JSON object `{"violations": [...]}` containing the 1 violation entry (`file` with `/` separators, `line`, `rule`, `message`) |
 | 3 | Add second violation to source → `violating_v2.c` | Source with 2 violations | — |
 | 4 | Invoke: `python cstylecheck.py --baseline-file baseline.json violating_v2.c` | Source v2 + baseline | Only the new (2nd) violation reported; original suppressed |
 | 5 | Check exit code | — | Exit code = 1 (new error present) |
+| 6 | Insert blank lines above the baselined violation and re-run with the baseline | Shifted source + baseline | Baselined violation still suppressed (line-independent matching, #394) |
 
 | Execution Date | Tester | SW Version | Result | Deviation Ref |
 |---|---|---|---|---|
 | 2026-05-28 | GitHub Actions (automated) / Dermot Murphy (manual review) | 93178cd | PASS | |
+| 2026-09-29 | Local pytest run (`TestBaselineSuppression`) | develop `296e91b` | PASS | Step 6 added for #394 |
 
 ---
 
@@ -467,6 +491,59 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 ---
 
+### SITC-017 — Post-v1.6.0 MISRA/Barr-C Rule Coverage
+
+| Field | Value |
+|---|---|
+| **Test Case ID** | SITC-017 |
+| **Test Objective** | Verify end-to-end that the 8 rules added by #391/#392 (`misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else`) are loaded from `rules.yml`, detect their violations, honour `enabled`/`severity`, and are reported through the standard output path |
+| **Architecture Interface** | IF-01, IF-06, IF-08, IF-09 |
+| **Requirement Reference** | SYS-F-011, SYS-F-020, SYS-F-025, SYS-F-026 |
+
+| Step | Action | Expected Result |
+|---|---|---|
+| 1 | Run cstylecheck on a C file containing one instance of each of the 8 constructs, with `enabled: true` set for each of the 8 rules (all are opt-in, #412, #418) | One violation per rule ID with the default severity (`goto_usage` and `recursive_function` error; `sizeof_type` info; others warning); with the default config (keys absent), none of the 8 rule IDs is reported |
+| 2 | Re-run with each rule's `enabled: false` | No violation for the disabled rule |
+| 3 | Re-run with an overridden `severity` | Reported severity matches the configuration |
+| 4 | Place the constructs inside comments or string literals | No violation |
+
+| Execution Details | Value |
+|---|---|
+| **Result** | PASS |
+| **Date** | 2026-09-29 |
+| **Environment** | Python 3.11, develop `296e91b` (local pytest run) |
+| **Evidence** | `tests/test_misra_rules.py` — UV-MSR-001 to UV-MSR-008 (76 tests; 82 since the 6 `misc.sizeof_type` object tests of #460) and UV-MSR-009 (opt-in policy, 11 tests, #418; 13 since #456); SIT-027 |
+
+---
+
+### SITC-018 — Partially Initialised Local Struct Rules (#456)
+
+| Field | Value |
+|---|---|
+| **Test Case ID** | SITC-018 |
+| **Test Objective** | Verify end-to-end that `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` are loaded from `rules.yml`, use the struct definitions of every scanned file (a type defined in a header is known in a `.c` file scanned in the same run), detect their violations, honour `enabled`/`severity` and inline suppression, and are reported through the standard output path |
+| **Architecture Interface** | IF-01, IF-06, IF-08, IF-09 |
+| **Requirement Reference** | SYS-F-011, SYS-F-020, SYS-F-025, SYS-F-026 |
+
+| Step | Action | Expected Result |
+|---|---|---|
+| 1 | Run cstylecheck on a header defining a struct and a C file that declares it without an initialiser, assigns one member and passes it to a function, with `misc.partial_struct_assignment.enabled: true` | One `misc.partial_struct_assignment` warning at the declaration, naming the use line and the unassigned members |
+| 2 | Re-run on the C file only | No violation (struct definition not in a scanned file) |
+| 3 | A local struct with a short positional initialiser, with `misc.partial_struct_initialiser.enabled: true` | One `misc.partial_struct_initialiser` info; `{0}` and designated initialisers not reported |
+| 4 | Re-run steps 1 and 3 with the default config (keys absent), and with an inline suppression comment | No violation: both rules are opt-in (#456); the suppressed finding is not reported |
+| 5 | Re-run step 2 with the header excluded (`--exclude`) and named in `definition_paths` (or with `--definitions`) | The step 1 warning is reported for the C file; nothing is reported for the header, which is read but never checked. With neither rule enabled, `--definitions` prints a `WARNING` and is ignored (#461) |
+| 6 | The header's struct has members under `#if CFG_X`, with `CFG_X` defined `0`, defined `1`, and not defined in any scanned or definition file | Members under the `#if` count only when `CFG_X` is `1`; when it is `0` or unknown they are left out of the count and not named as unassigned. A plain `#define CFG_X 1` in a checked configuration header beats an `#ifndef CFG_X` / `#define CFG_X 0` default in the header (#463) |
+| 7 | Step 2 with `report_unknown_types: true` | One `info` finding under `misc.partial_struct_assignment` naming the local and its unknown type; none with the default `false` (#462) |
+
+| Execution Details | Value |
+|---|---|
+| **Result** | PASS |
+| **Date** | 2026-11-19 |
+| **Environment** | Python 3.14, branch `claude/partial-struct-init-456` (local pytest run); steps 5 to 7: branch `claude/partial-struct-sdk-460-463` |
+| **Evidence** | `tests/test_partial_struct.py` — UV-PSI-001 to UV-PSI-009 (89 tests); `tests/test_misra_rules.py` — UV-MSR-009; SIT-028 |
+
+---
+
 ## 5. Integration Test Results Summary
 
 | SITC-ID | Test Case | Status | Deviation Ref |
@@ -487,8 +564,12 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-014 | `--warnings-as-errors` promotion | PASS | |
 | SITC-015 | v1.4.0 rule coverage (macro safety, function quality, file constraints, naming) | PASS | |
 | SITC-016 | v1.6.0 inline suppression — block-comment form and all directive variants | PASS | |
+| SITC-017 | Post-v1.6.0 MISRA/Barr-C rules (8 rule IDs; all 81 rule IDs now covered) | PASS | |
+| SITC-018 | Partially initialised local struct rules (2 rule IDs, #456; all 83 rule IDs covered) | PASS | |
 
-**Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016); 2026-10-06 (v1.6.1, SITC-006 step 4), GitHub Actions (automated) / Dermot Murphy (manual review), 1281 tests all PASS on Python 3.10 / 3.11 / 3.12.
+**Overall Result:** PASS — Commit 93178cd, 2026-05-28 (SITC-001 to SITC-014); 2026-06-26 (SITC-015); 2026-07-06 (v1.6.0 RC, SITC-016); 2026-10-06 (v1.6.1, SITC-006 step 4), GitHub Actions (automated) / Dermot Murphy (manual review), 1281 tests all PASS on Python 3.10 / 3.11 / 3.12. v2.0.0 release baseline (2026-11-20, CR #443): SITC-001 to SITC-018 PASS; 1671 tests all PASS (local run on `release/2.0.0`; CI matrix Python 3.10 / 3.11 / 3.12 is a merge gate of the release PR).
+
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SITC-007 step 6 and SITC-017 PASS on `develop` `296e91b` (1422 tests, local run, Python 3.11). The suite has 1444 tests after #408 (1 test), #407 (16 unit tests for SWE1-015/094/096) and #413 (5 tests), 1452 after #412 (8 tests), 1463 after #418 (11 tests), 1481 after #420 (18 tests), 1508 after #422 (27 tests), 1524 after #424 (16 tests), 1532 after #425 (8 tests), 1545 after #423 (13 tests), 1559 after #439, #441 and the v1.6.1 back-merge (14 tests) 1569 after #447 (10 tests), 1574 after #449 (5 tests), 1630 after #456 (49 tests; SITC-018 PASS, local run, Python 3.14, 2026-11-19) and 1655 after #460 to #463 (25 tests; SITC-018 steps 5 to 7 PASS, local run, Python 3.14, 2026-11-19) and 1671 after the review fixes (16 tests), all PASS.
 
 > **📋 Note:** All SITC test cases must achieve PASS status before the system verification (SYS.5) activities commence. Any FAIL result must be tracked as a GitHub Issue and resolved via the change control process (SUP.10).
 
@@ -514,6 +595,8 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 | SITC-014 | SYS-F-040 | IF-09 | SIT-014 |
 | SITC-015 | SYS-F-011, SYS-F-017, SYS-F-020 | IF-01, IF-02, IF-06, IF-08, IF-09 | SIT-019 |
 | SITC-016 | SYS-F-041 | IF-01, IF-06, IF-08, IF-09 | SIT-025 |
+| SITC-017 | SYS-F-011, SYS-F-020, SYS-F-025, SYS-F-026 | IF-01, IF-06, IF-08, IF-09 | SIT-027 |
+| SITC-018 | SYS-F-011, SYS-F-020, SYS-F-025, SYS-F-026 | IF-01, IF-06, IF-08, IF-09 | SIT-028 |
 
 ---
 
@@ -521,7 +604,7 @@ SWE.4/SWE.5 unit and component-level tests are documented in the software test s
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-10-06 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

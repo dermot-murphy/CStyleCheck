@@ -11,6 +11,387 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.0.0] — 2026-11-20
+
+### ⚠️ Compatibility
+
+This is a **Major** release, because the changes below can
+break an existing project on upgrade (SUP10 §7.2, semantic-versioning policy). See the
+linked entries under *Changed* and *Fixed* for details.
+
+- **Unknown case-style values are rejected (#422)** — a value that is not a canonical
+  name or accepted alias is a configuration error: `ERROR:` on stderr, exit 2.
+- **Config/usage errors exit 2, not 1 (#425)** — from the installed `cstylecheck`
+  command as well as `python src/cstylecheck.py`; CI scripts that tested for 1 must
+  test for 2.
+- **New enum findings possible (#423)** — the last enum member is now checked, so
+  code that passed before may report `enum.member_case` / `enum.member_prefix`.
+- **`functions.case` removed (#424)** — the key is ignored and prints a `WARNING`;
+  use `functions.style`.
+- **New rules are opt-in (#412, #418, #456)** — the 10 new `misc.*` rules ship
+  `enabled: false`; enable them per rule, or use `--preset misra` / `--preset barr-c`
+  (#420).
+- **GitHub Action: pin `@v2.0.0`** — the README, `DOCKERHUB_README.md` and `action.yml`
+  usage examples now use `dermot-murphy/CStyleCheck@v2.0.0`; a workflow pinned to a v1.x
+  tag stays on that version until its pin is changed.
+
+### Added
+
+- **8 new MISRA C / Barr-C rules** (81 rule IDs; 83 with the two #456 rules below), all **disabled by default** (opt-in; `enabled: false` in `src/rules.yml`, and off when the
+  key is absent — #412, #418):
+  - `misc.goto_usage` (error, disabled by default) — every `goto` (MISRA C:2012 Rule 15.1)
+    ([#391](https://github.com/dermot-murphy/CStyleCheck/pull/391)).
+  - `misc.assignment_in_condition` (warning, disabled by default) — `=` inside an `if`/`while` condition or a
+    `for` condition clause (MISRA C:2012 Rule 13.4)
+    ([#391](https://github.com/dermot-murphy/CStyleCheck/pull/391)).
+  - `misc.multiple_statements_per_line` (warning, disabled by default) — more than one statement on a line;
+    `for` headers exempt (Barr-C §3.2).
+  - `misc.void_pointer` (warning, disabled by default) — `void *` usage (MISRA C:2012 Rule 11.5).
+  - `misc.recursive_function` (error, disabled by default) — direct recursion (MISRA C:2012 Rule 17.2).
+  - `misc.sizeof_type` (info, disabled by default) — `sizeof` applied to a type name instead of an object
+    (Barr-C §5.7).
+  - `misc.boolean_comparison` (warning, disabled by default) — `==`/`!=` against the
+    lowercase `true`/`false` literals (style rule).
+  - `misc.empty_else` (warning, disabled by default) — empty `else { }` block; a block containing a comment
+    is accepted (Barr-C §8.3).
+
+  The last six were added in [#392](https://github.com/dermot-murphy/CStyleCheck/pull/392).
+  Projects upgrading with an existing `rules.yml` can add the new keys with
+  `--update-config` (they are added as `enabled: false`). 76 new tests in `tests/test_misra_rules.py`.
+- **Partially initialised local structs — 2 new opt-in rules (#456)** (83 rule IDs in
+  total), both **disabled by default** (`enabled: false` in `src/rules.yml`, and off when
+  the key is absent), so upgrading adds no new findings:
+  - `misc.partial_struct_assignment` (warning, disabled by default) — a non-static local
+    struct declared without an initialiser whose members are only partly assigned before
+    the struct is first used as a whole (passed by value or address, returned, copied);
+    the unassigned members hold indeterminate stack data. Reported at the declaration;
+    the message names the use line and the unassigned members. A whole-struct
+    assignment, a call to one of `fill_functions` (default `memset`, `memcpy`,
+    `memmove`) with `&s` as its first argument, or `&s` passed to any other function
+    before the member writes counts as initialising every member. Order is lexical (no
+    control-flow analysis). Related to MISRA C:2012 Rule 9.1 and Barr-C §7.2.
+  - `misc.partial_struct_initialiser` (info, disabled by default) — a local (including
+    `static` local) struct whose positional brace initialiser lists fewer values than the
+    struct has members. `{0}`, `{}` and designated initialisers are not flagged. The code
+    is well-defined C (unlisted members are zero), so this is about intent only; cf.
+    MISRA C:2012 Rule 9.3.
+
+  Member lists come from the struct and typedef definitions in every scanned file
+  (collected in one pass before the files are checked, only when either rule is enabled
+  or `--per-dir-config` is used). `--preset misra` enables both rules and `--preset
+  barr-c` enables `misc.partial_struct_assignment`; the `--init` wizard lists them with
+  the other opt-in rules. Known limitation: a function whose return type is written
+  `struct tag` is not recognised, so its body is not checked. New module
+  `tests/test_partial_struct.py` (54 tests) and 2 new tests in
+  `tests/test_misra_rules.py`; total 1574→1630
+  (issue [#456](https://github.com/dermot-murphy/CStyleCheck/issues/456)).
+- **`misc.partial_struct_*`: struct definitions from files that are not checked (#461)** —
+  new rule key `definition_paths: []` (globs relative to the working directory) on
+  `misc.partial_struct_assignment` and `misc.partial_struct_initialiser`, and new CLI
+  option `--definitions GLOB` (repeatable). The files they name are read only for struct,
+  typedef and `#define` definitions: they are never checked or reported on, and
+  `--exclude` does not apply to them, so excluded vendor SDK headers can supply member
+  lists. The lists of both rules are joined (a rule's list is read even when the rule
+  is disabled in the root config, so per-directory configs can enable it);
+  `--definitions` globs come after them. Precedence: checked files first, then
+  definition files in the order listed (sorted within each glob); a struct definition
+  from a definition file never replaces one from a checked file or an earlier
+  definition file. Only the root configuration's `definition_paths` are used
+  (per-directory configs do not add any). `--definitions` prints a `WARNING` and is
+  ignored when neither partial-struct rule is enabled. The pre-scan took 26 s on 228
+  checked files plus 1002 SDK headers.
+  List the project's own configuration headers (for example `sdk_config.h`) first and
+  keep SDK globs narrow: SDK example folders contain their own `sdk_config.h` files with
+  different values. On a downstream nRF52840 project (228 files, nRF5 SDK 17.1.0 headers
+  as `definition_paths`) the rule now reports two local `nrfx_spim_config_t` structs with
+  10 of 14 members assigned (`dcx_pin`, `rx_delay`, `use_hw_ss` and `ss_duration`
+  missing), which it missed before. 7 new tests (UV-PSI-007)
+  (issue [#461](https://github.com/dermot-murphy/CStyleCheck/issues/461)).
+- **`misc.partial_struct_*`: `report_unknown_types` (#462)** — new rule key, default
+  `false`. When `true`, the rule gives one `info` finding (under its own rule ID) for
+  each local it could not check because its struct type has no definition: an explicit
+  `struct tag`, a typedef alias of an undefined struct (`typedef struct foo_s foo_t;`),
+  or a name that is neither a known typedef, a `#define`d type (`#define U8 unsigned
+  char`) nor a standard type.
+  `misc.partial_struct_assignment` reports non-static locals without an initialiser;
+  `misc.partial_struct_initialiser` reports locals with a positional brace initialiser.
+  The default output is unchanged. 6 new tests (UV-PSI-008)
+  (issue [#462](https://github.com/dermot-murphy/CStyleCheck/issues/462)).
+- **Trend analysis — safety indicators** — `scripts/collect_metrics.py` records
+  `assert_count`, `assert_density` (per KLOC SLOC), `goto_count`, `void_ptr_count`,
+  `cast_count` (C-style casts) and `macro_count` (excluding include guards), counted on
+  comment- and string-stripped text. `scripts/generate_charts.py` adds the
+  `safety_indicators` and `macro_metrics` charts, and `scripts/update_wiki_metrics.py`
+  adds snapshot rows for them
+  ([#392](https://github.com/dermot-murphy/CStyleCheck/pull/392)).
+- **Trend analysis — industry-standard C source code metrics** — `scripts/collect_metrics.py`
+  now uses a comment/string-aware lexer (`strip_comments_and_strings()`, `classify_lines()`,
+  `extract_functions()`, `count_file_scope_variables()`) so keywords, braces and calls inside
+  comments or strings are never counted. New per-commit data-point fields (existing fields
+  are unchanged; older data points without them still chart):
+  `c_file_count`, `h_file_count`, `cc_bucket_1_5`, `cc_bucket_6_10`, `cc_bucket_11_15`,
+  `cc_bucket_16_plus`, `dox_coverage_pct`, `global_vars`, `fanout_avg`,
+  `recursive_func_count`, `violations_by_category`, `files_zero_violations`, `top_rules`.
+  New charts in `scripts/generate_charts.py`: `cc_distribution` (stacked),
+  `function_size`, `violations_by_category` (stacked), `documentation_coverage`,
+  `coupling`; `loc_breakdown` is now a stacked-area LOC composition chart and
+  `defect_density` plots defect density alone. `scripts/update_wiki_metrics.py` adds
+  snapshot rows for the new metrics plus violations-by-category and top-5-rules tables;
+  `scripts/compare_metrics.py` compares the new scalar metrics. Thresholds are documented
+  in `scripts/metrics_rules.yml`
+  (issue [#388](https://github.com/dermot-murphy/CStyleCheck/issues/388)).
+- **Merge-time ASPICE process controls** — `scripts/aspice_check.py` checks that the ASPICE
+  work products are consistent (document-version citations, SYS2/SWE1 traceability, SWE4
+  test counts, README rule IDs, SWE3 line references, CM coverage of every tracked file);
+  `--fix-citations` resyncs stale citations. The new `aspice_consistency.yml` workflow runs
+  it on every pull request. A pull request template with an ASPICE checklist and bug /
+  change-request issue forms are added. No change to the checker, its rules, output or
+  exit codes (compatible)
+  (issue [#437](https://github.com/dermot-murphy/CStyleCheck/issues/437)).
+
+### Changed
+
+- **Missing output folders are created (#441)** — `--log FILE`, `--write-baseline FILE`
+  and `--init-output FILE` (with `--init` / `--preset`) now create the parent folder of
+  FILE, and any missing folders above it, before writing. Previously a missing folder
+  was a configuration error (`Cannot open log file ... No such file or directory`,
+  exit 2), so CI scripts had to run `mkdir -p` first. A folder that cannot be created
+  (for example, a path component that is an existing file) is still a configuration
+  error, exit 2. `--init` / `--preset` with an unwritable output path now exit 2 with a
+  `Cannot write config file` message instead of a Python traceback. Backwards
+  compatible. SWE1-062, SWE1-065, SWE1-075 updated; new module
+  `tests/test_output_dirs.py` (11 tests); total 1546→1557.
+
+- **Presets enable the matching opt-in rules (#420)** — `--preset misra` now enables
+  `misc.goto_usage` (MISRA C:2012 Rule 15.1), `misc.assignment_in_condition` (13.4),
+  `misc.void_pointer` (11.5), `misc.recursive_function` (17.2) and `misc.empty_else`
+  (related to 15.7); `--preset barr-c` enables `misc.multiple_statements_per_line` (§3.2),
+  `misc.sizeof_type` (§5.7) and `misc.empty_else` (§8.3). `minimal` is unchanged and
+  `misc.boolean_comparison` is in no preset. Severities are the shipped defaults. The
+  `--init` wizard asks two new yes/no questions last (enable the MISRA C:2012 rules; enable
+  the Barr-C rules), both defaulting to No; the generated config lists all seven rules with
+  `enabled: true` only for the standard(s) answered yes. The `barr-c` preset's
+  `typedefs.suffix` and `enums.type_suffix` are now written in the nested
+  `{enabled, suffix}` form; the previous bare strings made the checker crash when the
+  generated config was used. 18 new tests in `tests/test_init_wizard.py`; total 1463→1481
+  (issue [#420](https://github.com/dermot-murphy/CStyleCheck/issues/420)).
+- **New rules are opt-in (#418)** — `misc.goto_usage`, `misc.assignment_in_condition`,
+  `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`,
+  `misc.sizeof_type` and `misc.empty_else` now ship `enabled: false` in `src/rules.yml` and
+  are disabled when their key is absent from a project config (the checker reads
+  `cfg.get("enabled", False)`), as `misc.boolean_comparison` already was (#412). Upgrading
+  therefore adds no new findings to an existing project. `--update-config` adds the keys as
+  `enabled: false`. To use a rule, set `misc.<rule>.enabled: true`. The sample profile
+  `examples/embedded_project/config/strict.yml` enables all 8. **Policy** (recorded in
+  `CONTRIBUTING.md` and as CR-418 in SUP10): new rules ship `enabled: false` and default to
+  disabled when the key is absent; they may be enabled in presets. 11 new tests in
+  `tests/test_misra_rules.py`, including policy tests that fail if a rule shipped
+  `enabled: false` defaults to on in code; total 1452→1463
+  (issue [#418](https://github.com/dermot-murphy/CStyleCheck/issues/418)).
+- **`misc.boolean_comparison` is opt-in and matches lowercase `true`/`false` only (#412)** —
+  the rule is now disabled by default, including when the key is missing from a project
+  config (`enabled: false` in `src/rules.yml`; the checker defaults to disabled). Enabled by
+  default it produced 433 new warnings on a reference project. It also no longer matches
+  `TRUE`/`FALSE` macros: comparing an integer flag against `TRUE` is not redundant
+  (`if (flag)` and `if (TRUE == flag)` differ when `flag == 2`), so the suggested rewrite
+  changed behaviour. Only the `<stdbool.h>` literals `true`/`false` are flagged. To keep the
+  rule, set `misc.boolean_comparison.enabled: true`. 8 new tests in
+  `tests/test_misra_rules.py` and one changed (`TRUE` no longer flagged); total 1444→1452
+  (issue [#412](https://github.com/dermot-murphy/CStyleCheck/issues/412)).
+- **Repository protection: no workflow pushes to `develop` or `main` (#449)** — the
+  *Update Trend* job of `cstylecheck_rules.yml` no longer commits a README badge update to the
+  source branch; the README *Naming Convention* badge is a fixed shields.io endpoint URL that
+  reads `cstylecheck/badge.json` from `gh-pages`. `scripts/ci/update_readme_badge.py` is
+  deleted. Every workflow declares `permissions:` (default `contents: read`; only *Update
+  Trend* gets `contents: write`), so the default `GITHUB_TOKEN` can be read-only.
+  `cstylecheck_tests.yml` has no `paths:` filter on `pull_request` and adds an *All Checks
+  Passed* job that passes when the unit tests passed or were skipped because no test-relevant
+  file changed. On `develop` it and *ASPICE work-product consistency* are required status
+  checks (ruleset `Develop_Required_Checks`; `main` is added after v2.0.0 — #453). 5 new tests in
+  `tests/test_workflow_config.py` (`TestRepositoryProtection`); total 1569→1574.
+- **Dependabot targets `develop`** — `.github/dependabot.yml` sets `target-branch: develop`
+  for the `pip` and `github-actions` ecosystems (hotfix
+  [#399](https://github.com/dermot-murphy/CStyleCheck/pull/399), back-merged in
+  [#403](https://github.com/dermot-murphy/CStyleCheck/pull/403)). GitHub Actions updated:
+  `actions/checkout@v7`, `actions/setup-python@v7`, `actions/upload-artifact@v7`,
+  `docker/login-action@v4.6.0` (#386, #387, #400–#402, #404).
+- **Trend metrics accuracy** — cyclomatic complexity no longer counts `do` separately from
+  its `while`; `assert`/`goto`/`void *`/cast/macro counters ignore comments and strings;
+  `func_over_params` threshold is now > 5 parameters (was > 6); function length is measured
+  from the function-name line to the closing brace; static-variable counting handles
+  multi-line and multi-declarator definitions. Expect a one-off step in these series
+  (issue [#388](https://github.com/dermot-murphy/CStyleCheck/issues/388)).
+- **Startup-banner requirements match the tool (documentation only)** — SYS-F-046 and SWE1-094
+  now specify the existing behaviour: two lines on `stderr` (`CStyleCheck <version>`,
+  `(C) 2026 Dermot Murphy`), also written to `--log`, emitted even when output is piped, not
+  suppressible, never on `stdout`. The `--quiet`, date-time, file-count and non-TTY clauses are
+  removed. SWE1-015 records the `--fix` header re-read exception. Change request CR-413; no
+  code change; 5 new tests in `tests/test_cli_requirements.py` (total 1439→1444)
+  (issue [#413](https://github.com/dermot-murphy/CStyleCheck/issues/413)).
+
+### Removed
+
+- **`functions.case` setting (#424)** — the `misra`, `barr-c` and `minimal` presets and
+  the `--init` wizard wrote `functions.case`, and #422 validated it as a case-style key,
+  but the checker never read it, so it had no effect. Function-name casing is set by
+  `functions.style` (`object_verb`, `verb_object`, `lower_snake`, `any`). The key is no
+  longer written by the presets or the wizard, and is removed from the
+  `examples/embedded_project/config/*.yml` files, `scripts/metrics_rules.yml` and
+  `Rules-and-Configuration.md`. `validate_case_styles()` no longer lists it as a
+  case-style key (14 keys). A config (root or per-directory `.cstylecheck.yml`) that
+  still contains `functions.case` loads normally with the same exit code, and prints one
+  `WARNING` on `stderr` per config file saying the key is not used and to use
+  `functions.style` instead. New helper `deprecated_key_warnings()`. 16 new tests in
+  `tests/test_functions_case_removed.py`; total 1508→1524
+  (issue [#424](https://github.com/dermot-murphy/CStyleCheck/issues/424)).
+
+### Fixed
+
+- **`misc.sizeof_type` no longer reports objects that look like types (#460)** —
+  `sizeof(NAME)` was reported when `NAME` was upper case or ended in `_t`, even when it
+  was an object, for example `sizeof (STAGE_TABLE) / sizeof (STAGE_TABLE[0])` on a
+  `static const` lookup table. A name declared as an object (variable, parameter or
+  array) in the same file is now not reported; a typedef name still is. Limitation: an
+  object declared only in another file (for example an `extern` in a header) is not
+  known. A C keyword (`long` in `sizeof(long int)`) is never taken for an object name.
+  On a downstream nRF52840 project (228 files) the `misc.sizeof_type` findings
+  went from 9 to 8. Rule added after v1.6.1, so no released version is affected. 6 new
+  tests in `tests/test_misra_rules.py` (`TestSizeofType`)
+  (issue [#460](https://github.com/dermot-murphy/CStyleCheck/issues/460)).
+- **`misc.partial_struct_*` count members inside inactive `#if` blocks (#463)** — a member
+  inside `#if` / `#ifdef` / `#ifndef` / `#elif` / `#else` in a struct body now counts only
+  when the condition evaluates true from the `#define`s collected from the checked files
+  and definition files (object-like and simple function-like macros spliced as in C,
+  `defined`, integer arithmetic, `#elifdef` / `#elifndef`, backslash-continued
+  conditions). A plain `#define` (top level or inside an include guard) beats an
+  `#ifndef X` / `#define X` default, the first file in precedence order wins within a
+  kind, a `#define` under any other conditional is not used, and a top-level `#undef`
+  drops the name; the project-wide table beats a file's own `#define`s, so a checked
+  `sdk_config.h` beats an SDK header's default. An identifier with no known `#define`
+  (and `#ifdef` of such a name) is unknown, not 0, and an unknown condition leaves its
+  members out of the count, unless one arm must compile (an `#else`, or an `#elif`
+  true by itself) and every arm declares the member, which then keeps its declaration
+  position. This replaces the earlier rule that a member declared in
+  both `#if` and `#else` branches is counted once. Before, every branch was counted, so
+  the rule named members that do not exist in the build (for example the four members of
+  `nrfx_spim_config_t` under `NRFX_SPIM_EXTENDED_ENABLED`). Rules added after v1.6.1, so
+  no released version is affected. 22 new tests (UV-PSI-006, UV-PSI-009)
+  (issue [#463](https://github.com/dermot-murphy/CStyleCheck/issues/463)).
+- **`misc.constant_comparison` no longer reports `#if` / `#elif` conditions (#447)** —
+  the rule reported comparisons in preprocessor conditions such as
+  `#if (BOARD_I2C_INSTANCE == 0U)`, which compare constants at compile time by design
+  (reported against v1.6.1). Comparisons in `#if` and `#elif` conditions are now skipped,
+  including their backslash-continuation lines and directives written with whitespace
+  before or after the `#`. Comparisons in run-time code, including the line straight
+  after an `#if`, are still reported. An `identifiers:` entry in an `--exclusions` file
+  can now suppress the rule: an entry naming either operand (for example
+  `BOARD_I2C_INSTANCE` or `0U`) with `misc.constant_comparison` in its `disabled_rules`
+  suppresses the finding. Before, the entry was matched against the operator text
+  (`==`), so no useful entry could target this rule. The message text is unchanged.
+  10 new tests in `tests/test_constant_comparison.py`; total 1559→1569
+  (issue [#447](https://github.com/dermot-murphy/CStyleCheck/issues/447)).
+- **Startup banner no longer written into a machine-readable `--log` file (#439)** — in
+  v1.6.0 the two-line startup banner was written to the `--log` file for every output
+  format, so with `--output-format json` or `sarif` the file did not parse. The GitHub
+  Action reads its results from that file, so it failed on every run with
+  `could not read results JSON`, whatever the checked code contained. The banner is now
+  written to the `--log` file only for `--output-format text`; for `json`, `sarif` and
+  `html` the log file holds only the report document. The banner is still written to
+  `stderr` for every format. SWE1-094 updated. 1 new test in
+  `tests/test_cli_requirements.py`; total 1545→1546. Already released in
+  [1.6.1](#161--2026-10-06); merging `main` back into `develop` adds that release's
+  2 tests in `tests/test_cli.py` (`TestStartupBannerLogFile`); total 1557→1559.
+- **Last enum member is now checked (#423)** — `enum.member_case` and
+  `enum.member_prefix` skipped the last member of a `typedef enum` when it had no
+  trailing comma (e.g. `typedef enum { COLOUR_RED, badLast } colour_t;`), because the
+  member pattern required `=`, `,` or `}` after the name and the matched body excludes
+  the closing brace. Members are now found by splitting the body on top-level commas,
+  so the last member is checked with or without a trailing comma, an initialiser
+  (`LAST = 5`) or a trailing comment, including single-line and one-member enums.
+  Identifiers inside an initialiser (`COLOUR_RED = OTHER_BASE,`) are no longer checked
+  as if they were members, and `#if` / `#endif` lines in an enum body are ignored.
+  With a trailing comma both rules already reported the last member. **Projects may
+  see new `enum.member_case` / `enum.member_prefix` findings** for last members
+  written without a trailing comma. 13 new tests in `tests/test_enums.py`; total 1532→1545.
+- **Config errors exit with code 2 from the installed `cstylecheck` command (#425)** —
+  config and usage errors (missing or unreadable config, malformed or non-UTF-8 YAML,
+  unreadable baseline, options, alias, exclusions, defines, banned-names, spell-words,
+  copyright or log file, `--options-file` without a path) called `sys.exit("message")`,
+  which exits with code `1`. Only the `python src/cstylecheck.py` wrapper converted this
+  to `2`; the installed console script (`cstylecheck = "cstylecheck:main"`) calls
+  `main()` directly, so it exited `1` and CI could not tell a broken config from a run
+  that found violations. The new helper `config_error()` in `utils.py` prints the
+  message to stderr and exits `2`, and all 18 of these call sites now use it. `main()`
+  itself now reports any other string-message `SystemExit` on stderr and exits `2`, so
+  both entry points behave the same; the duplicate conversion in `src/cstylecheck.py`
+  and in `cli.py`'s `__main__` block was removed. Error message text is unchanged.
+  8 new tests in `tests/test_exit_code_entry_points.py` run each error path through the
+  console-script target and the wrapper; total 1524→1532
+  (issue [#425](https://github.com/dermot-murphy/CStyleCheck/issues/425)).
+- **Unknown case-style names no longer pass silently (#422)** — `matches_case()`
+  returned True for any style name it did not know, and the `barr-c` preset wrote
+  `PascalCase` / `UPPER_SNAKE` while the `--init` wizard wrote `camelCase` /
+  `PascalCase`, so naming checks configured that way never reported anything. The
+  presets and the wizard now write only canonical names (`lower_snake`,
+  `upper_snake`, `camel`, `pascal`); the wizard still shows the friendly labels, in
+  the same order. The `barr-c` preset's `typedefs.case` and `enums.type_case` are now
+  `lower_snake` (Barr-C §5.1.a): `pascal` cannot be satisfied together with the `_t`
+  suffix. `load_config()` (and each per-directory `.cstylecheck.yml`) converts
+  aliases such as `PascalCase`, `camelCase`, `UPPER_SNAKE`, `SCREAMING_SNAKE_CASE`
+  and `snake_case` to the canonical name, ignoring letter case. `any` is accepted
+  as an explicit "no case check" value. New helpers `normalize_case_style()` and
+  `validate_case_styles()`; `matches_case()` raises `ValueError` for an unknown style.
+  Valid names and aliases are listed in `Rules-and-Configuration.md`. 27 new tests in
+  `tests/test_case_style_config.py`; total 1481→1508
+  (issue [#422](https://github.com/dermot-murphy/CStyleCheck/issues/422)).
+
+  > ⚠️ **Behaviour change:** projects that use a config generated by `--preset barr-c`
+  > or the `--init` wizard (camelCase / PascalCase answer) will now get naming findings
+  > (`typedef.case`, `enum.type_case`, `enum.member_case`, `variable.*.case`) that were
+  > silently skipped before. An unknown case name in any case-style key (or in
+  > `functions.style`, `file_prefix.case` or `misc.eof_comment.filename_case`) now stops
+  > the run before any file is checked, with exit code `2` and a message naming the key
+  > and the allowed values.
+- **`misc.boolean_comparison` message citation (#410)** — the rule no longer cites
+  MISRA C:2012 Rule 14.4. Rule 14.4 requires controlling expressions to be essentially
+  Boolean, and `if (flag == true)` is compliant with it, so the citation overstated MISRA
+  coverage. The rule is now a style rule; its message ends with
+  "(redundant comparison with a Boolean literal)" instead of "(MISRA C:2012 Rule 14.4)".
+  The `misc.yoda_condition` "Rule 14.4 (informative)" citation in the ASPICE documents
+  was also removed as unrelated. Tools that match on the exact message text need updating.
+- **`misc.multiple_statements_per_line` message citation (#408)** — the violation message
+  no longer cites MISRA C:2012 Rule 15.5 (single point of exit), which is unrelated; it now
+  cites Barr-C §3.2 only. Tools that match on the exact message text need updating.
+- **Baseline matching ignores line numbers (#394)** — `--baseline-file` now matches
+  on `(file, rule, message)` as a multiset instead of `file:line:rule:message`.
+  Accepted violations stay suppressed when unrelated edits move them up or down the
+  file. Each baseline entry suppresses at most one violation, so an extra copy of an
+  accepted violation is still reported as new. The `line` field is still written for
+  review. New helper `apply_baseline()`; `load_baseline()` now returns a
+  `collections.Counter` instead of a `frozenset`.
+- **Baseline paths are platform-independent (#395)** — baseline file paths are
+  normalised to `/` separators (and `./` removed) when written, loaded and matched,
+  so baselines written on Windows and Linux are interchangeable. Existing baselines
+  containing backslashes are still honoured. New helper `_normalise_path()`.
+
+### Tests
+
+- **#460–#463** — 41 new tests: 6 in `tests/test_misra_rules.py` (`TestSizeofType`) and
+  35 in `tests/test_partial_struct.py` (`TestPreprocessorConditionals` 11,
+  `TestMacroCollection` 11, `TestDefinitionPaths` 7, `TestReportUnknownTypes` 6);
+  total 1630→1671.
+
+- **Unit tests for SWE1-015, SWE1-094 and SWE1-096 (#407)** — new module
+  `tests/test_cli_requirements.py` (16 tests, UV-CLI-014 to UV-CLI-022) asserts that
+  each source file is read from disk exactly once per run and shared by `Checker` and
+  `SignChecker` (including a cross-file sign check), that the startup banner (tool name,
+  version, copyright) goes to `stderr` and never to `stdout`, and that violation paths use
+  the OS-native separator (both `\` and `/` behaviour, via `ntpath`/`posixpath`).
+  Closes RR-003-001 (CSC-REVIEW-003) and AUD9-F-004 (CSC-AUD-009). Test total 1423→1439
+  (issue [#407](https://github.com/dermot-murphy/CStyleCheck/issues/407)).
+
+---
+
 ## [1.6.1] — 2026-10-06
 
 ### Fixed
@@ -460,7 +841,8 @@ Initial public release.
 
 ---
 
-[Unreleased]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/dermot-murphy/CStyleCheck/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.6.1...v2.0.0
 [1.6.1]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.5.1...v1.6.0
 [1.5.1]: https://github.com/dermot-murphy/CStyleCheck/compare/v1.5.0...v1.5.1

@@ -256,5 +256,79 @@ class TestTimezoneAware(unittest.TestCase):
         )
 
 
+class TestRepositoryProtection(unittest.TestCase):
+    """SUP9-TC-PROT-001 to 005 — issue #449 regression suite.
+
+    The repository rulesets require a pull request on develop and main, the
+    default GITHUB_TOKEN is read-only, and one always-run aggregate job is
+    the required status check.  These tests keep the workflows compatible
+    with those settings: no workflow pushes to the source branch, the jobs
+    that write declare their own permissions, and the aggregate job always
+    reports on a pull request.
+    """
+
+    def setUp(self):
+        try:
+            import yaml  # noqa: F401
+        except ImportError:
+            self.skipTest("PyYAML not available")
+        self._rules_text = _WORKFLOW_RULES.read_text(encoding="utf-8")
+        self._rules = _load_yaml(_WORKFLOW_RULES)
+        self._tests = _load_yaml(_WORKFLOW_TESTS)
+
+    @staticmethod
+    def _triggers(wf):
+        # PyYAML (YAML 1.1) loads the bare key "on" as the boolean True.
+        return wf.get("on", wf.get(True)) or {}
+
+    # SUP9-TC-PROT-001
+    def test_rules_workflow_does_not_push_to_source_branch(self):
+        """cstylecheck_rules.yml must push only to gh-pages, never to main/develop."""
+        self.assertNotIn("HEAD:${{ github.ref_name }}", self._rules_text,
+                         "Update Trend still pushes a commit to the source branch")
+        self.assertNotIn("update_readme_badge.py", self._rules_text,
+                         "README badge commit step is back in the workflow")
+
+    # SUP9-TC-PROT-002
+    def test_every_workflow_declares_permissions(self):
+        """Every workflow must declare permissions at workflow or job level."""
+        for path in sorted(_WORKFLOWS_DIR.glob("*.yml")):
+            wf = _load_yaml(path)
+            jobs = wf.get("jobs", {})
+            if "permissions" in wf:
+                continue
+            missing = [name for name, job in jobs.items()
+                       if "permissions" not in job]
+            self.assertEqual(missing, [],
+                             f"{path.name}: jobs without permissions: {missing}")
+
+    # SUP9-TC-PROT-003
+    def test_rules_workflow_token_scopes(self):
+        """Rules workflow is read-only by default; only Update Trend may write."""
+        self.assertEqual(self._rules.get("permissions"), {"contents": "read"})
+        trend = self._rules["jobs"]["trend"]
+        self.assertEqual(trend.get("permissions"), {"contents": "write"})
+        self.assertNotIn("permissions", self._rules["jobs"]["stylecheck"])
+
+    # SUP9-TC-PROT-004
+    def test_tests_workflow_pull_request_has_no_path_filter(self):
+        """The aggregate check must report on every PR, so pull_request has no paths: filter."""
+        pr = self._triggers(self._tests).get("pull_request") or {}
+        self.assertNotIn("paths", pr)
+        self.assertNotIn("paths-ignore", pr)
+        self.assertEqual(self._tests.get("permissions"), {"contents": "read"})
+
+    # SUP9-TC-PROT-005
+    def test_all_checks_passed_job(self):
+        """'All Checks Passed' runs always, needs the unit tests and accepts only success/skipped."""
+        job = self._tests["jobs"]["all-checks"]
+        self.assertEqual(job.get("name"), "All Checks Passed")
+        self.assertEqual(job.get("if"), "always()")
+        self.assertIn("test", job.get("needs", []))
+        script = job["steps"][0]["run"]
+        self.assertIn("success|skipped)", script)
+        self.assertIn("exit 1", script)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

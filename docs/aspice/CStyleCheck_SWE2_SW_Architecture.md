@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE2-001 | **Version** | 1.13 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SWE2-001 | **Version** | 1.36 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.2 |
@@ -20,10 +20,33 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.13 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: COMP-01 key behaviour — the startup banner (two lines) is written to `stderr`, and to the `--log` file for text output only (a json / sarif / html log file holds only the report document); §10 SWE1-094 row updated; §3.1 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
+| 1.36 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): COMP-05 macro collection (`collect_macro_defs`, `MacroTable`: plain over default, conditional `#define`s not used, top-level `#undef` drops a name; project-wide table over the file's own `#define`s via `ChainMap`, built only for struct bodies with a preprocessor line); `_defined_value` for `#ifdef` / `#elifdef`; `struct_definition_paths` reads disabled rules' lists; §8.1 pre-pass — definition files sorted within each glob, `MacroTable`, `--definitions` warning when the pre-pass is not run |
+| 1.35 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): COMP-05 constructor inputs `macros` and `type_names`; COMP-05f `_check_sizeof_type` exempts objects via `_object_names` (#460); module-level helpers `collect_macros`, `eval_pp_condition`, `_members_with_conditionals` (#463), `collect_typedef_names`, `clean_for_struct_scan`, `struct_definition_paths` (#461, #462) and `_is_unknown_struct_type` / `_report_unknown_type`; §7 SWA-IF-11 also carries the macro table and typedef-name set, built from the checked files and the definition files; §8.1 pre-pass reads definition files (`definition_paths`, `--definitions`, `--exclude` not applied); §10 rows SWE1-121 to SWE1-123 |
+| 1.34 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 1.33 | 2026-11-19 | Claude | Issue #456 (CR-456): COMP-05f adds `_check_partial_struct_assignment` and `_check_partial_struct_initialiser` (opt-in) with the helpers `_struct_entries` and `_iter_local_struct_decls`; COMP-05 constructor input `struct_defs` and module-level struct-definition table functions (`collect_struct_defs`, `collect_struct_defs_from_source`, `struct_rules_enabled`); §7 SWA-IF-11 (struct-definition table, COMP-01 → COMP-05); §8.1 struct-definition pre-pass in `main()`; §10 rows for SWE1-118 to SWE1-120 |
+| 1.32 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
+| 1.31 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
+| 1.30 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
+| 1.29 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): COMP-01 SWE1-094 trace row wording from the v1.6.1 release (banner in `--log` for text output only); no design change |
+| 1.28 | 2026-10-05 | Claude | Issue #439: COMP-01 key behaviour — the startup banner is written to the `--log` file only for text output; a json / sarif / html log file holds only the report document |
+| 1.27 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
+| 1.26 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
+| 1.25 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-009: COMP-02 adds case-style validation (`validate_case_styles()`) and deprecated-key warnings (`deprecated_key_warnings()`); COMP-12 adds `normalize_case_style()` and `config_error()` and corrects "Used by" (COMP-01, COMP-02, COMP-05, COMP-06, COMP-11); COMP-09 records that presets and `--init` enable the standard opt-in rules (#420) and write canonical case names (#422); §8.2 rows for unknown case-style value (exit 2) and `functions.case` (WARNING). AUD10-F-022: all 8 post-v1.6.0 COMP-05f rules marked opt-in (#418, #412); referenced-document versions resynced (SWE3 1.29→1.30); approval-by-merge policy (CSC-DEV-002 §5.2) |
+| 1.24 | 2026-09-29 | Claude | Cross-reference resync with #423: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.23 | 2026-09-29 | Claude | Issue #425: §8.2 error handling — config/usage errors exit 2 through `config_error()` (`utils.py`); PyYAML-missing row corrected (was `sys.exit("…")`, exit 1); rows for unreadable supplementary files and string-message `SystemExit` mapped to 2 in `main()`; both entry points return the same exit code; referenced-document versions resynced (4) |
+| 1.22 | 2026-09-29 | Claude | Cross-reference resync with #424: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.21 | 2026-09-29 | Claude | Cross-reference resync with #422: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.20 | 2026-09-29 | Claude | Cross-reference resync with #420: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.19 | 2026-09-29 | Claude | Cross-reference resync with #418: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.18 | 2026-09-29 | Claude | Issue #412: COMP-05f table — `misc.boolean_comparison` marked opt-in (disabled by default); referenced-document versions resynced (4) |
+| 1.17 | 2026-09-29 | Claude | Release-prep cross-reference resync: 4 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.16 | 2026-09-29 | Claude | Issue #413 (CR-413): COMP-01 key behaviour describes the startup banner as two lines on stderr and the log, never stdout, not suppressible (was "one-line"); referenced-document versions resynced (SWE1 2.9→2.10, SWE3 1.19→1.20) |
+| 1.15 | 2026-09-29 | Claude | Issue #410: COMP-05f table — `misc.boolean_comparison` is a style rule; MISRA 14.4 citation removed |
+| 1.14 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP8 1.13→1.14, SWE1 2.8→2.9, SWE3 1.18→1.19, SYS3 1.7→1.8) |
+| 1.13 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-002: add the 8 new checks (#391/#392) to COMP-05f (diagram and method table, with the previously missing v1.4.0–v1.6.0 methods), to the §8.1 run_all() sequence and to the §10 RTM (SWE1-109 to SWE1-116). AUD9-F-006: SWA-IF-09 → Counter multiset; §8.1 baseline steps. AUD9-F-011: add COMP-13 Trend-Analysis Scripts (out of package) and §10 rows for SWE1-100/101, SWE1-102 to SWE1-108 and SWE1-117. AUD9-F-015: record the #397 edits (COMP-06 functions, baseline key, SWA-IF-08) made to v1.12 without a revision; header date. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.12 | 2026-07-06 | Claude | ASPICE audit — v1.6.0: update scope to v1.6.0; §3.1 refs (SWE1 2.4→2.6, SWE3 1.15→1.16, SUP8 1.9→1.10); add models.py/utils.py as COMP-11/COMP-12; update COMP-01 (startup banner), COMP-05b (fn_start), COMP-07 (Tee.log_print), COMP-08 (pointer_prefix fix); update §10 RTM with SWE1-091–099 — closes #372 |
-| 1.11 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.3→2.4, SWE3 1.14→1.15; fix header date | Dermot Murphy |
-| 1.10 | 2026-06-27 | Fix §3.1 cross-refs: SWE1 2.1→2.3, SWE3 1.12→1.14 | Dermot Murphy |
+| 1.11 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SWE1 2.3→2.4, SWE3 1.14→1.15; fix header date |
+| 1.10 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SWE1 2.1→2.3, SWE3 1.12→1.14 |
 | 1.9 | 2026-06-26 | Claude | v1.9 — ASPICE audit corrections: fix §3 scope text (v1.2.x→v1.5.0); update §3.1 SWE1/SWE3 version refs; add v1.4.0/v1.5.0 methods to §8.1 run_all() sequence; add SWE1-MISRA-004/SWE1-089/SWE1-090 to §10 RTM — closes #307 |
 | 1.8 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.7 | 2026-06-08 | Claude | ASPICE audit #238 — add COMP-05h (naming rules); extend §10 RTM with SWE1-078–088 |
@@ -39,7 +62,7 @@
 
 ## 3. Purpose & Scope
 
-This Software Architecture Description defines the internal structure, component decomposition, interfaces, and dynamic behaviour of **CStyleCheck v1.6.0**. It refines the system architecture (CSC-SYS3-001) to the software component level, providing the design basis for detailed design (SWE.3) and integration testing (SWE.5).
+This Software Architecture Description defines the internal structure, component decomposition, interfaces, and dynamic behaviour of **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**. It refines the system architecture (CSC-SYS3-001) to the software component level, providing the design basis for detailed design (SWE.3) and integration testing (SWE.5).
 
 This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Architectural Design**.
 
@@ -47,10 +70,10 @@ This document satisfies **Automotive SPICE® PAM v4.0, SWE.2 — Software Archit
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
-| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.6 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.17 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.11 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
+| CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.27 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.42 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
 
 ---
 
@@ -83,11 +106,20 @@ src/cstylecheck/   (package — 12 sub-modules)
 │   │                                   _check_function_length, _check_function_doc_header,
 │   │                                   _check_assert_density, _check_null_statement_comment,
 │   │                                   _check_declaration_spacing, _check_file_length,
-│   │                                   _check_reserved_header_name)
+│   │                                   _check_reserved_header_name, _check_constant_comparison,
+│   │                                   _check_lowercase_l_suffix, _check_octal_constants,
+│   │                                   _check_trigraphs, _check_non_ascii_source,
+│   │                                   _check_goto_usage, _check_assignment_in_condition,
+│   │                                   _check_multiple_statements_per_line, _check_void_pointer,
+│   │                                   _check_recursive_function, _check_sizeof_type,
+│   │                                   _check_boolean_comparison, _check_empty_else,
+│   │                                   _check_partial_struct_assignment,
+│   │                                   _check_partial_struct_initialiser)
 │   ├── [COMP-05g] Sign Checker        (class SignChecker — _check_calls)
 │   └── [COMP-05h] Naming Checker      (_check_identifier_length,
 │                                       _check_no_single_char_identifiers)
-├── [COMP-06] Baseline Manager         (load_baseline, write_baseline, _baseline_key)
+├── [COMP-06] Baseline Manager         (load_baseline, write_baseline, apply_baseline,
+│                                       _baseline_key, _normalise_path)
 ├── [COMP-07] Output Formatter         (_violations_to_json, _violations_to_sarif,
 │                                       _violations_to_html, print_summary,
 │                                       class Tee, Violation.github_annotation)
@@ -96,6 +128,11 @@ src/cstylecheck/   (package — 12 sub-modules)
 │                                       --init, --preset, --init-output, --overwrite)
 └── [COMP-10] Per-directory Config     (config.resolve_per_dir_config — upward dir-walk,
                                         deep-merge, root-stop, per-dir cache)
+
+scripts/   (outside the package — CI-only, not installed)
+└── [COMP-13] Trend-Analysis Scripts   (collect_metrics.py, generate_charts.py,
+                                        update_wiki_metrics.py, compare_metrics.py;
+                                        run by .github/workflows/metrics.yml)
 ```
 
 ---
@@ -110,14 +147,14 @@ src/cstylecheck/   (package — 12 sub-modules)
 | **Responsibility** | Parse command-line arguments; expand `--options-file` tokens before direct CLI args; resolve source file lists from globs; validate invocation |
 | **Inputs** | `sys.argv`; options file on disk |
 | **Outputs** | `argparse.Namespace` object; resolved `[filepath]` list |
-| **Key behaviour** | Options-file tokens are injected before direct argv tokens so direct args always take precedence; `main()` writes a two-line startup banner (tool name and version, then the copyright line) to `stderr` before processing, and to the `--log` file for text output only (a json / sarif / html log file holds only the report document); it is never written to stdout (SWE1-094) |
+| **Key behaviour** | Options-file tokens are injected before direct argv tokens so direct args always take precedence; `main()` writes a two-line startup banner (`CStyleCheck <version>`, then the copyright line) to `stderr` before processing, and to the `--log` file for text output only (a json / sarif / html log file holds only the report document); it is never written to stdout and cannot be suppressed (SWE1-094) |
 
 ### COMP-02 — Configuration Loader
 
 | Attribute | Value |
 |---|---|
-| **Source functions** | `load_config()`, `load_alias_file()`, `load_exclusions_file()`, `_disabled_rules_for_file()`, `load_defines_file()`, `apply_defines()`, `update_config()`, `_find_default_rules()`, `_deep_merge()`, `_collect_paths()` |
-| **Responsibility** | Load and validate YAML config; build alias-prefix lists; resolve per-file disabled rules; apply defines substitutions to preprocessed source |
+| **Source functions** | `load_config()`, `validate_case_styles()`, `deprecated_key_warnings()`, `load_alias_file()`, `load_exclusions_file()`, `_disabled_rules_for_file()`, `load_defines_file()`, `apply_defines()`, `update_config()`, `_find_default_rules()`, `_deep_merge()`, `_collect_paths()` |
+| **Responsibility** | Load and validate YAML config; validate and normalise every case-style value (`validate_case_styles()`: aliases such as `PascalCase` → canonical names, unknown values → `ERROR:` on stderr, exit 2, #422); report deprecated keys such as `functions.case` as a WARNING on stderr and continue (`deprecated_key_warnings()`, #424); build alias-prefix lists; resolve per-file disabled rules; apply defines substitutions to preprocessed source |
 | **Inputs** | YAML config file path; alias file path; exclusions file path; defines file path |
 | **Outputs** | `cfg` dict; `alias_prefixes` list; `disabled_rules` frozenset; preprocessed source text |
 
@@ -146,7 +183,7 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | Attribute | Value |
 |---|---|
 | **Class** | `Checker` |
-| **Constructor inputs** | `filepath`, `source`, `cfg`, `spell_words`, `alias_prefixes`, `disabled_rules`, `ident_disabled_rules`, `defines`, `extra_banned`, `copyright_header` |
+| **Constructor inputs** | `filepath`, `source`, `cfg`, `spell_words`, `alias_prefixes`, `disabled_rules`, `ident_disabled_rules`, `defines`, `extra_banned`, `copyright_header`, `struct_defs` (cross-file struct-definition table, #456; this file's own definitions are merged over it), `macros` (`#define` table that resolves `#if` blocks in struct bodies, #463), `type_names` (typedef names found by the pre-pass, #462) |
 | **Public interface** | `run_all() → CheckResult` |
 | **Internal state** | `self.clean`, `self.module`, `self.result`, `self._line_map`, `self._brace_depths`, `self._comment_only`, `self._disabled_rules`, `self._alias_prefixes` |
 
@@ -193,6 +230,29 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | `_check_copyright_header()` | `misc.copyright_header` |
 | `_check_comment_ratio()` | `misc.comment_ratio` |
 | `_check_whitespace_ratio()` | `misc.whitespace_ratio` |
+| `_check_function_length()` | `misc.function_length` |
+| `_check_function_doc_header()` | `misc.function_doc_header` |
+| `_check_assert_density()` | `misc.assert_density` |
+| `_check_null_statement_comment()` | `misc.null_statement_comment` |
+| `_check_declaration_spacing()` | `misc.declaration_spacing` |
+| `_check_file_length()` | `misc.file_length` |
+| `_check_reserved_header_name()` | `misc.reserved_header_name` |
+| `_check_constant_comparison()` | `misc.constant_comparison` |
+| `_check_lowercase_l_suffix()` / `_check_octal_constants()` / `_check_trigraphs()` / `_check_non_ascii_source()` | `misc.lowercase_l_suffix`, `misc.octal_constant`, `misc.trigraph`, `misc.non_ascii_source` |
+| `_check_goto_usage()` | `misc.goto_usage` (MISRA 15.1; opt-in, disabled by default, #418) |
+| `_check_assignment_in_condition()` | `misc.assignment_in_condition` (MISRA 13.4; opt-in, disabled by default, #418) |
+| `_check_multiple_statements_per_line()` | `misc.multiple_statements_per_line` (Barr-C §3.2; opt-in, disabled by default, #418) |
+| `_check_void_pointer()` | `misc.void_pointer` (MISRA 11.5; opt-in, disabled by default, #418) |
+| `_check_recursive_function()` | `misc.recursive_function` (MISRA 17.2, direct; opt-in, disabled by default, #418) |
+| `_check_sizeof_type()` | `misc.sizeof_type` (Barr-C §5.7; opt-in, disabled by default, #418); a name declared as an object in the file (`_object_names()`) is not a type operand (#460) |
+| `_check_boolean_comparison()` | `misc.boolean_comparison` (style; opt-in, disabled by default, #412) |
+| `_check_empty_else()` | `misc.empty_else` (Barr-C §8.3; opt-in, disabled by default, #418) |
+| `_check_partial_struct_assignment()` | `misc.partial_struct_assignment` (MISRA 9.1 partial, Barr-C §7.2; opt-in, disabled by default, #456) |
+| `_check_partial_struct_initialiser()` | `misc.partial_struct_initialiser` (cf. MISRA 9.3; opt-in, disabled by default, #456) |
+
+Both #456 rules share the helpers `_struct_entries()` (resolves a `struct <tag>` or typedef key, following alias chains, to its member entries) and `_iter_local_struct_decls()` (yields each struct-typed local declarator inside a function body, with its initialiser, `static` flag, statement end and scope end). The member lists come from a struct-definition table built by the module-level functions `collect_struct_defs()` (one preprocessed text; uses `RE_STRUCT_DEF_OPEN`, `RE_STRUCT_TYPEDEF_ALIAS` and the helpers `_match_brace()`, `_split_top_level()`, `_declarator_name()`, `_struct_members()`) and `collect_struct_defs_from_source()` (preprocesses and applies `--defines` first, via `clean_for_struct_scan()`); `struct_rules_enabled()` tells `main()` whether either rule is enabled.
+
+Since #461 to #463: `struct_definition_paths()` returns the `definition_paths` globs of both rules in the root configuration (read even from a disabled rule, so per-directory configurations can enable it), which `main()` joins with the `--definitions` globs to find **definition files** (read for definitions only, never checked, `--exclude` not applied). `collect_macro_defs()` classifies each file's `#define`s (plain, `#ifndef` default, or conditional and not used; top-level `#undef`) and `MacroTable` merges them into one project-wide macro table (plain beats default; within a kind the first file in precedence order wins — checked files, then definition files in glob order, sorted within each glob; an `#undef`-ed name is dropped); `collect_macros()` is the one-file form. `collect_struct_defs(clean, macros)` layers the project-wide table over the file's own `#define`s (`ChainMap`, built only when a struct body has a preprocessor line) and passes it to `_members_with_conditionals()`, which resolves the `#if` / `#ifdef` / `#elif` / `#elifdef` / `#else` blocks of a struct body with the three-valued evaluator `eval_pp_condition()` (helpers `_join_continuations()`, `_pp_tokenize()`, `_pp_expand()`, `_PPExprParser`, `_defined_value()`, `_resolve_conditionals()`, `_CondFrame`) so that only members under a true condition count. `collect_typedef_names()` lists every typedef name; with `report_unknown_types: true`, `_iter_local_struct_decls(include_unknown=True)` also yields locals whose type `_is_unknown_struct_type()` finds unknown, and `_report_unknown_type()` reports each as `info` under the rule's own ID.
 
 #### COMP-05g — Sign Checker (`class SignChecker`)
 
@@ -217,9 +277,9 @@ The `Checker` class is the central analysis component. It is instantiated once p
 
 | Attribute | Value |
 |---|---|
-| **Source functions** | `_baseline_key()`, `load_baseline()`, `write_baseline()` |
+| **Source functions** | `_normalise_path()`, `_baseline_key()`, `load_baseline()`, `apply_baseline()`, `write_baseline()` |
 | **Responsibility** | Serialise/deserialise violation baselines; generate stable violation keys for suppression matching |
-| **Baseline key** | `"{rule}::{filepath}::{line}::{message}"` |
+| **Baseline key** | `"{filepath}:{rule}:{message}"` — `filepath` normalised to `/` separators; line number excluded; matched as a multiset (issues #394, #395) |
 
 ### COMP-07 — Output Formatter
 
@@ -243,7 +303,7 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | Attribute | Value |
 |---|---|
 | **Source module** | `wizard.py` |
-| **Responsibility** | Interactive Q&A wizard (`--init`) writing `.cstylecheck.yml`; pre-built config generation without wizard (`--preset barr-c\|minimal\|misra`); custom output path (`--init-output`); overwrite guard (`--overwrite`) |
+| **Responsibility** | Interactive Q&A wizard (`--init`) writing `.cstylecheck.yml`; pre-built config generation without wizard (`--preset barr-c\|minimal\|misra`); custom output path (`--init-output`); overwrite guard (`--overwrite`). Presets and the `--init` wizard enable the standard opt-in rules (#420) and write canonical case-style names such as `pascal` and `upper_snake` (#422) |
 | **Inputs** | CLI flags; interactive terminal input (for `--init`) |
 | **Outputs** | `.cstylecheck.yml` (or `--init-output` path) |
 
@@ -269,12 +329,21 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | Attribute | Value |
 |---|---|
 | **Source module** | `utils.py` |
-| **Responsibility** | Provide shared stateless helper functions: `matches_case()`, `matches_case_abbrev()`, `to_case()`, `module_name()`, `is_exempt()`, `_cfg()`, `_strip_module_prefix()`, `_github_annotation_category()`; used by the Rule Engine to avoid duplication across sub-checkers |
-| **Used by** | COMP-05 (all sub-checkers), COMP-07 |
+| **Responsibility** | Provide shared stateless helper functions: `config_error()` (message to stderr, exit 2, #425), `normalize_case_style()` (case-style alias → canonical name, #422), `matches_case()`, `matches_case_abbrev()`, `to_case()`, `module_name()`, `is_exempt()`, `_cfg()`, `_strip_module_prefix()`, `_github_annotation_category()`; used by the Rule Engine to avoid duplication across sub-checkers |
+| **Used by** | COMP-01 (`cli.py`), COMP-02 (`config.py`), COMP-05 (`checker.py`, all sub-checkers), COMP-06 (`baseline.py`), COMP-11 (`models.py`; `Violation.github_annotation()` used by COMP-07) |
 
----
+### COMP-13 — Trend-Analysis Scripts (`scripts/`, outside the package)
 
-## 6. Data Structures
+| Attribute | Value |
+|---|---|
+| **Source modules** | `scripts/collect_metrics.py`, `scripts/generate_charts.py`, `scripts/update_wiki_metrics.py`, `scripts/compare_metrics.py`; configuration `scripts/metrics_rules.yml` |
+| **Responsibility** | Compute per-commit C source metrics for `examples/` (LOC, cyclomatic complexity, size, doxygen coverage, coupling, safety indicators, violation quality), render SVG trend charts, update the Trend-Analysis wiki page and compare PR metrics |
+| **Inputs** | `examples/*.c`/`*.h`; the CStyleCheck JSON report (run as a subprocess using `metrics_rules.yml`); historic data points |
+| **Outputs** | JSON data points, SVG charts, wiki markdown, PR comparison report |
+| **Invoked by** | `.github/workflows/metrics.yml` (CI only; not part of the installed `cstylecheck` package) |
+| **Requirements** | SWE1-102 to SWE1-108, SWE1-117 (process monitoring, CSC-MAN3-001 §10.3) |
+| **Units** | UNIT-121 to UNIT-127 (CSC-SWE3-001) |
+
 
 | Structure | Type | Fields | Used By |
 |---|---|---|---|
@@ -297,9 +366,10 @@ The `Checker` class is the central analysis component. It is instantiated once p
 | SWA-IF-05 | COMP-03 | COMP-05 | Keyword `frozenset`, stdlib `frozenset`, spell `set`, banned `frozenset` | Constructor args |
 | SWA-IF-06 | COMP-04 | COMP-05 | `clean` source, `_line_map`, `_brace_depths`, `_comment_only` | Constructor args via `Checker.__init__` |
 | SWA-IF-07 | COMP-04 | COMP-05g | Raw source (cached) | Cross-file sign check reuses cached content |
-| SWA-IF-08 | COMP-05 | COMP-06 | `List[Violation]` | Passed to `write_baseline()` or filtered by `load_baseline()` |
-| SWA-IF-09 | COMP-06 | COMP-05 | `frozenset` of baseline keys | Used in `main()` to filter violations |
+| SWA-IF-08 | COMP-05 | COMP-06 | `List[Violation]` | Passed to `write_baseline()` or filtered by `apply_baseline()` against `load_baseline()` |
+| SWA-IF-09 | COMP-06 | COMP-05 | `collections.Counter` multiset of `file:rule:message` baseline keys (line number excluded; paths normalised to `/`) | Consumed by `apply_baseline()` in `main()`; each entry suppresses at most one violation (issues #394, #395) |
 | SWA-IF-10 | COMP-05 | COMP-07 | `List[Violation]`, `files_checked: int` | Rendered to stdout / file / JSON / SARIF |
+| SWA-IF-11 | COMP-01 (`main()`) | COMP-05 | Struct-definition table `dict` (`struct <tag>` or typedef alias → member entries or alias key); macro table `dict` (name → (params, body), #463); typedef-name `set` (#462) | Built once from all scanned files and the definition files (`definition_paths`, `--definitions`; #461) before the per-file loop when a #456 rule is enabled or `--per-dir-config` is used; passed as `Checker(..., struct_defs=..., macros=..., type_names=...)` (#456, #461 to #463) |
 
 ---
 
@@ -313,7 +383,15 @@ main()
 ├─ COMP-01: resolve file list [f1.c, f2.h, ...]
 ├─ COMP-02: load_config() → cfg
 ├─ COMP-03: load dictionaries → keyword_set, stdlib_set, spell_set
-├─ COMP-06: load_baseline() → baseline_keys (if --baseline-file)
+├─ COMP-06: load_baseline() → Counter multiset of baseline keys (if --baseline-file)
+├─ struct-definition pre-pass (#456; only if a partial-struct rule is enabled or --per-dir-config):
+│   ├─ definition files = discover_files() per glob of struct_definition_paths(cfg) + --definitions,
+│   │   sorted within each glob, no --exclude, minus the checked files (#461)
+│   ├─ for each checked file, then each definition file: read once (checked files into source_cache);
+│   │   clean_for_struct_scan(); MacroTable.add(collect_macro_defs()) → macros (#463)
+│   └─ for each cleaned text in the same order: collect_struct_defs(clean, macros) → struct_defs
+│       (checked files override; definition files only add new keys); collect_typedef_names() → type_names
+├─ else, if --definitions was given: WARNING on stderr (pre-pass not run, --definitions ignored)
 │
 ├─ for each file in file_list:
 │   ├─ read file once → raw_source (cached in source_cache dict)
@@ -340,11 +418,21 @@ main()
 │   │   ├─ _check_declaration_spacing()     [COMP-05f, v1.4.0]
 │   │   ├─ _check_file_length()             [COMP-05f, v1.4.0]
 │   │   ├─ _check_reserved_header_name()    [COMP-05f, v1.4.0]
-│   │   └─ _check_non_ascii_source()        [COMP-05f, v1.5.0]
+│   │   ├─ _check_non_ascii_source()        [COMP-05f, v1.5.0]
+│   │   ├─ _check_goto_usage()              [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_assignment_in_condition() [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_multiple_statements_per_line() [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_void_pointer()            [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_recursive_function()      [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_sizeof_type()             [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_boolean_comparison()      [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_empty_else()              [COMP-05f, post-v1.6.0]
+│   │   ├─ _check_partial_struct_assignment()  [COMP-05f, post-v1.6.0, #456]
+│   │   └─ _check_partial_struct_initialiser() [COMP-05f, post-v1.6.0, #456]
 │   └─ accumulate violations
 │
 ├─ COMP-05g: SignChecker(source_cache, cfg).check() → sign violations
-├─ filter violations against baseline_keys
+├─ COMP-06: apply_baseline(violations, load_baseline()) — multiset match on file:rule:message
 ├─ COMP-07: render output (text / JSON / SARIF)
 └─ return exit code (0 / 1 / 2)
 ```
@@ -353,10 +441,16 @@ main()
 
 | Error Condition | Detection Point | Response |
 |---|---|---|
-| YAML config missing or malformed | `load_config()` (COMP-02) | `sys.exit(2)` with message to stderr |
+| YAML config missing or malformed | `load_config()` (COMP-02) | `config_error()`: message to stderr, exit 2 |
+| Unknown case-style value (e.g. `variables.case: Foo`) | `validate_case_styles()` via `load_config()` / `resolve_per_dir_config()` (COMP-02) | `ERROR:` message per value to stderr, exit 2 (#422) |
+| Deprecated key `functions.case` set | `deprecated_key_warnings()` via `load_config()` / `resolve_per_dir_config()` (COMP-02) | `WARNING:` to stderr (once per run); key ignored; processing continues (#424) |
 | Source file unreadable | `main()` file read loop | Warning to stderr; file skipped |
-| Baseline file malformed | `load_baseline()` (COMP-06) | `sys.exit(2)` with message to stderr |
-| PyYAML not installed | Module import | `sys.exit("PyYAML is required")` |
+| Baseline file malformed | `load_baseline()` (COMP-06) | `config_error()`: message to stderr, exit 2 |
+| PyYAML not installed | Module import | `config_error("PyYAML is required: pip install pyyaml")`: exit 2 |
+| Supplementary file unreadable (options, aliases, exclusions, defines, banned names, spell words, copyright, log) | Loader in COMP-01 / COMP-02, `main()` for `--log` | `config_error()`: message to stderr, exit 2 |
+| Any other `SystemExit` with a string message | `main()` (COMP-01) | Message to stderr, re-raised as exit 2 |
+
+All config/usage errors go through `config_error()` (`utils.py`), which prints the message and exits with code 2. `main()` also maps a string-message `SystemExit` to exit 2, so the installed `cstylecheck` console script (which calls `main()` directly) and the `python src/cstylecheck.py` wrapper return the same exit code (#425).
 
 ---
 
@@ -387,7 +481,7 @@ main()
 | SWE1-051 to SWE1-053 | Cross-file sign compatibility | COMP-05g |
 | SWE1-054 to SWE1-056 | Reserved names and spell check | COMP-05f |
 | SWE1-057 to SWE1-064 | Output formatting | COMP-07 |
-| SWE1-065 to SWE1-067 | Baseline suppression | COMP-06 |
+| SWE1-065 to SWE1-067, SWE1-100, SWE1-101 | Baseline suppression | COMP-06 |
 | SWE1-068 to SWE1-070 | CLI and entry point | COMP-01 |
 | SWE1-071 | Whitespace ratio check | COMP-05f |
 | SWE1-MISRA-001 to SWE1-MISRA-003 | MISRA C lexical rules (lowercase l, octal, trigraphs) | COMP-05f |
@@ -419,6 +513,21 @@ main()
 | SWE1-097 | `print_summary()` restructure | COMP-07 |
 | SWE1-098 | `fn_start` line correction | COMP-05b |
 | SWE1-099 | Function-pointer typedef exemption from `variable.pointer_prefix` | COMP-05a |
+| SWE1-102 to SWE1-108, SWE1-117 | Trend-analysis C source metrics (CI scripts) | COMP-13 |
+| SWE1-109 | `misc.goto_usage` | COMP-05f |
+| SWE1-110 | `misc.assignment_in_condition` | COMP-05f |
+| SWE1-111 | `misc.multiple_statements_per_line` | COMP-05f |
+| SWE1-112 | `misc.void_pointer` | COMP-05f |
+| SWE1-113 | `misc.recursive_function` | COMP-05f |
+| SWE1-114 | `misc.sizeof_type` | COMP-05f |
+| SWE1-115 | `misc.boolean_comparison` | COMP-05f |
+| SWE1-116 | `misc.empty_else` | COMP-05f |
+| SWE1-118 | `misc.partial_struct_assignment` | COMP-05f |
+| SWE1-119 | `misc.partial_struct_initialiser` | COMP-05f |
+| SWE1-120 | Cross-file struct-definition table | COMP-05 (`collect_struct_defs`), COMP-01 (`main()` pre-pass) |
+| SWE1-121 | Definition files (`definition_paths`, `--definitions`) | COMP-05 (`struct_definition_paths`, `clean_for_struct_scan`), COMP-01 (`main()` pre-pass, argument parser) |
+| SWE1-122 | `report_unknown_types` | COMP-05f (`_iter_local_struct_decls`, `_is_unknown_struct_type`, `_report_unknown_type`), COMP-05 (`collect_typedef_names`) |
+| SWE1-123 | `#if` members in struct definitions | COMP-05 (`collect_macros`, `eval_pp_condition`, `_members_with_conditionals`), COMP-01 (`main()` macro table) |
 
 ---
 
@@ -426,7 +535,7 @@ main()
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-10-06 |
+| Author | Claude | Approved | 2026-09-29 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

@@ -763,6 +763,169 @@ misc:
     severity: error
     extra_reserved: []      # additional project-specific names to reserve
 
+  # -----------------------------------------------------------------------
+  # MISRA C:2012 Rule 15.1 (Advisory) — goto forbidden
+  # -----------------------------------------------------------------------
+  # The goto statement is forbidden.  It can bypass initialisations, obscure
+  # control flow, and make static analysis harder.  Restructure using break,
+  # continue, or an early-return pattern.
+  #
+  #   Violation:  goto cleanup;
+  #   Correct:    Use break / continue / early return.
+  goto_usage:
+    enabled: false          # opt-in; disabled by default (#418)
+    severity: error
+
+  # -----------------------------------------------------------------------
+  # MISRA C:2012 Rule 13.4 (Required) — assignment in condition
+  # -----------------------------------------------------------------------
+  # The result of an assignment operator shall not be used.  Assignments
+  # inside if/while/for conditions are almost always typos for '==' and
+  # silently compile.  Even when intentional they reduce readability.
+  #
+  #   Violation:  if (x = foo()) { … }
+  #   Violation:  while (ptr = next_node(ptr)) { … }
+  #   Correct:    x = foo(); if (x) { … }
+  assignment_in_condition:
+    enabled: false          # opt-in; disabled by default (#418)
+    severity: warning
+
+  # -----------------------------------------------------------------------
+  # Multiple statements per line — Barr-C §3.2 (no direct MISRA C:2012 rule)
+  # -----------------------------------------------------------------------
+  # Each statement shall appear on its own line.  Multiple statements on
+  # one line obscure control flow and make targeted breakpoints impossible.
+  # for(init; cond; update) is exempt — the semicolons there are separators.
+  #
+  #   Violation:  x = 1; y = 2;
+  #   Correct:    x = 1;
+  #               y = 2;
+  multiple_statements_per_line:
+    enabled: false          # opt-in; disabled by default (#418)
+    severity: warning
+
+  # -----------------------------------------------------------------------
+  # MISRA C:2012 Rule 11.5 (Advisory) — void pointer usage
+  # -----------------------------------------------------------------------
+  # A conversion should not be performed from pointer to void into pointer
+  # to object.  void * removes compile-time type checking and can hide
+  # mismatched pointer arithmetic or object sizes.
+  #
+  #   Violation:  void *buf = get_buffer();
+  #   Correct:    uint8_t *buf = get_buffer();
+  void_pointer:
+    enabled: false          # opt-in; disabled by default (#418)
+    severity: warning
+
+  # -----------------------------------------------------------------------
+  # MISRA C:2012 Rule 17.2 (Required) — recursive functions forbidden
+  # -----------------------------------------------------------------------
+  # Functions shall not call themselves, either directly or indirectly.
+  # Recursion makes worst-case stack-depth analysis intractable and can
+  # silently overflow the fixed stacks of embedded RTOS tasks.
+  #
+  #   Violation:  int fact(int n) { return n * fact(n-1); }
+  #   Correct:    Use an iterative loop instead.
+  recursive_function:
+    enabled: false          # opt-in; disabled by default (#418)
+    severity: error
+
+  # -----------------------------------------------------------------------
+  # sizeof with type operand — Barr-C §5.7
+  # -----------------------------------------------------------------------
+  # sizeof(TypeName) is fragile: if the variable's declared type changes,
+  # the sizeof silently becomes wrong.  sizeof(*var) or sizeof(var) always
+  # track the variable's actual type.
+  #
+  #   Violation:  memset(buf, 0, sizeof(uint32_t) * N);
+  #   Correct:    memset(buf, 0, sizeof(*buf) * N);
+  sizeof_type:
+    enabled: false          # opt-in; disabled by default (#418)
+    severity: info
+
+  # -----------------------------------------------------------------------
+  # Boolean comparison with true/false (style rule)
+  # -----------------------------------------------------------------------
+  # Comparing a boolean expression to 'true' or 'false' with == / != is
+  # redundant and may hide type-coercion bugs; use the expression directly
+  # or negate it.  Style rule only: it does not enforce MISRA C:2012
+  # Rule 14.4, with which 'if (flag == true)' is compliant.
+  # Only the lowercase <stdbool.h> literals 'true' / 'false' are matched;
+  # TRUE / FALSE macros are not (comparing an integer flag against TRUE is
+  # not redundant -- 'if (flag)' differs when flag == 2).  See #412.
+  #
+  #   Violation:  if (flag == true)   { … }
+  #   Violation:  while (done == false) { … }
+  #   Correct:    if (flag)            { … }
+  #   Correct:    while (!done)        { … }
+  #   Not flagged: if (TRUE == flag)   (macro, not a <stdbool.h> literal)
+  boolean_comparison:
+    enabled: false          # opt-in; disabled by default (#412)
+    severity: warning
+
+  # -----------------------------------------------------------------------
+  # Empty else clause — Barr-C §8.3 / MISRA C:2012 Rule 15.7
+  # -----------------------------------------------------------------------
+  # An else with an empty body is either a forgotten placeholder or dead
+  # code.  Remove it or add a comment explaining why no action is needed.
+  #
+  #   Violation:  } else {}
+  #   Correct:    remove the else, or add /* intentionally empty */
+  empty_else:
+    enabled: false          # opt-in; disabled by default (#418)
+    severity: warning
+
+  # -----------------------------------------------------------------------
+  # Partially assigned local struct — MISRA C:2012 Rule 9.1 / Barr-C §7.2
+  # -----------------------------------------------------------------------
+  # A non-static local struct declared without an initialiser holds
+  # indeterminate stack data in every member.  Flags such a struct when only
+  # some of its members are assigned before it is used as a whole (passed by
+  # value or address, returned, copied).  Member lists come from the struct
+  # definitions in all scanned files and in definition_paths; a local whose
+  # struct definition is not found is not checked (report_unknown_types
+  # lists them).  Members inside #if / #ifdef blocks count only when the
+  # condition evaluates true from the #defines found; an unknown condition
+  # leaves them out.  A whole-struct assignment, or a call to one of
+  # fill_functions with '&s' as its first argument, before the member
+  # assignments counts as initialising every member.  Passing '&s' to any
+  # other function before a member is assigned counts as an out-parameter
+  # fill.  Order is lexical (no control-flow analysis).
+  #
+  #   Violation:  uart_cfg_t cfg;  cfg.baud = 9600U;  Uart_Init(&cfg);
+  #   Correct:    uart_cfg_t cfg = {0};  cfg.baud = 9600U;  Uart_Init(&cfg);
+  partial_struct_assignment:
+    enabled: false          # opt-in; disabled by default (#456)
+    severity: warning
+    fill_functions:         # functions that write every member of '&s'
+      - memset
+      - memcpy
+      - memmove
+    # Files read only for struct, typedef and #define definitions (#461):
+    # never checked, and --exclude does not apply, so vendor SDK headers
+    # can supply member lists.  Globs are relative to the working directory.
+    # Earlier entries win when a macro is defined more than once, so list
+    # the project's own configuration headers first.  Shared with
+    # partial_struct_initialiser; --definitions GLOB adds more.
+    definition_paths: []
+    report_unknown_types: false   # info per local whose type is unknown (#462)
+
+  # -----------------------------------------------------------------------
+  # Short positional struct initialiser — cf. MISRA C:2012 Rule 9.3
+  # -----------------------------------------------------------------------
+  # A positional brace initialiser of a local struct that lists fewer values
+  # than the struct has members.  The unlisted members are zero (C11 §6.7.9
+  # p21), so this is about explicit intent only.  {0}, {} and designated
+  # initialisers (.member = value) are not flagged.
+  #
+  #   Violation:  uart_cfg_t cfg = { 9600U };
+  #   Correct:    uart_cfg_t cfg = { .baud = 9600U };   or   = {0}
+  partial_struct_initialiser:
+    enabled: false          # opt-in; disabled by default (#456)
+    severity: info
+    definition_paths: []    # see partial_struct_assignment (#461)
+    report_unknown_types: false   # info per local whose type is unknown (#462)
+
 # --- Reserved / banned identifier names ---
 # Checks that no declared variable, function, macro, or constant name
 # shadows a C keyword, C++ keyword, or C standard library name.

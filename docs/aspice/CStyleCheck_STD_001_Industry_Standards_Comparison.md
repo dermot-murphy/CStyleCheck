@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-STD-001 | **Version** | 1.2 |
-| **Project** | CStyleCheck | **Date** | 2026-06-18 |
+| **Document ID** | CSC-STD-001 | **Version** | 1.24 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.1 |
@@ -20,6 +20,28 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
+| 1.23 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
+| 1.22 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 1.21 | 2026-11-19 | Claude | Issue #456: §7.8 adds `misc.partial_struct_assignment` (MISRA C:2012 Rule 9.1 partial, Barr-C §7.2) and `misc.partial_struct_initialiser` (cf. MISRA C:2012 Rule 9.3), both opt-in; ten post-v1.6.0 rules |
+| 1.20 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
+| 1.19 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
+| 1.18 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
+| 1.17 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
+| 1.16 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
+| 1.15 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
+| 1.14 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-022: §7.8 marks all eight post-v1.6.0 rules opt-in — new "Default state" column (disabled by default; enabled by the `misra` / `barr-c` presets and `--init` since #420; `misc.boolean_comparison` in no preset), severity column renamed "Severity when enabled", explanatory note added; approval-by-merge policy (CSC-DEV-002 §5.2) |
+| 1.13 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.12 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.11 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.10 | 2026-09-29 | Claude | Cross-reference resync with #422: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.9 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.8 | 2026-09-29 | Claude | Cross-reference resync with #418: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.7 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.6 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.5 | 2026-09-29 | Claude | Issue #410: §7.8 `misc.boolean_comparison` row — MISRA C:2012 column no longer cites Rule 14.4 (style rule; `if (flag == true)` is compliant with Rule 14.4) |
+| 1.4 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE3 1.18→1.19) |
+| 1.3 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-023: `goto` (P10-1, MISRA 15.1) and recursion (AV 119, MISRA 17.2) rows 🔵→🟢; add §7.8 mapping the 8 post-v1.6.0 rules (#391/#392) to the surveyed standards; footer version v1.1→v1.3. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.2 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.1 | 2026-06-06 | Claude | Add `misc.file_length` (max lines per file) as unique opportunity #12; create change-request issues for all 12 opportunities |
 | 1.0 | 2026-06-06 | Claude | Initial document — full survey of 11 industry standards with coverage matrix; closes issue #217 |
@@ -41,9 +63,9 @@ The findings are presented in a unified coverage matrix and a prioritised list o
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
-| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.13 |
-| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.17 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.36 |
+| CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.42 |
 
 ---
 
@@ -107,7 +129,7 @@ The ten rules were designed by Gerard J. Holzmann explicitly to be **mechanicall
 
 | Rule | Description | CStyleCheck | astyle | MISRA C checker | Notes |
 |---|---|---|---|---|---|
-| P10-1 | No `goto`, `setjmp`, `longjmp` | 🔵 | — | 📏 MISRA 15.1, 21.4 | Could add `goto` check; MISRA already covers it |
+| P10-1 | No `goto`, `setjmp`, `longjmp` | 🟢 (`goto` only) | — | 📏 MISRA 15.1, 21.4 | `goto` covered by `misc.goto_usage` (post-v1.6.0, #391); `setjmp`/`longjmp` left to MISRA 21.4 |
 | P10-2 | All loops have a fixed upper bound (no `while(1)` / `for(;;)` without a counter) | 🔵 | — | 📏 MISRA 15.4 | Partial: `for(;;)` detectable by regex |
 | P10-3 | No dynamic memory after init (`malloc`/`calloc`/`realloc`/`free`) | 🔵 | — | 📏 MISRA 21.3 | Grep-detectable; MISRA 21.3 covers |
 | P10-4 | Functions ≤ 60 lines (configurable) | ⭐ | — | — | **Not in MISRA or Barr-C**; line-count between braces; unique opportunity |
@@ -190,7 +212,7 @@ Publicly available at stroustrup.com. The following rules apply to C (not C++ sp
 | JSF Rule | Description | CStyleCheck | astyle | MISRA C checker | Notes |
 |---|---|---|---|---|---|
 | AV Rule 111 | No variadic functions (`...` parameter) | 🔵 | — | 📏 MISRA 17.1 | MISRA 17.1 covers |
-| AV Rule 119 | No recursion | 🔵 | — | 📏 MISRA 17.2 | MISRA 17.2 covers |
+| AV Rule 119 | No recursion | 🟢 (direct) | — | 📏 MISRA 17.2 | Direct recursion covered by `misc.recursive_function` (post-v1.6.0, #392); indirect recursion left to MISRA 17.2 |
 | AV Rule 206 | No dynamic memory (`malloc`/`free`) | 🔵 | — | 📏 MISRA 21.3 | MISRA 21.3 covers |
 
 **Summary (S6):** 7 already covered (🟢), 5 unique opportunities (⭐), 5 already in MISRA, 1 not feasible.
@@ -286,6 +308,25 @@ Rules currently implemented in CStyleCheck that go beyond the base standards:
 | `sign_compatibility` | Cross-file signed/unsigned parameter compatibility | CStyleCheck original |
 | `spell_check` | Spell-checking identifiers against a dictionary | CStyleCheck original |
 
+### 7.8 Post-v1.6.0 Additions (PRs #391, #392; issue #456)
+
+The matrices above are a snapshot of the v1.2 survey (2026-06-06). Rules later implemented, such as function length and assert density (v1.4.0), are shown with their original survey symbol except where updated in this revision. The 10 rules added on `develop` after v1.6.0 (8 by #391/#392, 2 by #456) map to the surveyed standards as follows:
+
+| CStyleCheck rule | Default state | Severity when enabled | MISRA C:2012 | Barr-C:2018 | Power of 10 / JSF | Previous matrix status |
+|---|---|---|---|---|---|---|
+| `misc.goto_usage` | Opt-in: disabled by default; enabled by `--preset misra` and the `--init` MISRA question | error | Rule 15.1 | — | P10-1 | 🔵 → 🟢 |
+| `misc.assignment_in_condition` | Opt-in: disabled by default; enabled by `--preset misra` and the `--init` MISRA question | warning | Rule 13.4 (conditions only) | — | — | 📏 (MISRA-only) |
+| `misc.multiple_statements_per_line` | Opt-in: disabled by default; enabled by `--preset barr-c` and the `--init` Barr-C question | warning | — | §3.2 | — | not listed |
+| `misc.void_pointer` | Opt-in: disabled by default; enabled by `--preset misra` and the `--init` MISRA question | warning | Rule 11.5 (all `void *` use) | — | — | 📏 (MISRA-only) |
+| `misc.recursive_function` | Opt-in: disabled by default; enabled by `--preset misra` and the `--init` MISRA question | error | Rule 17.2 (direct only) | — | P10-1, AV 119 | 🔵 → 🟢 |
+| `misc.sizeof_type` | Opt-in: disabled by default; enabled by `--preset barr-c` and the `--init` Barr-C question | info | — | §5.7 | — | not listed |
+| `misc.boolean_comparison` | Opt-in: disabled by default; in no preset (enable explicitly) | warning | — (style rule; Rule 14.4 not enforced) | — | — | 📏 (MISRA-only) |
+| `misc.empty_else` | Opt-in: disabled by default; enabled by `--preset misra`, `--preset barr-c` and either `--init` question | warning | Rule 15.7 (intent) | §8.3 | — | not listed |
+| `misc.partial_struct_assignment` | Opt-in: disabled by default; enabled by `--preset misra`, `--preset barr-c` and either `--init` question | warning | Rule 9.1 (partial — local structs with only some members assigned before use as a whole) | §7.2 | — | 📏 (MISRA-only) |
+| `misc.partial_struct_initialiser` | Opt-in: disabled by default; enabled by `--preset misra` and the `--init` MISRA question | info | Rule 9.3 (related — struct analogue, intent only) | — | — | not listed |
+
+All ten rules are opt-in: they ship `enabled: false` in `src/rules.yml` and are disabled when the configuration key is absent (#412, #418, #456). Since #420 the MISRA and Barr-C presets and the `--init` wizard enable the standard-specific rules at the severity shown; `misc.boolean_comparison` is a style rule and belongs to no preset. These rules give early, style-level feedback. They do not replace a MISRA C checker; cppcheck `--misra` remains authoritative for the MISRA rules listed (CSC-SWE1-001 Appendix A).
+
 ---
 
 ## 8. Consolidated Unique Opportunity Rules (⭐)
@@ -340,9 +381,9 @@ These rules are best handled by a dedicated formatting tool. CStyleCheck should 
 | `switch` must have `default` label | CERT MSC01-C, MISRA 16.4 | 🔵 | — | 📏 | ✅ |
 | No dead code / unreachable code | CERT MSC07-C, MISRA 2.1 | 🔵 | — | 📏 | ⚠️ Partial |
 | No statements with no effect | CERT MSC12-C, MISRA 2.2 | 🔵 | — | 📏 | ⚠️ Partial |
-| No `goto` | Power of 10 R1, MISRA 15.1 | 🔵 | — | 📏 | ✅ |
+| No `goto` | Power of 10 R1, MISRA 15.1 | 🟢 `misc.goto_usage` | — | 📏 | ✅ |
 | No `setjmp`/`longjmp` | Power of 10 R1, MISRA 21.4 | 🔵 | — | 📏 | ✅ |
-| No recursion | Power of 10 R1, MISRA 17.2 | 🔵 | — | 📏 | ⚠️ Direct only |
+| No recursion | Power of 10 R1, MISRA 17.2 | 🟢 `misc.recursive_function` (direct only) | — | 📏 | ⚠️ Direct only |
 | Fixed upper bound on all loops | Power of 10 R2, MISRA 15.4 | 🔵 | — | 📏 | ⚠️ Partial |
 | No dynamic memory allocation | Power of 10 R3, MISRA 21.3 | 🔵 | — | 📏 | ✅ |
 | **Function length limit** | **Power of 10 R4, JSF 200** | **⭐** | **—** | **—** | **✅** |
@@ -434,13 +475,15 @@ These rules are best handled by a dedicated formatting tool. CStyleCheck should 
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-06-06 |
-| Technical Reviewer | Dermot Murphy | Pending | — |
-| Quality Assurance | Dermot Murphy | Pending | — |
-| Approver | Dermot Murphy | Pending | — |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.
 
 ---
 
-*End of Industry Standards Comparison Report — CSC-STD-001 v1.2*
+*End of Industry Standards Comparison Report — CSC-STD-001 v1.24*

@@ -1,0 +1,74 @@
+name: Bug report
+description: Report a problem (CSC-SUP9-001 §5.1 problem record)
+title: "[BUG] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form records a problem per CSC-SUP9-001 §5.1. The maintainer
+        confirms the severity and applies the matching `SEV-n` label at
+        triage (§5.2); issue forms cannot set labels from a dropdown.
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: |
+        CSC-SUP9-001 §4.1 criteria:
+        - **SEV-1 Critical** — crash, data loss, security vulnerability, or incorrect rule evaluation causing a silent pass of invalid code (48 hours)
+        - **SEV-2 Major** — false positive blocking adoption; incorrect violation output data (wrong file/line/rule); wrong exit code (1 week)
+        - **SEV-3 Minor** — cosmetic output issue; misleading error message; documentation inaccuracy (next planned release)
+        - **SEV-4 Enhancement** — feature request or improvement; raise a change request instead where possible (planned release)
+      options:
+        - SEV-1 Critical
+        - SEV-2 Major
+        - SEV-3 Minor
+        - SEV-4 Enhancement
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Affected version / commit
+      description: Version tag (`cstylecheck --version`) or commit SHA where the problem was observed
+      placeholder: v1.6.0 or 1a2b3c4
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Python version, OS, and the exact invocation command
+      placeholder: |
+        Python 3.12, Ubuntu 24.04
+        cstylecheck --config rules.yml src/
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Minimal C source file or command that triggers the problem
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What actually happened (paste output, exit code)
+    validations:
+      required: true
+  - type: textarea
+    id: work-products
+    attributes:
+      label: Affected work products
+      description: Configuration items (CSC-SUP8-001 §6.1), if known — the maintainer completes this at triage otherwise
+    validations:
+      required: false

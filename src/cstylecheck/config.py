@@ -17,10 +17,12 @@ import shlex
 import sys
 from pathlib import Path
 
+from .utils import _CASE_PATTERNS, config_error, normalize_case_style
+
 try:
     import yaml
 except ImportError:
-    sys.exit("PyYAML is required: pip install pyyaml")
+    config_error("PyYAML is required: pip install pyyaml")
 
 
 # ---------------------------------------------------------------------------
@@ -44,7 +46,7 @@ def _read_options_file(path: str) -> list:
     try:
         text = Path(path).read_text(encoding="utf-8", errors="replace")
     except OSError as e:
-        sys.exit(f"Cannot read options file '{path}': {e}")
+        config_error(f"Cannot read options file '{path}': {e}")
     tokens: list = []
     for lineno, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
@@ -76,7 +78,7 @@ def _expand_options_file(argv: list) -> list:
         if arg == "--options-file":
             i += 1
             if i >= len(argv):
-                sys.exit("ERROR: --options-file requires a path argument")
+                config_error("ERROR: --options-file requires a path argument")
             result.extend(_read_options_file(argv[i]))
         elif arg.startswith("--options-file="):
             result.extend(_read_options_file(arg[len("--options-file="):]))
@@ -248,14 +250,158 @@ def update_config(config_path: str) -> int:
     return 0
 
 
+# ---------------------------------------------------------------------------
+# Case-style validation  (#422)
+# ---------------------------------------------------------------------------
+
+# Every config key whose value is a naming case style checked through
+# utils._CASE_PATTERNS.  Values are normalised in place (aliases such as
+# PascalCase -> pascal) and anything unknown is a config error.
+_CASE_STYLE_KEYS: tuple[tuple[str, ...], ...] = (
+    ("variables", "case"),
+    ("variables", "global", "case"),
+    ("variables", "static", "case"),
+    ("variables", "local", "case"),
+    ("variables", "parameter", "case"),
+    ("constants", "case"),
+    ("macros", "case"),
+    ("typedefs", "case"),
+    ("enums", "type_case"),
+    ("enums", "member_case"),
+    ("structs", "tag_case"),
+    ("structs", "member_case"),
+    ("functions", "object_case"),
+    ("functions", "verb_case"),
+)
+
+# Style-like keys with their own (non-_CASE_PATTERNS) value sets.  Matched
+# case-insensitively; functions.style also accepts the lower_snake aliases.
+_ENUM_STYLE_KEYS: dict[tuple[str, ...], tuple[str, ...]] = {
+    ("functions", "style"):                   ("object_verb", "verb_object",
+                                               "lower_snake", "any"),
+    ("file_prefix", "case"):                  ("lower", "upper", "as_is"),
+    ("misc", "eof_comment", "filename_case"): ("lower", "upper", "preserve"),
+}
+
+
+# Keys that are accepted but ignored by the checker.  A config that still
+# contains one gets a WARNING on stderr (not an error, so existing configs
+# keep working).  functions.case (#424) was written by the presets but never
+# read; function-name casing is controlled by functions.style.
+_DEPRECATED_KEYS: dict[tuple[str, ...], str] = {
+    ("functions", "case"): (
+        "is not used by the checker and is ignored; function-name casing "
+        "is controlled by 'functions.style' (object_verb, verb_object, "
+        "lower_snake, any). Remove 'functions.case' and use "
+        "'functions.style' instead"),
+}
+
+# (source, message) pairs already warned about, so a per-directory config
+# visited for several sub-directories warns only once per run.
+_WARNED_DEPRECATED: set = set()
+
+
+def deprecated_key_warnings(cfg, source: str = "config") -> list:
+    """
+    Return a warning string for every deprecated key present in *cfg*
+    (#424).  The keys are left in place; the checker ignores them.
+    """
+    warnings: list = []
+    if not isinstance(cfg, dict):
+        return warnings
+    for path, reason in _DEPRECATED_KEYS.items():
+        node: object = cfg
+        for k in path[:-1]:
+            node = node.get(k) if isinstance(node, dict) else None
+        if isinstance(node, dict) and path[-1] in node:
+            warnings.append(f"{source}: '{'.'.join(path)}' {reason}")
+    return warnings
+
+
+def _warn_deprecated_keys(cfg, source: str) -> None:
+    """Print each deprecated-key warning for *cfg* once per run (#424)."""
+    for msg in deprecated_key_warnings(cfg, source):
+        if (source, msg) in _WARNED_DEPRECATED:
+            continue
+        _WARNED_DEPRECATED.add((source, msg))
+        print(f"WARNING: {msg}", file=sys.stderr)
+
+
+def validate_case_styles(cfg, source: str = "config") -> list:
+    """
+    Normalise every case-style value in *cfg* in place and return a list
+    of error strings for values that are not recognised (#422).
+
+    Each error names the dotted key path, the offending value and the
+    allowed values.  An empty list means the config is valid.  Keys that
+    are absent (or whose parent is not a mapping) are skipped.
+    """
+    errors: list = []
+    if not isinstance(cfg, dict):
+        return errors
+
+    def _slot(path):
+        node = cfg
+        for k in path[:-1]:
+            node = node.get(k) if isinstance(node, dict) else None
+        if isinstance(node, dict) and path[-1] in node:
+            return node
+        return None
+
+    allowed_cases = ", ".join(_CASE_PATTERNS)
+    for path in _CASE_STYLE_KEYS:
+        node = _slot(path)
+        if node is None:
+            continue
+        raw = node[path[-1]]
+        canon = normalize_case_style(raw)
+        if isinstance(canon, str) and canon in _CASE_PATTERNS:
+            node[path[-1]] = canon
+        else:
+            errors.append(
+                f"{source}: invalid case style {raw!r} for "
+                f"'{'.'.join(path)}' (allowed: {allowed_cases}; "
+                f"aliases such as PascalCase, camelCase, UPPER_SNAKE and "
+                f"snake_case are accepted)")
+
+    for path, allowed in _ENUM_STYLE_KEYS.items():
+        node = _slot(path)
+        if node is None:
+            continue
+        raw = node[path[-1]]
+        canon = raw.strip().lower() if isinstance(raw, str) else raw
+        if path == ("functions", "style"):
+            canon = normalize_case_style(canon)
+        if canon in allowed:
+            node[path[-1]] = canon
+        else:
+            errors.append(
+                f"{source}: invalid value {raw!r} for "
+                f"'{'.'.join(path)}' (allowed: {', '.join(allowed)})")
+    return errors
+
+
+def _exit_on_case_style_errors(cfg, source: str) -> None:
+    """
+    Validate *cfg*; on error print each message and exit with code 2.
+    Deprecated keys (#424) only produce a WARNING on stderr.
+    """
+    _warn_deprecated_keys(cfg, source)
+    errors = validate_case_styles(cfg, source)
+    if errors:
+        for err in errors:
+            print(f"ERROR: {err}", file=sys.stderr)
+        sys.exit(2)
+
+
 def load_config(path: str) -> dict:
     cfg_path = Path(path)
     if not cfg_path.exists():
-        sys.exit(f"Config file not found: {path}")
+        config_error(f"Config file not found: {path}")
     try:
         raw = cfg_path.read_bytes()
     except OSError as e:
-        sys.exit(f"Cannot read config file '{path}': {e}")
+        config_error(f"Cannot read config file '{path}': {e}")
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError as e:
@@ -263,15 +409,18 @@ def load_config(path: str) -> dict:
         # Common cause: Windows text editor saved the file as Windows-1252 or
         # Latin-1 (e.g. an ellipsis character U+2026 encoded as 0x85).
         bad_byte = raw[e.start] if e.start < len(raw) else 0
-        sys.exit(
+        config_error(
             f"Config file '{path}' contains a non-UTF-8 byte "
             f"0x{bad_byte:02X} at offset {e.start}. "
             f"Save the file as UTF-8 (without BOM) and try again."
         )
     try:
-        return yaml.safe_load(text)
+        cfg = yaml.safe_load(text)
     except yaml.YAMLError as e:
-        sys.exit(f"Cannot parse config file '{path}': {e}")
+        config_error(f"Cannot parse config file '{path}': {e}")
+    # Normalise case-style aliases; unknown styles are a config error (#422).
+    _exit_on_case_style_errors(cfg, path)
+    return cfg
 
 
 def load_spell_words(path: str) -> set:
@@ -283,7 +432,7 @@ def load_spell_words(path: str) -> set:
             if word and not word.startswith("#"):
                 result.add(word.lower())
     except OSError as e:
-        sys.exit(f"Cannot read spell-words file '{path}': {e}")
+        config_error(f"Cannot read spell-words file '{path}': {e}")
     return result
 
 
@@ -314,7 +463,7 @@ def load_alias_file(path: str) -> dict:
     try:
         text = Path(path).read_text(encoding="utf-8", errors="replace")
     except OSError as e:
-        sys.exit(f"Cannot read alias file '{path}': {e}")
+        config_error(f"Cannot read alias file '{path}': {e}")
     for lineno, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
         if not line or line.startswith("#"):
@@ -363,7 +512,7 @@ def load_exclusions_file(path: str) -> dict:
         data = yaml.safe_load(
             Path(path).read_text(encoding="utf-8", errors="replace"))
     except OSError as e:
-        sys.exit(f"Cannot read exclusions file '{path}': {e}")
+        config_error(f"Cannot read exclusions file '{path}': {e}")
     if not isinstance(data, dict):
         return {}
     result: dict = {}
@@ -442,7 +591,7 @@ def load_defines_file(path: str) -> list:
     try:
         text = Path(path).read_text(encoding="utf-8", errors="replace")
     except OSError as e:
-        sys.exit(f"Cannot read defines file '{path}': {e}")
+        config_error(f"Cannot read defines file '{path}': {e}")
     for lineno, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
         if not line or line.startswith("#"):
@@ -548,7 +697,7 @@ def load_banned_names_file(path: str) -> frozenset:
     try:
         text = Path(path).read_text(encoding="utf-8", errors="replace")
     except OSError as e:
-        sys.exit(f"Cannot read banned-names file '{path}': {e}")
+        config_error(f"Cannot read banned-names file '{path}': {e}")
     for raw in text.splitlines():
         name = raw.strip()
         if name and not name.startswith("#"):
@@ -590,13 +739,13 @@ def load_copyright_file(path: str) -> tuple:
     try:
         raw = Path(path).read_text(encoding='utf-8', errors='replace')
     except OSError as e:
-        sys.exit(f"Cannot read copyright file '{path}': {e}")
+        config_error(f"Cannot read copyright file '{path}': {e}")
 
     text = raw.replace('\r\n', '\n').replace('\r', '\n')
 
     m = re.search(r'/\*.*?\*/', text, re.DOTALL)
     if not m:
-        sys.exit(
+        config_error(
             f"Copyright file '{path}' contains no block comment (/* ... */)."
         )
 
@@ -672,6 +821,9 @@ def _walk_per_dir_configs(dirpath: Path) -> list:
             except (OSError, yaml.YAMLError):
                 data = None
             if isinstance(data, dict):
+                # Same case-style normalisation / validation as the root
+                # config: an unknown style is a config error (#422).
+                _exit_on_case_style_errors(data, str(candidate))
                 chain.append(data)
                 if data.get("root"):
                     break

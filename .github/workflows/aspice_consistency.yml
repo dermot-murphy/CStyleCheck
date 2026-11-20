@@ -1,0 +1,43 @@
+name: ASPICE Consistency
+
+# Merge-time ASPICE work-product consistency gate (#437, CSC-SUP1-001 GATE).
+# Runs scripts/aspice_check.py: document-version citations, SYS2/SWE1 RTM,
+# SWE4 test counts, README rule IDs, SWE3 line references and SUP8 CI
+# coverage. No path filter: any change can make a work product stale.
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  aspice-check:
+    name: ASPICE work-product consistency
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # src/_version.py is git-ignored; generate it as the test workflow does
+      # so pytest collection (SWE4 count check) sees the same package state.
+      - name: Generate _version.py
+        working-directory: src
+        run: |
+          VERSION=$(git describe --tags --dirty --always 2>/dev/null || echo "0.0.0.dev")
+          echo "__version__ = \"${VERSION}\"" > _version.py
+          echo "Version: ${VERSION}"
+
+      - name: Run ASPICE consistency checks
+        run: python scripts/aspice_check.py

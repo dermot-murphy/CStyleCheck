@@ -1,0 +1,299 @@
+{
+  "summary": {
+    "files_checked": 6,
+    "errors": 0,
+    "warnings": 36,
+    "info": 0,
+    "total": 36
+  },
+  "violations": [
+    {
+      "file": "src/led_control.c",
+      "line": 42,
+      "col": 29,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'id' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/led_control.c",
+      "line": 42,
+      "col": 39,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'on' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/led_control.c",
+      "line": 56,
+      "col": 50,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/led_control.c",
+      "line": 70,
+      "col": 50,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/led_control.c",
+      "line": 100,
+      "col": 30,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'id' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/led_control.c",
+      "line": 100,
+      "col": 43,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'mode' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/led_control.c",
+      "line": 100,
+      "col": 57,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'period_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/led_control.c",
+      "line": 113,
+      "col": 23,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/led_control.c",
+      "line": 139,
+      "col": 27,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'id' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/led_control.c",
+      "line": 20,
+      "col": 78,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'period_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/task_scheduler.c",
+      "line": 25,
+      "col": 29,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'fn' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/task_scheduler.c",
+      "line": 25,
+      "col": 39,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'erval_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/task_scheduler.c",
+      "line": 46,
+      "col": 25,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/task_scheduler.c",
+      "line": 62,
+      "col": 32,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'fn' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/task_scheduler.c",
+      "line": 62,
+      "col": 42,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'enabled' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/task_scheduler.c",
+      "line": 1,
+      "col": 1,
+      "severity": "warning",
+      "rule": "misc.comment_ratio",
+      "message": "comment ratio 0.12 is below warning threshold 0.15 (6 comment lines / 48 code lines)"
+    },
+    {
+      "file": "src/main.c",
+      "line": 69,
+      "col": 29,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/main.c",
+      "line": 78,
+      "col": 28,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/main.c",
+      "line": 93,
+      "col": 33,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/main.c",
+      "line": 20,
+      "col": 33,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/main.c",
+      "line": 21,
+      "col": 37,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/main.c",
+      "line": 22,
+      "col": 32,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "src/main.c",
+      "line": 53,
+      "col": 15,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "include/led_control.h",
+      "line": 54,
+      "col": 30,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'id' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "include/led_control.h",
+      "line": 54,
+      "col": 43,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'mode' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "include/led_control.h",
+      "line": 54,
+      "col": 57,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'period_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "include/led_control.h",
+      "line": 63,
+      "col": 23,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "include/led_control.h",
+      "line": 70,
+      "col": 27,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'id' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "include/led_control.h",
+      "line": 22,
+      "col": 1,
+      "severity": "warning",
+      "rule": "enum.type_case",
+      "message": "Enum type 'led_id_t' must be upper_snake"
+    },
+    {
+      "file": "include/led_control.h",
+      "line": 29,
+      "col": 1,
+      "severity": "warning",
+      "rule": "enum.type_case",
+      "message": "Enum type 'led_mode_t' must be upper_snake"
+    },
+    {
+      "file": "include/task_scheduler.h",
+      "line": 44,
+      "col": 29,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'fn' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "include/task_scheduler.h",
+      "line": 44,
+      "col": 39,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'erval_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "include/task_scheduler.h",
+      "line": 54,
+      "col": 25,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'now_ms' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "include/task_scheduler.h",
+      "line": 63,
+      "col": 32,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'fn' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "include/task_scheduler.h",
+      "line": 63,
+      "col": 42,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'enabled' must start with 'p_' (parameter prefix)"
+    },
+    {
+      "file": "include/task_scheduler.h",
+      "line": 28,
+      "col": 72,
+      "severity": "warning",
+      "rule": "variable.parameter.p_prefix",
+      "message": "Parameter 'enabled' must start with 'p_' (parameter prefix)"
+    }
+  ]
+}

@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS3-001 | **Version** | 1.6 |
-| **Project** | CStyleCheck | **Date** | 2026-07-06 |
+| **Document ID** | CSC-SYS3-001 | **Version** | 1.27 |
+| **Project** | CStyleCheck | **Date** | 2026-11-19 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.3 |
@@ -20,6 +20,27 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.27 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
+| 1.26 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
+| 1.25 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 1.24 | 2026-11-19 | Claude | Issue #456: §9 traceability 81→83 rule IDs (the 2 opt-in partially-initialised local struct rules in SS-05) |
+| 1.23 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
+| 1.22 | 2026-11-19 | Claude | Cross-reference version resync with #449: referenced-document versions set to the current baseline; no technical content change |
+| 1.21 | 2026-10-06 | Claude | Cross-reference version resync with #447: referenced-document versions set to the current baseline; no technical content change |
+| 1.20 | 2026-10-06 | Claude | Cross-reference version resync after the v1.6.1 hotfix back-merge (#444): referenced-document versions set to the current baseline; no technical content change |
+| 1.19 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
+| 1.18 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
+| 1.17 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-003: §9 adds SYS-F-046 (startup banner, CR-413) → SS-01, `cli.main()`; approval-by-merge policy (CSC-DEV-002 §5.2) |
+| 1.16 | 2026-09-29 | Claude | Cross-reference resync with #423: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.15 | 2026-09-29 | Claude | Cross-reference resync with #425: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.14 | 2026-09-29 | Claude | Cross-reference resync with #424: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.13 | 2026-09-29 | Claude | Cross-reference resync with #422: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.12 | 2026-09-29 | Claude | Cross-reference resync with #420: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.11 | 2026-09-29 | Claude | Cross-reference resync with #418: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.10 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.9 | 2026-09-29 | Claude | Release-prep cross-reference resync: 3 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.8 | 2026-09-29 | Claude | Issue #407: cross-reference update only; referenced-document versions resynced (SUP8 1.13→1.14, SYS2 2.3→2.4, SYS4 1.12→1.13) |
+| 1.7 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: §9 traceability 73→81 rule IDs (8 MISRA/Barr-C rules from #391/#392 in SS-05); scope text. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.6 | 2026-07-06 | Claude | ASPICE audit — scope v1.2.x→v1.6.0; traceability 53→73 rule IDs; add models.py and utils.py to subsystem table — closes #379 |
 | 1.5 | 2026-06-18 | Claude | ASPICE audit #254 — sync referenced-document version citations to current versions |
 | 1.4 | 2026-06-05 | Claude | CSC-AUD-005 corrective action — fix factual errors identified in audit |
@@ -34,16 +55,16 @@
 
 ### 3.1 Purpose
 
-This System Architecture Description defines the top-level structural and behavioural design of **CStyleCheck v1.6.0**, decomposing the system into its major functional subsystems, defining their interfaces, and establishing the basis for software-level design. It satisfies **Automotive SPICE® PAM v4.0, SYS.3 — System Architectural Design**.
+This System Architecture Description defines the top-level structural and behavioural design of **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**, decomposing the system into its major functional subsystems, defining their interfaces, and establishing the basis for software-level design. It satisfies **Automotive SPICE® PAM v4.0, SYS.3 — System Architectural Design**.
 
 ### 3.2 Referenced Documents
 
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.3 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.12 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.11 |
+| CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.25 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.34 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
 
 ---
 
@@ -223,7 +244,7 @@ If any configuration or invocation error is detected during steps 1 or 2:
 | SYS REQ-ID | Requirement Summary | Subsystem(s) |
 |---|---|---|
 | SYS-F-001 to SYS-F-010 | Input handling | SS-01 (CLI & Options Loader) |
-| SYS-F-011 to SYS-F-026 | Rule checking (all 73 rule IDs) | SS-05 (Rule Engine), SS-03 (Dictionary Manager) |
+| SYS-F-011 to SYS-F-026 | Rule checking (all 83 rule IDs — 73 at v1.6.0 plus the 8 MISRA/Barr-C rules from #391/#392 and the 2 partial-struct rules from #456) | SS-05 (Rule Engine), SS-03 (Dictionary Manager) |
 | SYS-F-027 to SYS-F-033 | Output formats and reporting | SS-06 (Output Formatter) |
 | SYS-F-034 to SYS-F-036 | Baseline suppression | SS-01 (flags), SS-05 (filter), SS-06 (write) |
 | SYS-F-037 to SYS-F-040 | Exit codes | SS-06 (exit code return) |
@@ -240,6 +261,7 @@ If any configuration or invocation error is detected during steps 1 or 2:
 | SYS-F-043 | Config wizard (`--init`) and preset generation (`--preset`) | SS-08 (Config Wizard) |
 | SYS-F-044 | Per-directory config override resolution (`--per-dir-config`) | SS-09 (Per-directory Config) |
 | SYS-F-045 | HTML report output (`--output-format html`) | SS-06 (Output Formatter) |
+| SYS-F-046 | Startup banner (two lines on stderr before checking, unconditional; also `--log`) | SS-01 (CLI — `cli.main()` writes `_VERSION_STRING` and `_COPYRIGHT` to stderr, never stdout) |
 
 ---
 
@@ -247,9 +269,11 @@ If any configuration or invocation error is detected during steps 1 or 2:
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-04-15 |
-| Technical Reviewer | Dermot Murphy | Approved | 2026-04-15 |
-| Quality Assurance | Dermot Murphy | Approved | 2026-04-15 |
-| Approver | Dermot Murphy | Approved | 2026-04-15 |
+| Author | Claude | Approved | 2026-09-29 |
+| Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+| Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
+
+> Approval is given by the owner's merge of the pull request that introduces this revision; the merge commit is the approval record (CSC-DEV-002 §5.2).
 
 > **Note:** This document is under configuration management (SUP.8). Post-approval changes require a change request (SUP.10) and a new document version.

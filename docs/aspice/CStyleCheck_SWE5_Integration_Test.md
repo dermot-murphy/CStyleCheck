@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.15 |
-| **Project** | CStyleCheck | **Date** | 2026-10-06 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.37 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.5 |
@@ -20,12 +20,34 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
-| 1.15 | 2026-10-06 | Claude | v1.6.1 hotfix, issue #439: SIT-024 adds steps 5 and 6 — the startup banner is written to the `--log` file for text output only; a json / sarif / html log file holds only the report document (`test_cli.py` `TestStartupBannerLogFile`); SIT-024 execution record for v1.6.1; §3.2 CM baseline v1.6.1; §6 overall result 1279→1281; §3.1 referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
+| 1.37 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §3 scope v2.0.0; §3.2 CM baseline adds the v2.0.0 release baseline (tag `v2.0.0` on the `main` merge commit of `release/2.0.0`); §6 overall result for v2.0.0 (SIT-001 to SIT-028, 1671 tests); referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
+| 1.36 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): SIT-028 step 8 — a plain `#define` beats an `#ifndef` default, first file in precedence order wins within a kind; new steps 11 (`--definitions` warning when no partial-struct rule is enabled) and 12 (checked configuration header beats an SDK default); test file cites UV-PSI-009; execution record; §6 post-v1.6.0 note — suite total 1655→1671 |
+| 1.35 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SIT-028 — SW-REQ adds SWE1-121 to SWE1-123; steps 7 to 10 (definition files through `definition_paths` and `--definitions` with `--exclude`, macro precedence, `#if` members, `report_unknown_types`); SWA-IF-11 also carries the macro table and typedef names; execution record; §6 post-v1.6.0 note — suite total 1630→1655; §7 SIT-028 row |
+| 1.34 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
+| 1.33 | 2026-11-19 | Claude | Issue #456 (CR-456): new SIT-028 (partially initialised local struct rules through the CLI, cross-file struct-definition table, SWA-IF-11) with §6 and §7 rows; §4 interface SWA-IF-11 (11 SWA interfaces); SIT-016 step 4 — the trigger snippet covers 10 opt-in rules, `misra` adds both partial-struct rules and `barr-c` adds `misc.partial_struct_assignment`; §6 post-v1.6.0 note — suite total 1574→1630, 83 rule IDs |
+| 1.32 | 2026-11-19 | Claude | Cross-reference version resync with #453 (CSC-SUP8-001 §7.1/§7.5 ruleset wording) |
+| 1.31 | 2026-11-19 | Claude | Issue #449: §6 post-v1.6.0 note — suite total 1569→1574 (5 workflow-configuration tests), all PASS; referenced-document versions resynced |
+| 1.30 | 2026-10-06 | Claude | Issue #447: §6 post-v1.6.0 note — suite total 1545→1559 (#439, #441, v1.6.1 back-merge) →1569 (`misc.constant_comparison` skips `#if` / `#elif`), all PASS |
+| 1.29 | 2026-10-06 | Claude | v1.6.1 hotfix back-merge (`main` into `develop`, #439, #444): SIT-024 steps 5 and 6 (startup banner in the `--log` file for text output only) and the v1.6.1 execution record / overall result brought in from the v1.6.1 release |
+| 1.28 | 2026-09-30 | Claude | Cross-reference version resync (#437): referenced-document versions set to the current baseline after the merge-time process-control changes; no technical content change |
+| 1.27 | 2026-09-30 | Claude | Cross-reference version resync (#435): all referenced-document versions set to the current baseline (every controlled work product bumped once in this change set); no technical content change |
+| 1.26 | 2026-09-29 | Claude | CSC-AUD-010 corrective actions (#430). AUD10-F-007: SIT-024 step 2 expects the copyright line in the code's format `(C) <year> <holder>` (no word "Copyright"; SWE1-095, UV-CLI-018). AUD10-F-019: post-v1.6.0 test-count note extended through #422 (1508), #424 (1524), #425 (1532) and #423 (1545); approval-by-merge policy (CSC-DEV-002 §5.2) |
+| 1.25 | 2026-09-29 | Claude | Cross-reference resync with #423: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.24 | 2026-09-29 | Claude | Cross-reference resync with #425: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.23 | 2026-09-29 | Claude | Cross-reference resync with #424: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.22 | 2026-09-29 | Claude | Cross-reference resync with #422: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.21 | 2026-09-29 | Claude | Issue #420: SIT-016 objective extended; steps 4 (each preset's generated config enables and fires exactly its opt-in rules via `--config`) and 5 (wizard MISRA C:2012 / Barr-C questions, default No) added; 2026-09-29 PASS result row; post-v1.6.0 note test total 1463→1481; referenced-document versions resynced (5) |
+| 1.20 | 2026-09-29 | Claude | Issue #418 (CR-418): SIT-027 steps 1–6 and 8 enable the rule explicitly (all 8 post-v1.6.0 rules are opt-in); new step 10 — none of the 8 reported with the default config; steps renumbered (old step 10 → 11); test file cites UV-MSR-009; post-v1.6.0 note 1452→1463 tests; referenced-document versions resynced (5) |
+| 1.19 | 2026-09-29 | Claude | Issue #412: SIT-027 step 7 — `misc.boolean_comparison` not reported with the default config (opt-in), `TRUE` macro not matched; post-v1.6.0 note 1444→1452 tests; referenced-document versions resynced (5) |
+| 1.18 | 2026-09-29 | Claude | Release-prep cross-reference resync: 5 referenced-document version(s) updated to current (SVD excluded; updated at release) |
+| 1.17 | 2026-09-29 | Claude | Issue #413 (CR-413): SIT-024 step 1 expects the two-line stderr banner with stdout piped; step 3 expects `--quiet` to be rejected (no suppression); post-v1.6.0 note 1439→1444 tests; referenced-document versions resynced (SWE2 1.14→1.15, SWE1 2.9→2.10, SWE4 1.24→1.25, SWE6 1.18→1.19) |
+| 1.16 | 2026-09-29 | Claude | Issue #407: §7 SIT-011 and SIT-024 rows cite UV-CLI-014 to UV-CLI-016 and UV-CLI-017 to UV-CLI-019; post-v1.6.0 note records 1439 tests after #408 and #407; referenced-document versions resynced (SWE1 2.8→2.9, SWE2 1.13→1.14, SWE4 1.22→1.24, SWE6 1.17→1.18, SYS4 1.12→1.13) |
+| 1.15 | 2026-09-29 | Claude | CSC-AUD-009 corrective actions (#405). AUD9-F-005: add SIT-027 for the 8 rules from #391/#392 (SWE1-109 to SWE1-116), with §6 and §7 rows and a post-v1.6.0 result note. AUD9-F-006: SWA-IF-09 → Counter multiset; SIT-012 step 4 → {"violations":[…]} with `file`; add steps 5–7 (moved violation, duplicate, Windows path); trace SIT-012 to SWE1-100/101 and UV-CLI-011 to 013. AUD9-F-026: CM baseline ID → v1.6.0 tag / develop 296e91b; scope text. AUD9-F-024: Author and Description columns swapped back in earlier revision rows. AUD9-F-014: referenced-document versions resynced to current revisions |
 | 1.14 | 2026-07-06 | Claude | ASPICE audit — add SIT-024 body (missing from doc); add SIT-025 (block-comment suppression), SIT-026 (--summary restructure); update §3.1 refs (SWE2 1.11→1.12, SWE4 1.18→1.20, SWE6 1.14→1.16); update §6 and §7 — closes #375 |
 | 1.13 | 2026-07-06 | Claude | v1.6.0 RC — update §6 overall result 1223→1279; §3.1 SWE4→1.19, SVD→1.22; add SIT-024 (startup banner/copyright output) |
 | 1.12 | 2026-07-01 | Claude | Add SIT-021/022/023 (constant_comparison, unsigned_suffix signed-param, pointer_prefix fix); update §3 scope to v1.6.0; §6 overall result 1183→1223; §3.1 SWE1→2.5, SWE4→1.18, SWE6→1.14 |
-| 1.11 | 2026-06-27 | Fix §3.1 cross-refs: SWE4 1.16→1.17, SWE6 1.12→1.13, SYS4 1.7→1.9; fix header date | Dermot Murphy |
-| 1.10 | 2026-06-27 | Fix §3.1 cross-refs: SWE4 1.14→1.16, SWE6 1.10→1.12 | Dermot Murphy |
+| 1.11 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SWE4 1.16→1.17, SWE6 1.12→1.13, SYS4 1.7→1.9; fix header date |
+| 1.10 | 2026-06-27 | Dermot Murphy | Fix §3.1 cross-refs: SWE4 1.14→1.16, SWE6 1.10→1.12 |
 | 1.9 | 2026-06-26 | Claude | ASPICE audit — update §3.1 refs (SWE2 1.8→1.9, SWE4 1.12→1.14, SWE6 1.7→1.10, SYS4 1.5→1.7); update §3.2 CM baseline to v1.5.0 tag; update §6 overall result 1182→1183 — closes #306 #309 |
 | 1.8 | 2026-06-26 | Claude | v1.5.0 release — update product version reference in §3 scope |
 | 1.7 | 2026-06-26 | Claude | Add SIT-020 for non_ascii_source (Rule 4.1), per-file summary breakdown, and typedef-alias constant.case exemption — issues #279 #278 #272 #244 |
@@ -41,7 +63,7 @@
 
 ## 3. Purpose & Scope
 
-This document defines the software integration test specification for **CStyleCheck v1.6.0**, verifying that the software components integrate correctly across the interfaces defined in CSC-SWE2-001. It satisfies **Automotive SPICE® PAM v4.0, SWE.5 — Software Integration and Integration Verification**.
+This document defines the software integration test specification for **CStyleCheck v2.0.0** (v1.6.0 / v1.6.1 plus the post-v1.6.0 `develop` changes), verifying that the software components integrate correctly across the interfaces defined in CSC-SWE2-001. It satisfies **Automotive SPICE® PAM v4.0, SWE.5 — Software Integration and Integration Verification**.
 
 Integration tests operate at a higher level than unit tests (SWE.4): they exercise data flows **across component boundaries** — primarily the path from COMP-01 (CLI) through COMP-04 (Parser) into COMP-05 (Rule Engine) and COMP-07 (Output Formatter) — rather than individual method logic.
 
@@ -51,11 +73,11 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.13 |
-| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.7 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.21 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.17 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.12 |
+| CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.36 |
+| CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.48 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.40 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.34 |
 
 ### 3.2 Test Environment
 
@@ -65,14 +87,14 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 | **Python Versions** | 3.10, 3.11, 3.12 |
 | **Test runner** | pytest 7+ via `cstylecheck_tests.yml` CI workflow |
 | **Invocation method** | `subprocess.run()` — full process invocation including argument parsing |
-| **CM Baseline ID** | v1.6.1 (`hotfix/1.6.1` merged to `main`; v1.6.0 baseline plus the #439 fix) |
+| **CM Baseline ID** | SIT-001 to SIT-026: release tag `v1.6.0` (commit `a6102d6`, 2026-07-06). SIT-012 re-run and SIT-027: `develop` commit `296e91b` (2026-09-29). v2.0.0 release baseline: tag `v2.0.0` on the `main` merge commit of `release/2.0.0` (2026-11-20, CR #443) |
 
 ### 3.3 Integration Verification Criteria
 
 | Criterion | Target | Measurement |
 |---|---|---|
 | All SIT test cases | PASS | pytest result |
-| Interface coverage | All 10 SWA interfaces exercised | Traceability matrix |
+| Interface coverage | All 11 SWA interfaces exercised | Traceability matrix |
 | Exit code correctness | 100% | Subprocess return code assertion |
 | Output schema conformance | JSON and SARIF valid | Schema validation in test |
 
@@ -80,7 +102,7 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 
 ## 4. Interface Coverage Plan
 
-Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised by at least one integration test.
+Each software architecture interface (SWA-IF-01 to SWA-IF-11) must be exercised by at least one integration test.
 
 | Interface ID | Description | Covered By |
 |---|---|---|
@@ -92,8 +114,9 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SWA-IF-06 | COMP-04 → COMP-05: clean source, line_map, brace_depths | SIT-001, SIT-005 |
 | SWA-IF-07 | COMP-04 → COMP-05g: cached source for cross-file sign check | SIT-011 |
 | SWA-IF-08 | COMP-05 → COMP-06: violation list to baseline manager | SIT-012 |
-| SWA-IF-09 | COMP-06 → COMP-05: baseline frozenset for filtering | SIT-012 |
+| SWA-IF-09 | COMP-06 → COMP-05: baseline `Counter` multiset (`file:rule:message`) for filtering | SIT-012 |
 | SWA-IF-10 | COMP-05 → COMP-07: violation list to output formatter | SIT-001, SIT-006, SIT-007 |
+| SWA-IF-11 | COMP-01 (`main()`) → COMP-05: cross-file struct-definition table (#456), macro table (#463) and typedef names (#462), built from the checked and definition files (#461) | SIT-028 |
 
 ---
 
@@ -344,18 +367,22 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | **Test Case ID** | SIT-012 |
 | **Objective** | Verify SWA-IF-08 and IF-09: violation list written to baseline correctly filters rule engine output on reload |
 | **Interfaces** | SWA-IF-08, SWA-IF-09 |
-| **SW-REQ** | SWE1-065, SWE1-066, SWE1-067 |
+| **SW-REQ** | SWE1-065, SWE1-066, SWE1-067, SWE1-100, SWE1-101 |
 
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
 | 1 | `--write-baseline baseline.json` with 2-violation source | Source v1 | `baseline.json` created; 2 entries; exit 0 |
 | 2 | `--baseline-file baseline.json` same source | Source v1 + baseline | 0 violations output; exit 0 |
 | 3 | Add third violation to source | Source v2 | 1 violation reported (new); 2 suppressed; exit 1 |
-| 4 | Inspect `baseline.json` | File | Valid JSON array with `rule`, `filepath`, `line`, `message` per entry |
+| 4 | Inspect `baseline.json` | File | Valid JSON object `{"violations": [...]}`; each entry has `file` (with `/` separators), `line`, `rule`, `message` |
+| 5 | Insert blank lines above the baselined violations | Source v1 shifted + baseline | Moved violations remain suppressed; exit 0 (line number not part of the key — SWE1-100) |
+| 6 | Duplicate one baselined violation | Source v3 + baseline | The extra copy is reported as new; exit 1 (multiset matching) |
+| 7 | Load a baseline whose `file` values use `\` separators | Windows-style baseline + source | Violations suppressed (paths normalised — SWE1-101) |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
-| 2026-05-28 | GitHub Actions (automated) | 3.11 | PASS | |
+| 2026-05-28 | GitHub Actions (automated) | 3.11 | PASS | Steps 1–4 (pre-#397 key) |
+| 2026-09-29 | Local pytest run, develop `296e91b` (`test_improvements.py::TestBaselineSuppression`, 22 tests) | 3.11 | PASS | Steps 1–7 |
 
 ---
 
@@ -429,7 +456,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | Field | Value |
 |---|---|
 | **Test Case ID** | SIT-016 |
-| **Objective** | Verify `.cstylecheck.yml` generated by `run_wizard` passes YAML schema validation |
+| **Objective** | Verify `.cstylecheck.yml` generated by `run_wizard` / `run_preset` passes YAML schema validation and, used as `--config`, enables exactly the opt-in rules of the selected standard (#420) |
 | **Interfaces** | SWA-IF-01 (filesystem output) |
 | **SW-REQ** | SWE1-075 |
 | **Test file** | `test_init_wizard.py` |
@@ -439,10 +466,13 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | 1 | `--init --init-output /tmp/test.yml` with scripted prompt answers | Wizard prompt sequence | `.cstylecheck.yml` created; valid YAML; parseable by `load_config()` |
 | 2 | `--preset barr-c --init-output /tmp/barr.yml` | Preset name | File written without wizard prompts; valid YAML |
 | 3 | Re-run without `--overwrite` | Existing output file | Return code 1; file unchanged |
+| 4 | `--preset misra`, `--preset barr-c` and `--preset minimal`, then `--config <generated file>` on a C file that triggers all 10 opt-in rules (#420, #456) | Trigger snippet | No traceback; `misra` reports exactly `misc.goto_usage`, `misc.assignment_in_condition`, `misc.void_pointer`, `misc.recursive_function`, `misc.empty_else`, `misc.partial_struct_assignment` and `misc.partial_struct_initialiser`; `barr-c` exactly `misc.multiple_statements_per_line`, `misc.sizeof_type`, `misc.empty_else` and `misc.partial_struct_assignment`; `minimal` none of the 10; `misc.boolean_comparison` never |
+| 5 | `run_wizard` answering `y` / default to the MISRA C:2012 and Barr-C questions (#420) | Scripted answers | Yes enables the matching rule set with `enabled: true` and shipped severity; default (No) or end of input enables none; the checker fires exactly the enabled rules |
 
 | Date | Tester | Python | Result | Deviation |
 |---|---|---|---|---|
 | 2026-06-05 | GitHub Actions (automated) | 3.11 | PASS | |
+| 2026-09-29 | Claude (local run, `develop` + #420) | 3.11 | PASS (steps 1–5; UV-WIZ-001 to UV-WIZ-005) | |
 
 ---
 
@@ -627,9 +657,9 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 | Step | Action | Input | Expected Result |
 |---|---|---|---|
-| 1 | Run tool with any valid source file | Standard subprocess invocation | `stderr` contains a one-line startup banner with version and "Copyright" text |
-| 2 | Run with `--version` | `--version` flag | stdout or stderr contains both the version string and "Copyright" on separate lines |
-| 3 | Run with `--quiet` flag (if supported) | `--quiet` | Startup banner is suppressed |
+| 1 | Run tool with any valid source file | Standard subprocess invocation (stdout piped) | `stderr` starts with the two-line banner `CStyleCheck <version>` / `(C) 2026 Dermot Murphy` |
+| 2 | Run with `--version` | `--version` flag | stdout contains the version string `CStyleCheck <version>` and the copyright notice `(C) <year> <holder>` (`(C) 2026 Dermot Murphy`) on separate lines (SWE1-095; UV-CLI-018) |
+| 3 | Run with `--quiet` | `--quiet` | Option rejected (exit 2); the banner has no suppression option (SWE1-094, #413) |
 | 4 | Verify banner does not appear in `stdout` violation output | Normal run | `stdout` violation lines are not prefixed with banner content |
 | 5 | Run with text output and a log file (v1.6.1, #439) | `--log FILE` | The log file starts with the startup banner (`CStyleCheck <version>`) |
 | 6 | Run with each machine-readable format and a log file (v1.6.1, #439) | `--output-format json` / `sarif` / `html`, `--log FILE` | The log file equals the stdout document and contains no banner (JSON / SARIF parse; HTML starts with `<!DOCTYPE html>`); `stderr` still starts with the banner |
@@ -687,6 +717,69 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 ---
 
+### SIT-027 — Post-v1.6.0 MISRA/Barr-C Rules Integration (COMP-02 → COMP-04 → COMP-05f → COMP-07)
+
+| Field | Value |
+|---|---|
+| **Test Case ID** | SIT-027 |
+| **Objective** | Verify end-to-end integration of the 8 rules added by PRs #391/#392: each rule reads its `misc.*` config (enabled, severity), runs on the comment/string-stripped source and reports through the Violation / output path |
+| **Interfaces** | SWA-IF-03, SWA-IF-06, SWA-IF-10 |
+| **SW-REQ** | SWE1-109, SWE1-110, SWE1-111, SWE1-112, SWE1-113, SWE1-114, SWE1-115, SWE1-116 |
+| **Test file** | `test_misra_rules.py` (UV-MSR-001 to UV-MSR-009, via `tests/harness.py` `run()` with `tests/rules.yml`) |
+
+| Step | Action | Input | Expected Result |
+|---|---|---|---|
+| 1 | `goto cleanup;` | Config with `misc.goto_usage.enabled: true` | `misc.goto_usage` error |
+| 2 | `if (x = foo())`, `while (p = next(p))`, `for (i = 0; j = k; i++)` | Config with `misc.assignment_in_condition.enabled: true` | `misc.assignment_in_condition` warning for each condition assignment; none for the `for` init |
+| 3 | `x = 1; y = 2;` and a `for (…; …; …)` header | Config with `misc.multiple_statements_per_line.enabled: true` | `misc.multiple_statements_per_line` for the first line only |
+| 4 | `void *buf;` and `uint8_t *buf;` | Config with `misc.void_pointer.enabled: true` | `misc.void_pointer` for `void *` only |
+| 5 | `int fact(int n) { return n * fact(n - 1); }` | Config with `misc.recursive_function.enabled: true` | `misc.recursive_function` error naming `fact` |
+| 6 | `sizeof(uint32_t)`, `sizeof(*p)` | Config with `misc.sizeof_type.enabled: true` | `misc.sizeof_type` info for the type operand only |
+| 7 | `if (flag == true)`, `if (flag)`, `if (TRUE == flag)` | Default config, then `misc.boolean_comparison.enabled: true` | No `misc.boolean_comparison` with the default config (opt-in, #412); when enabled, one for `flag == true` only (`TRUE` macro not matched) |
+| 8 | `} else {}` and `} else { /* intentionally empty */ }` | Config with `misc.empty_else.enabled: true` | `misc.empty_else` for the empty block only |
+| 9 | Each rule with `enabled: false`, and with an overridden `severity` | Modified config | No violation when disabled; configured severity reported |
+| 10 | The inputs of steps 1–8 together | Default config (no `misc` keys for the 8 rules) | None of the 8 rule IDs reported: all 8 rules are opt-in (#412, #418) |
+| 11 | Rule keywords inside comments or strings | Each rule enabled | No violation |
+
+| Date | Tester | Python | Result | Deviation |
+|---|---|---|---|---|
+| 2026-09-29 | Local pytest run, develop `296e91b` (76 tests) | 3.11 | PASS | CI matrix run (3.10 / 3.11 / 3.12) to be recorded at the next release |
+
+---
+
+### SIT-028 — Partially Initialised Local Structs (COMP-01 → COMP-05 → COMP-05f → COMP-07)
+
+| Field | Value |
+|---|---|
+| **Test Case ID** | SIT-028 |
+| **Objective** | Verify end-to-end that the CLI collects the struct definitions of every scanned file before the per-file checks and passes the table to each `Checker` (SWA-IF-11), and that `misc.partial_struct_assignment` and `misc.partial_struct_initialiser` read their `misc.*` config and report through the Violation / output path (#456) |
+| **Interfaces** | SWA-IF-03, SWA-IF-06, SWA-IF-10, SWA-IF-11 |
+| **SW-REQ** | SWE1-118, SWE1-119, SWE1-120, SWE1-121, SWE1-122, SWE1-123 |
+| **Test file** | `test_partial_struct.py` (UV-PSI-002 to UV-PSI-009; UV-PSI-005 and UV-PSI-007 run `cli.main()`) |
+
+| Step | Action | Input | Expected Result |
+|---|---|---|---|
+| 1 | `uart.h` defines `uart_cfg_t`; `app.c` declares `uart_cfg_t cfg;`, assigns `cfg.baud` and calls `Uart_Init(&cfg)`; run the CLI on both files | Config with `misc.partial_struct_assignment.enabled: true` | `misc.partial_struct_assignment` warning at the declaration in `app.c`, naming the use line and the unassigned member |
+| 2 | Same as step 1, CLI run on `app.c` only | Same config | No finding: the struct definition is not in a scanned file |
+| 3 | Step 1 with an inline suppression comment on the declaration | Same config | Finding suppressed |
+| 4 | `= {0}`, `memset(&cfg, …)` first, whole-struct assignment first, `&cfg` passed to another function first, `static` local | Same config | No finding |
+| 5 | `uart_cfg_t cfg = { 9600 };`, `= { 9600, 0 }`, `= { .baud = 9600 }`, `= {0}` | Config with `misc.partial_struct_initialiser.enabled: true` | `misc.partial_struct_initialiser` info for the short positional initialiser only |
+| 6 | The inputs of steps 1 and 5 | Default config (no keys for the 2 rules) | Neither rule ID reported: both rules are opt-in (#456) |
+| 7 | `sdk/drv.h` defines `drv_cfg_t` (two members, a third under `#if DRV_EXTENDED`); `app_config.h` defines `DRV_EXTENDED 1`; `app.c` assigns the two plain members and passes `&cfg`; CLI run on `app.c` with `--exclude "sdk/**"` | Step 1 config, then with `definition_paths: [app_config.h, sdk/*.h]` | Without definition files: no finding. With them: one `misc.partial_struct_assignment` warning naming `2 of 3` and `delay`; no finding in `drv.h` (never checked, although excluded) (#461) |
+| 8 | Step 7 with `definition_paths: [sdk/*.h, app_config.h]` (`sdk/sdk_config.h` defines `DRV_EXTENDED 0`) | Step 7 config | No finding: both are plain `#define`s, so the first file in precedence order wins and the struct has 2 members (#461, #463) |
+| 9 | Step 7 with `--definitions app_config.h --definitions "sdk/**/*.h"` instead of `definition_paths` | Step 1 config | Same finding as step 7 (#461) |
+| 10 | Locals of an unknown typedef, of an undefined `struct tag`, of an enum typedef, of `uint8_t` and of a known struct | `report_unknown_types: true` | One `info` finding under the rule's own ID for each of the first two only; none with the default `false` (#462) |
+| 11 | `--definitions app_config.h` with neither partial-struct rule enabled | Default config | `WARNING: --definitions is ignored …` on stderr; no pre-scan (#461) |
+| 12 | A checked `sdk_config.h` with `#define DRV_EXTENDED 1`; the definition-file header guards its default `#ifndef DRV_EXTENDED` / `#define DRV_EXTENDED 0` | Step 7 config | The checked plain `#define` beats the header's default: the extended member counts (#463) |
+
+| Date | Tester | Python | Result | Deviation |
+|---|---|---|---|---|
+| 2026-11-19 | Local pytest run, `claude/partial-struct-init-456` (54 tests in `test_partial_struct.py`, 2 in `test_misra_rules.py`) | 3.14 | PASS | CI matrix run (3.10 / 3.11 / 3.12) to be recorded at the next release |
+| 2026-11-19 | Local pytest run, `claude/partial-struct-sdk-460-463` (74 tests in `test_partial_struct.py`; steps 7 to 10, #461 to #463) | 3.14 | PASS | CI matrix run (3.10 / 3.11 / 3.12) to be recorded at the next release |
+| 2026-11-19 | Local pytest run, `claude/partial-struct-sdk-460-463` after the review fixes (89 tests in `test_partial_struct.py`; steps 8, 11, 12) | 3.14 | PASS | CI matrix run (3.10 / 3.11 / 3.12) to be recorded at the next release |
+
+---
+
 ## 6. Integration Test Results Summary
 
 | SIT-ID | Test Case | Interfaces | Status | Deviation Ref |
@@ -717,10 +810,14 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SIT-024 | Startup banner and `--version` copyright output; banner in the `--log` file for text output only (v1.6.1, #439) | IF-02, IF-10 | PASS | |
 | SIT-025 | Block-comment `/* */` inline suppression form | IF-06 | PASS | |
 | SIT-026 | `--summary` output restructure (Files before Results, header, dynamic separator) | IF-10 | PASS | |
+| SIT-027 | Post-v1.6.0 MISRA/Barr-C rules (goto, assignment in condition, multiple statements, void pointer, recursion, sizeof type, boolean comparison, empty else) | IF-03, IF-06, IF-10 | PASS | |
+| SIT-028 | Partially initialised local structs (cross-file struct-definition table, #456; definition files, unknown types, `#if` members, #461 to #463) | IF-03, IF-06, IF-10, IF-11 | PASS | |
 
-**Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence). v1.6.1, 2026-10-06: 1281 tests all PASS (SIT-024 steps 5 and 6 added for #439)
+**Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence). v1.6.1, 2026-10-06: 1281 tests all PASS (SIT-024 steps 5 and 6 added for #439) v2.0.0, 2026-11-20 (release baseline, CR #443): SIT-001 to SIT-028 PASS; 1671 tests all PASS.
 
-> **📋 Note:** All 10 defined software architecture interfaces must be covered before integration testing is considered complete. Any uncovered interface must be resolved via a new or updated test case.
+**Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests; #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: 1452 tests; #418 (the other 7 post-v1.6.0 rules opt-in) adds 11: 1463 tests; #420 (presets / `--init` enable the standard-specific opt-in rules) adds 18: 1481 tests; #422 (case-style config validation) adds 27: 1508 tests; #424 (`functions.case` removed) adds 16: 1524 tests; #425 (config errors exit 2 from both entry points) adds 8: 1532 tests; #423 (last enum member checked) adds 13: 1545 tests, all PASS (local run, Python 3.11); #439, #441 and the v1.6.1 back-merge add 14: 1559 tests; #447 (`misc.constant_comparison` skips `#if` / `#elif`) adds 10: 1569 tests, all PASS (local run, Python 3.14, 2026-10-06); #449 (repository protection, workflow-configuration tests) adds 5: 1574 tests, all PASS (local run, Python 3.14, 2026-11-19); #456 (2 opt-in partial-struct rules, 83 rule IDs; SIT-028) adds 49: 1630 tests, all PASS (local run, Python 3.14, 2026-11-19); #460 to #463 (`misc.sizeof_type` objects, definition files, unknown struct types, `#if` members; SIT-028 steps 7 to 10) add 25: 1655 tests, and the review fixes 16 more: 1671 tests, all PASS (local run, Python 3.14, 2026-11-19).
+
+> **📋 Note:** All 11 defined software architecture interfaces must be covered before integration testing is considered complete. Any uncovered interface must be resolved via a new or updated test case.
 
 ---
 
@@ -738,8 +835,8 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SIT-008 | SWE1-005, SWE1-006 | IF-01, IF-03 | UV-CLI-002 | SWQ-003 |
 | SIT-009 | SWE1-003 | IF-04 | — | SWQ-003 |
 | SIT-010 | SWE1-007, SWE1-008, SWE1-009 | IF-05 | UV-DCT-001, UV-DCT-002 | SWQ-005 |
-| SIT-011 | SWE1-015, SWE1-051, SWE1-052 | IF-07 | UV-SGN-001, UV-SGN-004 | SWQ-006 |
-| SIT-012 | SWE1-065, SWE1-066, SWE1-067 | IF-08, IF-09 | UV-CLI-008 | SWQ-007 |
+| SIT-011 | SWE1-015, SWE1-051, SWE1-052 | IF-07 | UV-SGN-001, UV-SGN-004, UV-CLI-014 to UV-CLI-016 | SWQ-006 |
+| SIT-012 | SWE1-065, SWE1-066, SWE1-067, SWE1-100, SWE1-101 | IF-08, IF-09 | UV-CLI-008, UV-CLI-011 to UV-CLI-013 | SWQ-007 |
 | SIT-013 | SWE1-062 | IF-10 | — | SWQ-004 |
 | SIT-014 | SWE1-072, SWE1-073 | IF-06 | `test_inline_suppression.py` | — |
 | SIT-015 | SWE1-074 | IF-10 | `test_fix_mode.py` | — |
@@ -751,9 +848,11 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 | SIT-021 | SWE1-091 | IF-03, IF-06, IF-10 | `test_constant_comparison.py` | SWQ-003 |
 | SIT-022 | SWE1-092 | IF-03, IF-06, IF-10 | `test_unsigned_suffix_signed_params.py` | SWQ-003 |
 | SIT-023 | SWE1-093 | IF-06, IF-10 | `test_pointer_prefix_fix.py` | SWQ-003 |
-| SIT-024 | SWE1-094, SWE1-095 | IF-02, IF-10 | `test_cli.py` | SWQ-004 |
+| SIT-024 | SWE1-094, SWE1-095 | IF-02, IF-10 | `test_cli.py`; UV-CLI-017 to UV-CLI-019 (`test_cli_requirements.py`) | SWQ-004 |
 | SIT-025 | SWE1-072 | IF-06 | `test_inline_suppression.py` | — |
 | SIT-026 | SWE1-097 | IF-10 | `test_print_summary.py` | SWQ-004 |
+| SIT-027 | SWE1-109 to SWE1-116 | IF-03, IF-06, IF-10 | `test_misra_rules.py` — UV-MSR-001 to UV-MSR-008 | SWQ-003 |
+| SIT-028 | SWE1-118 to SWE1-123 | IF-03, IF-06, IF-10, IF-11 | `test_partial_struct.py` — UV-PSI-002 to UV-PSI-009 | SWQ-003 |
 
 ---
 
@@ -761,7 +860,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-10) must be exercised 
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-10-06 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

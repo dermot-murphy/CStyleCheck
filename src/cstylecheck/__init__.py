@@ -81,12 +81,18 @@ from .utils import (                     # noqa: F401, E402
     _strip_module_prefix,
     _github_annotation_category,
     _CASE_PATTERNS,
+    _CASE_ALIASES,
+    normalize_case_style,
 )
 
 from .config import (                    # noqa: F401, E402
     _read_options_file,
     _expand_options_file,
     load_config,
+    validate_case_styles,
+    _CASE_STYLE_KEYS,
+    _DEPRECATED_KEYS,
+    deprecated_key_warnings,
     load_spell_words,
     load_alias_file,
     load_exclusions_file,
@@ -145,6 +151,8 @@ from .sign_checker import (              # noqa: F401, E402
 
 from .baseline import (                  # noqa: F401, E402
     _baseline_key,
+    _normalise_path,
+    apply_baseline,
     load_baseline,
     write_baseline,
 )
@@ -168,6 +176,7 @@ from .wizard import (                    # noqa: F401, E402
     run_wizard,
     run_preset,
     PRESETS,
+    WIZARD_CASE_CHOICES,
 )
 
 from .cli import (                       # noqa: F401, E402
