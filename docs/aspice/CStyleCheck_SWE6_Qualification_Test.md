@@ -1,4 +1,4 @@
-﻿# Software Qualification Test Specification
+# Software Qualification Test Specification
 
 *Automotive SPICE® PAM v4.0 | SWE.6 Software Verification*
 
@@ -498,7 +498,7 @@ The following conditions were assessed for the **v2.0.0** release baseline (2026
 - [x] Statement coverage ≥ 85% combined CI gate: PASS — 89.8% statement (v1.2.0 historical baseline), 87.31% combined (`--cov-fail-under=85 --cov-branch`, enforced by `cstylecheck_tests.yml` on every pull request)
 - [x] Branch coverage ≥ 85% combined: PASS — 87.31% combined stmt+branch ≥ 85% gate ✅
 - [x] SW requirements coverage: 119/119 in-scope requirements (§6)
-- [x] `cstylecheck_tests.yml` (Python 3.10, 3.11, 3.12), `rules.yml` naming-convention check, Docker build and `aspice_consistency.yml`: required to pass on the release PR `release/2.0.0` → `main` before the owner's merge (CSC-SUP8-001 §8.2 step 1); the merge records the result (CSC-DEV-002 §5.2)
+- [x] `cstylecheck_tests.yml` (Python 3.10, 3.11, 3.12), `rules.yml` naming-convention check and `aspice_consistency.yml`: PASS on the release PR #465 `release/2.0.0` → `main` at `0c99dad` (runs 44714166810, 44714167028, 44714167031; CSC-SUP8-001 §8.2 step 1). The Docker build (`docker_publish.yml`) does not run on pull requests; it is checked after the merge, on the `v2.0.0` tag push (CR #443)
 - [x] Zero open functional bug Issues: PASS — no open `bug` Issue on 2026-11-20; #460 and #463 resolved by PR #464 (merge `153d5d1`); all post-v1.6.1 problem reports closed (CSC-SUP9-001 §6.2)
 - [x] This document approved and placed under CM baseline (SUP.8) — by the owner's merge of the release PR
 - [x] All TBD items in SYS.5 requirements coverage resolved or formally accepted — 6 of 9 resolved; SYS-NF-010/011/012 formally deferred (see CSC-SYS5-001 §7)

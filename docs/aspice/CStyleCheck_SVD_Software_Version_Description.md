@@ -1,4 +1,4 @@
-﻿# Software Version Description
+# Software Version Description
 
 *Automotive SPICE® PAM v4.0 | SUP.8 Configuration Management — Release Artefact*
 
@@ -434,7 +434,7 @@ The following issues are open at the time of this release and deferred to a futu
 
 ### 8.1 CI Status at Release
 
-All of the following CI checks must pass before merge to `develop` and sync to `main`:
+CI results on the release PR `release/2.0.0` → `main` (#465), commit `0c99dad`: `cstylecheck_tests.yml` run 44714166810, `cstylecheck_rules.yml` run 44714167028 and `aspice_consistency.yml` run 44714167031. mypy, ruff and the coverage gate are steps of the Unit Tests (Python 3.11) job.
 
 | Check | Result |
 |---|---|
@@ -445,7 +445,7 @@ All of the following CI checks must pass before merge to `develop` and sync to `
 | ruff lint (Python 3.11) | ✅ Pass |
 | Coverage gate ≥ 85% combined (Python 3.11) | ✅ Pass |
 | Example C file action (CStyleCheck self-check) | ✅ Pass |
-| Docker build | ✅ Pass |
+| Docker build (`docker_publish.yml`) | Not run on the PR. The workflow has no `pull_request` trigger; it runs on the merge to `main` and on the `v2.0.0` tag push. Its result is recorded after the tag (CR #443) |
 | ASPICE work-product consistency (`aspice_consistency.yml`, #437) | ✅ Pass |
 
 ### 8.2 Qualification Test Status

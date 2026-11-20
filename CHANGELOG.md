@@ -28,7 +28,7 @@ linked entries under *Changed* and *Fixed* for details.
   code that passed before may report `enum.member_case` / `enum.member_prefix`.
 - **`functions.case` removed (#424)** — the key is ignored and prints a `WARNING`;
   use `functions.style`.
-- **New rules are opt-in (#412, #418)** — the 8 new `misc.*` rules ship
+- **New rules are opt-in (#412, #418, #456)** — the 10 new `misc.*` rules ship
   `enabled: false`; enable them per rule, or use `--preset misra` / `--preset barr-c`
   (#420).
 - **GitHub Action: pin `@v2.0.0`** — the README, `DOCKERHUB_README.md` and `action.yml`

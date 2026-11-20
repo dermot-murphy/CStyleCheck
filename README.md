@@ -611,7 +611,7 @@ Changes:
 - **Missing output folders are created** (#441) for `--log FILE`,
   `--write-baseline FILE` and `--init-output FILE`; CI scripts no longer need `mkdir -p`.
 
-8 new rules; **81 rule IDs** total. 143 new tests (1422 total at the time).
+8 new rules (before #456); **81 rule IDs** total. 143 new tests (1422 total at the time).
 #408 and #407 (dedicated unit tests for the source cache, startup banner and OS path
 separator) add 17 more, #413 (startup-banner requirements aligned with the code) adds 5,
 #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8, and #418 (the other 7 new
