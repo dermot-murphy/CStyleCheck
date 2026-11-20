@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-MAN3-001 | **Version** | 1.29 |
-| **Project** | CStyleCheck | **Date** | 2026-11-19 |
+| **Document ID** | CSC-MAN3-001 | **Version** | 1.30 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | MAN.3 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.30 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §3 purpose and §3.1 version 2.0.0; §4.1 scope — test suite 1671 tests across 60 modules at v2.0.0; §4.3 schedule; WBS-07, WBS-10, WBS-16 (v2.0.0 released); §8 schedule — v1.6.1 hotfix and v2.0.0 release baseline (2026-11-20) actuals, v2.0.0 release audit / CSC-REVIEW record planned as a separate milestone; referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.29 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): §4.1 scope — test suite 1671 tests across 60 modules; referenced-document versions resynced |
 | 1.28 | 2026-11-19 | Claude | #460 to #463: §4.1 scope — test suite 1655 tests across 60 modules (rule-ID count unchanged at 83); referenced-document versions resynced |
 | 1.27 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
@@ -55,14 +56,14 @@
 
 ## 3. Purpose & Scope
 
-This Project Management Plan (PMP) defines the project scope, lifecycle, work breakdown, resources, schedule, interfaces, and monitoring approach for **CStyleCheck v1.2.0**. It satisfies **Automotive SPICE® PAM v4.0, MAN.3 — Project Management**.
+This Project Management Plan (PMP) defines the project scope, lifecycle, work breakdown, resources, schedule, interfaces, and monitoring approach for **CStyleCheck** (current release v2.0.0). It satisfies **Automotive SPICE® PAM v4.0, MAN.3 — Project Management**.
 
 ### 3.1 Project Overview
 
 | Attribute | Value |
 |---|---|
 | **Product** | CStyleCheck — Embedded C naming-convention linter |
-| **Version** | 1.6.0 (released 2026-07-06); `develop` post-v1.6.0 |
+| **Version** | 2.0.0 (released 2026-11-20); previous releases v1.6.1 (2026-10-06) and v1.6.0 (2026-07-06) |
 | **Repository** | `https://github.com/dermot-murphy/CStyleCheck` |
 | **Language** | Python 3.10–3.12 |
 | **Deployment** | CLI, pip/pipx, Docker (GHCR + Docker Hub), GitHub Action, pre-commit |
@@ -75,7 +76,7 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 |---|---|---|
 | CSC-SYS2-001 | System Requirements Specification | 2.25 |
 | CSC-SWE1-001 | Software Requirements Specification | 2.32 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.33 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
 | CSC-MAN5-001 | Risk Management Plan | 1.25 |
 | CSC-SUP1-001 | Quality Assurance Plan | 1.30 |
 
@@ -86,7 +87,7 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 ### 4.1 In Scope
 
 - Design, implementation, and testing of `src/cstylecheck/` package (12 sub-modules) implementing 83 rule IDs (73 at v1.6.0; 8 added on `develop` by #391/#392 and 2 by #456)
-- Test suite (1671 pytest tests across 60 test modules on `develop` with #460 to #463 and their review fixes, 2026-11-19; 1655 before the review fixes; 1630 with #456; 1545 across 58 modules on 2026-09-29, after #408, #407, #413, #412, #418, #420, #422, #424, #425 and #423; 1279 at v1.6.0)
+- Test suite (1671 pytest tests across 60 test modules at v2.0.0, 2026-11-20; 1281 at v1.6.1; 1279 at v1.6.0)
 - Docker image build and multi-platform publication to GHCR and Docker Hub
 - GitHub Action integration (`action.yml`)
 - pre-commit hook integration (`.pre-commit-hooks.yml`)
@@ -107,7 +108,7 @@ This Project Management Plan (PMP) defines the project scope, lifecycle, work br
 | Constraint | Assessment |
 |---|---|
 | **Technical** | Python-only implementation; package architecture (`src/cstylecheck/`, 12 modules, plus the `src/cstylecheck.py` wrapper); no exotic dependencies. Technically feasible with one engineer |
-| **Schedule** | v1.6.0 released 2026-07-06; current phase is post-v1.6.0 development on `develop` toward v2.0.0 (see §8) |
+| **Schedule** | v2.0.0 released 2026-11-20 (release baseline, CR #443); v1.6.1 hotfix released 2026-10-06 (see §8) |
 | **Resources** | Solo developer; GitHub Actions for CI/CD (zero compute cost for public repo) |
 | **Standards compliance** | ASPICE CL2 documentation producible; naming convention self-check demonstrable |
 
@@ -149,16 +150,16 @@ Requirements  →  Architecture  →  Detailed Design  →  Implementation
 | WBS-04 | Software architecture (SWE.2) | 6h | Claude | Complete |
 | WBS-05 | Detailed design (SWE.3) | 8h | Claude | Complete |
 | WBS-06 | Core linter implementation | 80h | Claude | Complete |
-| WBS-07 | Test suite (1545 tests on `develop`) | 40h | Claude | Complete (ongoing per feature) |
+| WBS-07 | Test suite (1671 tests at v2.0.0) | 40h | Claude | Complete (ongoing per feature) |
 | WBS-08 | Docker packaging and CI | 8h | Claude | Complete |
 | WBS-09 | GitHub Action and pre-commit | 6h | Claude | Complete |
-| WBS-10 | Unit verification (SWE.4) | 4h | Claude | Complete — 1545 tests across 58 modules; SWE4 catalogue updated (CSC-SWE4-001 v1.24, #405, #408, #407) |
+| WBS-10 | Unit verification (SWE.4) | 4h | Claude | Complete — 1671 tests across 60 modules at v2.0.0; SWE4 catalogue updated (CSC-SWE4-001 v1.48) |
 | WBS-11 | Integration testing (SWE.5) | 4h | Claude | Complete — #152 closed 2026-05-28; SIT-001 to SIT-027 recorded |
 | WBS-12 | Qualification testing (SWE.6) | 4h | Claude | Complete — SWQ-001 to SWQ-012 recorded (v1.6.0); post-v1.6.0 extensions recorded 2026-09-29 |
 | WBS-13 | System integration testing (SYS.4) | 4h | Claude | Complete — SITC-001 to SITC-017 recorded |
 | WBS-14 | System verification (SYS.5) | 4h | Claude | Complete — SYS-VTC-001 to SYS-VTC-013 recorded |
 | WBS-15 | Documentation finalisation | 4h | Claude | Ongoing per release — CSC-AUD-009 corrective actions (#405) applied 2026-09-29 |
-| WBS-16 | Release (tag, GitHub Release, container images) — per release | 2h | Claude | Releases v1.0.0 to v1.6.0 complete (see §8); next release v2.0.0 (Major) planned |
+| WBS-16 | Release (tag, GitHub Release, container images) — per release | 2h | Claude | Releases v1.0.0 to v2.0.0 complete (see §8); v2.0.0 release baseline 2026-11-20 (CR #443) |
 | WBS-17 | *Merged into WBS-16 (was: v1.0.0 release, complete 2026-04-12)* | — | — | Withdrawn 2026-09-29 (CSC-AUD-010 AUD10-F-016) |
 
 ---
@@ -197,7 +198,9 @@ Requirements  →  Architecture  →  Detailed Design  →  Implementation
 | v1.5.1 release baseline (CSC-AUD-008) | 2026-06-28 | ✅ Complete | 2026-06-28 |
 | v1.6.0 release baseline | 2026-07-06 | ✅ Complete | 2026-07-06 |
 | Internal audit CSC-AUD-009 and corrective actions (#405) | 2026-09-29 | ✅ Complete | 2026-09-29 |
-| v2.0.0 release (Major) — 8 opt-in MISRA/Barr-C rules, baseline matching, trend metrics; compatibility changes: config with unknown case-style names rejected (#422), config/usage-error exit code 1→2 for the installed command (#425), last enum member now checked (#423), presets/`--init` enable opt-in rules (#420), `functions.case` removed with WARNING (#424); release audit and CSC-REVIEW record | 2026-Q4 | ⏳ Planned | — |
+| v1.6.1 release baseline (hotfix, #439) | 2026-10-06 | ✅ Complete | 2026-10-06 |
+| v2.0.0 release baseline (Major) — 10 opt-in rules (8 MISRA C / Barr-C, 2 partial-struct), baseline matching, trend metrics; compatibility changes: config with unknown case-style names rejected (#422), config/usage-error exit code 1→2 for the installed command (#425), last enum member now checked (#423), presets/`--init` enable opt-in rules (#420), `functions.case` removed with WARNING (#424); CR #443, tag `v2.0.0` on the `main` merge commit of `release/2.0.0` | 2026-Q4 | ✅ Complete | 2026-11-20 |
+| v2.0.0 release audit (CL2 re-rating) and CSC-REVIEW record | 2026-Q4 | ⏳ Planned | — |
 
 **Release-classification decision (2026-09-29, Dermot Murphy):** the next release is **v2.0.0 (Major)**, not v1.7.0. Rationale: CSC-SUP10-001 §5.6 requires a Major version for changed default behaviour or an incompatible config format; CR-422 rejects configs that v1.6.0 loaded and CR-425 changes the config-error exit code of the installed command from 1 to 2. Recorded in CSC-SUP10-001 §7.2 (CSC-AUD-010 AUD10-F-002, #430).
 
@@ -261,7 +264,7 @@ These tooling requirements are specified in CSC-SWE1-001 §4.17 (SWE1-102 to SWE
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-09-29 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

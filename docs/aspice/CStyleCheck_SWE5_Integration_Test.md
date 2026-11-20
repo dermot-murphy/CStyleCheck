@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE5-001 | **Version** | 1.36 |
-| **Project** | CStyleCheck | **Date** | 2026-11-19 |
+| **Document ID** | CSC-SWE5-001 | **Version** | 1.37 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.5 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.37 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §3 scope v2.0.0; §3.2 CM baseline adds the v2.0.0 release baseline (tag `v2.0.0` on the `main` merge commit of `release/2.0.0`); §6 overall result for v2.0.0 (SIT-001 to SIT-028, 1671 tests); referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.36 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): SIT-028 step 8 — a plain `#define` beats an `#ifndef` default, first file in precedence order wins within a kind; new steps 11 (`--definitions` warning when no partial-struct rule is enabled) and 12 (checked configuration header beats an SDK default); test file cites UV-PSI-009; execution record; §6 post-v1.6.0 note — suite total 1655→1671 |
 | 1.35 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SIT-028 — SW-REQ adds SWE1-121 to SWE1-123; steps 7 to 10 (definition files through `definition_paths` and `--definitions` with `--exclude`, macro precedence, `#if` members, `report_unknown_types`); SWA-IF-11 also carries the macro table and typedef names; execution record; §6 post-v1.6.0 note — suite total 1630→1655; §7 SIT-028 row |
 | 1.34 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
@@ -62,7 +63,7 @@
 
 ## 3. Purpose & Scope
 
-This document defines the software integration test specification for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**, verifying that the software components integrate correctly across the interfaces defined in CSC-SWE2-001. It satisfies **Automotive SPICE® PAM v4.0, SWE.5 — Software Integration and Integration Verification**.
+This document defines the software integration test specification for **CStyleCheck v2.0.0** (v1.6.0 / v1.6.1 plus the post-v1.6.0 `develop` changes), verifying that the software components integrate correctly across the interfaces defined in CSC-SWE2-001. It satisfies **Automotive SPICE® PAM v4.0, SWE.5 — Software Integration and Integration Verification**.
 
 Integration tests operate at a higher level than unit tests (SWE.4): they exercise data flows **across component boundaries** — primarily the path from COMP-01 (CLI) through COMP-04 (Parser) into COMP-05 (Rule Engine) and COMP-07 (Output Formatter) — rather than individual method logic.
 
@@ -74,9 +75,9 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 |---|---|---|
 | CSC-SWE2-001 | CStyleCheck Software Architecture Description | 1.36 |
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
-| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.47 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.39 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.33 |
+| CSC-SWE4-001 | CStyleCheck Unit Verification Specification | 1.48 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.40 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.34 |
 
 ### 3.2 Test Environment
 
@@ -86,7 +87,7 @@ The primary integration test suite is `tests/test_cli.py`, which invokes `cstyle
 | **Python Versions** | 3.10, 3.11, 3.12 |
 | **Test runner** | pytest 7+ via `cstylecheck_tests.yml` CI workflow |
 | **Invocation method** | `subprocess.run()` — full process invocation including argument parsing |
-| **CM Baseline ID** | SIT-001 to SIT-026: release tag `v1.6.0` (commit `a6102d6`, 2026-07-06). SIT-012 re-run and SIT-027: `develop` commit `296e91b` (2026-09-29) |
+| **CM Baseline ID** | SIT-001 to SIT-026: release tag `v1.6.0` (commit `a6102d6`, 2026-07-06). SIT-012 re-run and SIT-027: `develop` commit `296e91b` (2026-09-29). v2.0.0 release baseline: tag `v2.0.0` on the `main` merge commit of `release/2.0.0` (2026-11-20, CR #443) |
 
 ### 3.3 Integration Verification Criteria
 
@@ -812,7 +813,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-11) must be exercised 
 | SIT-027 | Post-v1.6.0 MISRA/Barr-C rules (goto, assignment in condition, multiple statements, void pointer, recursion, sizeof type, boolean comparison, empty else) | IF-03, IF-06, IF-10 | PASS | |
 | SIT-028 | Partially initialised local structs (cross-file struct-definition table, #456; definition files, unknown types, `#if` members, #461 to #463) | IF-03, IF-06, IF-10, IF-11 | PASS | |
 
-**Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence). v1.6.1, 2026-10-06: 1281 tests all PASS (SIT-024 steps 5 and 6 added for #439)
+**Overall Integration Verification Result:** PASS — v1.6.0, 2026-07-06, GitHub Actions (automated) / Dermot Murphy (manual review), Python 3.10 / 3.11 / 3.12, 1279 tests all PASS. (SIT-024/025/026 validated against existing test_cli.py and test_inline_suppression.py evidence). v1.6.1, 2026-10-06: 1281 tests all PASS (SIT-024 steps 5 and 6 added for #439) v2.0.0, 2026-11-20 (release baseline, CR #443): SIT-001 to SIT-028 PASS; 1671 tests all PASS.
 
 **Post-v1.6.0 update (2026-09-29, CSC-AUD-009 / #405):** SIT-012 (steps 5–7) and SIT-027 PASS on `develop` `296e91b`. 1422 tests PASS in a local run (Python 3.11). All 81 rule IDs now have integration coverage. After #408 (1 test) and #407 (dedicated unit tests for SWE1-015, SWE1-094 and SWE1-096, UV-CLI-014 to UV-CLI-022) the suite has 1439 tests; #413 (SWE1-094 aligned with the code) adds 5 banner tests: 1444 tests; #412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8: 1452 tests; #418 (the other 7 post-v1.6.0 rules opt-in) adds 11: 1463 tests; #420 (presets / `--init` enable the standard-specific opt-in rules) adds 18: 1481 tests; #422 (case-style config validation) adds 27: 1508 tests; #424 (`functions.case` removed) adds 16: 1524 tests; #425 (config errors exit 2 from both entry points) adds 8: 1532 tests; #423 (last enum member checked) adds 13: 1545 tests, all PASS (local run, Python 3.11); #439, #441 and the v1.6.1 back-merge add 14: 1559 tests; #447 (`misc.constant_comparison` skips `#if` / `#elif`) adds 10: 1569 tests, all PASS (local run, Python 3.14, 2026-10-06); #449 (repository protection, workflow-configuration tests) adds 5: 1574 tests, all PASS (local run, Python 3.14, 2026-11-19); #456 (2 opt-in partial-struct rules, 83 rule IDs; SIT-028) adds 49: 1630 tests, all PASS (local run, Python 3.14, 2026-11-19); #460 to #463 (`misc.sizeof_type` objects, definition files, unknown struct types, `#if` members; SIT-028 steps 7 to 10) add 25: 1655 tests, and the review fixes 16 more: 1671 tests, all PASS (local run, Python 3.14, 2026-11-19).
 
@@ -859,7 +860,7 @@ Each software architecture interface (SWA-IF-01 to SWA-IF-11) must be exercised 
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-09-29 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

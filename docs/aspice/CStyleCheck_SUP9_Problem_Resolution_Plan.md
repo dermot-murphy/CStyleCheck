@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP9-001 | **Version** | 1.23 |
-| **Project** | CStyleCheck | **Date** | 2026-11-19 |
+| **Document ID** | CSC-SUP9-001 | **Version** | 1.24 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.9 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.24 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §6.2 — #460 and #463 closed 2026-11-20 by PR #464 (merge `153d5d1`); every problem in §6.2 ships in the v2.0.0 release baseline; referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.23 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
 | 1.22 | 2026-11-19 | Claude | Issues #460 and #463: §6.2 problem classification rows (both SEV-3 Minor, rules added after v1.6.1 and not in a release; fixed on `develop` by the implementing PR for v2.0.0); referenced-document versions resynced |
 | 1.21 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
@@ -57,9 +58,9 @@ A **problem** is any unintended behaviour, defect, failure, or non-conformance d
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.29 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.33 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.25 |
+| CSC-MAN3-001 | Project Management Plan | 1.30 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.26 |
 | CSC-SUP1-001 | Quality Assurance Plan | 1.30 |
 
 ---
@@ -189,10 +190,12 @@ SEV labels were confirmed by the owner (Dermot Murphy) on 2026-09-29 and applied
 | #423 | SEV-1 Critical | Last enum member not checked, so invalid names passed silently | 2026-09-29 | 2026-09-29 | Yes (target 48 h) | #429 (`2444036`) | v2.0.0 |
 | #424 | SEV-3 Minor | Unused `functions.case` key accepted without effect (CR-424) | 2026-09-29 | 2026-09-29 | Yes | #427 (`31acd91`) | v2.0.0 |
 | #425 | SEV-2 Major | Config and usage errors exit 1 instead of 2 from the installed `cstylecheck` command (CR-425) | 2026-09-29 | 2026-09-29 | Yes (target 1 week) | #428 (`7ddf732`) | v2.0.0 |
-| #460 | SEV-3 Minor | `misc.sizeof_type` reports `sizeof` of an upper-case array object (or an object ending in `_t`) as a type operand | 2026-11-19 | On merge of the implementing PR | Yes (target: next planned release) | Implementing PR (with CR-461, CR-462) | v2.0.0 |
-| #463 | SEV-3 Minor | `misc.partial_struct_*` count struct members inside inactive `#if` blocks, so members that are not in the build are named as unassigned | 2026-11-19 | On merge of the implementing PR | Yes (target: next planned release) | Implementing PR (with CR-461, CR-462) | v2.0.0 |
+| #460 | SEV-3 Minor | `misc.sizeof_type` reports `sizeof` of an upper-case array object (or an object ending in `_t`) as a type operand | 2026-11-19 | 2026-11-20 | Yes (target: next planned release) | #464 (`153d5d1`, with CR-461, CR-462) | v2.0.0 |
+| #463 | SEV-3 Minor | `misc.partial_struct_*` count struct members inside inactive `#if` blocks, so members that are not in the build are named as unassigned | 2026-11-19 | 2026-11-20 | Yes (target: next planned release) | #464 (`153d5d1`, with CR-461, CR-462) | v2.0.0 |
 
-#460 and #463 were found on 2026-11-19 while comparing v1.6.1 and `develop` on a downstream nRF52840 project. Both affect rules added after v1.6.1 (#418, #456), so no released version is affected; neither needed a hotfix.
+#460 and #463 were found on 2026-11-19 while comparing v1.6.1 and `develop` on a downstream nRF52840 project. Both affect rules added after v1.6.1 (#418, #456), so no released version is affected; neither needed a hotfix. Both were fixed by PR #464 (merge `153d5d1`, 2026-11-20).
+
+**v2.0.0 release (2026-11-20, CR #443):** every problem in this table is closed and its fix is in the v2.0.0 release baseline (tag `v2.0.0`); no bug Issue was open when `release/2.0.0` was cut.
 
 ---
 
@@ -211,7 +214,7 @@ SEV labels were confirmed by the owner (Dermot Murphy) on 2026-09-29 and applied
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-09-29 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

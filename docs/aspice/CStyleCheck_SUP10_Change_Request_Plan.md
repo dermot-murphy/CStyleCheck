@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP10-001 | **Version** | 1.25 |
-| **Project** | CStyleCheck | **Date** | 2026-11-19 |
+| **Document ID** | CSC-SUP10-001 | **Version** | 1.26 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.10 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.26 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §7 register row and §7.1 record CR-443 (release v2.0.0, Major; High); CR-461 and CR-462 closed (PR #464, merge `153d5d1`); §7.2 record cites CR-443; referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.25 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): CR-461 record — `definition_paths` read even from a disabled rule, files sorted within each glob, `--definitions` warning, `#define` precedence (plain over `#ifndef` default, project table over a file's own `#define`s, top-level `#undef`), new units `collect_macro_defs` / `MacroTable`, pre-scan time 66 s → 26 s, verification 7 tests; CR-462 record — typedef alias of an undefined struct reported, `#define`d type not, verification 6 tests |
 | 1.24 | 2026-11-19 | Claude | Issues #461 and #462: §7 register rows and §7.1 records CR-461 (definition files for `misc.partial_struct_*`: `definition_paths`, `--definitions GLOB`; new requirement SWE1-121; Medium; backwards compatible) and CR-462 (`report_unknown_types`; new requirement SWE1-122; Low; backwards compatible); the companion problem reports #460 and #463 are in CSC-SUP9-001 §6.2; referenced-document versions resynced |
 | 1.23 | 2026-11-19 | Claude | Issue #458: §7 register and §7.1 records — CR-441 (PR #442, merge `81b6f2e`) and CR-456 (PR #457, merge `d97c0b2`) set to Closed |
@@ -59,9 +60,9 @@ A **change request (CR)** covers any planned modification to a baselined work pr
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SUP8-001 | Configuration Management Plan | 1.33 |
-| CSC-SUP9-001 | Problem Resolution Management Plan | 1.23 |
-| CSC-MAN3-001 | Project Management Plan | 1.29 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP9-001 | Problem Resolution Management Plan | 1.24 |
+| CSC-MAN3-001 | Project Management Plan | 1.30 |
 
 ---
 
@@ -194,8 +195,9 @@ Summary view:
 | #425 | `bug` | Config and usage errors exit 2 from the installed `cstylecheck` command | High | Closed — PR #428, merge `7ddf732` | v2.0.0 |
 | #441 | `enhancement` | [CR] Create the parent folder of output files (`--log`, `--write-baseline`, `--init-output`) if it does not exist | Medium | Closed — PR #442, merge `81b6f2e` | v2.0.0 |
 | #456 | `enhancement` | [CR] Opt-in rules for partially initialised local structs (`misc.partial_struct_assignment`, `misc.partial_struct_initialiser`) | Medium | Closed — PR [#457](https://github.com/dermot-murphy/CStyleCheck/pull/457), merge `d97c0b2` | v2.0.0 |
-| #461 | `enhancement` | [CR] `misc.partial_struct_*`: read struct definitions from excluded paths (e.g. vendor SDK headers) | Medium | Open — implementing PR | v2.0.0 |
-| #462 | `enhancement` | [CR] `misc.partial_struct_*`: optionally report locals whose struct type is unknown | Low | Open — implementing PR | v2.0.0 |
+| #461 | `enhancement` | [CR] `misc.partial_struct_*`: read struct definitions from excluded paths (e.g. vendor SDK headers) | Medium | Closed — PR [#464](https://github.com/dermot-murphy/CStyleCheck/pull/464), merge `153d5d1` | v2.0.0 |
+| #462 | `enhancement` | [CR] `misc.partial_struct_*`: optionally report locals whose struct type is unknown | Low | Closed — PR [#464](https://github.com/dermot-murphy/CStyleCheck/pull/464), merge `153d5d1` | v2.0.0 |
+| #443 | `enhancement` | [CR] Release v2.0.0: merge develop to main through release/2.0.0 | High | Implemented — release PR `release/2.0.0` → `main` | v2.0.0 |
 
 ### 7.1 Change Request Records
 
@@ -323,7 +325,7 @@ Summary view:
 
 | Field | CR-461 |
 |---|---|
-| **Issue / PR** | [#461](https://github.com/dermot-murphy/CStyleCheck/issues/461) / implementing PR (shared with #460, #462, #463) |
+| **Issue / PR** | [#461](https://github.com/dermot-murphy/CStyleCheck/issues/461) / PR [#464](https://github.com/dermot-murphy/CStyleCheck/pull/464) (shared with #460, #462, #463), merge `153d5d1` |
 | **Date** | 2026-11-19 |
 | **Raised by / implemented by** | Dermot Murphy / Claude |
 | **Type** | `enhancement` — new rule key, new CLI option and a new requirement |
@@ -334,11 +336,11 @@ Summary view:
 | **Impact analysis** | With no definition files nothing changes. With them, each definition file is read once per run in addition to the checked files (no source cache entry, as it is never checked); on a downstream project the pre-scan of 228 checked files and 1002 SDK headers took 26 s after the review fixes (66 s before: the macro table is no longer copied per file); a broad glob over a whole SDK costs read time and can pick up SDK example `sdk_config.h` files whose `#define`s then win, so the documentation advises listing the project's configuration headers first and keeping SDK globs narrow. Per-directory configurations do not add definition files (a known limitation, documented). More structs become known, so enabling the option can report findings that were silently skipped before — the purpose of the change. No impact on SIT, SWQ or SYS-VTC procedures beyond the new SIT-028 / SITC-018 steps |
 | **Verification** | `tests/test_partial_struct.py` UV-PSI-007 `TestDefinitionPaths` (7 tests) and UV-PSI-009 `TestMacroCollection` (11 tests, `#define` precedence); SIT-028 steps 7 to 9, 11 and 12, SITC-018 steps 5 and 6; test total 1630→1671 with #460, #462 and #463 |
 | **Approval** | By merge (CSC-DEV-002 §5.2) — owner merge of the implementing PR |
-| **Status / target release** | Open / v2.0.0 |
+| **Status / target release** | Closed / v2.0.0 |
 
 | Field | CR-462 |
 |---|---|
-| **Issue / PR** | [#462](https://github.com/dermot-murphy/CStyleCheck/issues/462) / implementing PR (shared with #460, #461, #463) |
+| **Issue / PR** | [#462](https://github.com/dermot-murphy/CStyleCheck/issues/462) / PR [#464](https://github.com/dermot-murphy/CStyleCheck/pull/464) (shared with #460, #461, #463), merge `153d5d1` |
 | **Date** | 2026-11-19 |
 | **Raised by / implemented by** | Dermot Murphy / Claude |
 | **Type** | `enhancement` — new rule key and a new requirement |
@@ -349,7 +351,21 @@ Summary view:
 | **Impact analysis** | Default output unchanged. When enabled, the extra findings are `info` (they do not change the exit code unless `--warnings-as-errors` is used) and can be suppressed like any other finding (inline, `--exclusions`, baseline). A typedef name that is not a struct (enum, scalar, pointer typedef) is not reported when its typedef is in a checked or definition file; a project type defined only in an unscanned header is reported, which is the intent |
 | **Verification** | `tests/test_partial_struct.py` UV-PSI-008 `TestReportUnknownTypes` (6 tests); SIT-028 step 10, SITC-018 step 7 |
 | **Approval** | By merge (CSC-DEV-002 §5.2) — owner merge of the implementing PR |
-| **Status / target release** | Open / v2.0.0 |
+| **Status / target release** | Closed / v2.0.0 |
+
+| Field | CR-443 |
+|---|---|
+| **Issue / PR** | [#443](https://github.com/dermot-murphy/CStyleCheck/issues/443) / release PR `release/2.0.0` → `main` |
+| **Date** | 2026-11-20 (scope question resolved 2026-10-06: #439 shipped alone as v1.6.1) |
+| **Raised by / implemented by** | Dermot Murphy / Claude |
+| **Type** | `enhancement` — release baseline (CSC-SUP8-001 §8.2) |
+| **Impact level** | High — the release breaks backwards compatibility (§7.2): CR-422, CR-425, #423, CR-424, CR-412 / CR-418 / CR-420 |
+| **Change** | Release **v2.0.0 (Major)** from `develop` through `release/2.0.0`: version bump (`pyproject.toml`), CHANGELOG `[Unreleased]` → `[2.0.0] - 2026-11-20`, README / DOCKERHUB_README / `action.yml` usage examples to `@v2.0.0`, ASPICE release records (CSC-SVD-001 v1.35, CSC-SUP8-001 v1.34 §8.4, CSC-SWE4-001 v1.48, CSC-SWE5-001 v1.37, CSC-SWE6-001 v1.40 §9, CSC-SYS4-001 v1.34, CSC-SYS5-001 v1.31, CSC-MAN3-001 v1.30, CSC-PA2-001 v1.45, CSC-SUP9-001 v1.24, this record); merge to `main`, back-merge to `develop`, annotated tag `v2.0.0` on the `main` merge commit |
+| **Content** | All changes since v1.6.1 (CSC-SVD-001 §6.7): CR-412, CR-413, CR-418, CR-420, CR-422, CR-424, CR-425, CR-441, CR-456, CR-461, CR-462; problem fixes #408, #410, #423, #447, #460, #463 (CSC-SUP9-001 §6.2); #388, #394, #395, #437, #449; 83 rule IDs, 1671 tests |
+| **Impact analysis** | Projects upgrading from v1.6.x can see new findings, a configuration error (exit 2) or a different exit code; the new rules are opt-in, so they add no findings by default. Upgrade steps are in CSC-SVD-001 §9.1 and the CHANGELOG ⚠️ Compatibility section; the GitHub Release lists the breaking changes in their own section |
+| **Verification** | 1671 tests, 0 failures (local run on `release/2.0.0`, 2026-11-20); CI on the release PR (Python 3.10 / 3.11 / 3.12, naming-convention check, Docker build, ASPICE consistency) must pass before merge; release-readiness gate CSC-SWE6-001 §9; SYS.5 verdict CSC-SYS5-001 §6; after the tag, the action is run end to end with `--output-format json --log` (#439 regression) and the Docker publication is confirmed (CSC-SUP8-001 §11.2) |
+| **Approval** | By merge (CSC-DEV-002 §5.2) — owner merge of the release PR |
+| **Status / target release** | Implemented on `release/2.0.0`; closed when the release PR is merged and `v2.0.0` is tagged / v2.0.0 |
 
 ### 7.2 Release Classification Decision
 
@@ -359,7 +375,7 @@ Summary view:
 | **Decided by / date** | Dermot Murphy, 2026-09-29 (CSC-AUD-010 AUD10-F-002, #430) |
 | **Rationale** | §5.6 requires a Major version for changed default behaviour or an incompatible config format. CR-422 rejects configs that v1.6.0 loaded, and CR-425 changes the configuration-error exit code of the installed command from 1 to 2 |
 | **Compatibility changes in scope** | CR-422 (config rejection, canonical case names), CR-425 (exit code 1→2), #423 (last enum member now checked; new findings possible), CR-420 (preset / `--init` output enables opt-in rules), CR-424 (`functions.case` removed, WARNING), CR-412 / CR-418 (post-v1.6.0 rules opt-in) |
-| **Record** | CSC-MAN3-001 §8; CHANGELOG [Unreleased] ⚠️ notes |
+| **Record** | CSC-MAN3-001 §8; CHANGELOG [2.0.0] ⚠️ Compatibility notes; released as v2.0.0 on 2026-11-20 under CR-443 |
 
 ---
 
@@ -378,7 +394,7 @@ Summary view:
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-09-29 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

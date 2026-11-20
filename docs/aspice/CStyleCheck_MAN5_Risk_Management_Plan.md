@@ -57,9 +57,9 @@ This Risk Management Plan defines the risk identification, analysis, treatment, 
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-MAN3-001 | Project Management Plan | 1.29 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.33 |
-| CSC-SUP10-001 | Change Request Management Plan | 1.25 |
+| CSC-MAN3-001 | Project Management Plan | 1.30 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP10-001 | Change Request Management Plan | 1.26 |
 
 ---
 

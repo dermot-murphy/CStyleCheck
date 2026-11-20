@@ -554,7 +554,21 @@ Matching rules:
 
 ## New in this release
 
-### Unreleased (on `develop`)
+### New in v2.0.0 (2026-11-20)
+
+**Major release.** v2.0.0 can break an existing project on upgrade. GitHub Action users pin
+`dermot-murphy/CStyleCheck@v2.0.0`. Check these points before you upgrade:
+
+- An unknown case-style name in a config is now an error, exit code `2` (#422).
+- Configuration and usage errors exit with `2`, not `1`, also from the installed
+  `cstylecheck` command (#425). CI scripts that tested for `1` must test for `2`.
+- The last enum member is now checked, so code that passed before can report
+  `enum.member_case` / `enum.member_prefix` findings (#423).
+- `functions.case` is removed: it is ignored with a warning, use `functions.style` (#424).
+- All 10 new `misc.*` rules are opt-in (#412, #418, #456): upgrading adds no findings
+  from them until you enable them, or use `--preset misra` / `--preset barr-c` (#420).
+
+Changes:
 
 - **8 new MISRA C / Barr-C rules** (#391, #392), all **opt-in** (disabled by default,
   including when the key is absent from a project config; #412, #418). Enable each with
@@ -594,6 +608,8 @@ Matching rules:
 - **Baseline matching without line numbers** (#394) and **platform-independent baseline
   paths** (#395).
 - **Trend-analysis C source metrics** (#388), including safety indicators.
+- **Missing output folders are created** (#441) for `--log FILE`,
+  `--write-baseline FILE` and `--init-output FILE`; CI scripts no longer need `mkdir -p`.
 
 8 new rules; **81 rule IDs** total. 143 new tests (1422 total at the time).
 #408 and #407 (dedicated unit tests for the source cache, startup banner and OS path
@@ -1039,7 +1055,7 @@ root.
 
 ```yaml
 # .github/workflows/rules.yml
-- uses: dermot-murphy/CStyleCheck@v1
+- uses: dermot-murphy/CStyleCheck@v2.0.0
   with:
     config: src/rules.yml
 ```
@@ -1057,7 +1073,7 @@ jobs:
 
       - name: Run CStyleCheck
         id: cstylecheck
-        uses: dermot-murphy/CStyleCheck@v1
+        uses: dermot-murphy/CStyleCheck@v2.0.0
         with:
           config: src/rules.yml
           include: |

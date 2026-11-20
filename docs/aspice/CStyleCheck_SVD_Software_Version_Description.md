@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SVD-001 | **Version** | 1.34 |
-| **Project** | CStyleCheck | **Date** | 2026-11-19 |
+| **Document ID** | CSC-SVD-001 | **Version** | 1.35 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.8 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.35 | 2026-11-20 | Claude | v2.0.0 release (Major), CR #443 — §4.1 version, git tag, release date, release type and previous release (v1.6.1); §4.2 classification (breaking changes #422, #423, #424, #425; opt-in rules #412, #418, #420; 83 rule IDs); §5.1 `_version.py` 2.0.0 and 83 rule implementations; §5.2 Docker tags 2.0.0 / 2.0 / 2; §5.3 `update_readme_badge.py` removed (#449), `aspice_check.py` and the trend-metrics scripts added (#437, #388); §5.4 test table 1281→1671 tests, 53→60 modules; §6.7 v2.0.0 change summary (C-001 to C-005, F-026 to F-033, B-013 to B-023, P-001 to P-006, D-014); §7 rule count; §8 CI checks, test count and tag; §9 upgrade notes from v1.6.x with the breaking changes; §10 configuration items 2.0.0; baseline notes; approval by merge (CSC-DEV-002 §5.2) |
 | 1.34 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
 | 1.33 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
 | 1.32 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
@@ -59,25 +60,25 @@
 
 ## 3. Purpose & Scope
 
-This **Software Version Description (SVD)** formally describes the **CStyleCheck v1.6.1** software release. It identifies the software items delivered, the baseline against which changes are recorded, and the configuration status of all controlled work products.
+This **Software Version Description (SVD)** formally describes the **CStyleCheck v2.0.0** software release. It identifies the software items delivered, the baseline against which changes are recorded, and the configuration status of all controlled work products.
 
 This document satisfies the release-identification and configuration-status-accounting requirements of **Automotive SPICE® PAM v4.0, SUP.8 — Configuration Management**.
 
 ### 3.1 Referenced Documents
 
-> **Baseline note (#435, 2026-09-30):** the document versions below are the current `develop` baseline. The release content in §4–§9 still describes v1.6.0; the SVD is re-baselined for the next release, **v2.0.0**.
+> **Baseline note (v2.0.0, 2026-11-20):** the document versions below are the v2.0.0 release baseline (CR #443).
 
 | Document ID | Title | Version |
 |---|---|---|
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
 | CSC-SWE2-001 | CStyleCheck Software Architecture Design | 1.36 |
 | CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.42 |
-| CSC-SWE4-001 | CStyleCheck Software Unit Verification Specification | 1.47 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.36 |
-| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.39 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.33 |
+| CSC-SWE4-001 | CStyleCheck Software Unit Verification Specification | 1.48 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.37 |
+| CSC-SWE6-001 | CStyleCheck Software Qualification Test Specification | 1.40 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
 | CSC-SUP1-001 | CStyleCheck Quality Assurance Plan | 1.30 |
-| CSC-MAN3-001 | CStyleCheck Project Management Plan | 1.29 |
+| CSC-MAN3-001 | CStyleCheck Project Management Plan | 1.30 |
 
 ---
 
@@ -88,33 +89,45 @@ This document satisfies the release-identification and configuration-status-acco
 | Field | Value |
 |---|---|
 | **Product Name** | CStyleCheck |
-| **Version** | 1.6.1 |
-| **Release Date** | 2026-10-06 |
-| **Release Type** | Patch Release (hotfix) |
-| **Git Tag** | `v1.6.1` |
-| **Branch** | `main` (from `hotfix/1.6.1`) |
-| **Previous Release** | v1.6.0 (2026-07-06) |
+| **Version** | 2.0.0 |
+| **Release Date** | 2026-11-20 |
+| **Release Type** | Major Release |
+| **Git Tag** | `v2.0.0` — annotated release baseline tag on the `main` merge commit of `release/2.0.0`, created after the merge (CSC-SUP8-001 §8.2) |
+| **Branch** | `main` (from `release/2.0.0`, cut from `develop`) |
+| **Previous Release** | v1.6.1 (2026-10-06, tag `v1.6.1` on `be797a5`) |
+| **Change Request** | [#443](https://github.com/dermot-murphy/CStyleCheck/issues/443) (release CR) |
 | **Repository** | https://github.com/dermot-murphy/CStyleCheck |
 
 ### 4.2 Release Classification
 
-This is a **patch release** under Semantic Versioning (see the last paragraph of this
-section). It is **backward-compatible** with v1.6.0 and v1.5.x: all existing rule IDs,
-CLI flags, and `rules.yml` schema entries are unchanged. v1.6.0, the minor release it
-patches, added one new rule, one bug fix, and one new fix-mode capability — see §6.
+This is a **major release** under Semantic Versioning (CSC-SUP10-001 §5.6; decision in
+CSC-SUP10-001 §7.2). It is **not fully backward-compatible** with v1.6.x: after upgrading,
+a project can see new findings, a configuration error or a different exit code. The
+breaking changes are (§6.7.1):
 
-v1.5.0 (the release before v1.6.0) added `misc.non_ascii_source`, per-file `--summary`
-breakdown, and `constant.case` typedef-alias exemption. v1.6.0 adds
-`misc.constant_comparison` (constant==constant detection), fixes a `misc.unsigned_suffix`
-false positive for signed-typed function parameters, and adds `--fix` auto-fix support
-for `variable.pointer_prefix` violations, reaching **73 rule IDs** total. The CLI
-entry point and all existing output formats remain backward-compatible with v1.5.x.
+- **Unknown case-style values are rejected (#422)** — a case-style value that is not a
+  canonical name or an accepted alias is a configuration error (`ERROR:` on stderr, exit 2).
+- **Configuration and usage errors exit 2, not 1 (#425)** — from the installed `cstylecheck`
+  command as well as `python src/cstylecheck.py`.
+- **The last enum member is checked (#423)** — new `enum.member_case` /
+  `enum.member_prefix` findings are possible.
+- **`functions.case` is removed (#424)** — the key is ignored with a `WARNING`; use
+  `functions.style`.
+- **New rules are opt-in (#412, #418, #420)** — the 10 rules added since v1.6.1 ship
+  `enabled: false`; `--preset misra` / `--preset barr-c` and `--init` enable the rules of
+  the chosen standard.
 
-v1.6.1 is a **patch (hotfix) release** of v1.6.0. It fixes one defect (#439, §6.6): v1.6.0
-wrote the startup banner into the `--log` file for every output format, so a `json` or
-`sarif` log file did not parse and the GitHub Action failed on every run. The banner is
-now written to the `--log` file only for `--output-format text`. No rule, CLI flag or
-`rules.yml` schema entry changed; the rule count is unchanged at **73 rule IDs**.
+v2.0.0 adds 10 rule IDs, all disabled by default: 8 MISRA C / Barr-C rules (#391, #392)
+and the 2 partially-initialised local struct rules (#456, extended by #460 to #463),
+reaching **83 rule IDs** total. It also creates missing output folders (#441), matches
+baselines without line numbers (#394, #395), and adds trend-analysis metrics (#388) and
+merge-time ASPICE consistency checks (#437). With the shipped defaults, upgrading adds no
+findings from the new rules.
+
+v1.6.1 (the previous release, 2026-10-06) was a patch (hotfix) release of v1.6.0 that kept
+the startup banner out of a json / sarif / html `--log` file (#439, §6.6); v1.6.0 added
+`misc.constant_comparison`, the `misc.unsigned_suffix` signed-parameter exemption and
+`--fix` support for `variable.pointer_prefix` (73 rule IDs, §6.5).
 
 ---
 
@@ -131,14 +144,14 @@ now written to the `--log` file only for `--output-format text`. No rule, CLI fl
 | `src/cstylecheck/models.py` | Violation, CheckResult, shared constants | `src/cstylecheck/models.py` |
 | `src/cstylecheck/preprocessor.py` | Comment/string stripping, token extraction | `src/cstylecheck/preprocessor.py` |
 | `src/cstylecheck/utils.py` | Case matching helpers, module-name derivation | `src/cstylecheck/utils.py` |
-| `src/cstylecheck/checker.py` | Main Checker class — all 73 rule implementations | `src/cstylecheck/checker.py` |
+| `src/cstylecheck/checker.py` | Main Checker class — all 83 rule implementations | `src/cstylecheck/checker.py` |
 | `src/cstylecheck/sign_checker.py` | Cross-file sign-compatibility and declared_not_defined | `src/cstylecheck/sign_checker.py` |
 | `src/cstylecheck/baseline.py` | Baseline load / write | `src/cstylecheck/baseline.py` |
 | `src/cstylecheck/output.py` | Text / JSON / SARIF / HTML formatters, Tee, summary table | `src/cstylecheck/output.py` |
 | `src/cstylecheck/fixer.py` | Auto-fix engine: apply_fixes, unified_diff (`--fix`, `--dry-run`, `--safe-only`) | `src/cstylecheck/fixer.py` |
 | `src/cstylecheck/wizard.py` | Config wizard and preset writer (`--init`, `--preset`) | `src/cstylecheck/wizard.py` |
 | `src/rules.yml` | Rule configuration for the CStyleCheck project | `src/rules.yml` |
-| `src/_version.py` | Version string: `1.6.1` (generated by CI: `git describe --tags`) | `src/_version.py` |
+| `src/_version.py` | Version string: `2.0.0` (generated by CI: `git describe --tags`) | `src/_version.py` |
 | `src/aliases.txt` | Module alias map | `src/aliases.txt` |
 | `src/exclusions.yml` | Per-file rule suppressions | `src/exclusions.yml` |
 | `src/options.txt` | Project defaults for `--options-file` | `src/options.txt` |
@@ -152,8 +165,8 @@ now written to the `--log` file only for `--output-format text`. No rule, CLI fl
 
 | Registry | Image | Tags |
 |---|---|---|
-| Docker Hub | `dermotmurphy/cstylecheck` | `1.6.1`, `1.6`, `1`, `latest` |
-| GitHub Container Registry | `ghcr.io/dermot-murphy/cstylecheck` | `1.6.1`, `1.6`, `1`, `latest` |
+| Docker Hub | `dermotmurphy/cstylecheck` | `2.0.0`, `2.0`, `2`, `latest` |
+| GitHub Container Registry | `ghcr.io/dermot-murphy/cstylecheck` | `2.0.0`, `2.0`, `2`, `latest` |
 
 Platforms: `linux/amd64`, `linux/arm64`.
 
@@ -163,11 +176,14 @@ Platforms: `linux/amd64`, `linux/arm64`.
 |---|---|
 | `scripts/ci/append_trend_record.py` | Appends JSON record to `gh-pages/cstylecheck/trend.jsonl` |
 | `scripts/ci/generate_trend.py` | Regenerates `gh-pages/cstylecheck/index.html` and `badge.json` |
-| `scripts/ci/update_readme_badge.py` | Updates the naming-convention badge link in `README.md` |
+| `scripts/aspice_check.py` | ASPICE work-product consistency check, run on every pull request by `aspice_consistency.yml` (#437) |
+| `scripts/collect_metrics.py`, `scripts/generate_charts.py`, `scripts/update_wiki_metrics.py`, `scripts/compare_metrics.py` | Trend-analysis metrics and charts (`metrics.yml`, #388) |
+
+`scripts/ci/update_readme_badge.py` was removed in v2.0.0: the README *Naming Convention* badge is a fixed shields.io endpoint URL, so no workflow pushes to `develop` or `main` (#449).
 
 ### 5.4 Test Suite
 
-**Total: 1281 tests across 53 modules** — all passing.
+**Total: 1671 tests across 60 modules** — all passing.
 
 | Item | Test Count | Description |
 |---|---|---|
@@ -180,7 +196,7 @@ Platforms: `linux/amd64`, `linux/arm64`.
 | `tests/test_variables.py` | 43 | all variable.* rules |
 | `tests/test_functions.py` | 14 | function.* |
 | `tests/test_typedefs.py` | 8 | typedef.* |
-| `tests/test_enums.py` | 11 | enum.* |
+| `tests/test_enums.py` | 24 | enum.* (last member checked, v2.0.0, #423) |
 | `tests/test_structs.py` | 12 | struct.* |
 | `tests/test_include_guards.py` | 8 | include_guard.* |
 | `tests/test_misc.py` | 28 | line_length / indentation / magic / suffix |
@@ -190,11 +206,11 @@ Platforms: `linux/amd64`, `linux/arm64`.
 | `tests/test_copyright_header.py` | 55 | misc.copyright_header |
 | `tests/test_eof_comment.py` | 33 | misc.eof_comment |
 | `tests/test_cli.py` | 45 | CLI flags end-to-end (incl. startup banner in `--log`, v1.6.1) |
-| `tests/test_improvements.py` | 67 | bugs + new feature regression tests |
+| `tests/test_improvements.py` | 80 | bugs + new feature regression tests |
 | `tests/test_comment_ratio.py` | 24 | misc.comment_ratio (new in v1.2.0) |
 | `tests/test_whitespace_ratio.py` | 27 | misc.whitespace_ratio (new in v1.2.0) |
 | `tests/test_declared_not_defined.py` | 39 | misc.declared_not_defined (new in v1.2.0) |
-| `tests/test_misra_rules.py` | 64 | MISRA C rule coverage |
+| `tests/test_misra_rules.py` | 168 | MISRA C rule coverage, incl. the 8 opt-in MISRA C / Barr-C rules (v2.0.0) |
 | `tests/test_parameter_prefix.py` | 51 | variable.parameter.* rules |
 | `tests/test_exclusions.py` | 28 | per-file rule suppression |
 | `tests/test_github_annotations.py` | 8 | GitHub Actions annotation output |
@@ -203,10 +219,10 @@ Platforms: `linux/amd64`, `linux/arm64`.
 | `tests/test_preprocessor.py` | 76 | preprocessor.py — strip_comments, strip_strings, preprocess, build_line_map, etc. |
 | `tests/test_config_loading.py` | 13 | config.py — load_config UTF-8 handling, missing file, YAML errors |
 | `tests/test_update_config.py` | 27 | config.py — _deep_merge function |
-| `tests/test_workflow_config.py` | 16 | CI workflow configuration regression tests |
+| `tests/test_workflow_config.py` | 21 | CI workflow configuration regression tests |
 | `tests/test_inline_suppression.py` | 24 | Inline suppression comments — `//` and `/* */` syntax (`parse_inline_suppressions`) |
 | `tests/test_fix_mode.py` | 11 | Auto-fix engine (`apply_fixes`, `unified_diff`) |
-| `tests/test_init_wizard.py` | 15 | Config wizard and presets (`run_wizard`, `run_preset`) |
+| `tests/test_init_wizard.py` | 33 | Config wizard and presets (`run_wizard`, `run_preset`) |
 | `tests/test_per_dir_config.py` | 15 | Per-directory config resolution (`resolve_per_dir_config`) |
 | `tests/test_html_report.py` | 20 | HTML report output (`_violations_to_html`) |
 | `tests/test_function_length.py` | 11 | `misc.function_length` rule |
@@ -221,42 +237,49 @@ Platforms: `linux/amd64`, `linux/arm64`.
 | `tests/test_identifier_length.py` | 10 | `naming.identifier_length` rule |
 | `tests/test_no_single_char_identifiers.py` | 8 | `naming.no_single_char_identifiers` rule |
 | `tests/test_print_summary.py` | 11 | `print_summary` per-file breakdown and section labels |
-| `tests/test_constant_comparison.py` | 27 | `misc.constant_comparison` rule (new in v1.6.0) |
+| `tests/test_constant_comparison.py` | 37 | `misc.constant_comparison` rule (new in v1.6.0; `#if` / `#elif` skipped in v2.0.0, #447) |
 | `tests/test_unsigned_suffix_signed_params.py` | 15 | `misc.unsigned_suffix` signed-param exemption (new in v1.6.0) |
 | `tests/test_pointer_prefix_fix.py` | 20 | `variable.pointer_prefix` auto-fix mode (new in v1.6.0) |
-| **Total** | **1281** | |
+| `tests/test_case_style_config.py` | 27 | Case-style aliases and rejection of unknown names (new in v2.0.0, #422) |
+| `tests/test_functions_case_removed.py` | 16 | `functions.case` removal warning (new in v2.0.0, #424) |
+| `tests/test_exit_code_entry_points.py` | 8 | Exit code 2 for config / usage errors from both entry points (new in v2.0.0, #425) |
+| `tests/test_output_dirs.py` | 11 | Missing output folders created (new in v2.0.0, #441) |
+| `tests/test_partial_struct.py` | 89 | `misc.partial_struct_assignment` / `misc.partial_struct_initialiser` (new in v2.0.0, #456, #460 to #463) |
+| `tests/test_collect_metrics.py` | 54 | Trend-analysis metrics scripts (new in v2.0.0, #388) |
+| `tests/test_cli_requirements.py` | 22 | Unit tests for SWE1-015, SWE1-094, SWE1-096 (new in v2.0.0, #407, #413, #439) |
+| **Total** | **1671** | |
 
 ### 5.5 Documentation
 
-> **Baseline note (#435, 2026-09-30):** the document versions below are the current `develop` baseline. The release content in §4–§9 still describes v1.6.0; the SVD is re-baselined for the next release, **v2.0.0**.
+> **Baseline note (v2.0.0, 2026-11-20):** the document versions below are the v2.0.0 release baseline (CR #443).
 
 | Document ID | Title | Version |
 |---|---|---|
-| CSC-SVD-001 | Software Version Description (this document) | 1.34 |
+| CSC-SVD-001 | Software Version Description (this document) | 1.35 |
 | CSC-SWE1-001 | Software Requirements Specification | 2.32 |
 | CSC-SWE2-001 | Software Architecture Design | 1.36 |
 | CSC-SWE3-001 | Software Detailed Design | 1.42 |
-| CSC-SWE4-001 | Software Unit Verification Specification | 1.47 |
-| CSC-SWE5-001 | Software Integration Test Specification | 1.36 |
-| CSC-SWE6-001 | Software Qualification Test Specification | 1.39 |
+| CSC-SWE4-001 | Software Unit Verification Specification | 1.48 |
+| CSC-SWE5-001 | Software Integration Test Specification | 1.37 |
+| CSC-SWE6-001 | Software Qualification Test Specification | 1.40 |
 | CSC-SYS2-001 | System Requirements Specification | 2.25 |
 | CSC-SYS3-001 | System Architecture Design | 1.27 |
-| CSC-SYS4-001 | System Integration Test Specification | 1.33 |
-| CSC-SYS5-001 | System Verification Specification | 1.30 |
-| CSC-MAN3-001 | Project Management Plan | 1.29 |
+| CSC-SYS4-001 | System Integration Test Specification | 1.34 |
+| CSC-SYS5-001 | System Verification Specification | 1.31 |
+| CSC-MAN3-001 | Project Management Plan | 1.30 |
 | CSC-MAN5-001 | Risk Management Plan | 1.25 |
 | CSC-SUP1-001 | Quality Assurance Plan | 1.30 |
-| CSC-SUP8-001 | Configuration Management Plan | 1.33 |
-| CSC-SUP9-001 | Problem Resolution Plan | 1.23 |
-| CSC-SUP10-001 | Change Request Plan | 1.25 |
+| CSC-SUP8-001 | Configuration Management Plan | 1.34 |
+| CSC-SUP9-001 | Problem Resolution Plan | 1.24 |
+| CSC-SUP10-001 | Change Request Plan | 1.26 |
 | CSC-ACQ4-001 | Supplier Monitoring Plan | 1.24 |
-| CSC-PA2-001 | Capability Level 2 Records | 1.44 |
+| CSC-PA2-001 | Capability Level 2 Records | 1.45 |
 | CSC-DEV-001 | AI Authorship Deviation Record | 1.22 |
 | CSC-DEV-002 | Independent Review Deviation Record | 1.22 |
 
 ---
 
-## 6. Change Summary (v1.3.0 → v1.6.1)
+## 6. Change Summary (v1.3.0 → v2.0.0)
 
 ### 6.1 New Features
 
@@ -331,6 +354,66 @@ Platforms: `linux/amd64`, `linux/arm64`.
 | B-012 | Startup banner no longer written into a machine-readable `--log` file — v1.6.0 wrote the two-line banner to the `--log` file for every output format, so with `--output-format json` or `sarif` the file did not parse and the GitHub Action, which reads its results from that file, failed on every run with `could not read results JSON`. `main()` now writes the banner to the log via `tee.log_print()` only when `--output-format` is `text`; for `json`, `sarif` and `html` the log file holds only the report document. The banner is still written to `stderr` for every format (SWE1-094) | [#439](https://github.com/dermot-murphy/CStyleCheck/issues/439) |
 | D-013 | 2 new tests (1281 total) in `test_cli.py` (`TestStartupBannerLogFile`): `test_text_log_file_has_banner` (text log starts with the banner) and `test_structured_log_file_has_no_banner` (json / sarif / html log equals the stdout document, has no banner, and JSON / SARIF parse; banner still on `stderr`) | [#439](https://github.com/dermot-murphy/CStyleCheck/issues/439) |
 
+### 6.7 v2.0.0 Changes (2026-11-20)
+
+Content of the `[2.0.0]` section of `CHANGELOG.md` (the `[Unreleased]` section before the release). Changes are recorded in detail in the CHANGELOG and in the CR / problem records (CSC-SUP10-001 §7, CSC-SUP9-001 §6.2); this table summarises them.
+
+#### 6.7.1 Compatibility (breaking) changes
+
+| ID | Description | Issue |
+|---|---|---|
+| C-001 | Unknown case-style values are rejected: a value that is not a canonical name (`lower_snake`, `upper_snake`, `camel`, `pascal`, `any`) or an accepted alias is a configuration error, exit 2. Presets and `--init` write canonical names only; aliases are normalised by `load_config()` | [#422](https://github.com/dermot-murphy/CStyleCheck/issues/422) |
+| C-002 | Configuration and usage errors exit 2 (not 1) from the installed `cstylecheck` command as well as `python src/cstylecheck.py` (`config_error()`) | [#425](https://github.com/dermot-murphy/CStyleCheck/issues/425) |
+| C-003 | The last member of a `typedef enum` is checked by `enum.member_case` / `enum.member_prefix` with or without a trailing comma; new findings are possible | [#423](https://github.com/dermot-murphy/CStyleCheck/issues/423) |
+| C-004 | `functions.case` removed (it had no effect); a config that still sets it loads with a `WARNING` — use `functions.style` | [#424](https://github.com/dermot-murphy/CStyleCheck/issues/424) |
+| C-005 | New-rule opt-in policy: all rules added since v1.6.1 ship `enabled: false` and are off when the key is absent; `misc.boolean_comparison` matches lowercase `true` / `false` only; `--preset misra` / `--preset barr-c` and `--init` enable the rules of the chosen standard | [#412](https://github.com/dermot-murphy/CStyleCheck/issues/412), [#418](https://github.com/dermot-murphy/CStyleCheck/issues/418), [#420](https://github.com/dermot-murphy/CStyleCheck/issues/420) |
+
+#### 6.7.2 New features
+
+| ID | Description | Issue |
+|---|---|---|
+| F-026 | 8 opt-in MISRA C / Barr-C rules: `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else` | PR [#391](https://github.com/dermot-murphy/CStyleCheck/pull/391), PR [#392](https://github.com/dermot-murphy/CStyleCheck/pull/392) |
+| F-027 | 2 opt-in rules for partially initialised local structs: `misc.partial_struct_assignment`, `misc.partial_struct_initialiser` (83 rule IDs) | [#456](https://github.com/dermot-murphy/CStyleCheck/issues/456) |
+| F-028 | `misc.partial_struct_*`: struct definitions from files that are not checked (`definition_paths`, `--definitions GLOB`) | [#461](https://github.com/dermot-murphy/CStyleCheck/issues/461) |
+| F-029 | `misc.partial_struct_*`: `report_unknown_types` (default `false`) | [#462](https://github.com/dermot-murphy/CStyleCheck/issues/462) |
+| F-030 | Missing parent folders of `--log`, `--write-baseline` and `--init-output` files are created | [#441](https://github.com/dermot-murphy/CStyleCheck/issues/441) |
+| F-031 | Presets and `--init` enable the matching opt-in rules | [#420](https://github.com/dermot-murphy/CStyleCheck/issues/420) |
+| F-032 | Trend analysis: safety indicators and industry-standard C source metrics, new charts | [#388](https://github.com/dermot-murphy/CStyleCheck/issues/388) |
+| F-033 | Merge-time ASPICE process controls: `scripts/aspice_check.py`, `aspice_consistency.yml`, PR template and issue forms | [#437](https://github.com/dermot-murphy/CStyleCheck/issues/437) |
+
+#### 6.7.3 Bug fixes
+
+| ID | Description | Issue |
+|---|---|---|
+| B-013 | `misc.sizeof_type` no longer reports an object that looks like a type (upper case or `_t`) | [#460](https://github.com/dermot-murphy/CStyleCheck/issues/460) |
+| B-014 | `misc.partial_struct_*` count members inside `#if` blocks only when the condition is true | [#463](https://github.com/dermot-murphy/CStyleCheck/issues/463) |
+| B-015 | `misc.constant_comparison` no longer reports `#if` / `#elif` conditions; `identifiers:` exclusions can suppress it | [#447](https://github.com/dermot-murphy/CStyleCheck/issues/447) |
+| B-016 | Startup banner kept out of a json / sarif / html `--log` file (released in v1.6.1, §6.6; back-merged into `develop`) | [#439](https://github.com/dermot-murphy/CStyleCheck/issues/439) |
+| B-017 | `misc.boolean_comparison` no longer cites MISRA C:2012 Rule 14.4 | [#410](https://github.com/dermot-murphy/CStyleCheck/issues/410) |
+| B-018 | `misc.multiple_statements_per_line` no longer cites MISRA C:2012 Rule 15.5 | [#408](https://github.com/dermot-murphy/CStyleCheck/issues/408) |
+| B-019 | Baseline matching ignores line numbers (`(file, rule, message)` multiset) | #394 |
+| B-020 | Baseline paths are platform-independent (`/` separators) | #395 |
+| B-021 | `barr-c` preset `typedefs.suffix` / `enums.type_suffix` written in the nested form (crash with the generated config) | [#420](https://github.com/dermot-murphy/CStyleCheck/issues/420) |
+| B-022 | Trend-metrics accuracy (cyclomatic complexity, counters ignore comments and strings, function length, static variables) | [#388](https://github.com/dermot-murphy/CStyleCheck/issues/388) |
+| B-023 | Startup-banner requirements SYS-F-046 / SWE1-094 aligned with the implementation (documentation only, CR-413) | [#413](https://github.com/dermot-murphy/CStyleCheck/issues/413) |
+
+#### 6.7.4 CI, repository and process changes
+
+| ID | Description | Issue |
+|---|---|---|
+| P-001 | No workflow pushes to `develop` or `main`; every workflow declares `permissions:`; *All Checks Passed* aggregate job; required status checks on `develop` | [#449](https://github.com/dermot-murphy/CStyleCheck/issues/449), [#453](https://github.com/dermot-murphy/CStyleCheck/issues/453) |
+| P-002 | Dependabot targets `develop` (CI-configuration-only hotfix #399, recorded here per CSC-SUP8-001 §7.6) | PR [#399](https://github.com/dermot-murphy/CStyleCheck/pull/399), PR [#403](https://github.com/dermot-murphy/CStyleCheck/pull/403) |
+| P-003 | GitHub Actions updated: `actions/checkout@v7`, `actions/setup-python@v7`, `actions/upload-artifact@v7`, `docker/login-action@v4.6.0` | #386, #387, #400 to #402, #404 |
+| P-004 | Internal audits CSC-AUD-009 and CSC-AUD-010 and their corrective actions | [#405](https://github.com/dermot-murphy/CStyleCheck/issues/405), [#430](https://github.com/dermot-murphy/CStyleCheck/issues/430) |
+| P-005 | ASPICE document-version resyncs | #416, #435 |
+| P-006 | `examples/embedded_project` sample project | — |
+
+#### 6.7.5 Tests
+
+| ID | Description | Issue |
+|---|---|---|
+| D-014 | 390 new tests (1281 at v1.6.1 → 1671 at v2.0.0, 53 → 60 modules); new modules `test_case_style_config.py`, `test_functions_case_removed.py`, `test_exit_code_entry_points.py`, `test_output_dirs.py`, `test_partial_struct.py`, `test_collect_metrics.py`, `test_cli_requirements.py` (§5.4) | — |
+
 ---
 
 ## 7. Known Issues and Limitations
@@ -343,7 +426,7 @@ The following issues are open at the time of this release and deferred to a futu
 | [#160](https://github.com/dermot-murphy/CStyleCheck/issues/160) | Pre-commit hook: warn gracefully when no C files are staged | Low |
 | [#161](https://github.com/dermot-murphy/CStyleCheck/issues/161) | `misc.copyright_header` regex anchoring edge cases on Windows line endings | Low |
 
-> No open issues map to known functional defects in the 73 active rules. All issue numbers above are illustrative; see GitHub for the live issue tracker.
+> No open issues map to known functional defects in the 83 rules. All issue numbers above are illustrative; see GitHub for the live issue tracker.
 
 ---
 
@@ -362,14 +445,16 @@ All of the following CI checks must pass before merge to `develop` and sync to `
 | ruff lint (Python 3.11) | ✅ Pass |
 | Coverage gate ≥ 85% combined (Python 3.11) | ✅ Pass |
 | Example C file action (CStyleCheck self-check) | ✅ Pass |
+| Docker build | ✅ Pass |
+| ASPICE work-product consistency (`aspice_consistency.yml`, #437) | ✅ Pass |
 
 ### 8.2 Qualification Test Status
 
-All 1281 tests pass with no failures. Test counts per module are documented in §5.4.
+All 1671 tests pass with no failures. Test counts per module are documented in §5.4.
 
 ### 8.3 Docker Build
 
-The Docker image is built for `linux/amd64` and `linux/arm64` and published to Docker Hub and GHCR automatically on creation of the `v1.6.1` tag via `docker_publish.yml`.
+The Docker image is built for `linux/amd64` and `linux/arm64` and published to Docker Hub and GHCR automatically on creation of the `v2.0.0` tag via `docker_publish.yml`.
 
 ### 8.4 GitHub Pages / Wiki
 
@@ -379,62 +464,65 @@ The GitHub Wiki is rebuilt automatically on any push to `main` that touches `REA
 
 ## 9. Installation and Upgrade Notes
 
-### 9.1 Upgrade from v1.6.0 / v1.5.x
+### 9.1 Upgrade from v1.6.x
 
-No breaking changes. All existing configurations, pre-commit hooks, and CLI flags work
-without modification. Upgrade steps:
+v2.0.0 has breaking changes (§4.2, §6.7.1). Before upgrading a project:
+
+1. Run `cstylecheck --update-config` (or compare with `src/rules.yml`) to add the new rule keys; they are added as `enabled: false`.
+2. Replace any non-canonical case-style value (e.g. `PascalCase`, `camelCase`) if it is not an accepted alias; an unknown value now stops the run with exit 2 (#422).
+3. Replace `functions.case` with `functions.style` (#424).
+4. CI scripts that tested for exit code 1 on a configuration or usage error must test for 2 (#425).
+5. Expect possible new `enum.member_case` / `enum.member_prefix` findings for last enum members written without a trailing comma (#423); a configuration generated by `--preset barr-c` or `--init` (camelCase / PascalCase answer) can also report naming findings that were skipped before (#422).
 
 ```bash
 # pip / pipx
 pip install --upgrade cstylecheck
 
 # Docker
-docker pull dermotmurphy/cstylecheck:1.6.1
+docker pull dermotmurphy/cstylecheck:2.0.0
 
 # pre-commit (update rev in .pre-commit-config.yaml)
-rev: v1.6.1
+rev: v2.0.0
+
+# GitHub Action
+uses: dermot-murphy/CStyleCheck@v2.0.0
 ```
 
 ### 9.2 New Features — Optional Activation
 
-New features in v1.6.0 requiring explicit opt-in (`enabled: true` in `rules.yml`):
+The 10 rules added in v2.0.0 are disabled by default (`enabled: false`, and off when the key is absent):
 
-- **`misc.constant_comparison`** — disabled-by-default at project level but enabled in
-  the bundled `src/rules.yml`. Enable to flag comparisons where both sides are
-  compile-time constants.
-- **`variable.pointer_prefix` auto-fix** — activated via `--fix` CLI flag. No
-  `rules.yml` change required.
+- **MISRA C / Barr-C rules** — `misc.goto_usage`, `misc.assignment_in_condition`, `misc.multiple_statements_per_line`, `misc.void_pointer`, `misc.recursive_function`, `misc.sizeof_type`, `misc.boolean_comparison`, `misc.empty_else`. Enable per rule (`misc.<rule>.enabled: true`) or generate a config with `--preset misra` / `--preset barr-c` or `--init`.
+- **Partially initialised local structs** — `misc.partial_struct_assignment`, `misc.partial_struct_initialiser`; optional `definition_paths` / `--definitions GLOB` (#461) and `report_unknown_types` (#462).
 
-The `misc.unsigned_suffix` signed-parameter exemption activates automatically (no config
-changes needed).
+Missing output folders (#441) and line-independent baseline matching (#394, #395) need no configuration change.
 
 ### 9.3 Backward Compatibility
 
-The `src/cstylecheck.py` entry point shim is unchanged. The 72 rule IDs present in v1.5.x are all retained and unchanged. One new rule ID (`misc.constant_comparison`) was added (73 rule IDs total). Users who import the checker programmatically via `import cstylecheck` continue to work without modification.
-
+The `src/cstylecheck.py` entry point shim and all CLI flags of v1.6.x are retained; `--definitions` is new. The 73 rule IDs present in v1.6.x are all retained; 10 rule IDs were added (83 rule IDs total). The behaviour changes listed in §6.7.1 can change the findings or the exit code of an existing project. Baselines written by v1.6.x are still honoured (entries are matched without the line number). Users who import the checker programmatically via `import cstylecheck` continue to work, except that `matches_case()` raises `ValueError` for an unknown style and `load_baseline()` returns a `collections.Counter`.
 ---
 
 ## 10. Traceability
 
-> **Baseline note (#435, 2026-09-30):** the document versions below are the current `develop` baseline. The release content in §4–§9 still describes v1.6.0; the SVD is re-baselined for the next release, **v2.0.0**.
+> **Baseline note (v2.0.0, 2026-11-20):** the document versions below are the v2.0.0 release baseline (CR #443).
 
 | Work Product | Document | Version | Status |
 |---|---|---|---|
 | System Requirements | CSC-SYS2-001 | 2.25 | Released |
 | System Architecture | CSC-SYS3-001 | 1.27 | Released |
-| System Integration Tests | CSC-SYS4-001 | 1.33 | Released |
-| System Verification | CSC-SYS5-001 | 1.30 | Released |
+| System Integration Tests | CSC-SYS4-001 | 1.34 | Released |
+| System Verification | CSC-SYS5-001 | 1.31 | Released |
 | Software Requirements | CSC-SWE1-001 | 2.32 | Released |
 | Software Architecture | CSC-SWE2-001 | 1.36 | Released |
 | Detailed Design | CSC-SWE3-001 | 1.42 | Released |
-| Unit Verification | CSC-SWE4-001 | 1.47 | Released |
-| Integration Tests | CSC-SWE5-001 | 1.36 | Released |
-| Qualification Tests | CSC-SWE6-001 | 1.39 | Released |
-| Source Code | `src/cstylecheck/` (package) | 1.6.0 | Released |
-| Test Suite | `tests/` (1279 tests) | 1.6.0 | Released |
-| CI Automation | `.github/workflows/` + `scripts/ci/` | 1.6.0 | Released |
-| Docker Image | `Dockerfile/Dockerfile` | 1.6.0 | Released |
-| Change Log | `CHANGELOG.md` | 1.6.0 | Released |
+| Unit Verification | CSC-SWE4-001 | 1.48 | Released |
+| Integration Tests | CSC-SWE5-001 | 1.37 | Released |
+| Qualification Tests | CSC-SWE6-001 | 1.40 | Released |
+| Source Code | `src/cstylecheck/` (package) | 2.0.0 | Released |
+| Test Suite | `tests/` (1671 tests) | 2.0.0 | Released |
+| CI Automation | `.github/workflows/` + `scripts/ci/` + `scripts/aspice_check.py` | 2.0.0 | Released |
+| Docker Image | `Dockerfile/Dockerfile` | 2.0.0 | Released |
+| Change Log | `CHANGELOG.md` | 2.0.0 | Released |
 
 ---
 
@@ -442,7 +530,7 @@ The `src/cstylecheck.py` entry point shim is unchanged. The 72 rule IDs present 
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-07-06 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
@@ -453,4 +541,4 @@ The `src/cstylecheck.py` entry point shim is unchanged. The 72 rule IDs present 
 
 ---
 
-*End of Software Version Description — CStyleCheck v1.6.1*
+*End of Software Version Description — CStyleCheck v2.0.0*

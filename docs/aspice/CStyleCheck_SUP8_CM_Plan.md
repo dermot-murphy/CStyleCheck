@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SUP8-001 | **Version** | 1.33 |
-| **Project** | CStyleCheck | **Date** | 2026-11-19 |
+| **Document ID** | CSC-SUP8-001 | **Version** | 1.34 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SUP.8 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.34 | 2026-11-20 | Claude | v2.0.0 release (CR #443): new §8.4 release baseline record (v1.6.0, v1.6.1, v2.0.0 — branch flow, tag and change record per release baseline); §7.6 record — hotfix #399 recorded in CSC-SVD-001 §6.7.4; referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.33 | 2026-11-19 | Claude | Cross-reference version resync with the #460 to #463 review fixes (`783b5a4`): referenced-document versions set to the current baseline; no technical content change |
 | 1.32 | 2026-11-19 | Claude | Cross-reference version resync with #460 to #463 (CR-461, CR-462): referenced-document versions set to the current baseline; no technical content change |
 | 1.31 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
@@ -81,8 +82,8 @@ This plan applies to all configuration items produced by the CStyleCheck project
 | Document ID | Title | Version |
 |---|---|---|
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.23 |
-| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.25 |
+| CSC-SUP9-001 | CStyleCheck Problem Resolution Management Plan | 1.24 |
+| CSC-SUP10-001 | CStyleCheck Change Request Management Plan | 1.26 |
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
 
 ---
@@ -283,7 +284,7 @@ main ──► hotfix/* ──► main ──► tag v1.0.1
 
 Every hotfix is back-merged into `develop` immediately. Hotfix branches may use the `claude/<topic>-<id>` naming used for AI-authored work (see CLAUDE.md) in place of `hotfix/<issue-id>-…`, provided the PR is labelled as a hotfix and targets `main`.
 
-> **Record (AUD9-F-028):** Hotfix #399 (commits `8da22b9`/`945dd02`, Dependabot `target-branch: develop`) was a CI-configuration-only change. Under this policy it needed no patch version or tag. It was back-merged into `develop` by #403 and is to be recorded in the next SVD. `main` therefore holds `v1.6.0` plus #399 with no new tag.
+> **Record (AUD9-F-028):** Hotfix #399 (commits `8da22b9`/`945dd02`, Dependabot `target-branch: develop`) was a CI-configuration-only change. Under this policy it needed no patch version or tag. It was back-merged into `develop` by #403 and is to be recorded in the next SVD. `main` therefore holds `v1.6.0` plus #399 with no new tag. It is recorded in CSC-SVD-001 v1.35 §6.7.4 (P-002) for the v2.0.0 release.
 
 ---
 
@@ -314,6 +315,18 @@ Every hotfix is back-merged into `develop` immediately. Hotfix branches may use 
 - Docker image digest (SHA-256) provides integrity verification for container baselines
 - The `build-and-push` job prints the image digest to the Actions log as an audit record
 - Layer caching uses a dedicated `:buildcache` tag in GHCR to speed incremental builds without affecting release tags
+
+### 8.4 Release Baseline Record
+
+Release baselines created under §8.2 (and §7.6 for hotfixes) since v1.6.0. Each release is described in CSC-SVD-001; the tag is the release baseline.
+
+| Release | Date | Type | Branch flow | Release baseline tag | Change record |
+|---|---|---|---|---|---|
+| v1.6.0 | 2026-07-06 | Minor | `develop` → `main` (PR #381) | `v1.6.0` on `a6102d6` | CSC-SVD-001 §6.5 |
+| v1.6.1 | 2026-10-06 | Patch (hotfix) | `hotfix/1.6.1` → `main` (PR #444); back-merged to `develop` (PR #445) | `v1.6.1` on `be797a5` | #439; CSC-SVD-001 §6.6 |
+| v2.0.0 | 2026-11-20 | Major (CSC-SUP10-001 §7.2) | `release/2.0.0` cut from `develop` `153d5d1` → `main` (release PR); back-merged to `develop`; `release/2.0.0` deleted after the back-merge | Annotated tag `v2.0.0` on the `main` merge commit of `release/2.0.0`, created and pushed after the owner's merge (§8.2 steps 4–5) | CR #443 (CSC-SUP10-001 CR-443); CSC-SVD-001 §6.7 |
+
+The v2.0.0 release baseline contains 83 rule IDs and 1671 tests (60 modules). After the tag, `docker_publish.yml` publishes the container baseline (`2.0.0`, `2.0`, `2`, `latest`) and the Physical Configuration Audit (§11.2) is performed; both are tracked in CR #443. `main` is then added to ruleset `Develop_Required_Checks` (#455, §7.1).
 
 ---
 
@@ -420,7 +433,7 @@ Performed after tagging to verify:
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-09-29 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

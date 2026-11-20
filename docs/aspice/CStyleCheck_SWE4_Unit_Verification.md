@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SWE4-001 | **Version** | 1.47 |
-| **Project** | CStyleCheck | **Date** | 2026-11-19 |
+| **Document ID** | CSC-SWE4-001 | **Version** | 1.48 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SWE.4 |
@@ -22,6 +22,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.48 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §3 scope v2.0.0 release baseline; §4.2 CI-gate text — 1671 tests at the v2.0.0 release baseline (1671 passed in a local run on `release/2.0.0`, 2026-11-20); §6 v2.0.0 note; referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.47 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): §5.14 `test_misra_rules.py` 167→168 (UV-MSR-006 12→13: a two-word built-in type does not make a C keyword an object name); §5.24 `test_partial_struct.py` 74→89 — new UV-PSI-009 `TestMacroCollection` (11 tests: `#define` classification, `#undef`, project table over the file's own `#define`s, continued `#if` lines, declaration order, exhaustive `#elif`, `#elifdef`, C-style splicing, deep nesting), UV-PSI-006 test renamed `test_this_file_macro_fills_gaps_only`, UV-PSI-007 5→7 (checked configuration beats an SDK `#ifndef` default; `--definitions` warning), UV-PSI-008 4→6 (typedef alias of an undefined struct reported; `#define`d type not); §6 rows and total 1655→1671; §4.2 CI-gate test total; §7 SWE1-123 row |
 | 1.46 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): §5.14 `test_misra_rules.py` 162→167 (UV-MSR-006 `TestSizeofType` 7→12: an upper-case array object, an upper-case local and parameter, and an object ending in `_t` are not flagged; an upper-case typedef and an undeclared upper-case name still are; #460); §5.24 `test_partial_struct.py` 54→74 with new UV-PSI-006 `TestPreprocessorConditionals` (11 tests, SWE1-123, #463), UV-PSI-007 `TestDefinitionPaths` (5 tests, SWE1-121, #461) and UV-PSI-008 `TestReportUnknownTypes` (4 tests, SWE1-122, #462); UV-PSI-004 — the `#if` / `#else` test now passes under SWE1-123 (member in every arm); §6 module rows and total 1630→1655; §4.2 CI-gate test total; §7 rows SWE1-114, SWE1-118 to SWE1-123 |
 | 1.45 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
@@ -74,7 +75,7 @@
 
 ## 3. Purpose & Scope
 
-This specification defines the unit verification strategy, coverage criteria, and test case catalogue for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline**. It satisfies **Automotive SPICE® PAM v4.0, SWE.4 — Software Unit Verification**.
+This specification defines the unit verification strategy, coverage criteria, and test case catalogue for **CStyleCheck v2.0.0** (release baseline 2026-11-20; v1.6.0 / v1.6.1 content plus the post-v1.6.0 `develop` changes). It satisfies **Automotive SPICE® PAM v4.0, SWE.4 — Software Unit Verification**.
 
 Unit verification covers both dynamic testing (pytest test suite) and static verification (naming convention self-check via `rules.yml` CI workflow).
 
@@ -84,8 +85,8 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 |---|---|---|
 | CSC-SWE1-001 | CStyleCheck Software Requirements Specification | 2.32 |
 | CSC-SWE3-001 | CStyleCheck Software Detailed Design | 1.42 |
-| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.36 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.33 |
+| CSC-SWE5-001 | CStyleCheck Software Integration Test Specification | 1.37 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
 
 ---
 
@@ -112,7 +113,7 @@ Unit verification covers both dynamic testing (pytest test suite) and static ver
 
 Coverage is measured per CI run on all three Python matrix versions (3.10, 3.11, 3.12) and reported via `coverage.xml` artefact (uploaded as a GitHub Actions artefact, Python 3.11 build).
 
-**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1671 tests (2026-11-19 develop baseline, after #408, #407, #413, #412, #418, #420, #422, #424, #425, #423, #441, the v1.6.1 back-merge, #447, #449, #456 and #460 to #463) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
+**CI gate (from v1.2.0+):** `--cov-fail-under=85 --cov-branch` applied across all 1671 tests (v2.0.0 release baseline, 2026-11-20; the `develop` baseline after #408, #407, #413, #412, #418, #420, #422, #424, #425, #423, #441, the v1.6.1 back-merge, #447, #449, #456 and #460 to #463) including `test_cli.py` subprocess calls. Combined coverage 87.31% ≥ 85% gate ✅
 
 > **Subprocess coverage implementation (issue #54 — resolved):** From v1.2.0 CI onwards, `COVERAGE_PROCESS_START` and `sitecustomize.py` subprocess instrumentation are enabled in `cstylecheck_tests.yml`. This allows `test_cli.py` to contribute coverage of `main()` and the CLI output helpers (`_violations_to_json`, `_violations_to_sarif`, `write_baseline`, `load_baseline`, `print_summary`), which previously accounted for ~14% of unmeasured statements (the v1.1.0 measured baseline was 86% statement-only, excluding subprocess invocations). The CI gate has been raised from 72% statement-only to 85% combined statement + branch. The long-term targets of ≥ 90% statement and ≥ 85% branch remain; the 85% combined gate will be reviewed once the first post-instrumentation CI run reports actual figures (baseline reference: 1279 tests as of v1.6.0).
 
@@ -620,6 +621,8 @@ Added for issue #456. The two opt-in rules `misc.partial_struct_assignment` and 
 **Branch Coverage (v1.5.0 CI — 1183 tests incl. subprocess):** 874 branch points, 96 partial → **87.31% combined statement + branch** ≥ 85% gate ✅ (issue #54 resolved)
 **v1.6.0 CI coverage:** to be measured after first CI run (expected ≥ 85% combined gate).
 
+**v2.0.0 release baseline (2026-11-20, CR #443):** 1671 tests across 60 modules, 0 failures (local run on `release/2.0.0`; the CI matrix on Python 3.10 / 3.11 / 3.12 is a merge gate of the release PR, CSC-SUP8-001 §8.2).
+
 **Static Verification (rules.yml):** PASS
 
 ---
@@ -718,7 +721,7 @@ Added for issue #456. The two opt-in rules `misc.partial_struct_assignment` and 
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-09-29 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |

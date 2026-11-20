@@ -8,8 +8,8 @@
 
 | Field | Value | Field | Value |
 |---|---|---|---|
-| **Document ID** | CSC-SYS5-001 | **Version** | 1.30 |
-| **Project** | CStyleCheck | **Date** | 2026-11-19 |
+| **Document ID** | CSC-SYS5-001 | **Version** | 1.31 |
+| **Project** | CStyleCheck | **Date** | 2026-11-20 |
 | **Status** | Released | **Classification** | Internal |
 | **Author** | Claude | **Reviewer** | Dermot Murphy |
 | **Approver** | Dermot Murphy | **Related Process** | SYS.5 |
@@ -20,6 +20,7 @@
 
 | Version | Date | Author | Description of Change |
 |---|---|---|---|
+| 1.31 | 2026-11-20 | Claude | v2.0.0 release (CR #443): §3 scope v2.0.0; §3.3 CM baseline adds the v2.0.0 release baseline; §6 system verification verdict for the v2.0.0 release baseline (replaces the "current `develop` run" note); referenced-document versions resynced; approval by merge (CSC-DEV-002 §5.2) |
 | 1.30 | 2026-11-19 | Claude | Review fixes for #460 to #463 (`783b5a4`): SYS-VTC-003 evidence — `test_partial_struct.py` 89 tests, 6 `misc.sizeof_type` object tests; result note test total 1655→1671 |
 | 1.29 | 2026-11-19 | Claude | Issues #460 to #463 (CR-461, CR-462): SYS-VTC-003 partial-struct row — definition files, `report_unknown_types` and `#if` members, evidence `test_partial_struct.py` 74 tests; MISRA/Barr-C row notes the #460 `misc.sizeof_type` tests; result note test total 1630→1655 |
 | 1.28 | 2026-11-19 | Claude | Cross-reference version resync with #458 (CSC-SUP10-001 CR-441 and CR-456 closed) |
@@ -58,7 +59,7 @@
 
 ### 3.1 Purpose
 
-This System Verification Report documents the qualification test specification, execution results, and verdict for **CStyleCheck v1.6.0 and the post-v1.6.0 `develop` baseline** (base execution at v1.2.x, extended per release) — verifying that the complete, integrated system satisfies all system requirements defined in CSC-SYS2-001. It satisfies **Automotive SPICE® PAM v4.0, SYS.5 — System Verification**.
+This System Verification Report documents the qualification test specification, execution results, and verdict for **CStyleCheck v2.0.0** (v1.6.0 / v1.6.1 plus the post-v1.6.0 `develop` changes; base execution at v1.2.x, extended per release) — verifying that the complete, integrated system satisfies all system requirements defined in CSC-SYS2-001. It satisfies **Automotive SPICE® PAM v4.0, SYS.5 — System Verification**.
 
 System verification (SYS.5) differs from system integration testing (SYS.4) in that it tests the **complete, fully integrated system against its requirements**, rather than testing interface behaviour between subsystems.
 
@@ -68,9 +69,9 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 |---|---|---|
 | CSC-SYS2-001 | CStyleCheck System Requirements Specification | 2.25 |
 | CSC-SYS3-001 | CStyleCheck System Architecture Description | 1.27 |
-| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.33 |
+| CSC-SYS4-001 | CStyleCheck System Integration Test Specification | 1.34 |
 | ASPICE PAM v4.0 | Automotive SPICE Process Assessment Model | 4.0 |
-| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.33 |
+| CSC-SUP8-001 | CStyleCheck Configuration Management Plan | 1.34 |
 
 ### 3.3 System Configuration Under Test
 
@@ -85,7 +86,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 | **Docker Image Digest** | See `docker_publish.yml` Actions log for commit 93178cd |
 | **Test Execution Date** | 2026-05-28 |
 | **Tester** | GitHub Actions (automated) / Dermot Murphy (manual review) |
-| **CM Baseline** | v1.2.0 release tag (base execution); SYS-VTC-003 extensions at v1.4.1, v1.6.0 (`a6102d6`) and `develop` `296e91b` (2026-09-29) |
+| **CM Baseline** | v1.2.0 release tag (base execution); SYS-VTC-003 extensions at v1.4.1, v1.6.0 (`a6102d6`) and `develop` `296e91b` (2026-09-29); v2.0.0 release baseline: tag `v2.0.0` on the `main` merge commit of `release/2.0.0` (2026-11-20, CR #443) |
 
 ### 3.4 Verification Strategy
 
@@ -439,7 +440,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 **Overall System Verification Verdict — v1.4.1 baseline:** PASS (applies to the v1.4.1 release baseline only — 2026-06-25; 1157 tests all PASS on Python 3.10 / 3.11 / 3.12; coverage 87.31% combined, 89.8% statement)
 
-**Current `develop` run (not a release verdict):** 1545 passed, 58 test modules, 2026-09-29 (`develop` after #423, local run, Python 3.11); SYS-VTC-003 and SYS-VTC-008 re-confirmed at this baseline (see above). The system verification verdict for the next release (v2.0.0) is issued at release, including the CI matrix (Python 3.10 / 3.11 / 3.12).
+**Overall System Verification Verdict — v2.0.0 release baseline:** PASS (2026-11-20, CR #443 — SYS-VTC-001 to SYS-VTC-013 PASS at their recorded baselines; SYS-VTC-003 covers all 83 rule IDs and SYS-VTC-008 was re-executed on the installed command; 1671 tests, 0 failures, local run on `release/2.0.0`, Python 3.14. The CI matrix on Python 3.10 / 3.11 / 3.12, the naming-convention check and the Docker build are required to pass on the release PR before the owner's merge, which records the result, CSC-DEV-002 §5.2). SYS-NF-010/011/012 remain formally deferred (§7).
 
 ---
 
@@ -511,7 +512,7 @@ System verification (SYS.5) differs from system integration testing (SYS.4) in t
 
 | Role | Name | Signature / Electronic Approval | Date |
 |---|---|---|---|
-| Author | Claude | Approved | 2026-09-29 |
+| Author | Claude | Approved | 2026-11-20 |
 | Technical Reviewer | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Quality Assurance | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
 | Approver | Dermot Murphy | By merge (CSC-DEV-002 §5.2) | On PR merge |
