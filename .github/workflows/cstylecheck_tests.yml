@@ -15,24 +15,55 @@ on:
       - "requirements.txt"
       - ".github/workflows/cstylecheck_tests.yml"
   pull_request:
-    paths:
-      - "src/cstylecheck/**"
-      - "src/cstylecheck.py"
-      - "src/rules.yml"
-      - "src/_version.py"
-      - "src/c_keywords.txt"
-      - "src/c_stdlib_names.txt"
-      - "src/c_spell_dict.txt"
-      - "tests/**"
-      - "tests/rules.yml"
-      - "requirements.txt"
-      - ".github/workflows/cstylecheck_tests.yml"
 
   workflow_dispatch:
 
+# The default GITHUB_TOKEN is read-only (#449); no job here needs more.
+permissions:
+  contents: read
+
+# pull_request has no paths: filter, so the "All Checks Passed" job always
+# reports and can be a required status check on develop and main (#449).
+# The changes job decides whether the unit tests need to run on a PR; push
+# events keep their paths: filter and always run the tests.
 jobs:
+  changes:
+    name: Detect test-relevant changes
+    runs-on: ubuntu-latest
+    outputs:
+      any_changed: ${{ steps.changed.outputs.any_changed }}
+
+    steps:
+      - name: Checkout repository
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get changed test-relevant files (PR only)
+        if: github.event_name == 'pull_request'
+        id: changed
+        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+        with:
+          files: |
+            src/cstylecheck/**
+            src/cstylecheck.py
+            src/rules.yml
+            src/_version.py
+            src/c_keywords.txt
+            src/c_stdlib_names.txt
+            src/c_spell_dict.txt
+            tests/**
+            tests/rules.yml
+            requirements.txt
+            .github/workflows/cstylecheck_tests.yml
+
   test:
     name: Unit Tests (Python ${{ matrix.python-version }})
+    needs: changes
+    if: >
+      github.event_name != 'pull_request' ||
+      needs.changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -45,7 +76,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -147,3 +178,25 @@ jobs:
           path: coverage.xml
           retention-days: 30
 
+  # Aggregate gate: the one required status check (#449). Passes when the
+  # unit tests passed, or were skipped because the PR touches no
+  # test-relevant path; fails on any failure or cancellation.
+  all-checks:
+    name: All Checks Passed
+    needs: [changes, test]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check job results
+        run: |
+          echo "changes: ${{ needs.changes.result }}"
+          echo "test:    ${{ needs.test.result }}"
+          if [ "${{ needs.changes.result }}" != "success" ]; then
+            echo "::error::Change detection did not succeed."
+            exit 1
+          fi
+          case "${{ needs.test.result }}" in
+            success|skipped) echo "All checks passed." ;;
+            *) echo "::error::Unit tests: ${{ needs.test.result }}"; exit 1 ;;
+          esac

@@ -1,0 +1,57 @@
+name: Change request
+description: Request a change or enhancement (CSC-SUP10-001 §5.1 change request)
+title: "[CR] "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form records a change request per CSC-SUP10-001 §5.1. The
+        maintainer applies the type label (§4.1) and records the impact
+        analysis (§5.2) on this issue before the implementing PR is merged.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description and rationale
+      description: What should change, and why — which stakeholder need or deficiency it addresses
+    validations:
+      required: true
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact level
+      description: |
+        CSC-SUP10-001 §4.2:
+        - **Low** — changes a single CI; no interface impact; no requirement change
+        - **Medium** — changes multiple CIs; impacts one interface; minor requirement change
+        - **High** — changes architecture, adds/removes requirements, or breaks backwards compatibility
+      options:
+        - Low
+        - Medium
+        - High
+    validations:
+      required: true
+  - type: textarea
+    id: affected
+    attributes:
+      label: Affected requirements / work products
+      description: Requirement IDs (SYS-*, SWE1-*), configuration items (CSC-SUP8-001 §6.1) and ASPICE documents that need updating
+    validations:
+      required: true
+  - type: dropdown
+    id: compatible
+    attributes:
+      label: Backwards compatible?
+      description: "Semantic versioning (CSC-SUP10-001 §5.6): **No** means a Major release (x.0.0)"
+      options:
+        - "Yes"
+        - "No (Major release)"
+    validations:
+      required: true
+  - type: input
+    id: target
+    attributes:
+      label: Target release
+      placeholder: v2.0.0
+    validations:
+      required: true

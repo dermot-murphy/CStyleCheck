@@ -5,19 +5,19 @@ The purpose of this project is three-fold:
 - As an experiment to prompt Claude to generate all content - eg documents, webpages, issues, code, workflow - no manual correction of files
 - For a human to review all the work - either manually or with the help of an AI
 
-Contributions are very welcome.
-
 ![Logo](logo/cstylecheck.jpg)
 
 Embedded C Style Compliance Checker for GitHub Actions / pre-commit hooks.
-Implements **Barr-C:2018** and MISRA-C complementary rules across **73 rule IDs**.
+Implements **Barr-C:2018** and MISRA-C complementary rules across **83 rule IDs**.
 
 [![Tests](https://github.com/dermot-murphy/CStyleCheck/actions/workflows/cstylecheck_tests.yml/badge.svg)](https://github.com/dermot-murphy/CStyleCheck/actions/workflows/cstylecheck_tests.yml)
 [![Naming Convention](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/cstylecheck/badge.json)](https://dermot-murphy.github.io/CStyleCheck/cstylecheck/)
 [![Docker](https://github.com/dermot-murphy/CStyleCheck/actions/workflows/docker_publish.yml/badge.svg)](https://github.com/dermot-murphy/CStyleCheck/actions/workflows/docker_publish.yml)
 
+Contributions are very welcome.
+
 📖 **[Rules and Configuration Reference](Rules-and-Configuration.md)** — full
-documentation for all 73 rules with YAML configuration and annotated C examples.
+documentation for all 83 rules with YAML configuration and annotated C examples.
 
 Draft companion documents (pending rule population, not yet authoritative):
 [Embedded C Style Guide](embedded_c_style_guide.md) ·
@@ -26,12 +26,28 @@ Draft companion documents (pending rule population, not yet authoritative):
 
 ---
 
+## Trend analysis
+
+Code quality metrics tracked after every PR merge to `main` and `develop`.
+Full charts and history on the **[Trend Analysis](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis)** wiki page.
+
+`scripts/collect_metrics.py` also records industry-standard C source metrics for `examples/` (pure-Python heuristics, no compiler): LOC composition (SLOC / comment / doxygen / blank), cyclomatic complexity (max, average, distribution) and nesting depth, function size and parameter counts, doxygen coverage, coupling (global/static variables, fan-out, recursion), safety indicators (`assert`, `goto`, `void *`, C-style cast and macro counts, assert density) and violation quality (violations per KLOC, by rule category, top rules). The thresholds used (function > 60 lines, > 5 parameters, V(G) > 10) are documented in `scripts/metrics_rules.yml`.
+
+| Chart | main | develop |
+|---|---|---|
+| Violations | [![violations-main](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/main_errors_warnings.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) | [![violations-develop](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/develop_errors_warnings.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) |
+| File stats | [![files-main](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/main_file_stats.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) | [![files-develop](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/develop_file_stats.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) |
+| LOC composition | [![loc-main](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/main_loc_breakdown.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) | [![loc-develop](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/develop_loc_breakdown.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) |
+| Ratios | [![ratios-main](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/main_ratios.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) | [![ratios-develop](https://raw.githubusercontent.com/dermot-murphy/CStyleCheck/gh-pages/metrics/charts/develop_ratios.svg)](https://github.com/dermot-murphy/CStyleCheck/wiki/Trend-Analysis) |
+
+---
+
 ## Repository layout
 
 ```
 .pre-commit-hooks.yml   # pre-commit hook definition (id: cstylecheck)
 pyproject.toml           # pip / pipx / pre-commit packaging metadata
-Rules-and-Configuration.md  # wiki: all 73 rules with config and examples
+Rules-and-Configuration.md  # wiki: all 83 rules with config and examples
 src/
     cstylecheck.py          # thin CLI shim (backward-compatible entry point)
     cstylecheck/            # checker package (12 sub-modules)
@@ -41,7 +57,7 @@ src/
         models.py           # Violation, CheckResult, shared constants
         preprocessor.py     # comment/string stripping, token extraction
         utils.py            # case matching, module name helpers
-        checker.py          # main Checker class — all 73 rule implementations
+        checker.py          # main Checker class — all 83 rule implementations
         sign_checker.py     # cross-file sign-compatibility and declared_not_defined
         baseline.py         # baseline load/write
         output.py           # text / JSON / SARIF / HTML formatters, Tee, summary
@@ -72,7 +88,7 @@ tests/
     test_variables.py       #  43 tests: all variable.* rules
     test_functions.py       #  14 tests: function.*
     test_typedefs.py        #   8 tests: typedef.*
-    test_enums.py           #  11 tests: enum.*
+    test_enums.py           #  24 tests: enum.*
     test_structs.py         #  12 tests: struct.*
     test_include_guards.py  #   8 tests: include_guard.*
     test_misc.py            #  28 tests: line_length / indentation / magic / suffix
@@ -82,21 +98,26 @@ tests/
     test_copyright_header.py #  55 tests: misc.copyright_header
     test_eof_comment.py     #  33 tests: misc.eof_comment
     test_cli.py             #  43 tests: CLI flags end-to-end
-    test_improvements.py    #  67 tests: bugs + new features
+    test_cli_requirements.py # 21 tests: startup banner, --version, path separator, single read
+    test_exit_code_entry_points.py # 8 tests: config/usage errors exit 2 (both entry points)
+    test_improvements.py    #  80 tests: bugs + new features
     test_comment_ratio.py   #  24 tests: misc.comment_ratio
     test_whitespace_ratio.py #  27 tests: misc.whitespace_ratio
     test_declared_not_defined.py # 39 tests: misc.declared_not_defined
-    test_misra_rules.py     #  64 tests: MISRA C rule coverage
+    test_misra_rules.py     # 168 tests: MISRA C / Barr-C rule coverage
+    test_partial_struct.py  #  89 tests: misc.partial_struct_assignment / _initialiser
     test_parameter_prefix.py #  51 tests: variable.parameter.*
     test_print_summary.py   #  11 tests: --summary per-file breakdown
     test_exclusions.py      #  28 tests: per-file exclusions
     test_github_annotations.py #  8 tests: GitHub Actions annotations
     test_case_patterns.py   #   6 tests: case pattern helpers
+    test_case_style_config.py # 27 tests: case-style names, aliases and config validation
+    test_functions_case_removed.py # 16 tests: functions.case removed / deprecated
     test_thread_safe_globals.py # 4 tests: thread-safety of globals
-    test_workflow_config.py #  16 tests: CI workflow regression tests
+    test_workflow_config.py #  21 tests: CI workflow regression tests
     test_inline_suppression.py # 24 tests: inline suppression comments
     test_fix_mode.py        #  11 tests: auto-fix engine (apply_fixes, unified_diff)
-    test_init_wizard.py     #  15 tests: config wizard and presets (run_wizard, run_preset)
+    test_init_wizard.py     #  33 tests: config wizard and presets (run_wizard, run_preset)
     test_per_dir_config.py  #  15 tests: per-directory config resolution
     test_html_report.py     #  20 tests: HTML report output
     test_function_length.py #  11 tests: misc.function_length
@@ -113,17 +134,20 @@ tests/
     test_config_loading.py  #  13 tests: rules.yml / config loading edge cases
     test_preprocessor.py    #  76 tests: comment/string stripping, token extraction
     test_update_config.py   #  27 tests: per-directory and config merge updates
-    test_constant_comparison.py # 27 tests: misc.constant_comparison
+    test_constant_comparison.py # 37 tests: misc.constant_comparison
     test_unsigned_suffix_signed_params.py # 15 tests: misc.unsigned_suffix signed-param exemption
     test_pointer_prefix_fix.py # 20 tests: variable.pointer_prefix auto-fix
+    test_collect_metrics.py # 54 tests: trend-analysis C source metrics (scripts/)
 Dockerfile/
     Dockerfile               # multi-platform Docker image
     .dockerignore
 .github/workflows/
-    cstylecheck_tests.yml      # runs the test suite on every commit (1281 tests)
-    rules.yml    # runs linter + trend page on C source commits
+    cstylecheck_tests.yml      # runs the test suite on every commit (1671 tests)
+    cstylecheck_rules.yml    # runs linter + trend page on C source commits
     docker_publish.yml       # builds and pushes image to GHCR and Docker Hub
     wiki_publish.yml         # publishes GitHub Wiki from README + ASPICE docs
+    metrics.yml              # trend-analysis metrics, SVG charts and wiki page
+    aspice_consistency.yml   # ASPICE work-product consistency check on every PR
 requirements.txt             # pip dependencies
 ```
 
@@ -178,20 +202,21 @@ pytest tests/ --cov=src --cov-report=term-missing
 | `--spell-words FILE` | Extra spell-check exempt words |
 | `--include GLOB` | Source glob to scan (repeatable) |
 | `--exclude GLOB` | Path/directory to exclude (repeatable) |
+| `--definitions GLOB` | Files read only for struct, typedef and `#define` definitions used by `misc.partial_struct_*` (e.g. vendor SDK headers); never checked, `--exclude` does not apply; ignored with a warning when neither rule is enabled (repeatable, #461) |
 | `--output-format FORMAT` | Output format: `text` (default), `json`, `sarif`, or `html` |
 | `--baseline-file FILE` | Suppress violations present in a saved baseline |
-| `--write-baseline FILE` | Write all current violations to FILE as a baseline, exit 0 |
+| `--write-baseline FILE` | Write all current violations to FILE as a baseline, exit 0 (missing folders in the path are created) |
 | `--github-actions` | Emit `::error`/`::warning` GitHub Actions annotations |
 | `--warnings-as-errors` | Promote all warnings and info to errors |
 | `--summary` | Print violation summary table (text mode only) |
-| `--log FILE` | Write output to file as well as stdout |
+| `--log FILE` | Write output to file as well as stdout (missing folders in the path are created) |
 | `--verbose` | Print the file being scanned — prevents apparent hangs on large filesets |
 | `--fix` | Auto-fix safe mechanical violations in-place |
 | `--dry-run` | With `--fix`: show a unified diff without writing to disk |
 | `--safe-only` | With `--fix`: apply only zero-risk fixes (currently all fixes qualify) |
 | `--init` | Launch the interactive config wizard; writes `.cstylecheck.yml` |
 | `--preset PRESET` | Write a pre-built config without the wizard (`barr-c`, `minimal`, or `misra`) |
-| `--init-output FILE` | Output path for `--init` / `--preset` (default: `.cstylecheck.yml`) |
+| `--init-output FILE` | Output path for `--init` / `--preset` (default: `.cstylecheck.yml`; missing folders in the path are created) |
 | `--overwrite` | Overwrite an existing config file when using `--init` or `--preset` |
 | `--per-dir-config` | Walk upward from each source file looking for `.cstylecheck.yml` overrides |
 | `--exit-zero` | Always exit 0 (useful for warning-only CI steps) |
@@ -408,6 +433,23 @@ The wizard asks a short series of questions (project name, preferred naming styl
 which rule categories to enable) and writes `.cstylecheck.yml` in the current
 directory.
 
+The last two questions enable the standard-specific opt-in rules (#420); both
+default to **No** (Enter, or end of input, keeps the default):
+
+```text
+Enable MISRA C:2012 rules (goto 15.1, assignment in condition 13.4, void pointer 11.5, recursion 17.2, empty else 15.7)? [y/N]:
+Enable Barr-C rules (one statement per line §3.2, sizeof on objects §5.7, empty else §8.3)? [y/N]:
+```
+
+The generated file always lists these rules, with `enabled: true` only for the
+standard(s) answered yes, so they can be toggled later.
+
+The naming-style question shows `lower_snake / camelCase / PascalCase`; the config
+stores the canonical name (`lower_snake`, `camel` or `pascal`).  Hand-written configs
+may use aliases such as `PascalCase` or `UPPER_SNAKE`; an unknown case name is a config
+error (exit code `2`).  See [Case-style values](Rules-and-Configuration.md#case-style-values)
+(#422).
+
 ### Pre-built presets
 
 Skip the wizard entirely with `--preset`:
@@ -418,11 +460,22 @@ python src/cstylecheck.py --preset minimal    # minimal rule set for adoption
 python src/cstylecheck.py --preset misra      # MISRA-oriented rule set
 ```
 
+The standard-specific presets also enable the matching opt-in rules (#420), at
+their shipped default severities:
+
+| Preset | Opt-in rules enabled |
+|---|---|
+| `misra` | `misc.goto_usage` (15.1), `misc.assignment_in_condition` (13.4), `misc.void_pointer` (11.5), `misc.recursive_function` (17.2), `misc.empty_else` (related to 15.7), `misc.partial_struct_assignment` (related to 9.1), `misc.partial_struct_initialiser` (related to 9.3) |
+| `barr-c` | `misc.multiple_statements_per_line` (§3.2), `misc.sizeof_type` (§5.7), `misc.empty_else` (§8.3), `misc.partial_struct_assignment` (§7.2) |
+| `minimal` | none |
+
+`misc.boolean_comparison` is a style rule and is in no preset.
+
 ### Options
 
 | Flag | Description |
 |---|---|
-| `--init-output FILE` | Write the config to `FILE` instead of `.cstylecheck.yml` |
+| `--init-output FILE` | Write the config to `FILE` instead of `.cstylecheck.yml` (missing folders in the path are created) |
 | `--overwrite` | Overwrite an existing config file; without this flag the command aborts if the file already exists |
 
 ---
@@ -485,9 +538,92 @@ The baseline file is plain JSON — diff it in code review to see exactly which
 legacy issues have been fixed.  When a team is ready to enforce a previously
 suppressed rule, delete its entries from the baseline and commit.
 
+Matching rules:
+
+- A violation is suppressed while the baseline holds an unused entry with the
+  same **file, rule and message**.  The `line` field is recorded for reviewers
+  but ignored when matching, so accepted violations stay suppressed when
+  unrelated edits move them up or down the file.
+- Each baseline entry suppresses at most one violation, so a second copy of an
+  accepted violation is still reported as new.
+- File paths are stored with `/` separators on every platform, so a baseline
+  written on Windows works on Linux CI and vice versa.  Older baselines that
+  contain `\` separators are still accepted.
+
 ---
 
 ## New in this release
+
+### New in v2.0.0 (2026-11-20)
+
+**Major release.** v2.0.0 can break an existing project on upgrade. GitHub Action users pin
+`dermot-murphy/CStyleCheck@v2.0.0`. Check these points before you upgrade:
+
+- An unknown case-style name in a config is now an error, exit code `2` (#422).
+- Configuration and usage errors exit with `2`, not `1`, also from the installed
+  `cstylecheck` command (#425). CI scripts that tested for `1` must test for `2`.
+- The last enum member is now checked, so code that passed before can report
+  `enum.member_case` / `enum.member_prefix` findings (#423).
+- `functions.case` is removed: it is ignored with a warning, use `functions.style` (#424).
+- All 10 new `misc.*` rules are opt-in (#412, #418, #456): upgrading adds no findings
+  from them until you enable them, or use `--preset misra` / `--preset barr-c` (#420).
+
+Changes:
+
+- **8 new MISRA C / Barr-C rules** (#391, #392), all **opt-in** (disabled by default,
+  including when the key is absent from a project config; #412, #418). Enable each with
+  `misc.<rule>.enabled: true`:
+  `misc.goto_usage` (MISRA 15.1, error), `misc.assignment_in_condition` (MISRA 13.4),
+  `misc.multiple_statements_per_line` (Barr-C §3.2), `misc.void_pointer` (MISRA 11.5),
+  `misc.recursive_function` (MISRA 17.2, direct recursion, error),
+  `misc.sizeof_type` (Barr-C §5.7, info), `misc.boolean_comparison` (style, lowercase `true`/`false` only) and
+  `misc.empty_else` (Barr-C §8.3). See [Rules and Configuration](Rules-and-Configuration.md).
+- **Partially initialised local structs** (#456), two more **opt-in** rules:
+  `misc.partial_struct_assignment` (warning; a local struct with no initialiser that has
+  only some members assigned before it is used as a whole — the rest hold indeterminate
+  stack data; related to MISRA 9.1 and Barr-C §7.2) and `misc.partial_struct_initialiser`
+  (info; a positional brace initialiser with fewer values than members; related to MISRA
+  9.3). Struct definitions are collected from every scanned file, and from files named by
+  `definition_paths` / `--definitions GLOB` that are read for definitions only, so excluded
+  vendor SDK headers can supply member lists (#461). Members inside `#if` blocks of a
+  struct count only when the condition is true (#463), and `report_unknown_types: true`
+  reports locals whose struct type is unknown (#462). See
+  [Rules and Configuration](Rules-and-Configuration.md).
+- **`misc.sizeof_type` no longer reports objects** (#460): `sizeof(NAME)` is not reported
+  when `NAME` is declared as a variable, parameter or array in the same file (for example an
+  upper-case `const` lookup table).
+- **Presets enable the matching opt-in rules** (#420): `--preset misra` enables the five
+  MISRA rules above (plus `misc.empty_else`, and since #456 both partial-struct rules),
+  `--preset barr-c` enables the three Barr-C rules (plus `misc.partial_struct_assignment`
+  since #456), and `--init` asks two new yes/no questions (default No).
+  `misc.boolean_comparison` is in no preset.
+- **Unknown case-style names are a config error** (#422): presets and `--init` now write
+  canonical case names (`lower_snake`, `upper_snake`, `camel`, `pascal`); aliases such as
+  `PascalCase` or `UPPER_SNAKE` are accepted and converted; an unknown name stops the run
+  with exit code `2`. ⚠️ Configs generated by `--preset barr-c` or the wizard now report
+  naming findings that were silently skipped before.
+- **`functions.case` removed** (#424): the checker never read it. Presets and `--init` no
+  longer write it; function-name casing is set by `functions.style`. A config that still
+  has `functions.case` works as before but prints a warning on stderr.
+- **Baseline matching without line numbers** (#394) and **platform-independent baseline
+  paths** (#395).
+- **Trend-analysis C source metrics** (#388), including safety indicators.
+- **Missing output folders are created** (#441) for `--log FILE`,
+  `--write-baseline FILE` and `--init-output FILE`; CI scripts no longer need `mkdir -p`.
+
+8 new rules (before #456); **81 rule IDs** total. 143 new tests (1422 total at the time).
+#408 and #407 (dedicated unit tests for the source cache, startup banner and OS path
+separator) add 17 more, #413 (startup-banner requirements aligned with the code) adds 5,
+#412 (`misc.boolean_comparison` opt-in, lowercase only) adds 8, and #418 (the other 7 new
+rules opt-in) adds 11, #420 (preset opt-in rules) adds 18, #422 (case-style names) adds 27, #424
+(`functions.case` removed) adds 16, #425 (config-error exit code 2) adds 8, #423 (last enum member
+checked) adds 13, #439 (no startup banner in a json / sarif / html `--log` file) adds 1, and #441
+(missing output folders created) adds 11, the v1.6.1 back-merge (#439 tests from `main`,
+`TestStartupBannerLogFile`) adds 2, and #447 (`misc.constant_comparison` skips `#if` / `#elif`)
+adds 10, #449 (repository protection, workflow-configuration tests) adds 5, and #456 (partially
+initialised local structs, 2 new rules; **83 rule IDs** total) adds 56, and #460–#463
+(`misc.sizeof_type` objects, definition files, unknown struct types, `#if` members in struct
+bodies) add 41: **1671 tests** in total.
 
 ### New in v1.2.0 (2026-05-29)
 
@@ -788,7 +924,7 @@ Rule ID: `misc.eof_comment` · Default severity: `warning`
 
 ---
 
-## Rule IDs (73 total)
+## Rule IDs (83 total)
 
 | Category | Rule IDs |
 |---|---|
@@ -798,7 +934,7 @@ Rule ID: `misc.eof_comment` · Default severity: `warning`
 | Naming | `naming.identifier_length` `naming.no_single_char_identifiers` |
 | Types | `typedef.case` `typedef.suffix` `enum.type_case` `enum.type_suffix` `enum.member_case` `enum.member_prefix` `struct.tag_case` `struct.tag_suffix` `struct.member_case` |
 | Include guards | `include_guard.missing` `include_guard.format` |
-| Misc | `misc.copyright_header` `misc.eof_comment` `misc.line_length` `misc.indentation` `misc.magic_number` `misc.unsigned_suffix` `misc.lowercase_l_suffix` `misc.yoda_condition` `misc.block_comment_spacing` `misc.comment_ratio` `misc.whitespace_ratio` `misc.declared_not_defined` `misc.function_length` `misc.function_doc_header` `misc.assert_density` `misc.null_statement_comment` `misc.declaration_spacing` `misc.file_length` `misc.reserved_header_name` `misc.non_ascii_source` `misc.octal_constant` `misc.trigraph` `misc.constant_comparison` |
+| Misc | `misc.copyright_header` `misc.eof_comment` `misc.line_length` `misc.indentation` `misc.magic_number` `misc.unsigned_suffix` `misc.lowercase_l_suffix` `misc.yoda_condition` `misc.block_comment_spacing` `misc.comment_ratio` `misc.whitespace_ratio` `misc.declared_not_defined` `misc.function_length` `misc.function_doc_header` `misc.assert_density` `misc.null_statement_comment` `misc.declaration_spacing` `misc.file_length` `misc.reserved_header_name` `misc.non_ascii_source` `misc.octal_constant` `misc.trigraph` `misc.constant_comparison` `misc.goto_usage` `misc.assignment_in_condition` `misc.multiple_statements_per_line` `misc.void_pointer` `misc.recursive_function` `misc.sizeof_type` `misc.boolean_comparison` `misc.empty_else` `misc.partial_struct_assignment` `misc.partial_struct_initialiser` |
 | Other | `reserved_name` `spell_check` `sign_compatibility` |
 
 ---
@@ -919,7 +1055,7 @@ root.
 
 ```yaml
 # .github/workflows/rules.yml
-- uses: dermot-murphy/CStyleCheck@v1
+- uses: dermot-murphy/CStyleCheck@v2.0.0
   with:
     config: src/rules.yml
 ```
@@ -937,7 +1073,7 @@ jobs:
 
       - name: Run CStyleCheck
         id: cstylecheck
-        uses: dermot-murphy/CStyleCheck@v1
+        uses: dermot-murphy/CStyleCheck@v2.0.0
         with:
           config: src/rules.yml
           include: |
@@ -1055,8 +1191,24 @@ jobs:
 ### Test workflow (`cstylecheck_tests.yml`)
 Triggers on pushes touching `src/` (including dictionary files), `tests/`, or `requirements.txt`.
 
-### Linter workflow (`rules.yml`)
+### Linter workflow (`cstylecheck_rules.yml`)
 Triggers on pushes/PRs touching C source. Publishes a violation-trend page and badge.
+
+### Metrics workflow (`metrics.yml`)
+Runs on pushes and PRs to `main`/`develop`. Collects the trend-analysis metrics
+(`scripts/collect_metrics.py`), renders SVG charts, updates the Trend-Analysis wiki
+page and, on PRs, uploads a metrics comparison report.
+
+### Wiki workflow (`wiki_publish.yml`)
+Publishes the GitHub Wiki from the README and the ASPICE documents.
+
+### ASPICE consistency workflow (`aspice_consistency.yml`)
+Runs `python scripts/aspice_check.py` on every PR and on pushes to `main`/`develop`:
+document-version citations, SYS2/SWE1 traceability, SWE4 test counts, README rule IDs,
+SWE3 line references and CM coverage of every tracked file (#437).
+
+Dependabot (`.github/dependabot.yml`) opens weekly update PRs for pip and GitHub
+Actions dependencies against `develop`.
 
 ### Docker workflow (`docker_publish.yml`)
 Triggers on `main`/`master` when `Dockerfile/` or `src/` changes, and on `v*.*.*` tags.
